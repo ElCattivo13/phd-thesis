@@ -1,0 +1,1179 @@
+\chapter{Preliminaries}\label{ch:preliminaries}
+
+In this chapter, we set a basis for the later chapters by introducing the basic
+notions that we need.  Firstly, we introduce \emph{description logics (DLs)} as
+the logical formalism that we use throughout the thesis.  Secondly, we give the
+basic definitions of \emph{propositional linear-time temporal logic} and recall the
+relationship with $\omega$-automata, i.e.~automata working on infinite words.
+These notions are needed to obtain the \emph{linear-time temporalised
+description logic \SHOQ-LTL} (see Chapter~\ref{ch:shoq-ltl}).
+
+More specific notions like the basics of DL-based query answering and action
+formalisms based on description logics are not covered in this chapter but
+introduced in the respective later chapters.
+
+
+\section{Basic Notions of Description Logics}\label{sec:dls}
+
+As already sketched in the Chapter~\ref{ch:introduction}, description
+logics~\cite{DLhandbook-07} are a successful family of logic-based knowledge
+representation formalisms.  In this section, we introduce the basic notions of
+DLs that are relevant for this thesis.  For a more thorough introduction to DLs,
+the interested reader is referred to the \emph{Description Logic
+Handbook}~\cite{DLhandbook-07}.
+
+
+\subsection{Description Logic Concepts}\label{sec:dl-concepts}
+
+As discussed in Section~\ref{sec:intro-dls}, \emph{concepts} are defined using
+concept names, role names, individual names, and concept and role constructors.
+Throughout the thesis, let \NC, \NR, and \NI, respectively, denote pairwise
+disjoint sets of concept names, role names, and individual names.
+%
+We introduce now the concept and role constructors that are relevant for this
+thesis, and show how they are used to define the syntax of concepts (sometimes
+called \emph{concept descriptions}).
+
+\begin{definition}[Syntax of concepts]
+    A \emph{role} $r$ is either a role name, i.e.~$r\in\NR$, or it is of the
+    form $s^-$ for $s\in\NR$ (inverse role).
+    %
+    The set of \emph{concepts} is the smallest set such that
+    \begin{itemize}
+        \item every concept name $A\in\NC$ is a concept; and
+        \item if $C,D$ are concepts, $a\in\NI$, $r$ is a role, and $n$ is a
+            non-negative integer, then the following are also concepts: $\lnot
+            C$ (negation), $C\sqcap D$ (conjunction), $\{a\}$ (nominal),
+            $\exists r.C$ (existential restriction), and $\atLeast{n}{r}{C}$
+            (at-least restriction).
+    \end{itemize}
+\end{definition}
+
+\noindent
+As usual in description logics, we use
+\begin{itemize}
+    \item $C\sqcup D$ (disjunction) as an abbreviation for $\lnot(\lnot
+        C\sqcap\lnot D)$;
+    \item $C\to D$ (implication) as an abbreviation for $\lnot C\sqcup D$;
+    \item $\top$ (top) as an abbreviation for $A\sqcup\lnot A$ where $A\in\NC$
+        is arbitrary but fixed;
+    \item $\bot$ (bottom) as an abbreviation for $\lnot\top$;
+    \item $\forall r.C$ (value restriction) as an abbreviation for
+        $\lnot(\exists r.\lnot C)$; and
+    \item $\atMost{n}{r}{C}$ (at-most restriction) as an abbreviation for
+        $\lnot(\atLeast{(n+1)}{r}{C})$.
+\end{itemize}
+
+Note that there are more concept and role constructors introduced in the
+literature.  These are either beyond the scope of this thesis or introduced
+where needed.
+
+The semantics of concepts is given in a model-theoretic way using the notion of
+an interpretation.
+
+\begin{definition}[Semantics of concepts]\label{def:semantics-concepts}
+    An \emph{interpretation} is a pair $\Imc=(\Delta^\Imc,\cdot^\Imc)$, where the
+    \emph{domain} $\Delta^\Imc$ is a non-empty set, and the \emph{interpretation
+    function} $\cdot^\Imc$ assigns to every $A\in\NC$ a set
+    $A^\Imc\subseteq\Delta^\Imc$, to every $r\in\NR$ a binary relation
+    $r^\Imc\subseteq\Delta^\Imc\times\Delta^\Imc$, and to every $a\in\NI$ an
+    element $a^\Imc\in\Delta^\Imc$ such that the \emph{unique-name assumption
+    (UNA)} holds, i.e.~for all $a,b\in\NI$ with $a\ne b$, we have
+    $a^\Imc\ne b^\Imc$.  This function is extended to inverse roles and concepts
+    as follows:
+    \begin{itemize}
+        \item $(s^-)^\Imc:=\{(e,d)\mid(d,e)\in s^\Imc\}$;
+        \item $(\lnot C)^\Imc:=\Delta^\Imc\setminus C^\Imc$;
+        \item $(C\sqcap D)^\Imc:=C^\Imc\cap D^\Imc$;
+        \item $\{a\}^\Imc:=\{a^\Imc\}$;
+        \item $(\exists r.C)^\Imc:=\{d\in\Delta^\Imc\mid\text{there exists an
+            $e\in\Delta^\Imc$ with $(d,e)\in r^\Imc$ and $e\in C^\Imc$}\}$; and
+        \item
+            $(\atLeast{n}{r}{C})^\Imc:=\bigl\{d\in\Delta^\Imc\mid\lvert\{e\in\Delta^\Imc\mid(d,e)\in
+            r^\Imc\text{ and }e\in C^\Imc\}\rvert\ge n\bigr\}$.
+    \end{itemize}
+    We call a concept $C$ \emph{satisfiable} if there is a interpretation~\Imc
+    such that $C^\Imc\ne\emptyset$.
+\end{definition}
+
+\noindent
+Note that in our definition of the semantics, we make the unique-name
+assumption, which is an assumption often made in DLs.
+%
+We continue by giving an example of the notions introduced so far.
+
+\begin{example}\label{ex:camel-concept}
+    Let $C$ be the following concept:
+    \[\{\leah\}\sqcap\lnot\Dromedary\sqcap\exists\likes.\Foliage\sqcap%
+        \atMost{1}{\has}{\Hump}\sqcap\exists\isFatherOf^-.\{\hassan\}.\]
+    It is not hard to see that $C$ is satisfiable.
+    Figure~\ref{fig:camel-concept} depicts the graphical representation of an
+    interpretation~\Imc with $C^\Imc=\{\leah^\Imc\}\ne\emptyset$.  Note
+    that for this interpretation~\Imc, we have $\Dromedary^\Imc=\emptyset$.
+\end{example}
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}[%
+            ->,
+            >=stealth',
+            semithick,
+            shorten <=2pt,
+            shorten >=2pt,
+            auto,
+            on grid,
+            node distance=10ex and 10em,
+            element/.style={circle,fill,draw,inner sep=0,minimum size=4pt}]
+
+         \node[element] (leah)    [label=below:\leah]                  {};
+         \node[element] (hassan)  [right=of leah,label=below:\hassan]  {};
+         \node[element] (hump)    [left=of leah,label=above:\Hump]     {};
+         \node[element] (foliage) [above=of leah,label=above:\Foliage] {};
+
+         \path[->]  (leah)   edge node [swap] {\has}        (hump)
+                             edge node [swap] {\likes}      (foliage)
+                    (hassan) edge node [swap] {\isFatherOf} (leah);
+    \end{tikzpicture}
+    \caption{An interpretation \Imc such that $C^\Imc\ne\emptyset$ for the
+        concept $C$ of Example~\ref{ex:camel-concept}}
+    \label{fig:camel-concept}
+\end{figure}
+
+\noindent
+It is important to note that the semantics of a concept is entirely given by an
+interpretation.  The concept, role, and individual names itself do not imply
+anything.  For instance, the concept name \Dromedary does not necessarily denote
+dromedaries.  It is just a name, and the actual interpretation has to ensure the
+expected meaning.
+
+
+\subsection{Knowledge Bases}
+
+To restrict ourselves to certain kinds of interpretations, we capture the domain
+knowledge in a so-called knowledge base (KB).  Each KB consists of three parts:
+a \emph{TBox} (terminological box), an \emph{RBox} (role box), and an
+\emph{ABox} (assertional box).  Intuitively, the RBox states knowledge about
+roles, the TBox states knowledge about all domain elements, whilst the ABox
+states knowledge about specific individuals.\footnote{%
+    In the literature, sometimes the information from the RBox is included in
+    the TBox.  However, we keep them separately here as this turns out to be
+    useful later.}
+
+\begin{definition}[Syntax of TBoxes]\label{def:syntax-tbox}
+    An \emph{concept definition} is of the form $A\equiv C$ where $A\in\NC$ and
+    $C$ is a concept.
+    %
+    A \emph{general concept inclusion (GCI)} is of the form $C\sqsubseteq D$
+    where $C,D$ are concepts.
+    %
+    We call both concept definitions and GCIs \emph{TBox-axioms}.
+
+    A \emph{(general) TBox} is a finite set of TBox-axioms.
+    %
+    An \emph{acyclic TBox} \Tmc is a finite set of concept definitions such that
+    the following two conditions are satisfied:
+    \begin{itemize}
+        \item if $A\equiv C,\ A\equiv D\in\Tmc$, then $C=D$ (unambiguity); and
+        \item there is no sequence $A_1\equiv C_1,\dots,A_n\equiv C_n\in\Tmc$
+            with $n\ge 1$ such that $A_{i+1}$ occurs in $C_i$ (for $1\le i<n$)
+            and $A_1$ occurs in $C_n$ (no cyclic definitions).
+    \end{itemize}
+    We call the concept names that occur on the left-hand side of some concept
+    definition in \Tmc \emph{defined concept names} whereas we call the others
+    \emph{primitive concept names}.
+\end{definition}
+
+\noindent
+Intuitively, an acyclic TBox consists of \enquote{macros}, i.e.\ definitions of
+shorthands for (complex) concepts.  Therefore, acyclic TBoxes are sometimes
+called \emph{unfoldable} TBoxes.
+%
+The semantics of TBoxes can now be defined in a straightforward manner.
+
+\begin{definition}[Semantics of TBoxes]\label{def:semantics-tbox}
+    The interpretation~\Imc is a \emph{model}
+    \begin{itemize}
+        \item of the concept definition $A\equiv C$ (written $\Imc\models
+            A\equiv C$) if $A^\Imc=C^\Imc$; and
+        \item of the GCI $C\sqsubseteq D$ (written $\Imc\models C\sqsubseteq D$)
+            if $C^\Imc\subseteq D^\Imc$.
+    \end{itemize}
+    \Imc is a model of the TBox~\Tmc (written $\Imc\models\Tmc$) if it is a
+    model of each TBox-axiom in~\Tmc.
+    %
+    We call a TBox \emph{consistent} if it has a model.
+\end{definition}
+
+\noindent
+Note that the concept definition $A\equiv C$ can be captured by two GCIs, namely
+$A\sqsubseteq C$ and $C\sqsubseteq A$.  For ease of presentation, we thus often
+assume in the following that general TBoxes do not contain concept definitions
+or that a concept definition is an \enquote{abbreviation} for two GCIs.
+
+\begin{definition}[Syntax of RBoxes]
+    A \emph{transitivity axiom} is of the form $\trans(r)$ where $r$ is a
+    role, and a \emph{role-inclusion axiom} is of the form
+    $r\sqsubseteq s$ where $r,s$ are roles.
+    %
+    We call both transitivity axioms and role-inclusion axioms
+    \emph{RBox-axioms}.
+    %
+    An \emph{RBox} is a finite set of RBox-axioms.
+\end{definition}
+
+\noindent
+Again, the semantics is straightforward.
+
+\begin{definition}[Semantics of RBoxes]
+    The interpretation \Imc is a \emph{model}
+    \begin{itemize}
+        \item of the transitivity axiom $\trans(r)$ (written
+            $\Imc\models\trans(r)$) if $r^\Imc\circ r^\Imc\subseteq r^\Imc$,
+            i.e.\ $r^\Imc$ is transitive; and
+        \item of the role-inclusion axiom $r\sqsubseteq s$ (written $\Imc\models
+            r\sqsubseteq s$) if $r^\Imc\subseteq s^\Imc$.
+    \end{itemize}
+    \Imc is a model of the RBox \Rmc (written $\Imc\models\Rmc$) if it is
+    a model of each RBox-axiom in~\Rmc.
+    %
+    We call \Rmc \emph{consistent} if it has a model.
+\end{definition}
+
+\noindent
+Finally, we define the syntax of ABoxes as follows.
+
+\begin{definition}[Syntax of ABoxes]\label{def:syntax-abox}
+    A \emph{concept assertion} is of the form $C(a)$ where $C$ is a concept, and
+    $a\in\NI$.  A \emph{role assertion} is of the form $r(a,b)$ where $r\in\NR$,
+    and $a,b\in\NI$.  We call both concept assertions and role assertions
+    \emph{ABox-axioms}.
+    %
+    An ABox-axiom is \emph{atomic} if it is either a role assertion or an atomic
+    concept assertion, i.e.\ it is of the form $A(a)$ where $A\in\NC$ and
+    $a\in\NI$.
+
+    A (complex) \emph{ABox} is a finite set of ABox-axioms.
+    %
+    A \emph{simple ABox} is a finite set of atomic ABox-axioms.
+\end{definition}
+
+\noindent
+We call ABox-axioms sometimes \emph{assertions}.  Note that every simple ABox is
+also a (complex) ABox.
+%
+The semantics of ABoxes is defined as follows.
+
+\begin{definition}[Semantics of ABoxes]\label{def:semantics-abox}
+    The interpretation \Imc is a \emph{model}
+    \begin{itemize}
+        \item of the concept assertion $C(a)$ (written $\Imc\models
+            C(a)$) if $a^\Imc\in C^\Imc$; and
+        \item of the role assertion $r(a,b)$ (written $\Imc\models
+            r(a,b)$) if $(a^\Imc,b^\Imc)\in r^\Imc$.
+    \end{itemize}
+    \Imc is a model of the ABox~\Amc (written $\Imc\models\Amc$) if it is a
+    model of each ABox-axiom in~\Amc.
+    %
+    We call \Amc \emph{consistent} if it has a model.
+\end{definition}
+
+\noindent
+Note that in the definition of the syntax of role assertions, we do not allow
+inverse roles.  This is not a real restriction as an \enquote{assertion} of
+the form $r^-(a,b)$ can be equivalently expressed by $r(b,a)$.
+
+In the following, we often call TBox-axioms, RBox-axioms, and ABox-axioms
+simply \emph{axioms}.  Now, we are ready to give the formal definition of the
+syntax and the semantics of knowledge bases.
+
+\begin{definition}[Knowledge base]\label{def:kb}
+    A \emph{knowledge base} is a triple $\Kmc=(\Amc,\Tmc,\Rmc)$
+    where \Amc is an ABox, \Tmc is a TBox, and \Rmc is an RBox.
+
+    The interpretation~\Imc is a \emph{model} of~\Kmc (written
+    $\Imc\models\Kmc$) if it is a model of \Amc, \Tmc, and~\Rmc.
+    %
+    We call \Kmc \emph{consistent} if it has a model.
+    %
+    We say that \Kmc \emph{entails} an axiom $\alpha$ (written
+    $\Kmc\models\alpha$) if every model of~\Kmc is also a model of~$\alpha$.
+\end{definition}
+
+\noindent
+If a component of a knowledge base is empty, we may also omit it, i.e.~we write
+e.g.\ $(\Amc,\Tmc)$ instead of $(\Amc,\Tmc,\emptyset)$
+if the RBox is empty.
+
+We now consider an example of a knowledge base that illustrates how knowledge
+bases may be used.  Note that this example serves only
+didactic purposes, and its content might not reflect everybody's mindset and is
+highly debatable.
+
+\begin{example}\label{ex:camels}
+    Let \Amc be the ABox that consists of the following assertions:
+    \[\NiceCamel(\leah)\text{, }\quad
+        \isFatherOf(\hassan,\leah)\text{, }\quad
+        \isFatherOf(\yusuf,\hassan).\]
+    Intuitively, the first assertion states that Leah is a nice camel.  The
+    second one states that Hassan is the father of Leah, and the third one
+    states that Yusuf is the father of Hassan.
+
+    Let \Rmc be the RBox that consists of the following two axioms:
+    \[\isFatherOf\sqsubseteq\isAncestorOf\text{, }\quad
+        \trans(\isAncestorOf).\]
+    The first axiom states that if $d$ is the father of $e$, then $d$ is also an
+    ancestor of $e$.  The second axiom states that \isAncestorOf is transitive.
+
+    Let \Tmc be the TBox that consists of the following GCIs and concept
+    definitions:
+    \begin{itemize}
+        \item $\BactrianCamel\sqcup\Dromedary\sqsubseteq\Camel$;
+        \item $\Llama\sqcup\Guanaco\sqcup\Alpaca\sqcup\Vicuna\sqsubseteq\Camel$;
+        \item $\TrueCamel\equiv\BactrianCamel\sqcup\Dromedary$; and
+        \item $\NiceCamel\equiv\lnot\Dromedary\sqcap\exists\likes.\Foliage$.
+    \end{itemize}
+    Intuitively, the GCIs state that Bactrian camels, dromedaries, llamas, etc.\
+    are camels.  The first concept definition states that true camels are
+    Bactrian camels or dromedaries, and the second one states that nice camels
+    are no dromedaries and they like foliage.
+
+    Figure~\ref{fig:camels-model} depicts the graphical representation of a
+    model~\Imc of $\Kmc:=(\Amc,\Tmc,\Rmc)$.
+    %
+    Note that \Imc is also a model of the axiom $\Llama(\hassan)$, which
+    is, however, not entailed by~\Kmc.
+\end{example}
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}[%
+            ->,
+            >=stealth',
+            semithick,
+            shorten <=2pt,
+            shorten >=2pt,
+            auto,
+            on grid,
+            node distance=12ex and 14em,
+            element/.style={circle,fill,draw,inner sep=0,minimum size=4pt}]
+
+         \node[element] (leah)    [label=above left:\leah,label=below:{\shortstack{\NiceCamel,\\ \Llama, \Camel}}] {};
+         \node[element] (hassan)  [right=of leah,label=above:\hassan,label=below:{\Llama, \Camel}]                 {};
+         \node[element] (yusuf)   [right=of hassan,label=above right:\yusuf,label=below:{\Llama, \Camel}]          {};
+         \node[element] (foliage) [above=of leah,label=above:\Foliage]                                             {};
+
+         \path[->]  (leah)   edge              node [swap] {\likes}         (foliage)
+                    (hassan) edge              node        {\isFatherOf}    (leah)
+                             edge              node [swap] {\isAncestorOf,} (leah)
+                    (yusuf)  edge              node        {\isFatherOf}    (hassan)
+                             edge              node [swap] {\isAncestorOf,} (hassan)
+                             edge [bend right] node [swap] {\isAncestorOf}  (leah);
+    \end{tikzpicture}
+    \caption{A model~\Imc of the KB~\Kmc of Example~\ref{ex:camels}}
+    \label{fig:camels-model}
+\end{figure}
+
+
+\subsection{Specific Description Logics}
+
+As mentioned above, what differs from DL to DL is which concept and role
+constructors are available.  The smallest propositionally closed DL is
+\ALC~\cite{ScSm-AIJ91}.  In this DL, the allowed concept constructors are
+negation, conjunction, and existential restrictions, and thus also disjunctions,
+universal restrictions, and the top and bottom concepts can be expressed.
+
+If additional concept or role constructors are available, this is denoted by
+concatenating a corresponding letter: \Qmc means (qualified) number
+restrictions, \Imc means inverse roles, \Omc means nominals, and \Hmc means
+role-inclusion axioms (role hierarchies).  For instance, the DL which is an
+extension of \ALC and allows inverse roles is called \ALCI.  The extension of
+\ALC with transitivity axioms is usually denoted by \Smc due to its close
+relationship with the modal logic~\Sfour.  Thus, the DL that allows all the
+concept and role constructors introduced above is called \SHOIQ.
+
+Throughout this thesis, we sometimes prefix some notions with the specific DL to
+make clear which DL is used to construct the concepts or axioms.  For instance,
+we may write \enquote{\ALC-knowledge base} to make clear that the knowledge base
+is constructed using concepts expressible in \ALC, and does not contain e.g.\
+inverse roles.  If the DL under consideration is clear from the context, we omit
+this prefix for ease of presentation.
+
+Given a knowledge base $\Kmc=(\Amc,\Tmc,\Rmc)$, we say that a role
+name~$r$ is \emph{transitive} (w.r.t.\ \Kmc) if $\Kmc\models\trans(r)$, and $r$
+is a \emph{subrole} of a role name~$s$ (w.r.t.\ \Kmc) if $\Kmc\models
+r\sqsubseteq s$.  Moreover, we call $r$ \emph{simple} (w.r.t.~\Kmc) if it has no
+transitive subrole.
+%
+Note that entailments of the form $\Kmc\models\trans(r)$ and $\Kmc\models
+r\sqsubseteq s$ only depend on the RBox~\Rmc.  Such entailments can be decided
+in time polynomial in the size of \Rmc~\cite{HoST-IGPL00}.
+%
+As shown in~\cite{HoST-IGPL00}, already for the DL~\SHQ, the problem of deciding
+whether a given knowledge base is consistent is undecidable, even if all
+at-least restrictions are unqualified, i.e.\ of the form $\atLeast{n}{r}{\top}$.
+One reason for that is the occurrence of non-simple role names in such
+restrictions.  To regain decidability of this important inference problem, role
+names occurring in at-least restrictions are therefore usually required to be
+simple.  In the following, we also make this restriction to the
+syntax of~\SHQ and every of its superlogics.
+
+Under this assumption, the problem of deciding the consistency of knowledge
+bases is in~\ExpTime, even if the numbers occurring in at-least restrictions are
+given in binary encoding~\cite{Tob-PhD01}.  On the other hand, the problem is
+\ExpTime-hard already in \ALC~\cite{Sch-IJCAI91}.  If we add nominals
+(\SHOQ)~\cite{Sch-DKE94,HoSa-IJCAI01} or inverse roles
+(\SHIQ)~\cite{Sch-DKE94,Tob-PhD01}, the complexity of this problem stays in
+\ExpTime, but it increases to \NExpTime-complete if we include both
+(\SHOIQ)~\cite{Sch-DKE94,Tob-JAIR00,Pra-JLLI05}.
+
+
+\subsection{Boolean Knowledge Bases}
+
+The notion of a knowledge base (see Definition~\ref{def:kb})
+can be generalised to Boolean knowledge bases.
+
+\begin{definition}[Boolean knowledge base]\label{def:boolean-kb}
+    Let \Rmc be an RBox.  The set of \emph{Boolean axiom formulas w.r.t.~\Rmc}
+    is the smallest set such that
+    \begin{itemize}
+        \item every ABox-axiom and every TBox-axiom in which at-least
+            restrictions contain only simple roles w.r.t.~\Rmc is a Boolean
+            axiom formula; and
+        \item if $\Psi_1$ and $\Psi_2$ are Boolean axiom formulas, then so are
+            $\lnot\Psi_1$ (negation) and $\Psi_1\land\Psi_2$ (conjunction).
+    \end{itemize}
+    %
+    A \emph{Boolean knowledge base} is a pair $\Bmc=(\Psi,\Rmc)$,
+    where \Rmc is an RBox, and $\Psi$ is a Boolean axiom formula w.r.t.~\Rmc.
+
+    The interpretation~\Imc is a \emph{model} of~\Bmc (written
+    $\Imc\models\Bmc$) iff $\Imc\models\Rmc$ and $\Imc\models\Psi$, where the
+    latter is defined inductively as follows:
+    \begin{itemize}
+        \item $\Imc\models\lnot\Psi_1$ iff $\Imc\not\models\Psi_1$; and
+        \item $\Imc\models\Psi_1\land\Psi_2$ iff $\Imc\models\Psi_1$ and
+            $\Imc\models\Psi_2$.
+    \end{itemize}
+    %
+    We call \Bmc \emph{consistent} if it has a model.  We say that \Bmc
+    \emph{entails} the axiom $\alpha$ (written $\Bmc\models\alpha$) if every
+    model of \Bmc is also a model of $\alpha$.
+\end{definition}
+
+\noindent
+For convenience, we use the Boolean knowledge base
+$(\Psi_1\lor\Psi_2,\Rmc)$ as an abbreviation for
+$(\lnot(\lnot\Psi_1\land\lnot\Psi_2),\Rmc)$.
+
+The reason why we do not allow RBox-axioms as Boolean axiom formulas is that the
+notion of simple roles does not make sense w.r.t.\ a Boolean combination of
+RBox-axioms.
+
+According to this definition, knowledge bases can be seen as special kinds of
+Boolean knowledge bases.  In fact, the knowledge base
+$\Kmc=(\Amc,\Tmc,\Rmc)$ \emph{induces} the Boolean knowledge base
+$\Bmc_\Kmc=(\Psi_\Kmc,\Rmc)$ with
+$\Psi_\Kmc:=\bigwedge\Amc\land\bigwedge\Tmc$, where $\bigwedge\Amc$ denotes
+$\bigwedge_{\alpha\in\Amc}\alpha$, and $\bigwedge\Tmc$ denotes
+$\bigwedge_{\beta\in\Tmc}\beta$.  Thus, Boolean knowledge bases generalise
+classical knowledge bases as introduced in Definition~\ref{def:kb}.
+
+The problem of deciding the consistency of Boolean knowledge bases, however, is
+not so well-investigated as for \enquote{classical} knowledge bases.  It is
+known that for the description logic \ALC, this problem is
+\ExpTime-complete~\cite{GKW+-03}, and we show in
+Section~\ref{sec:consistency-boolean-shoqcap-kb} that it remains in \ExpTime for
+an extension of the description logic \SHOQ.
+
+
+\section{Propositional Linear-Time Temporal Logic and \texorpdfstring{$\omega$}{Omega}-Automata}\label{sec:ltl-automata}
+
+In this section, we recall the definitions for the prominent temporal logic
+\emph{propositional linear-time temporal logic (LTL)}~\cite{Pnu-FOCS77} that are
+relevant for this thesis.  After introducing the syntax and semantics of
+propositional LTL in Section~\ref{sec:ltl}, we consider its connection to
+$\omega$-automata in Section~\ref{sec:aut-for-ltl}.
+
+
+\subsection{Syntax and Semantics of Propositional LTL}\label{sec:ltl}
+
+Propositional LTL extends propositional logic with modal operators that can be
+used to talk about the past and the future.
+%
+The syntax of propositional LTL is defined as follows.
+
+\begin{definition}[Syntax of propositional LTL]\label{def:syntax-ltl}
+    Let $\Pmc=\{p_1,\dots,p_m\}$ be a finite set of \emph{propositional
+    variables}.  The set of \emph{propositional LTL-formulas over~\Pmc} is the
+    smallest set such that
+    \begin{itemize}
+        \item if $p\in\Pmc$, then $p$ is a propositional LTL-formula over~\Pmc;
+            and
+        \item if $\phi_1$ and~$\phi_2$ are propositional LTL-formulas over~\Pmc,
+            then so are: $\lnot\phi_1$ (negation), $\phi_1\land\phi_2$
+            (conjunction), $\Next\phi_1$ (next), $\Previous\phi_1$ (previous),
+            $\phi_1\Until\phi_2$ (until), and $\phi_1\Since\phi_2$ (since).
+    \end{itemize}
+\end{definition}
+
+\noindent
+If the set of propositional variables is clear from the context or irrelevant,
+we talk about propositional LTL-formulas rather than propositional LTL-formulas
+over~\Pmc.
+
+As usual in temporal logics, we use
+\begin{itemize}
+    \item $\phi_1\lor\phi_2$ (disjunction) as an abbreviation for
+        $\lnot(\lnot\phi_1\land\lnot\phi_2)$;
+    \item $\phi_1\to\phi_2$ (implication) as an abbreviation for
+        $\lnot\phi_1\lor\phi_2$;
+    \item \true as an abbreviation for an arbitrary but fixed propositional
+        tautology such as $p\lor\lnot p$ with $p\in\Pmc$;
+    \item \false as an abbreviation for $\lnot\true$;
+    \item $\Diamond\phi$ (diamond, which should be read as \enquote{eventually}
+        or \enquote{some time in the future}) as an abbreviation for
+        $\true\Until\phi$;
+    \item $\Box\phi$ (box, which should be read as \enquote{always} or
+        \enquote{always in the future}) as an abbreviation for
+        $\lnot\Diamond\lnot\phi$;
+    \item $\Diamondm\phi$ (which should be read as \enquote{once}
+        or \enquote{some time in the past}) as an abbreviation for
+        $\true\Since\phi$; and
+    \item $\Boxm\phi$ (which should be read as \enquote{historically} or
+        \enquote{always in the past}) as an abbreviation for
+        $\lnot\Diamondm\lnot\phi$.
+\end{itemize}
+
+The semantics of propositional LTL is defined using the non-negative integers as
+discrete linear flow of time.  For each point in time, i.e.~non-negative
+integer, the semantic structure determines which of the propositional variables
+are true at this point.  This is captured in the notion of a propositional
+LTL-structure.
+
+\begin{definition}[Semantics of propositional LTL]\label{def:semantics-ltl}
+    Let $\Pmc=\{p_1,\dots,p_m\}$ be a set of propositional variables.  A
+    \emph{propositional LTL-structure over~\Pmc} is an infinite sequence
+    $\Wmf=(w_i)_{i\ge 0}$ of sets $w_i\subseteq\Pmc$, which we call
+    \emph{worlds}.
+
+    Given a propositional LTL-formula~$\phi$, a propositional LTL-structure
+    $\Wmf=(w_i)_{i\ge 0}$, and a time point $i\ge 0$, \emph{validity of~$\phi$
+    in~\Wmf at time~$i$} (written $\Wmf,i\models\phi$) is defined inductively as
+    follows:
+    \[\begin{array}{lcl}
+        \Wmf,i\models p
+            &\text{iff}
+            &p\in w_i\\
+        \Wmf,i\models\lnot\phi_1
+            &\text{iff}
+            &\Wmf,i\not\models\phi_1,\ \text{i.e.~not}\ \Wmf,i\models\phi_1\\
+        \Wmf,i\models\phi_1\land\phi_2
+            &\text{iff}
+            &\Wmf,i\models\phi_1\ \text{and}\ \Wmf,i\models\phi_2\\
+        \Wmf,i\models\Next\phi_1
+            &\text{iff}
+            &\Wmf,i+1\models\phi_1\\
+        \Wmf,i\models\Previous\phi_1
+            &\text{iff}
+            &i>0\ \text{and}\ \Wmf,i-1\models\phi_1\\
+        \Wmf,i\models\phi_1\Until\phi_2
+            &\text{iff}
+            &\text{there is some $k\geq i$ such that $\Wmf,k\models\phi_2$, and}\\
+            & &\text{$\Wmf,j\models\phi_1$ for every $j$, $i\le j<k$}\\
+        \Wmf,i\models\phi_1\Since\phi_2
+            &\text{iff}
+            &\text{there is some $k$, $0\le k\le i$, such that $\Wmf,k\models\phi_2$, and}\\
+            & &\text{$\Wmf,j\models\phi_1$ for every $j$, $k<j\le i$}
+    \end{array}\]
+    %
+    If $\Wmf,0\models\phi$, then we call \Wmf a \emph{model} of~$\phi$.  We call
+    the propositional LTL-formula~$\phi$ \emph{satisfiable} if it has a model.
+
+    The \emph{satisfiability problem in propositional LTL} is the problem of
+    deciding, given a propositional LTL-formula~$\phi$, whether $\phi$ is
+    satisfiable.
+
+    Two propositional LTL-formulas $\phi_1,\phi_2$ are \emph{equivalent}
+    (written $\phi_1\equiv\phi_2$) if they have the same models.
+\end{definition}
+
+\noindent
+Note that we defined here the so-called \emph{non-strict $\Until$} and
+\emph{non-strict $\Since$}.  For the strict version $\sUntil$ of $\Until$, one
+needs to replace in the definition of the semantics of $\Until$ \enquote{there
+is some $k\ge i$} by \enquote{there is some $k>i$}.  It is not hard to see that,
+in the presence of $\Next$, both $\Until$ and $\sUntil$ have the same expressive
+power.  In fact, the formula $\phi_1\Until\phi_2$ is equivalent to
+$\phi_2\lor(\phi_1\sUntil\phi_2)$, and conversely, $\phi_1\sUntil\phi_2$ is
+equivalent to $\phi_1\land\Next(\phi_1\Until\phi_2)$.  Similar arguments apply
+to the strict version $\sSince$ of $\Since$.
+
+We continue by giving an example of a propositional LTL-formula.
+
+\begin{example}\label{ex:ltl}
+    Let $\phi:=\Next p_1\land(p_2\Until p_3)$ be a propositional LTL-formula.
+    Consider the two propositional LTL-structures $\Wmf_1,\Wmf_2$ that are
+    depicted in Figure~\ref{fig:ltl-structures} in a graphical representation.
+    We have $\Wmf_1,0\models\phi$, and thus $\phi$ is satisfiable.  Moreover, we
+    have $\Wmf_2,0\not\models\phi$, but $\Wmf_2,1\models\phi$.
+\end{example}
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}[%
+            ->,
+            >=stealth',
+            semithick,
+            shorten <=2pt,
+            shorten >=2pt,
+            auto,
+            on grid,
+            node distance=8ex and 5em,
+            element/.style={circle,fill,draw,inner sep=0,minimum size=4pt}]
+
+            \node          (W1) [label=right:{$\Wmf_1$:}]                 {};
+            \node[element] (a0) [right=of W1,label=below:{$\{p_2\}$}]     {};
+            \node[element] (a1) [right=of a0,label=below:{$\{p_1,p_2\}$}] {};
+            \node[element] (a2) [right=of a1,label=below:{$\{p_2\}$}]     {};
+            \node[element] (a3) [right=of a2,label=below:{$\{p_3\}$}]     {};
+            \node[element] (a4) [right=of a3,label=below:{$\emptyset$}]   {};
+            \node          (d1) [right=of a4]                             {$\dots$};
+
+            \draw (a0)--(a1);
+            \draw (a1)--(a2);
+            \draw (a2)--(a3);
+            \draw (a3)--(a4);
+            \draw (a4)--(d1);
+
+            \node          (W2) [below=of W1,label=right:{$\Wmf_2$:}]     {};
+            \node[element] (b0) [right=of W2,label=below:{$\emptyset$}]   {};
+            \node[element] (b1) [right=of b0,label=below:{$\{p_1,p_2\}$}] {};
+            \node[element] (b2) [right=of b1,label=below:{$\{p_1,p_2\}$}] {};
+            \node[element] (b3) [right=of b2,label=below:{$\{p_3\}$}]     {};
+            \node[element] (b4) [right=of b3,label=below:{$\{p_2\}$}]     {};
+            \node          (d2) [right=of b4]                             {$\dots$};
+
+            \draw (b0)--(b1);
+            \draw (b1)--(b2);
+            \draw (b2)--(b3);
+            \draw (b3)--(b4);
+            \draw (b4)--(d2);
+    \end{tikzpicture}
+    \caption{The propositional LTL-structures $\Wmf_1,\Wmf_2$ of
+        Example~\ref{ex:ltl}}
+    \label{fig:ltl-structures}
+\end{figure}
+
+\noindent
+We call the temporal operators $\Next$ and $\Until$ \emph{future operators},
+whereas we call $\Previous$ and $\Since$ \emph{past operators}.
+%
+Note that propositional LTL is normally defined using only future
+operators~\cite{Pnu-FOCS77}, and the extension with past
+operators~\cite{GPS+-POPL80} is usually called \emph{propositional Past-LTL}.
+It is a well-known result, however, that the past operators do not add
+expressive power~\cite{GPS+-POPL80}, even though some properties are easier to
+express using past operators~\cite{LiPZ-CLP85}.  Indeed, using Gabbay's
+separation theorem~\cite{Gab-TLS87}, one can construct for each propositional
+LTL-formula $\phi$ with past operators, an equivalent propositional
+LTL-formula~$\phi'$ that does not contain past operators.  However, this
+construction is in general non-elementary in the size of~$\phi$, as basically
+the size of the constructed formula increases by one exponential for
+each~$\Until$ nested inside an~$\Since$, and vice versa.  This upper bound can
+be improved, but no constructions of size less than triply exponential in the
+size of~$\phi$ are known~\cite{LaMS-LICS02}.  For the lower bound, it is known
+that past operators make propositional LTL exponentially more
+succinct~\cite{LaMS-LICS02}, i.e.~there is a propositional LTL-formula~$\phi$
+with past operators such that the size of an equivalent propositional
+LTL-formula $\phi'$ without past operators is bounded by
+$2^{\Omega(\lvert\phi\rvert)}$, where $\lvert\phi\rvert$ denotes the size
+of~$\phi$.
+
+Moreover, the satisfiability problem in propositional LTL is \PSpace-complete
+irrespective of the use of past operators~\cite{SiCl-JACM85,Mar-AI04}.
+%
+In the next section, we recall the connection between propositional LTL and
+$\omega$-automata.
+
+
+\subsection{\texorpdfstring{$\omega$}{Omega}-Automata and Their Connection to Propositional LTL}\label{sec:aut-for-ltl}
+
+For propositional LTL, the satisfiability problem can be decided by first
+constructing an $\omega$-automaton for the given formula, and then testing this
+automaton for emptiness.
+%
+In general, $\omega$-automata accept \emph{$\omega$-words} over an
+alphabet~$\Sigma$, i.e.~infinite sequences of letters
+$w=\sigma_0\sigma_1\sigma_2\dots$ with $\sigma_i\in\Sigma$ for every $i\ge 0$.
+The set of all $\omega$-words over~$\Sigma$ is denoted by $\Sigma^\omega$, and a
+subset~$L$ of~$\Sigma^\omega$ is called \emph{$\omega$-language}.
+
+There are various $\omega$-automata models that can be employed for solving the
+satisfiability problem for propositional LTL such as
+Büchi-automata~\cite{Bue-ICLMPS62}, Muller-automata~\cite{Mul-SWCT63},
+Rabin-automata~\cite{Rab-ToAMS69}, and Streett-automata~\cite{Str-IC82}.  To
+keep the explanations simple, in this thesis we focus on (non-deterministic)
+Büchi-automata.
+
+\begin{definition}[Generalised Büchi-automaton]\label{def:gnba}
+    A \emph{generalised Büchi-automaton~\Gmc} is a tuple
+    $\Gmc=(Q,\Sigma,\Delta,Q_0,\Fmc)$ consisting of a finite set of states~$Q$,
+    a finite input alphabet~$\Sigma$, a transition relation
+    $\Delta\subseteq Q\times\Sigma\times Q$, a set of initial states
+    $Q_0\subseteq Q$, and a set of sets of final states $\Fmc\subseteq 2^Q$.
+
+    Given an $\omega$-word $w=\sigma_0\sigma_1\sigma_2\dotso\in\Sigma^\omega$, a
+    \emph{run} of~\Gmc on~$w$ is an $\omega$-word $q_0q_1q_2\dotso\in Q^\omega$
+    such that $q_0\in Q_0$ and $(q_i,\sigma_i,q_{i+1})\in\Delta$ for every
+    $i\ge 0$.  This run is \emph{accepting} if for every $F\in\Fmc$, there are
+    infinitely many $i\ge 0$ such that $q_i\in F$.
+    %
+    The \emph{language $L_\omega(\Gmc)$ accepted by~\Gmc} is defined as
+    \[L_\omega(\Gmc):=\{w\in\Sigma^\omega\mid\text{there is an accepting run of \Gmc on $w$}\}.\]
+    %
+    The \emph{emptiness problem} for generalised Büchi-automata is the problem
+    of deciding, given a generalised Büchi-automaton~\Gmc, whether
+    $L_\omega(\Gmc)=\emptyset$ or not.
+
+    Moreover, we call~\Gmc \emph{deterministic} if $\lvert Q_0\rvert=1$ and for
+    every $q\in Q$ and $\sigma\in\Sigma$, there is at most one $q'\in Q$ with
+    $(q,\sigma,q')\in\Delta$.
+\end{definition}
+
+\noindent
+Normal Büchi-automata are a special case of a generalised Büchi-automata where
+$\Fmc=\{F\}$, and are denoted by $\Nmc=(Q,\Sigma,\Delta,Q_0,F)$.
+%
+It is common knowledge that every generalised Büchi-automaton~\Gmc, can be
+transformed into a Büchi~automaton~\Nmc such that
+$L_\omega(\Gmc)=L_\omega(\Nmc)$ in time polynomial in the size
+of~\Gmc~\cite{GPV+-PSTV96,BaKa-08}.
+
+Regarding the complexity of the emptiness problem for Büchi-automata, it is
+well-known that it can be solved in time polynomial in the size of the
+Büchi-automaton~\cite{VaWo-IC94}.  Together with the arguments of the previous
+paragraph, this yields that the emptiness problem for generalised Büchi-automata
+can also be solved in time polynomial in the size of the generalised
+Büchi-automaton.
+
+Additionally, there is a well-known connection between (generalised)
+Büchi-automata and propositional LTL\@.  In fact, given a propositional
+LTL-formula~$\phi$ over~\Pmc, we can view any propositional LTL-structure
+$\Wmf=(w_i)_{i\ge 0}$ as an $\omega$-word
+$w=w_0w_1w_2\dotso\in\Sigma_\Pmc^\omega$, where the alphabet $\Sigma_\Pmc$
+consists of all subsets of~\Pmc.  It is well-known that one can build a
+generalised Büchi-automaton that accepts exactly the models of~$\phi$.
+
+\begin{definition}[Büchi-automaton for propositional LTL-formula]\label{def:ba-for-ltl}
+    Let $\phi$ be a propositional LTL-formula over~\Pmc, and let \Gmc be a
+    generalised Büchi-automaton working on the alphabet~$\Sigma_\Pmc$.  We
+    define
+    \[L_\omega(\phi):=\{w_0w_1w_2\dotso\in\Sigma_\Pmc^\omega\mid%
+        \Wmf=(w_i)_{i\ge 0}\ \text{is a model of $\phi$}\},\]
+    and say that \Gmc is a \emph{Büchi-automaton for~$\phi$} if
+    $L_\omega(\Gmc)=L_\omega(\phi)$.
+\end{definition}
+
+\noindent
+If \Gmc is a Büchi-automaton for~$\phi$, then $\phi$ is satisfiable iff
+$L_\omega(\Gmc)\ne\emptyset$.  Thus, by constructing a Büchi-automaton
+for~$\phi$, we can reduce the satisfiability problem in propositional LTL to the
+emptiness problem for Büchi-automata.
+%
+It is well-known that, given a propositional LTL-formula~$\phi$, one can
+construct a (generalised) Büchi-automaton for~$\phi$ in time exponential in the
+size of $\phi$~\cite{WoVS-FOCS83,VaWo-IC94,LiPZ-CLP85}.
+%
+However, for propositional LTL-formulas involving past-operators, this
+construction is often not done explicitly.  We include it here, and generalise
+it as follows.  Instead of constructing a Büchi-automaton for a propositional
+LTL-formula~$\phi$ over~\Pmc, we define a Büchi-automaton that, given $n\ge 0$,
+accepts all $\omega$-words $w_0w_1w_2\dotso\in\Sigma_\Pmc^\omega$ such that
+$\phi$ is valid in $\Wmf=(w_i)_{i\ge 0}$ at time~$n$.  This generalisation will
+prove to be useful in Section~\ref{sec:tcq-upper-bounds}.
+
+To define the Büchi-automaton, we need a few more notions.  From now on, let
+$\phi$ be a propositional LTL-formula over~\Pmc, and let $n\ge 0$.  As usual,
+the set of \emph{subformulas} of~$\phi$ is the smallest set containing all
+propositional LTL-formulas occurring in~$\phi$ (including $\phi$ itself).
+%
+We define $\PCl(\phi)$ to be the closure under negation of the set of
+subformulas of~$\phi$.  In the following, we identify $\lnot\lnot\psi$ with
+$\psi$ for every subformula~$\psi$ of~$\phi$.  Thus, the set $\PCl(\phi)$ is of
+size polynomial in the size of~$\phi$.
+
+\begin{definition}[Propositional LTL-type]
+    Let $\phi$ be a propositional LTL-formula.  A \emph{propositional LTL-type}
+    for~$\phi$ is a set $T\subseteq\PCl(\phi)$ such that:
+    \begin{itemize}
+        \item for every $\psi_1\land\psi_2\in\PCl(\phi)$, we have
+            $\psi_1\land\psi_2\in T$ iff $\{\psi_1,\psi_2\}\subseteq T$; and
+        \item for every $\lnot\psi\in\PCl(\phi)$, we have $\lnot\psi\in T$ iff
+            $\psi\notin T$.
+    \end{itemize}
+\end{definition}
+
+\noindent
+Obviously, the set of all propositional LTL-types for a given propositional
+LTL-formula~$\phi$ is exponential in the size of~$\phi$.
+
+Now, we are ready to define the generalised Büchi-automaton with the above
+properties by equipping the set of states with a counter from $\{0,\dots,n+1\}$.
+Transitions where the counter is $i=n$ ensure that $\phi$ is satisfied.  We
+construct the generalised Büchi-automaton
+$\Gmc_{\phi,n}=(Q,\Sigma_\Pmc,\Delta,Q_0,\Fmc)$ as follows:
+\begin{itemize}
+    \item $Q:=\bigl\{(q,k)\mid%
+            \text{$q$ is a propositional LTL-type for~$\phi$, and $0\le k\le n+1$}\bigr\}$;
+    \item $((T,k),\ \sigma,\ (T',k'))\ \in\ \Delta$ iff
+        \begin{itemize}
+            \item $\sigma=T\cap\Pmc$;
+            \item for every $\Next\psi\in\PCl(\phi)$, we have $\Next\psi\in
+                T$ iff $\psi\in T'$;
+            \item for every $\Previous\psi\in\PCl(\phi)$, we have
+                $\Previous\psi\in T'$ iff $\psi\in T$;
+            \item for every $\psi_1\Until\psi_2\in\PCl(\phi)$, we have
+                $\psi_1\Until\psi_2\in T$ iff (i)~$\psi_2\in T$ or
+                (ii)~$\psi_1\in T$ and $\psi_1\Until\psi_2\in T'$;
+            \item for every $\psi_1\Since\psi_2\in\PCl(\phi)$, we have
+                $\psi_1\Since\psi_2\in T'$ iff (i)~$\psi_2\in T'$ or
+                (ii)~$\psi_1\in T'$ and $\psi_1\Since\psi_2\in T$;
+            \item $k=n$ implies $\phi\in T$; and
+            \item $k'=\begin{cases}
+                    k+1 &\text{if $k\le n$, and}\\
+                    k   &\text{otherwise;}
+                \end{cases}$
+        \end{itemize}
+    \item $Q_0:=\bigl\{(T,0)\mid\text{there is no $\Previous\psi\in T$, and %
+            for every $\psi_1\Since\psi_2\in T$, we have $\psi_2\in T$}\bigr\}$; and
+    \item
+        $\Fmc:=\bigl\{F_{\psi_1\Until\psi_2}\times\{n+1\}\mid%
+            \psi_1\Until\psi_2\in\PCl(\phi)\bigr\}$, where
+        \[F_{\psi_1\Until\psi_2}:=\{T\mid\text{for every}\
+            \psi_1\Until\psi_2\in T,\ \text{we have}\ \psi_2\in T\}.\]
+\end{itemize}
+%
+We show now that $\Gmc_{\phi,n}$ has indeed the above properties.
+
+\begin{lemma}\label{lem:gba-phi-n}
+    For every $\omega$-word $w=w_0w_1w_2\dotso\in\Sigma_\Pmc^\omega$, we have
+    $w\in L_\omega(\Gmc_{\phi,n})$ iff $\phi$ is valid in the propositional
+    LTL-structure $\Wmf=(w_i)_{i\ge 0}$ at time~$n$.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{only if} direction, assume that $\phi$ is valid in the
+    propositional LTL-structure $\Wmf=(w_i)_{i\ge 0}$ at time~$n$.  We define
+    $S_i:=\{\psi\in\PCl(\phi)\mid\Wmf,i\models\psi\}$ for $i\ge 0$.  Then,
+    \[(S_0,0)(S_1,1)\dots(S_n,n)(S_{n+1},n+1)(S_{n+2},n+1)\dots\]
+    is a run of~$\Gmc_{\phi,n}$ on $w_0w_1w_2\dots$ due to the following
+    reasons:
+    %
+    \begin{itemize}
+        \item We have $(S_i,k)\in Q$ for every $i\ge 0$ and every~$k$,
+            $0\le k\le n+1$, since:
+            \begin{itemize}
+                \item For every $\psi_1\land\psi_2\in\PCl(\phi)$, we have
+                    $\Wmf,i\models\psi_1\land\psi_2$ iff $\Wmf,i\models\psi_1$
+                    and $\Wmf,i\models\psi_2$.  Thus, we have $\psi_1\land\psi_2\in S_i$ iff
+                    $\{\psi_1,\psi_2\}\subseteq S_i$.
+                \item For every $\lnot\psi\in\PCl(\phi)$, we have either
+                    $\Wmf,i\models\lnot\psi$ or $\Wmf,i\models\psi$.  Thus, we
+                    have $\lnot\psi\in S_i$ iff $\psi\notin S_i$.
+            \end{itemize}
+        \item We have for every~$i$, $0\le i\le n$, that
+            \[((S_i,i),\ w_i,\ (S_{i+1},i+1))\ \in\ \Delta,\]
+            and for every $i\ge n+1$ that
+            \[((S_i,n+1),\ w_i,\ (S_{i+1},n+1))\ \in\ \Delta\]
+            since:
+            \begin{itemize}
+                \item by the definition of $S_i$, we have $w_i=S_i\cap\Pmc$;
+                \item for every $\Next\psi\in\PCl(\phi)$, we have
+                    $\Next\psi\in S_i$ iff $\Wmf,i\models\Next\psi$ iff
+                    $\Wmf,i+1\models\psi$ iff $\psi\in S_{i+1}$;
+                \item for every $\Previous\psi\in\PCl(\phi)$, we have
+                    $\Previous\psi\in S_{i+1}$ iff
+                    $\Wmf,i+1\models\Previous\psi$ iff $\Wmf,i\models\psi$ iff
+                    $\psi\in S_i$;
+                \item for every $\psi_1\Until\psi_2\in\PCl(\phi)$, we have
+                    $\psi_1\Until\psi_2\in S_i$ iff
+                    $\Wmf,i\models\psi_1\Until\psi_2$ iff
+                    (i)~$\Wmf,i\models\psi_2$ or (ii)~$\Wmf,i\models\psi_1$ and
+                    $\Wmf,i+1\models\psi_1\Until\psi_2$ iff (i)~$\psi_2\in S_i$
+                    or (ii)~$\psi_1\in S_i$ and $\psi_1\Until\psi_2\in S_{i+1}$;
+                \item for every $\psi_1\Since\psi_2\in\PCl(\phi)$, we have
+                    $\psi_1\Since\psi_2\in S_{i+1}$ iff
+                    $\Wmf,i+1\models\psi_1\Since\psi_2$ iff
+                    (i)~$\Wmf,i+1\models\psi_2$ or (ii)~$\Wmf,i+1\models\psi_1$
+                    and $\Wmf,i\models\psi_1\Since\psi_2$ iff
+                    (i)~$\psi_2\in S_{i+1}$ or (ii)~$\psi_1\in S_{i+1}$ and
+                    $\psi_1\Since\psi_2\in S_i$;
+                \item for $i=n$, we have $\phi\in S_i$ since
+                    $\Wmf,n\models\phi$; and
+                \item the condition for incrementing the second component of a
+                    state (until $n+1$ is reached) is obviously also satisfied.
+            \end{itemize}
+        \item We have for every $\Previous\psi\in\PCl(\phi)$ that
+            $\Wmf,0\not\models\Previous\psi$, and thus $\Previous\psi\notin S_0$.
+            Additionally, we have for every $\psi_1\Since\psi_2\in S_0$, since
+            $\Wmf,0\models\psi_1\Since\psi_2$, also $\Wmf,0\models\psi_2$, and
+            thus $\psi_2\in S_0$.  This yields that $(S_0,0)\in Q_0$.
+    \end{itemize}
+    %
+    Moreover, the above run is accepting.  We prove this by contradiction.
+    Suppose that for some $\psi_1\Until\psi_2\in\PCl(\phi)$, the set
+    $\{i\ge 0\mid S_i\in F_{\psi_1\Until\psi_2}\}$ is finite.  Then there exists
+    some $k\ge 0$ such that $S_\ell\notin F_{\psi_1\Until\psi_2}$ for every
+    $\ell\geq k$.  This means $\psi_1\Until\psi_2\in S_\ell$ and
+    $\psi_2\notin S_\ell$ for every $\ell\ge k$.  Hence,
+    $\Wmf,k\models\psi_1\Until\psi_2$ and $\Wmf,\ell\not\models\psi_2$ for every
+    $\ell\ge k$.  This contradicts the semantics of~$\Until$.
+
+    For the \enquote{if} direction, assume that
+    $w_0w_1w_2\dotso\in L_\omega(\Gmc_{\phi_n})$, i.e.~there is an accepting run
+    \[(S_0,0)(S_1,1)\dots(S_n,n)(S_{n+1},n+1)(S_{n+2},n+1)\dots\]
+    of~$\Gmc_{\phi,n}$ on~$w_0w_1w_2\dots$.
+    %
+    We show that $\phi$ is valid in $\Wmf:=(w_i)_{i\ge 0}$ at time~$n$.  We have
+    $\phi\in S_n$ by the definition of~$\Delta$.  Thus, it is enough to show
+    that for every $\psi\in\PCl(\phi)$ and every $i\ge 0$, we have $\psi\in S_i$
+    iff $\Wmf,i\models\psi$.  This can be shown by induction on the structure
+    of~$\psi$ using the definition of~$\Delta$.
+    %
+    \begin{itemize}
+        \item If $\psi\in\Pmc$, we have $\psi\in S_i$ iff $\psi\in w_i$ iff
+            $\Wmf,i\models\psi$.
+        \item If $\psi=\lnot\chi$, we have $\lnot\chi\in S_i$ iff
+            $\chi\notin S_i$ iff $\Wmf,i\not\models\chi$ iff
+            $\Wmf,i\models\lnot\chi$.
+        \item If $\psi=\chi_1\land\chi_2$, we have $\chi_1\land\chi_2\in S_i$
+            iff $\{\chi_1,\chi_2\}\subseteq S_i$ iff $\Wmf,i\models\chi_1$ and
+            $\Wmf,i\models\chi_2$ iff $\Wmf,i\models\chi_1\land\chi_2$.
+        \item If $\psi=\Next\chi$, we have $\Next\chi\in S_i$ iff
+            $\chi\in S_{i+1}$ iff $\Wmf,i+1\models\chi$ iff
+            $\Wmf,i\models\Next\chi$.
+        \item If $\psi=\Previous\chi$, we have $\Previous\chi\in S_i$ iff $i>0$
+            and $\chi\in S_{i-1}$ iff $i>0$ and $\Wmf,i-1\models\chi$ iff
+            $\Wmf,i\models\Previous\chi$.  The first iff holds because of the
+            definition of $Q_0$.
+        \item If $\psi=\chi_1\Until\chi_2$, we prove $\chi_1\Until\chi_2\in S_i$
+            iff $\Wmf,i\models\chi_1\Until\chi_2$ as follows.
+            %
+            For the \enquote{if} direction, assume that
+            $\Wmf,i\models\chi_1\Until\chi_2$. Then there is some $k\ge i$ such
+            that $\Wmf,k\models\chi_2$ and $\Wmf,\ell\models\chi_1$ for every
+            $\ell$, $i\le\ell<k$.  We show by induction on~$j$ that
+            $\chi_1\Until\chi_2\in S_{k-j}$ for $j$, $j\le k-i$.
+
+            For $j=0$, we have: $\Wmf,k\models\chi_2$ implies $\chi_2\in S_k$ by
+            the outer induction hypothesis, and the definition of~$\Delta$
+            yields $\chi_1\Until\chi_2\in S_k$.
+
+            For $j>0$, we have: $\Wmf,k-j\models\chi_1$ implies
+            $\chi_1\in S_{k-j}$ by the outer induction hypothesis.  By the inner
+            induction hypothesis, we have $\chi_1\Until\chi_2\in S_{k-j+1}$.
+            Thus, by the definition of~$\Delta$, it follows that
+            $\chi_1\Until\chi_2\in S_{k-j}$.
+
+            For the \enquote{only if} direction, assume that
+            $\chi_1\Until\chi_2\in S_i$.  Since states of
+            $F_{\chi_1\Until\chi_2}\times\{n+1\}$ occur infinitely often among
+            $S_0,S_1,S_2,\dots$, there is some $k\ge i$ such that
+            $S_k\in F_{\chi_1\Until\chi_2}$.  Let $k$ be the smallest index with
+            that property.  Then it follows that $\chi_1\Until\chi_2\in S_\ell$
+            and $\chi_2\notin S_\ell$ for every~$\ell$, $i\le\ell<k$.
+
+            Since $\chi_1\Until\chi_2\in S_\ell$ and $\chi_2\notin S_\ell$ for
+            every~$\ell$, $i\le\ell<k$, we have $\chi_1\in S_\ell$ because of
+            the definition of~$\Delta$.  Thus, $\Wmf,\ell\models\chi_1$ for
+            every~$\ell$, $i\le\ell<k$~($\ast$).
+
+            Moreover, $\chi_1\Until\chi_2\in S_{k-1}$ and $\chi_2\notin S_{k-1}$
+            imply $\chi_1\Until\chi_2\in S_k$ because of the definition
+            of~$\Delta$.  This yields $\chi_2\in S_k$ since
+            $S_k\in F_{\chi_1\Until\chi_2}$, and thus
+            $\Wmf,k\models\chi_2$~($\ast\ast$).
+
+            Finally, ($\ast$) and~($\ast\ast$) yield that
+            $\Wmf,i\models\chi_1\Until\chi_2$ by the semantics of~$\Until$.
+        \item If $\psi=\chi_1\Since\chi_2$, we prove $\chi_1\Since\chi_2\in S_i$
+            iff $\Wmf,i\models\chi_1\Since\chi_2$ similarly.
+            %
+            For the \enquote{if} direction, assume that
+            $\Wmf,i\models\chi_1\Since\chi_2$.  Then there is some $k$,
+            $0\le k\le i$ such that $\Wmf,k\models\chi_2$ and
+            $\Wmf,\ell\models\chi_1$ for every~$\ell$, $k<\ell\le i$.  We show
+            by induction on~$j$ that $\chi_1\Since\chi_2\in S_{k+j}$ for $j$,
+            $j\le i-k$.
+
+            For $j=0$, we have: $\Wmf,k\models\chi_2$ implies $\chi_2\in S_k$ by
+            the outer induction hypothesis, and the definition of~$\Delta$
+            yields $\chi_1\Since\chi_2\in S_k$.
+
+            For $j>0$, we have: $\Wmf,k+j\models\chi_1$ implies
+            $\chi_1\in S_{k+j}$ by the outer induction hypothesis.  By the inner
+            induction hypothesis, we have $\chi_1\Since\chi_2\in S_{k+j-1}$.
+            Thus, by the definition of~$\Delta$, it follows that
+            $\chi_1\Since\chi_2\in S_{k+j}$.
+
+            For the \enquote{only if} direction, assume that
+            $\chi_1\Since\chi_2\in S_i$.  There are two cases to consider:
+            either $i=0$ or $i>0$.
+
+            For $i=0$, we have: $\chi_1\Since\chi_2\in S_0$ implies
+            $\chi_2\in S_0$ by the definition of~$Q_0$.  This yields
+            $\Wmf,0\models\chi_2$, and thus $\Wmf,0\models\chi_1\Since\chi_2$.
+
+            For $i>0$, we have again two cases: either $\chi_2\in S_i$ or
+            $\chi_1\in S_i$ and $\chi_1\Since\chi_2\in S_{i-1}$.  For the case
+            where $\chi_1\in S_i$, it directly follows that
+            $\Wmf,i\models\chi_1\Since\chi_2$.  For the other case where
+            $\chi_1\in S_i$ and $\chi_1\Since\chi_2\in S_{i-1}$, we have by the
+            inner induction hypothesis that $\Wmf,i-1\models\chi_1\Since\chi_2$.
+            Thus, there is a $k$, $0\le k\le i-1$, such that
+            $\Wmf,k\models\chi_2$ and $\Wmf,j\models\chi_1$ for every $j$,
+            $k<j\le i-1$.  Since we have by the outer induction hypothesis also
+            that $\Wmf,i\models\chi_1$, it follows that there is some $k$,
+            $0\le k\le i$, such that $\Wmf,k\models\chi_2$ and
+            $\Wmf,j\models\chi_1$ for every $j$, $k<j\le i$.  Hence,
+            $\Wmf,i\models\chi_1\Since\chi_2$.
+    \end{itemize}
+\end{proof}
+
+\noindent
+We immediately obtain the following corollary.
+
+\begin{corollary}
+    The generalised Büchi-automaton~$\Gmc_{\phi,0}$ is a Büchi-automaton
+    for~$\phi$.
+\end{corollary}
+
+\begin{proof}
+    By Lemma~\ref{lem:gba-phi-n}, we have
+    \[L_\omega(\Gmc_{\phi,0})=\{w_0w_1w_2\dotso\in\Sigma_\Pmc^\omega\mid%
+        \Wmf=(w_i)_{i\ge 0}\ \text{is a model of $\phi$}\}=L_\omega(\phi).\]
+\end{proof}
+
+\noindent
+As already mentioned above, one can transform the
+Büchi-automaton~$\Gmc_{\phi,n}$ into a \enquote{normal}
+Büchi-automaton~$\Nmc_{\phi,n}$ such that
+$L_\omega(\Gmc_{\phi,n})=L_\omega(\Nmc_{\phi,n})$ in time polynomial in the size
+of~$\Gmc_{\phi,n}$~\cite{GPV+-PSTV96,BaKa-08}.
+%
+An analysis of the construction of~$\Gmc_{\phi,n}$ yields the following lemma.
+
+\begin{lemma}\label{lem:ba-phi-n-exp}
+    The Büchi-automaton~$\Nmc_{\phi,n}$ is of size exponential in the size
+    of~$\phi$ and polynomial in~$n$, and can be constructed in time exponential in
+    the size of~$\phi$ and polynomial in~$n$.
+\end{lemma}
+
+\begin{proof}
+    Note that $\Gmc_{\phi,n}$, and thus $\Nmc_{\phi,n}$, have exponentially
+    many states in the size of~$\phi$ and linearly many states in the size
+    of~$n$, and each state can be represented using only space polynomial in the
+    size of~$\phi$ and~$n$.
+    %
+    Moreover, the alphabet~$\Sigma_{\Pmc_\phi}$ is exponential in the size
+    of~$\phi$.  The set of final states of~$\Gmc_{\phi,n}$ contains linearly
+    many sets of size at most exponential in~$\phi$, while the size of the set
+    of initial states and the transition relation is bounded polynomially in the
+    size of the set of states, which is exponential in the size of~$\phi$ and
+    linear in~$n$.
+
+    Since all conditions that need to be checked to construct the components
+    of~$\Gmc_{\phi,n}$ can be checked in time exponential in the size of~$\phi$
+    and polynomial in~$n$, and $\Nmc_{\phi,n}$ can be constructed in time
+    polynomial in the size of~$\Gmc_{\phi,n}$, we obtain the claim of the lemma.
+\end{proof}
+
+\noindent
+We will use the result of this lemma later in
+Section~\ref{sec:tcq-upper-bounds}.  Note that instead of constructing the
+Büchi-automaton~$\Nmc_{\phi,n}$, we could also omit the counter and construct a
+Büchi-automaton for~$\Next^n\phi$, e.g.~$\Nmc_{\Next^n\phi,0}$, that accepts the
+same $\omega$-language.  However, the size of this Büchi-automaton is
+exponential in the size of~$\Next^n\phi$, and thus also exponential in~$n$.
+With the construction above, we have shown that we can do better.
+
+Regarding the satisfiability problem in propositional LTL,
+Lemma~\ref{lem:ba-phi-n-exp} yields the following.  If we first compute an
+exponentially large Büchi-automaton for~$\phi$ and then apply the emptiness test
+for Büchi-automata, we obtain an \ExpTime decision procedure for the
+satisfiability problem.  In order to reduce the complexity to \PSpace, one has
+to generate the relevant parts of the Büchi-automaton on-the-fly while
+performing the emptiness check~\cite{SiCl-JACM85,LiPZ-CLP85}.
+
+It can be shown that, in the worst case, an exponential blow-up in the
+construction of the Büchi-automaton for a propositional LTL-formula cannot be
+avoided (see Theorem~5.42 in~\cite{BaKa-08} for a proof).  However, there are
+optimised implementations of the construction that try to keep the number of
+states as small as possible (see
+e.g.~\cite{GaOd-CAV01,GaOd-MFCS03,GPV+-PSTV96}).  Experiments with these
+implementations show that an exponential blow-up can frequently be avoided.  For
+example, the tool \emph{LTL2BA}\footnote{%
+    See~\url{http://www.lsv.ens-cachan.fr/~gastin/ltl2ba/}.}
+is widely used in practice to generate Büchi-automata from propositional
+LTL-formulas.\footnote{%
+    Unfortunately, like most other such tools, LTL2BA does \emph{not} support
+    propositional LTL \emph{with past-operators}.}
+
+\begin{example}
+    Reconsider the propositional LTL-formula
+    $\phi=\Next p_1\land(p_2\Until p_3)$ of Example~\ref{ex:ltl}.
+    Figure~\ref{fig:ba-phi} depicts a Büchi-automaton for this formula, which
+    was generated by LTL2BA\@.  Note that edges with propositional
+    formulas~$\psi$ as labels are used as abbreviations for sets of edges
+    labelled with those subsets of~\Pmc that represent models of~$\psi$.  For
+    example, the edge with label $p_1\land p_2$ from $q_1$ to $q_3$ stands for
+    two edges between these states, one with label $\{p_1,p_2\}$ and one with
+    label $\{p_1,p_2,p_3\}$.
+
+    This automaton accepts, for example, the $\omega$-word
+    $\{p_2\}\{p_1,p_2\}\{p_2\}\{p_3\}\emptyset\dots$,
+    which corresponds to the propositional LTL-structure $\Wmf_1$ of
+    Example~\ref{ex:ltl} with $\Wmf_1,0\models\phi$.
+\end{example}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[%
+            ->,
+            >=stealth',
+            semithick,
+            initial text=,
+            shorten <=2pt,
+            shorten >=2pt,
+            auto,
+            on grid,
+            node distance=8ex and 8em,
+            every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+            bend angle=20]
+
+        \node[state,initial]   (q0) {$q_0$};
+        \node[state]           (q1) [above right=of q0] {$q_1$};
+        \node[state,accepting] (q2) [below right=of q0] {$q_2$};
+        \node[state]           (q3) [right=of q1] {$q_3$};
+        \node[state,accepting] (q4) [right=of q2] {$q_4$};
+
+        \path[->] (q0) edge node {$p_2$} (q1)
+                       edge node {$p_3$} (q2)
+                  (q1) edge node {$p_1\land p_2$} (q3)
+                       edge node {$p_1\land p_3$} (q4)
+                  (q2) edge node {$p_1$} (q4)
+                  (q3) edge [loop right] node {$p_2$} (q3)
+                       edge node {$p_3$} (q4)
+                  (q4) edge [loop right] node {\true} (q4);
+    \end{tikzpicture}
+    \caption{A Büchi-automaton for the propositional LTL-formula~$\phi$ of
+        Example~\ref{ex:ltl}}
+    \label{fig:ba-phi}
+\end{figure}
+
+\noindent
+In this chapter, we have introduced description logics.  Moreover, we have given
+the basic definitions of propositional LTL and have recalled its relationship
+with $\omega$-automata.
+%
+This sets a basis for the later chapters.

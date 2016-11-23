@@ -1,0 +1,2106 @@
+\chapter{The Temporalised Description Logic \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL}}\label{ch:shoq-ltl}
+
+Temporalised description logics extend description logics with temporal
+modalities.  As discussed in Section~\ref{sec:temporalised-dls}, there are
+many different approaches to temporalising description logics.  In this thesis,
+we follow the approach that was taken by introducing
+\ALC-LTL~\cite{BaGL-ToCL12}, i.e.~a combination of \ALC with propositional LTL
+where \ALC-axioms replace propositional variables, and temporal operators are
+only allowed to occur in front of \ALC-axioms rather than inside of concepts.
+
+The temporalised description logic \SHOQ-LTL, which we examine in this chapter,
+generalises \ALC-LTL\@.  In fact, several constructions in the present chapter
+are adaptations of those for \ALC-LTL, in particular the ones used to show
+Lemmas~4.3 and~6.4 in~\cite{BaGL-ToCL12}.
+%
+Some of the results of this chapter have already been published
+in~\cite{BaLi-LTCS-14-01}.
+%in~\cite{tcq-journal,BaLi-LTCS-14-01}.
+
+This chapter is organised as follows.  In
+Section~\ref{sec:syntax-semantics-shoq-ltl}, we formally introduce the
+temporalised description logic \SHOQ-LTL\@.  Then, in
+Section~\ref{sec:complexity-shoq-ltl}, we show complexity results for the
+satisfiability problem in \SHOQ-LTL\@.  Finally, we provide a brief summary of
+the obtained results in Section~\ref{sec:shoq-ltl-summary}.
+
+
+\section{Syntax and Semantics of \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL}}\label{sec:syntax-semantics-shoq-ltl}
+
+The temporalised description logic \SHOQ-LTL combines the description logic
+\SHOQ with the temporal logic LTL\@.  Its syntax is very similar to the one of
+propositional LTL (see Definition~\ref{def:syntax-ltl}), but in \SHOQ-LTL
+propositional variables are replaced by \SHOQ-axioms.
+
+\begin{definition}[Syntax of \SHOQ-LTL]
+    Let \Rmc be an RBox.  The set of \emph{\SHOQ-LTL-formulas w.r.t.~\Rmc} is the smallest
+    set such that
+    \begin{itemize}
+        \item every ABox-axiom and every TBox-axiom in which at-least
+            restrictions contain only simple roles w.r.t.~\Rmc is a
+            \SHOQ-LTL-formula w.r.t.~\Rmc; and
+        \item if $\phi_1$ and $\phi_2$ are \SHOQ-LTL-formulas w.r.t.~\Rmc, then
+            so are: $\lnot\phi_1$ (negation), $\phi_1\land\phi_2$ (conjunction),
+            $\Next\phi_1$ (next), $\Previous\phi_1$ (previous),
+            $\phi_1\Until\phi_2$ (until), and $\phi_1\Since\phi_2$ (since).
+    \end{itemize}
+\end{definition}
+
+\noindent
+We denote the set of axioms occurring in a \SHOQ-LTL-formula~$\phi$ by
+$\Ax(\phi)$.  Clearly, the cardinality of~$\Ax(\phi)$ is bounded by the size
+of~$\phi$.  Similar to propositional LTL, we use
+\begin{itemize}
+    \item $\phi_1\lor\phi_2$ (disjunction) as an abbreviation for
+        $\lnot(\lnot\phi_1\land\lnot\phi_2)$;
+    \item $\phi_1\to\phi_2$ (implication) as an abbreviation for
+        $\lnot\phi_1\lor\phi_2$;
+    \item \true as an abbreviation for an arbitrary but fixed
+        tautology such as $A(a)\lor\lnot A(a)$ with $A\in\NC$ and $a\in\NI$;
+    \item \false as an abbreviation for $\lnot\true$;
+    \item $\Diamond\phi$ (diamond, which should be read as \enquote{eventually}
+        or \enquote{some time in the future}) as an abbreviation for
+        $\true\Until\phi$;
+    \item $\Box\phi$ (box, which should be read as \enquote{always} or
+        \enquote{always in the future}) as an abbreviation for
+        $\lnot\Diamond\lnot\phi$;
+    \item $\Diamondm\phi$ (which should be read as \enquote{once}
+        or \enquote{some time in the past}) as an abbreviation for
+        $\true\Since\phi$; and
+    \item $\Boxm\phi$ (which should be read as \enquote{historically} or
+        \enquote{always in the past}) as an abbreviation for
+        $\lnot\Diamondm\lnot\phi$.
+\end{itemize}
+
+The semantics of \SHOQ-LTL is based on DL-LTL-structures, which are infinite
+sequences of interpretations over the same non-empty domain~$\Delta$
+(\emph{constant-domain assumption}).
+%
+As discussed in Section~\ref{sec:temporalised-dls}, for some concept and role
+names it is also not desirable that their interpretation changes over time.
+%
+Thus, we assume in the following that a subset of the set of concept and role
+names can be designated as being rigid.  Let \NRC denote the set of \emph{rigid
+concept names} and \NRR the set of \emph{rigid role names} where
+$\NRC\subseteq\NC$ and $\NRR\subseteq\NR$.  All concept and role names in
+$\NC\setminus\NRC$ and $\NR\setminus\NRR$ are then called \emph{flexible}.
+%
+Moreover, we make the rigid-individual assumption, i.e.~we assume that every
+individual name stands for a unique element of the domain~$\Delta$.
+
+\begin{definition}[DL-LTL-structure]\label{def:dl-ltl-structure}
+    We call an infinite sequence $\Imf=(\Imc_i)_{i\ge 0}$ of interpretations
+    $\Imc_i=(\Delta,\cdot^{\Imc_i})$ a DL-LTL-structure if
+    \begin{itemize}
+        \item $a^{\Imc_i}=a^{\Imc_j}$ holds for every $a\in\NI$ and all
+            $i,j\ge 0$ (\emph{rigid-individual assumption});
+        \item $A^{\Imc_i}=A^{\Imc_j}$ holds for every $A\in\NRC$ and all
+            $i,j\ge 0$; and
+        \item $r^{\Imc_i}=r^{\Imc_j}$ holds for every $r\in\NRR$ and all
+            $i,j\ge 0$.
+    \end{itemize}
+\end{definition}
+
+\noindent
+This notion is now used to define the semantics of \SHOQ-LTL-formulas.
+
+\begin{definition}[Semantics of \SHOQ-LTL]\label{def:semantics-shoq-ltl}
+    Given a \SHOQ-LTL-formula~$\phi$ w.r.t.\ an RBox~\Rmc, a
+    DL-LTL-structure $\Imf=(\Imc_i)_{i\ge 0}$, and a time point $i\ge 0$,
+    \emph{validity of~$\phi$ in~\Imf at time~$i$} (written $\Imf,i\models\phi$)
+    is defined inductively as follows:
+    \[\begin{array}{lcl}
+        \Imf,i\models\alpha
+            &\text{iff}
+            &\Imc_i\models\alpha\\
+        \Imf,i\models\lnot\phi_1
+            &\text{iff}
+            &\Imf,i\not\models\phi_1,\ \text{i.e.~not}\ \Imf,i\models\phi_1\\
+        \Imf,i\models\phi_1\land\phi_2
+            &\text{iff}
+            &\Imf,i\models\phi_1\ \text{and}\ \Imf,i\models\phi_2\\
+        \Imf,i\models\Next\phi_1
+            &\text{iff}
+            &\Imf,i+1\models\phi_1\\
+        \Imf,i\models\Previous\phi_1
+            &\text{iff}
+            &i>0\ \text{and}\ \Imf,i-1\models\phi_1\\
+        \Imf,i\models\phi_1\Until\phi_2
+            &\text{iff}
+            &\text{there is some $k\geq i$ such that $\Imf,k\models\phi_2$, and}\\
+            & &\text{$\Imf,j\models\phi_1$ for every $j$, $i\le j<k$}\\
+        \Imf,i\models\phi_1\Since\phi_2
+            &\text{iff}
+            &\text{there is some $k$, $0\le k\le i$, such that $\Imf,k\models\phi_2$, and}\\
+            & &\text{$\Imf,j\models\phi_1$ for every $j$, $k<j\le i$}
+    \end{array}\]
+    %
+    If $\Imc_i\models\Rmc$ for every $i\ge 0$ (written $\Imf\models\Rmc$), and
+    $\Imf,0\models\phi$, then we call \Imf a \emph{model} of~$\phi$ w.r.t.~\Rmc.
+    %
+    We call~$\phi$ \emph{satisfiable w.r.t.~\Rmc} if it has a model w.r.t.~\Rmc.
+
+    The \emph{satisfiability problem in \SHOQ-LTL} is the problem of deciding,
+    given a \SHOQ-LTL-formula~$\phi$ w.r.t.\ an RBox~\Rmc, whether $\phi$ is
+    satisfiable w.r.t.~\Rmc.
+
+    Moreover, two \SHOQ-LTL-formulas $\phi_1,\phi_2$ w.r.t.\ an RBox~\Rmc are
+    \emph{equivalent} (written $\phi_1\equiv\phi_2$) if they have the same
+    models w.r.t.~\Rmc.
+\end{definition}
+
+\noindent
+In~\cite{BaGL-ToCL12}, the temporalised description logic \ALC-LTL, which is a
+fragment of \SHOQ-LTL, is considered.  There, the authors show that
+satisfiability in \ALC-LTL is \ExpTime-complete if no rigid names are present.
+If rigid concept names are allowed, the problem becomes \NExpTime-complete, and
+if additionally rigid role names are allowed, the problem becomes even
+\TwoExpTime-complete.%
+\footnote{Additional intermediate cases (such as the case where GCIs occurring
+    in the formula are global, i.e.~required to hold at every point in time; or
+    where only the temporal operator~$\Diamond$ may be used) are also considered
+    in~\cite{BaGL-ToCL12}, but are not considered in this thesis.}
+%
+In the next section, we show that the same complexity bounds also apply to the
+satisfiability problem in \SHOQ-LTL (see Table~\ref{tab:shoq-ltl-results}).%
+\footnote{Thus, the complexity of the satisfiability problem in \Lmc-LTL is the
+    same as of \ALC-LTL for any description logic~\Lmc between \ALC and \SHOQ.}
+
+\begin{table}[t]
+    \centering
+    \caption{The complexity of the satisfiability problem in \SHOQ-LTL}
+    \label{tab:shoq-ltl-results}
+    \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}ll}
+        \toprule
+        \emph{Setting~(i)}
+            &\ExpTime-complete
+            &(Theorems~\ref{thm:lower-bounds-shoq-ltl} and~\ref{thm:upper-bound-shoq-ltl-no-rigid})\\
+        \midrule
+        \emph{Setting~(ii)}
+            &\NExpTime-complete
+            &(Theorems~\ref{thm:lower-bounds-shoq-ltl} and~\ref{thm:upper-bound-shoq-ltl-rigid-concepts})\\
+        \midrule
+        \emph{Setting~(iii)}
+            &\TwoExpTime-complete
+            &(Theorems~\ref{thm:lower-bounds-shoq-ltl} and~\ref{thm:upper-bound-shoq-ltl-rigid-roles})\\
+        \bottomrule
+    \end{tabular*}
+    \\[1ex]
+    \caption*{Settings: (i)~neither concept names nor role names are allowed to
+        be rigid; (ii)~only concept names may be rigid; and (iii)~both concept
+        names and role names may be rigid.}
+\end{table}
+
+The results obtained in the next sections are used in later chapters of this
+thesis.  For instance, the ideas ideas underlying the decision procedures to
+show the complexity upper bounds for the cases without rigid names and with
+rigid concept and role names can also be used to obtain automata-based decision
+procedures.  These constructions of $\omega$-automata are then used in
+Chapter~\ref{ch:monitor}.
+%
+Moreover, the proof ideas and in particular the results of
+Section~\ref{sec:consistency-boolean-shoqcap-kb} are used in
+Chapter~\ref{ch:tcqs}.
+
+
+\section{The Complexity of Satisfiability in \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL}}\label{sec:complexity-shoq-ltl}
+
+In this section, we examine the complexity of the satisfiability problem in
+\SHOQ-LTL\@.  We consider three different settings: (i)~neither concept names
+nor role names are allowed to be rigid, i.e.~$\NRC=\NRR=\emptyset$, (ii)~only
+concept names may be rigid, i.e.~$\NRC\ne\emptyset$ and $\NRR=\emptyset$, and
+(iii)~both concept and role names may be rigid, i.e.~$\NRC\ne\emptyset$ and
+$\NRR\ne\emptyset$.  It is well-known that one can simulate rigid concept names
+by rigid role names~\cite{BaGL-ToCL12}, which is why there are only three cases
+to consider.  The results of this section are summarised in
+Table~\ref{tab:shoq-ltl-results}.
+
+Since \ALC-LTL is a fragment of \SHOQ-LTL, we immediately obtain the following
+lower bounds for the satisfiability problem.
+
+\begin{theorem}\label{thm:lower-bounds-shoq-ltl}
+    The satisfiability problem in \SHOQ-LTL is
+    \begin{enumerate}
+        \item \ExpTime-hard if $\NRC=\NRR=\emptyset$;
+        \item \NExpTime-hard if $\NRC\ne\emptyset$ and $\NRR=\emptyset$; and
+        \item \TwoExpTime-hard if $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$.
+    \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+    We reduce the satisfiability problem in \ALC-LTL\@.  This problem is
+    \ExpTime-complete if $\NRC=\NRR=\emptyset$, \NExpTime-complete if
+    $\NRC\ne\emptyset$ and $\NRR=\emptyset$, and \TwoExpTime-complete if
+    $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$ as shown in~\cite{BaGL-ToCL12}.
+
+    Let now $\phi$ be an \ALC-LTL-formula.  Obviously, $\phi$ is a
+    \SHOQ-LTL-formula w.r.t.\ the empty RBox.  Thus, we have that the
+    \ALC-LTL-formula~$\phi$ is satisfiable iff the \SHOQ-LTL-formula~$\phi$
+    is satisfiable w.r.t.~$\emptyset$.
+\end{proof}
+
+\noindent
+To obtain the corresponding upper bounds, we reduce the satisfiability problem
+in \SHOQ-LTL to two separate satisfiability problems.  For that, we use the idea
+of Lemma~4.3 in~\cite{BaGL-ToCL12}, where this was done for \ALC-LTL\@.
+
+In the following, let \Rmc be an RBox, and let $\phi$ be a \SHOQ-LTL-formula
+w.r.t.~\Rmc.
+%
+For the first satisfiability problem is called \emph{t-satisfiability}, because
+it takes care of the \emph{temporal} structure of~$\phi$.  For this, we consider
+the propositional abstraction.  The propositional abstraction of~$\phi$ is
+constructed by replacing each axiom occurring in~$\phi$
+with a propositional variable such that there is a 1--1 relationship between the
+axioms $\alpha_1,\dots,\alpha_m$ occurring in~$\phi$ and the propositional
+variables $p_1,\dots,p_m$ occurring in its abstraction.
+
+\begin{definition}[Propositional abstraction]\label{def:prop-abs}
+    Let \Rmc be an RBox, and let $\phi$ be a \SHOQ-LTL-formula w.r.t.~\Rmc.
+    Furthermore, let $\Pmc_\phi$ be a finite set of propositional variables such
+    that there is a bijection $\psf\colon\Ax(\phi)\to\Pmc_\phi$.
+    \begin{enumerate}
+        \item The propositional LTL-formula~$\phi^\psf$ is obtained from~$\phi$
+            by replacing every occurrence of an axiom~$\alpha$ in~$\phi$ by its
+            \psf-image $\psf(\alpha)$.  We call $\phi^\psf$ the
+            \emph{propositional abstraction of~$\phi$ w.r.t.~\psf}.
+        \item Given a DL-LTL-structure $\Imf=(\Imc_i)_{i\ge 0}$, its
+            \emph{propositional abstraction w.r.t.~\psf} is the propositional
+            LTL-structure $\Imf^\psf=(w_i)_{i\ge 0}$ with
+            \[w_i:=\bigl\{\psf(\alpha)\mid\alpha\in\Ax(\phi)\ \text{and} \
+                \Imc_i\models\alpha\bigr\}\]
+            for every $i\ge 0$.
+    \end{enumerate}
+\end{definition}
+
+\noindent
+In the following, we assume that $\psf\colon\Ax(\phi)\to\Pmc_\phi$ is a
+bijection.%
+\footnote{Obviously, for every \SHOQ-LTL-formula~$\phi$ w.r.t.\ an RBox~\Rmc,
+    there is a finite set~$\Pmc_\phi$ of propositional variables such that a
+    bijection $\psf\colon\Ax(\phi)\to\Pmc_\phi$ exists.}
+%
+For simplicity, for a subformula~$\psi$ of~$\phi$, we denote by~$\psi^\psf$ the
+propositional abstraction of~$\psi$ w.r.t.\ the restriction of~\psf to
+$\Ax(\psi)$.
+%
+We now give an example of a propositional abstraction.
+
+\begin{example}\label{ex:prop-abs}
+    Let
+    $\phi_\text{ex}:=\Next\bigl(A(a)\bigr)\land\bigl((A\sqsubseteq B)\Until((\lnot B)(a))\bigr)$
+    be a \SHOQ-LTL-formula w.r.t.\ the empty RBox, and let
+    $\psf\colon\Ax(\phi_\text{ex})\to\{p_1,p_2,p_3\}$ be the bijection that maps
+    $A(a)$ to~$p_1$, $A\sqsubseteq B$ to~$p_2$, and $(\lnot B)(a)$ to~$p_3$.
+    Then the propositional LTL-formula $\Next p_1\land(p_2\Until p_3)$ is the
+    propositional abstraction of~$\phi_\text{ex}$ w.r.t.~\psf.
+\end{example}
+
+\noindent
+The propositional abstraction~$\phi^\psf$ of~$\phi$ w.r.t.~\psf allows us to
+analyse the temporal structure of~$\phi$ separately from the DL-component.
+%
+The following lemma states the relationships between~$\phi$ and its
+propositional abstraction~$\phi^\psf$.
+
+\begin{lemma}\label{lem:prop-abs}
+    Let \Imf be a DL-LTL-structure with $\Imf\models\Rmc$.  Then, \Imf is a
+    model of~$\phi$ w.r.t.~\Rmc iff $\Imf^\psf$ is a model of~$\phi^\psf$.
+\end{lemma}
+
+\begin{proof}
+    Let $\Imf=(\Imc_i)_{i\ge 0}$ be a DL-LTL-structure with $\Imf\models\Rmc$,
+    and $\Imf^\psf=(w_i)_{i\ge 0}$ its propositional abstraction w.r.t.~\psf.
+    We prove this lemma by showing that $\Imf,i\models\phi$ iff
+    $\Imf^\psf,i\models\phi^\psf$ for every~$i\ge 0$ by induction of the
+    structure of~$\phi$.
+
+    For the base case, let $\phi$ be an axiom.  Then, we have for every~$i\ge 0$
+    that $\Imf,i\models\phi$ \emph{iff} $\Imc_i\models\phi$ \emph{iff}
+    $\psf(\phi)\in w_i$ \emph{iff} $w_i\models\phi^\psf$ \emph{iff}
+    $\Imf^\psf,i\models\phi^\psf$.
+
+    If $\phi$ is of the form $\lnot\phi_1$, we have for every~$i\ge 0$ that
+    $\Imf,i\models\lnot\phi_1$ \emph{iff} $\Imf,i\not\models\phi_1$ \emph{iff}
+    $\Imf^\psf,i\not\models\phi_1^\psf$ \emph{iff}
+    $\Imf^\psf\models(\lnot\phi_1)^\psf$.
+
+    If $\phi$ is of the form $\phi_1\land\phi_2$, we have for every~$i\ge 0$
+    that $\Imf,i\models\phi_1\land\phi_2$ \emph{iff} $\Imf,i\models\phi_1$ and
+    $\Imf,i\models\phi_2$ \emph{iff} $\Imf^\psf,i\models\phi_1^\psf$ and
+    $\Imf^\psf,i\models\phi_2^\psf$ \emph{iff}
+    $\Imf^\psf,i\models(\phi_1\land\phi_2)^\psf$.
+
+    If $\phi$ is of the form $\Next\phi_1$, we have for every~$i\ge 0$ that
+    $\Imf,i\models\Next\phi_1$ \emph{iff} $\Imf,i+1\models\phi_1$ \emph{iff}
+    $\Imf^\psf,i+1\models\phi_1^\psf$ \emph{iff}
+    $\Imf^\psf,i\models(\Next\phi_1)^\psf$.
+
+    If $\phi$ is of the form $\Previous\phi_1$, we have for every~$i\ge 0$ that
+    $\Imf,i\models\Previous\phi_1$ \emph{iff} $i>0$ and $\Imf,i-1\models\phi_1$
+    \emph{iff} $i>0$ and
+    $\Imf^\psf,i-1\models\phi_1^\psf$ \emph{iff}
+    $\Imf^\psf,i\models(\Previous\phi_1)^\psf$.
+
+    If $\phi$ is of the form $\phi_1\Until\phi_2$, we have for every~$i\ge 0$
+    that $\Imf,i\models\phi_1\Until\phi_2$ \emph{iff} there is some $k\ge i$
+    such that $\Imf,k\models\phi_2$, and $\Imf,j\models\phi_1$ for every~$j$,
+    $i\le j<k$ \emph{iff} there is some $k\ge i$ such that
+    $\Imf^\psf,k\models\phi_2^\psf$, and $\Imf^\psf,j\models\phi_1^\psf$
+    for every~$j$, $i\le j<k$ \emph{iff}
+    $\Imf^\psf,i\models(\phi_1\Until\phi_2)^\psf$.
+
+    Finally, if $\phi$ is of the form $\phi_1\Since\phi_2$, we have for
+    every~$i\ge 0$ that $\Imf,i\models\phi_1\Since\phi_2$ \emph{iff} there is
+    some~$k$, $0\le k\le i$, such that $\Imf,k\models\phi_2$, and
+    $\Imf,j\models\phi_1$ for every~$j$, $k<j\le i$ \emph{iff} there is some
+    $k$, $0\le k\le i$, such that $\Imf^\psf,k\models\phi_2^\psf$, and
+    $\Imf^\psf,j\models\phi_1^\psf$ for every~$j$, $k<j\le i$ \emph{iff}
+    $\Imf^\psf,i\models(\phi_1\Since\phi_2)^\psf$.
+\end{proof}
+
+\noindent
+The \enquote{only if} direction of this lemma yields that satisfiability
+of~$\phi$ w.r.t.~\Rmc implies satisfiability of~$\phi^\psf$.  However, the
+\enquote{if} direction does not yield the converse of this implication.  In
+fact, the propositional LTL-formula~$\phi^\psf$ may turn out to be satisfiable
+even though the original \SHOQ-LTL-formula~$\phi$ is not.  The reason is that
+there may exist propositional LTL-structures that are not propositional
+abstractions of DL-LTL-structures.
+
+\begin{example}
+    Take the \SHOQ-LTL-formula~$\phi_\text{ex}$ and the bijection~\psf of
+    Example~\ref{ex:prop-abs}, and consider the propositional LTL-structure
+    $\Wmf=(w_i)_{i\ge 0}$ with $w_i=\{p_1,p_2,p_3\}$ for every $i\ge 0$.
+    Obviously, we have $\Wmf,0\models\phi_\text{ex}^\psf$, but there is no
+    DL-LTL-structure~\Imf such that $\Imf^\psf=\Wmf$.  In fact, every world of
+    this DL-LTL-structure would need to satisfy the three axioms in
+    $\Ax(\phi_\text{ex})$ simultaneously, which is clearly not possible.
+\end{example}
+
+\noindent
+To address this problem, we need some more notions.  We consider a set
+$\Wmc\subseteq 2^{\Pmc_\phi}$, which intuitively specifies the worlds that are
+allowed to occur in a propositional LTL-structure satisfying $\phi^\psf$.  To
+express this restriction, we the define the propositional LTL-formula
+\[\phi^\psf_\Wmc:=\phi^\psf\land%
+    \Box\Biggl(\bigvee_{X\in\Wmc}\Biggl(\bigwedge_{p\in X}p\land%
+    \bigwedge_{p\in\Pmc_\phi\setminus X}\lnot p\Biggr)\Biggr).\]
+
+\noindent
+The second satisfiability problem is called \emph{r-satisfiability}, because it
+is used to determine whether it is possible to satisfy the \emph{rigidity}
+constraints for the names in~\NRC and~\NRR.  Thus, it can be used to check
+whether the set~\Wmc can indeed be induced by a DL-LTL-structure that is a model
+of~$\phi$ w.r.t.~\Rmc.
+
+\begin{definition}[R-satisfiability]\label{def:r-sat}
+    Let $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$.  We call \Wmc
+    \emph{r-satisfiable w.r.t.~\Rmc} if there exist interpretations
+    $\Imc_1=(\Delta,\cdot^{\Imc_1})$,~\dots, $\Imc_k=(\Delta,\cdot^{\Imc_k})$
+    such that
+    \begin{itemize}
+        \item $a^{\Imc_i}=a^{\Imc_j}$ holds for every $a\in\NI$ and all $i,j$,
+            $1\le i<j\le k$;
+        \item $A^{\Imc_i}=A^{\Imc_j}$ holds for every $A\in\NRC$ and all $i,j$,
+            $1\le i<j\le k$;
+        \item $r^{\Imc_i}=r^{\Imc_j}$ holds for every $r\in\NRR$ and all $i,j$,
+            $1\le i<j\le k$; and
+        \item every $\Imc_i$, $1\le i\le k$, is a model of the Boolean knowledge
+            base
+            \[\Bmc_{X_i}:=\Biggl(\bigwedge_{p\in X_i}\psf^{-1}(p)\land%
+                \bigwedge_{p\in\Pmc_\phi\setminus X_i}\lnot\psf^{-1}(p),\quad\Rmc\Biggr).\]
+    \end{itemize}
+\end{definition}
+
+\noindent
+Note that any subset of a set~\Wmc that is r-satisfiable w.r.t.~\Rmc is again
+r-satisfiable w.r.t.~\Rmc.  In particular, the empty set is always r-satisfiable
+w.r.t.~\Rmc.
+
+The intuition underlying the definition of r-satisfiability is the following.
+The existence of the interpretations~$\Imc_i$, $1\le i\le k$, ensures that the
+Boolean knowledge base induced by~$X_i$ and~\Rmc is consistent.  In fact, a
+set~\Wmc containing a set~$X_i$ for which this does not hold cannot be induced
+by a DL-LTL-structure.  Moreover, we ensure that the interpretations share the
+same domain and respect rigid names.  As we will see later, for deciding whether
+a set~\Wmc is r-satisfiable w.r.t.~\Rmc, the difficulty lies in ensuring that
+the interpretations share the same domain and respect rigid names.
+
+Satisfaction of the temporal structure of~$\phi$ by a DL-LTL-structure built
+this way is ensured by testing $\phi^\psf_\Wmc$ for satisfiability.  This is
+captured in the notion of t-satisfiability.
+
+\begin{definition}[T-satisfiability]\label{def:t-sat}
+    Let $\Wmc\subseteq 2^{\Pmc_\phi}$.  We call the propositional LTL-formula
+    $\phi^\psf$ \emph{t-satisfiable w.r.t.~\Wmc} if there exists a propositional
+    LTL-structure $\Wmf=(w_i)_{i\ge 0}$ such that $\Wmf,0\models\phi^\psf_\Wmc$.
+\end{definition}
+
+\noindent
+The next two lemmas show that these two satisfiability problems, namely,
+t-satisfiability and r-satisfiability, can be combined to decidable the
+satisfiability problem in \SHOQ-LTL\@.  The statements of the lemmas were also
+proved in~\cite{BaGL-ToCL12} for \ALC-LTL, but again the same arguments can also
+be used to prove them for \SHOQ-LTL\@.  Yet, we repeat these arguments for the
+sake of completeness.
+
+\begin{lemma}\label{lem:ltl-structure-r-sat}
+    For every propositional LTL-structure $\Wmf=(w_i)_{i\ge 0}$ with
+    $w_i\subseteq\Pmc_\phi$ for every $i\ge 0$, the following two statements are
+    equivalent:
+    \begin{enumerate}
+        \item There is a model~\Imf of~$\phi$ w.r.t.~\Rmc with $\Imf^\psf=\Wmf$.
+        \item \Wmf is a model of~$\phi^\psf$ and the set
+            $\Wmc:=\{w_i\mid i\ge 0\}$ is r-satisfiable w.r.t.~\Rmc.
+    \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+    For the direction \enquote{$1\implies 2$}, assume that there is a
+    DL-LTL-structure $\Imf=(\Imc_i)_{i\ge 0}$ that is a model of~$\phi$
+    w.r.t.~\Rmc with $\Imf^\psf=\Wmf$.
+    %
+    Since $\Imf\models\Rmc$, we have by Lemma~\ref{lem:prop-abs} that \Wmf is a
+    model of~$\phi^\psf$.
+    %
+    Since $w_i\subseteq\Pmc_\phi$ for every~$i\ge 0$, we have that
+    $\Wmc=\{w_i\mid i\ge 0\}\subseteq 2^{\Pmc_\phi}$ is finite.  Let
+    $\Wmc=\{X_1,\dots,X_k\}$.
+    %
+    We have that for every $i\ge 0$, there is an index $\nu_i\in\{1,\dots,k\}$
+    such that $\Imc_i$ induces the set~$X_{\nu_i}$, i.e.\
+    \[X_{\nu_i}=\bigl\{\psf(\alpha)\mid\alpha\in\Ax(\phi)\ \text{and}\
+        \Imc_i\models\alpha\bigr\},\]
+    and, conversely, for every $\nu\in\{1,\dots,k\}$, there is an index $i\ge 0$
+    such that $\nu=\nu_i$.
+    %
+    For every~$i$, $1\le i\le k$, the interpretation~$\Jmc_i$ is obtained as
+    follows.  Let $\ell_1,\dots,\ell_k$ be such that $\nu_{\ell_1}=1$,~\dots,
+    $\nu_{\ell_k}=k$.  Now, if we set $\Jmc_i:=\Imc_{\ell_i}$, then we clearly
+    have $\Jmc_i\models\Bmc_{X_i}$.  It is now easy to see that the
+    interpretations $\Jmc_1,\dots,\Jmc_k$ satisfy the conditions for
+    r-satisfiability of~\Wmc w.r.t.~\Rmc.
+
+    For the direction \enquote{$2\implies 1$}, assume that \Wmf is a model
+    of~$\phi^\psf$ and the set $\Wmc=\{w_i\mid i\ge 0\}$ is r-satisfiable
+    w.r.t.~\Rmc.
+    %
+    Since $w_i\subseteq\Pmc_\phi$ for every~$i\ge 0$, we have that
+    $\Wmc=\{w_i\mid i\ge 0\}\subseteq 2^{\Pmc_\phi}$ is finite.  Let
+    $\Wmc=\{X_1,\dots,X_k\}$.
+    %
+    Since \Wmc is r-satisfiable w.r.t.~\Rmc, there are interpretations
+    $\Jmc_1,\dots,\Jmc_k$ such that the conditions in Definition~\ref{def:r-sat}
+    are satisfied.
+    %
+    Moreover, we have that for every world~$w_i$, there is exactly one index
+    $\nu_i\in\{1,\dots,k\}$ such that $w_i$ satisfies
+    \[\bigwedge_{p\in X_{\nu_i}}p\land\bigwedge_{p\in\Pmc_\phi\setminus X_{\nu_i}}\lnot p.\]
+    We can now define a DL-LTL-structure $\Imf:=(\Imc_i)_{i\ge 0}$ as follows.
+    We set $\Imc_i:=\Jmc_{\nu_i}$ for $i\ge 0$.  By construction, we have
+    $\Imf^\psf=\Wmf$.  By Definition~\ref{def:r-sat},
+    each~$\Imc_i$ is a model of $\Bmc_{X_{\nu_i}}$, i.e.~it is a model of~\Rmc and
+    satisfies exactly the axioms specified by the propositional variables
+    in~$X_{\nu_i}$.  This yields that $\Imf\models\Rmc$, and since
+    $\Wmf,0\models\phi^\psf$, we have by Lemma~\ref{lem:prop-abs} that
+    $\Imf,0\models\phi$.  Thus, \Imf is a model of~$\phi$ w.r.t.~\Rmc.
+\end{proof}
+
+\noindent
+The following lemma is an immediate consequence of the previous lemma.
+
+\begin{lemma}\label{lem:r-sat-t-sat}
+    The \SHOQ-LTL-formula~$\phi$ is satisfiable w.r.t.\ the RBox~\Rmc iff there
+    is a set $\Wmc=\bigl\{X_1,\dots,X_k\bigr\}\subseteq 2^{\Pmc_\phi}$ such that
+    \begin{itemize}
+        \item \Wmc is r-satisfiable w.r.t.~\Rmc, and
+        \item $\phi^\psf$ is t-satisfiable w.r.t.~\Wmc.
+    \end{itemize}
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{only if} direction, assume that there is a DL-LTL-structure
+    $\Imf=(\Imc_i)_{i\ge 0}$ that is a model of~$\phi$ w.r.t.~\Rmc.
+    %
+    Let $\Imf^\psf=(w_i)_{i\ge 0}$, and let $\Wmc=\{w_i\mid i\ge 0\}$.
+    %
+    By Lemma~\ref{lem:ltl-structure-r-sat}, we have that $\Imf^\psf$ is a model
+    of~$\phi^\psf$ and that \Wmc is r-satisfiable w.r.t.~\Rmc.
+    %
+    By construction of~\Wmc, we have also that $\Imf^\psf$ is a model
+    of~$\phi^\psf_\Wmc$.  Hence, $\phi^\psf$ is t-satisfiable w.r.t.~\Wmc.
+
+    For the \enquote{if} direction, assume that there is a set
+    $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ such that \Wmc is
+    r-satisfiable w.r.t.~\Rmc and $\phi^\psf$ is t-satisfiable w.r.t.~\Wmc.
+    Hence, there is a propositional LTL-structure $\Wmf=(w_i)_{i\ge 0}$ such
+    that \Wmf is a model of~$\phi^\psf_\Wmc$.
+    %
+    Hence \Wmf is a model of~$\phi^\psf$.  We define
+    $\Wmc':=\{w_i\mid i\ge 0\}$.  Since \Wmf is a model of~$\phi^\psf_\Wmc$, we
+    have that $\Wmc'\subseteq\Wmc$.  Since \Wmc is r-satisfiable w.r.t.~\Rmc,
+    this yields that $\Wmc'$ is r-satisfiable w.r.t.~\Rmc.  Then,
+    Lemma~\ref{lem:ltl-structure-r-sat} yields that there is a model \Imf
+    of~$\phi$ w.r.t.~\Rmc with $\Imf^\psf=\Wmf$, i.e.~$\phi$ is satisfiable
+    w.r.t.~\Rmc.
+\end{proof}
+
+\noindent
+To obtain a decision procedure for the satisfiability problem in \SHOQ-LTL, we
+have to non-deterministically guess or construct the set~\Wmc, and then check
+the two conditions of Lemma~\ref{lem:r-sat-t-sat}.
+%
+Depending on which symbols are allowed to be rigid, we use different
+constructions to achieve that.
+
+First, we focus on deciding t-satisfiability w.r.t.\ a given set~\Wmc.
+%
+From now on, let $\Wmc\subseteq 2^{\Pmc_\phi}$.  Obviously, the size
+of~$\phi^\psf_\Wmc$ may be exponential in the size of~$\phi$.  Since we can
+decide satisfiability of a propositional LTL-formula in
+\PSpace~\cite{SiCl-JACM85,LiPZ-CLP85}, this yields an \ExpSpace-decision
+procedure for deciding the satisfiability of~$\phi^\psf_\Wmc$.  However, using a
+trick from~\cite{BaGL-ToCL12}, we can reduce the complexity to \ExpTime.
+
+\begin{lemma}\label{lem:t-sat}
+    Deciding whether $\phi^\psf$ is t-satisfiable w.r.t.~\Wmc can be done in
+    time exponential in the size of~$\phi^\psf$ and linear in the size of~\Wmc.
+\end{lemma}
+
+\begin{proof}
+    We first construct a Büchi-automaton for~$\phi^\psf$, which can be done in
+    time exponential in the size of~$\phi^\psf$ as discussed in
+    Section~\ref{sec:aut-for-ltl}.  Let
+    $\Nmc=(Q,\Sigma_{\Pmc_\phi},\Delta,Q_0,F)$ be a Büchi-automaton
+    for~$\phi^\psf$.  We obtain the Büchi-automaton
+    $\Nmc'=(Q,\Sigma_{\Pmc_\phi},\Delta',Q_0,F)$ by removing all transitions
+    that are labelled with a letter $\sigma\in\Sigma_{\Pmc_\phi}\setminus\Wmc$,
+    i.e.~we define
+    \[\Delta':=\bigl\{(q,\sigma,q')\in\Delta\mid\sigma\in\Wmc\bigr\}.\]
+    %
+    It is easy to verify that $\Nmc'$ is a Büchi-automaton for~$\phi^\psf_\Wmc$.
+
+    Note that the Büchi-automaton~$\Nmc'$ can be constructed in time polynomial
+    in the size of~\Nmc and linear in the size of~\Wmc, and thus the size
+    of~$\Nmc'$ is exponential in the size of~$\phi^\psf$.  Since the emptiness
+    problem for Büchi-automata can be solved in polynomial
+    time~\cite{VaWo-IC94}, this yields that t-satisfiability of~$\phi^\psf$
+    w.r.t.~\Wmc can be decided in time exponential in the size of~$\phi^\psf$
+    and linear in the size of~\Wmc.
+\end{proof}
+
+\noindent
+Due to Lemma~\ref{lem:r-sat-t-sat}, the complexity of the satisfiability problem
+in \SHOQ-LTL also depends on the complexity of the deciding whether \Wmc is
+r-satisfiable w.r.t.~\Rmc.  However, this depends on the fact whether there are
+concept or role names that are allowed to be rigid.
+
+In Section~\ref{sec:sat-no-rigid}, we consider the case without rigid names, and
+in Section~\ref{sec:sat-rigid}, we consider the most general case with rigid
+concept and role names.  Finally, we consider the case with rigid concept names
+in Section~\ref{sec:sat-rigid-concepts}.  A result that is needed in
+Section~\ref{sec:sat-rigid-concepts} is proved in a separate section, namely, in
+Section~\ref{sec:consistency-boolean-shoqcap-kb}.
+
+
+\subsection{Satisfiability in \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL} for the Case without Rigid Names}\label{sec:sat-no-rigid}
+
+In this section, we consider the case where neither concept names nor role names
+are allowed to be rigid, i.e.~$\NRC=\NRR=\emptyset$.
+%
+We establish the following complexity result.
+
+\begin{theorem}\label{thm:upper-bound-shoq-ltl-no-rigid}
+    The satisfiability problem in \SHOQ-LTL is in \ExpTime if
+    $\NRC=\NRR=\emptyset$.
+\end{theorem}
+
+\begin{proof}
+    Let \Rmc be an RBox, and let $\phi$ be a \SHOQ-LTL-formula w.r.t.~\Rmc.  We
+    can decide satisfiability of~$\phi$ w.r.t.~\Rmc using
+    Lemma~\ref{lem:r-sat-t-sat}.
+    %
+    For that, let $\psf\colon\Ax(\phi)\to\Pmc_\phi$ be a bijection, and define
+    \[\Wmc:=\{X\in 2^{\Pmc_\phi}\mid\Bmc_X\ \text{is consistent}\},\]
+    where $\Bmc_X$ is defined as in Definition~\ref{def:r-sat}.  We first show
+    that $\Wmc=\{X_1,\dots,X_k\}$ is r-satisfiable w.r.t.~\Rmc.
+    %
+    Since every~$\Bmc_{X_i}$, $1\le i\le k$ is consistent, there are models
+    $\Imc_1,\dots,\Imc_k$ such that every~$\Imc_i$, $1\le i\le k$, is a model
+    of~$\Bmc_{X_i}$.  We can assume w.l.o.g.\ that all of these models have the
+    same domain since we can assume w.l.o.g.\ that their domains are countably
+    infinite due to to the Löwenheim-Skolem theorem~\cite{Loe-MA15,Sko-VS20}.
+    Furthermore, we can assume w.l.o.g.\ that all individual names are
+    interpreted by the same domain elements in all models.  Since
+    $\NRC=\NRR=\emptyset$, this yields that \Wmc is r-satisfiable w.r.t.~\Rmc.
+
+    Thus, we have by Lemma~\ref{lem:r-sat-t-sat} that if $\phi^\psf$ is
+    t-satisfiable w.r.t.~\Wmc, then $\phi$ is satisfiable w.r.t.~\Rmc.
+    %
+    Conversely, again by Lemma~\ref{lem:r-sat-t-sat}, we have that if $\phi$ is
+    satisfiable w.r.t.~\Rmc, then there is a set $\Wmc'\subseteq 2^{\Pmc_\phi}$
+    such that $\Wmc'$ is r-satisfiable w.r.t.~\Rmc and $\phi^\psf$ is
+    t-satisfiable w.r.t.~$\Wmc'$.  The definition of~\Wmc yields that \Wmc is
+    the maximal subset of $2^{\Pmc_\phi}$ that is r-satisfiable w.r.t.~\Rmc.
+    Thus, we have that $\Wmc'\subseteq\Wmc$.  It is easy to see that the
+    t-satisfiability of~$\phi^\psf$ w.r.t.~$\Wmc'$ implies that $\phi^\psf$ is
+    t-satisfiable w.r.t.~\Wmc.
+    %
+    Hence, we have that $\phi$ is satisfiable w.r.t.~\Rmc iff $\phi^\psf$ is
+    t-satisfiable w.r.t.~\Wmc.
+
+    Note that \Wmc can be constructed in time exponential in the size of~$\phi$
+    and~\Rmc.  Indeed, there are exponentially many $X\in 2^{\Pmc_\phi}$, but
+    each~$\Bmc_X$ can be constructed in time polynomial in the size of~$\phi$
+    and~\Rmc, and is thus of size polynomial in the size of~$\phi$ and~\Rmc.  We
+    show in Corollary~\ref{cor:cons-boolean-shoq-kb} (see
+    Section~\ref{sec:consistency-boolean-shoqcap-kb}) that consistency of a
+    Boolean \SHOQ-knowledge base~\Bmc can be decided in time exponential in the
+    size of~\Bmc.  Thus, overall, deciding for every~$\Bmc_X$ whether it is
+    consistent can be done in time exponential in the size of~$\phi$ and~\Rmc.
+    %
+    Due to Lemma~\ref{lem:t-sat}, deciding whether $\phi^\psf$ is t-satisfiable
+    w.r.t.~\Wmc can be done in time exponential in the size of $\phi^\psf$ (and
+    thus in time exponential in the size of~$\phi$) and linear in the size
+    of~\Wmc.  Thus, we can decide whether $\phi$ is satisfiable w.r.t.~\Rmc in
+    time exponential in the size of~$\phi$ and~\Rmc.
+\end{proof}
+
+\noindent
+Together with Theorem~\ref{thm:lower-bounds-shoq-ltl}, we obtain that the
+satisfiability problem in \SHOQ-LTL is \ExpTime-complete if neither concept nor
+role names are allowed to be rigid.
+
+
+\subsection{Satisfiability in \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL} for the Case of Rigid Concept Names and Role Names}\label{sec:sat-rigid}
+
+In this section, we consider the case where both concept and role names may be
+rigid, i.e.~$\NRC\ne\emptyset$ and $\NRR\ne\emptyset$.
+
+Let us assume that a set $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ is
+given.  Note that deciding whether \Wmc is r-satisfiable w.r.t.~\Rmc cannot be
+done by simply checking for each $X\in\Wmc$ whether the Boolean knowledge
+base~$\Bmc_X$ is consistent as we did in Section~\ref{sec:sat-no-rigid} for the
+case without rigid names.  In fact, these consistency checks are not independent
+any longer since one has to ensure that rigid concept and role names are
+interpreted in the same way.  To achieve this, we adopt the renaming technique
+from~\cite{BaGL-ToCL12} that works by introducing copies of the flexible
+symbols.
+
+For every $i$, $1\le i\le k$, every \emph{flexible} concept name~$A$ occurring
+in~$\phi$, and every \emph{flexible} role name~$r$ occurring in~$\phi$ or~\Rmc,
+we introduce copies~$A^{(i)}$ and~$r^{(i)}$.  We call $A^{(i)}$ the $i$-th
+copy of~$A$, and similarly $r^{(i)}$ the $i$-th copy of~$r$.  The
+axiom~$\alpha^{(i)}$ is obtained from the axiom~$\alpha$ by replacing every
+occurrence of a flexible name by its $i$-th copy.  Similarly, the Boolean axiom
+formula~$\Psi^{(i)}$ (RBox~$\Rmc^{(i)}$) is obtained from the Boolean axiom
+formula~$\Psi$ (RBox~\Rmc) by replacing each axiom~$\alpha$ occurring in~$\Psi$
+(\Rmc) by $\alpha^{(i)}$.
+
+Moreover, let $\Bmc_{X_i}=(\Psi_{X_i},\Rmc)$, $1\le i\le k$, denote the Boolean
+knowledge bases defined in Definition~\ref{def:r-sat}.  We define
+\[\Bmc_\Wmc:=\Biggl(\bigwedge_{1\le i\le k}\Psi_{X_i}^{(i)},\quad%
+    \bigcup_{1\le i\le k}\Rmc^{(i)}\Biggr).\]
+%
+The next lemma states that consistency of~$\Bmc_\Wmc$ is enough for ensuring
+r-satisfiability of~\Wmc w.r.t.~\Rmc.
+
+\begin{lemma}\label{lem:bmc-wmc}
+    The set~\Wmc is r-satisfiable w.r.t.~\Rmc iff the Boolean knowledge
+    base~$\Bmc_\Wmc$ is consistent.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{only if} direction, let
+    $\Imc_1=(\Delta,\cdot^{\Imc_1})$,~\dots, $\Imc_k=(\Delta,\cdot^{\Imc_k})$ be
+    the interpretations required by Definition~\ref{def:r-sat} for the
+    r-satisfiability of~\Wmc w.r.t.~\Rmc.  We construct the interpretation
+    $\Jmc=(\Delta,\cdot^\Jmc)$ as follows:
+    \begin{itemize}
+        \item every individual name and every rigid name is interpreted as
+            in~$\Imc_1$; and
+        \item the $i$-th copy, $1\le i\le k$, of each flexible name is
+            interpreted like the original name in~$\Imc_i$.
+    \end{itemize}
+    %
+    It is easy to verify that~\Jmc is a model of~$\Bmc_\Wmc$.
+
+    For the \enquote{if} direction, let \Jmc be a model of~$\Bmc_\Wmc$.
+    We obtain the interpretations $\Imc_1,\dots,\Imc_k$ by the inverse
+    construction to the one above:
+    \begin{itemize}
+        \item the domain of all these interpretations is the domain of~\Jmc;
+        \item every individual name and every rigid name is interpreted by these
+            interpretations as in~\Jmc; and
+        \item every flexible name is interpreted in $\Imc_i$, $1\le i\le k$, as
+            its $i$-th copy is interpreted in~\Jmc.
+    \end{itemize}
+    %
+    It is again easy to verify that the interpretations $\Imc_1,\dots,\Imc_k$
+    satisfy the conditions for r-satisfiability of~\Wmc w.r.t.~\Rmc.
+\end{proof}
+
+\noindent
+Using this lemma, we can prove our complexity result.
+
+\begin{theorem}\label{thm:upper-bound-shoq-ltl-rigid-roles}
+    The satisfiability problem in \SHOQ-LTL is in \TwoExpTime if
+    $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$.
+\end{theorem}
+
+\begin{proof}
+    Let \Rmc be an RBox, let $\phi$ be a \SHOQ-LTL-formula w.r.t.~\Rmc, and let
+    $\psf\colon\Ax(\phi)\to\Pmc_\phi$ be a bijection.  We use again
+    Lemma~\ref{lem:r-sat-t-sat} for deciding satisfiability of~$\phi$
+    w.r.t.~\Rmc.  We first enumerate all sets $\Wmc\subseteq 2^{\Pmc_\phi}$,
+    which can be done in time doubly exponential in~$\phi$ and~\Rmc.  For each
+    of these sets~\Wmc, we check t-satisfiability of~$\phi^\psf$ w.r.t.~\Wmc and
+    r-satisfiability of~\Wmc w.r.t.~\Rmc.  By Lemma~\ref{lem:t-sat}, the
+    t-satisfiability check can be done in time exponential in the size
+    of~$\phi^\psf$ (and thus in time exponential in the size of~$\phi$) and
+    linear in the size of~\Wmc.
+
+    For the r-satisfiability check, we use Lemma~\ref{lem:bmc-wmc}.  We
+    construct the Boolean knowledge base~$\Bmc_\Wmc$, which can be done in time
+    exponential in the size of~$\phi$ and~\Rmc.  Also, $\Bmc_\Wmc$ is of size at
+    most exponential in the size of~$\phi$ and~\Rmc.  Consistency of~$\Bmc_\Wmc$
+    can be checked in time exponential in the size of~$\Bmc_\Wmc$ by
+    Corollary~\ref{cor:cons-boolean-shoq-kb}, which we prove in
+    Section~\ref{sec:consistency-boolean-shoqcap-kb}.  Thus, checking whether
+    \Wmc is r-satisfiable w.r.t.~\Rmc can be done in time doubly exponential in
+    the size of~$\phi$ and~\Rmc.
+
+    Thus, overall, we can decide whether $\phi$ is satisfiable w.r.t.~\Rmc in
+    time doubly exponential in the size of~$\phi$ and~\Rmc.
+\end{proof}
+
+\noindent
+Together with Theorem~\ref{thm:lower-bounds-shoq-ltl}, we obtain that the
+satisfiability problem in \SHOQ-LTL is \TwoExpTime-complete if both concept and
+role names are allowed to be rigid.
+
+
+\subsection{Satisfiability in \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL} for the Case of Rigid Concept Names}\label{sec:sat-rigid-concepts}
+
+In this section, we consider the case where only concept names may be rigid,
+i.e.~$\NRC\ne\emptyset$ and $\NRR=\emptyset$.
+
+Let us again assume that a set $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$
+is given.  By Lemma~\ref{lem:bmc-wmc}, for checking whether \Wmc is
+r-satisfiable w.r.t.~\Rmc, it is enough to construct the Boolean knowledge
+base~$\Bmc_\Wmc$ and to check it for consistency.  As we have seen in the proof
+of Theorem~\ref{thm:upper-bound-shoq-ltl-rigid-roles}, this yields a \TwoExpTime
+decision procedure.  However, we can reduce the complexity to \NExpTime by using
+the ideas of the proof of Lemma~6.3 in~\cite{BaGL-ToCL12}, where the same
+complexity result is shown for \ALC-LTL\@.  The principal idea is to fix the
+combinations of rigid concept names that are allowed to occur in the models of
+the Boolean knowledge bases~$\Bmc_{X_i}$, $1\le i\le k$.  For that, we need some
+more notation.
+
+\begin{definition}[Interpretation respects~\Dmc]\label{def:respects-dmc}
+    Let $\Imc=(\Delta^\Imc,\cdot^\Imc)$ be an interpretation, and let
+    $\Dmc=(\Umc,\Ymc)$ be a pair such that \Umc is a set of concept
+    names and $\Ymc\subseteq 2^\Umc$.
+
+    We say that \Imc \emph{respects~\Dmc} if
+    \[\Ymc=\bigl\{Y\subseteq\Umc\mid%
+        \text{there is some $d\in\Delta^\Imc$ with $d\in(C_{\Umc,Y})^\Imc$}\bigr\},\]
+    where
+    \[C_{\Umc,Y}:=\bigsqcap_{A\in Y}A\quad\sqcap\quad\bigsqcap_{A\in\Umc\setminus Y}\lnot A.\]
+\end{definition}
+
+\noindent
+Intuitively, this definitions states that every combination of concept names
+in~\Ymc is realised by a domain element of~\Imc, and conversely, every such
+combination that is realised by a domain element of~\Imc must occur in~\Ymc.
+
+Let $\RCon(\phi)$ denote the set of rigid concept names occurring in~$\phi$, and
+let $\Ind(\phi)$ denote the set of individual names occurring in~$\phi$.
+Furthermore, let $\Dmc=(\RCon(\phi),\Ymc)$ with $\Ymc\subseteq 2^{\RCon(\phi)}$
+be arbitrary, and let $\tau$ be a mapping from $\Ind(\phi)$ to~\Ymc.  The idea
+is that \Dmc fixes the combinations of rigid concept names that are allowed to
+occur in the models of~$\Bmc_{X_i}$, $1\le i\le k$.  The mapping~$\tau$ assigns
+to each individual name occurring in~$\phi$ one such combination.
+%
+We define $\Psi_\tau$ to be the following Boolean axiom formula:
+\[\Psi_\tau:=\bigwedge_{a\in\Ind(\phi)}C_{\RCon(\phi),\tau(a)}(a).\]
+%
+The next lemma states how these notions can be used to characterise
+r-satisfiability of~\Wmc w.r.t.~\Rmc.
+
+\begin{lemma}\label{lem:dmc-tau}
+    If $\NRC\ne\emptyset$ and $\NRR=\emptyset$, then \Wmc is r-satisfiable
+    w.r.t.~\Rmc iff there exist a pair $\Dmc=(\RCon(\phi),\Ymc)$ with
+    $\Ymc\subseteq 2^{\RCon(\phi)}$ and a mapping $\tau\colon\Ind(\phi)\to\Ymc$
+    such that for every $i$, $1\le i\le k$, the Boolean knowledge base
+    $(\Psi_{X_i}\land\Psi_\tau,\Rmc)$ has a model that respects~\Dmc.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{if} direction, assume that $\Imc_i$, $1\le i\le k$, are the
+    models of $(\Psi_{X_i}\land\Psi_\tau,\Rmc)$, respectively, that
+    respect~\Dmc.
+    %
+    Similar to the proof of Lemma~6.3 in~\cite{BaGL-ToCL12}, we can assume
+    w.l.o.g.\ that their domains $\Delta_i$ are countably infinite and for each
+    $Y\in\Ymc$ there are countably infinitely many elements
+    $d\in(C_{\RCon(\phi),Y})^{\Imc_i}$.  This is a consequence of the
+    Löwenheim-Skolem theorem~\cite{Loe-MA15,Sko-VS20} and the fact that the
+    countably infinite disjoint union of~$\Imc_i$ with itself is again a model
+    of $(\Psi_{X_i}\land\Psi_\tau,\Rmc)$.
+
+    Consequently, we can partition the domains~$\Delta_i$ into the countably
+    infinite sets
+    \[\Delta_i(Y):=\bigl\{d\in\Delta_i\mid d\in(C_{\RCon(\phi),Y})^{\Imc_i}\bigr\}\]
+    for $Y\in\Ymc$.
+    %
+    By the assumptions above and the fact that every~$\Imc_i$
+    satisfies~$\Psi_\tau$, there are bijections
+    $\pi_i\colon\Delta_1\to\Delta_i$, $2\le i\le k$, such that
+    \begin{itemize}
+        \item $\pi_i(\Delta_1(Y))=\Delta_i(Y)$ for every $Y\in\Ymc$, and
+        \item $\pi_i(a^{\Imc_1})=a^{\Imc_i}$ for every $a\in\Ind(\phi)$.
+    \end{itemize}
+    %
+    Thus, we can assume in the following that the models~$\Imc_i$,
+    $1\le i\le k$, actually share the same domain and interpret the concept
+    names in $\RCon(\phi)$ and the individual names occurring in~$\phi$ in the
+    same way.  Note that the interpretation of the names in
+    $\NRC\setminus\RCon(\phi)$ and $\NI\setminus\Ind(\phi)$ is irrelevant and
+    can be fixed arbitrarily, as long as the UNA is satisfied.
+
+    Since for every $i$, $1\le i\le k$, we have that $\Imc_i$ is a model of
+    $(\Psi_{X_i}\land\Psi_\tau,\Rmc)$, we have also that $\Imc_i$ is a model of
+    $\Bmc_{X_i}=(\Psi_{X_i},\Rmc)$.  Thus, the conditions required for the
+    r-satisfiability of~\Wmc w.r.t.~\Rmc by Definition~\ref{def:r-sat} are
+    satisfied.
+
+    For the \enquote{only if} direction, assume that
+    $\Imc_i=(\Delta,\cdot^{\Imc_i})$, $1\le i\le k$, are the interpretations
+    required for r-satisfiability of~\Wmc w.r.t.~\Rmc by
+    Definition~\ref{def:r-sat}.
+    %
+    Since these interpretations share the same domain, interpret the rigid
+    concept names in the same way, it follows that for every
+    $Y\subseteq\RCon(\phi)$, we have that
+    $(C_{\RCon(\phi),Y})^{\Imc_1}=(C_{\RCon(\phi),Y})^{\Imc_i}$ for every~$i$,
+    $2\le i\le k$.
+    %
+    We define $\Dmc:=(\RCon(\phi),\Ymc)$ with
+    \[\Ymc:=\bigl\{Y\subseteq\RCon(\phi)\mid%
+        \text{there is some $d\in\Delta$ with $d\in(C_{\RCon(\phi),Y})^{\Imc_1}$}\bigr\}.\]
+    %
+    Moreover, for every $a\in\Ind(\phi)$, we define
+    $\tau(a):=Y\subseteq\RCon(\phi)$ iff $a\in(C_{\RCon(\phi),Y})^{\Imc_1}$.
+    %
+    Since the interpretations $\Imc_1,\dots,\Imc_k$ interpret the individual
+    names in the same way, and for every $i$, $1\le i\le k$, the
+    interpretation~$\Imc_i$ is a model of~$\Bmc_{X_i}=(\Psi_{X_i},\Rmc)$, we
+    have thus that $\Imc_i$ is also a model of
+    $(\Psi_{X_i}\land\Psi_\tau,\Rmc)$.
+    %
+    Moreover, every~$\Imc_i$, $1\le i\le k$, respects~\Dmc by construction
+    of~\Dmc.
+\end{proof}
+
+\noindent
+Using this lemma, we can prove our complexity result.
+
+\begin{theorem}\label{thm:upper-bound-shoq-ltl-rigid-concepts}
+    The satisfiability problem in \SHOQ-LTL is in \NExpTime if
+    $\NRC\ne\emptyset$ and $\NRR=\emptyset$.
+\end{theorem}
+
+\begin{proof}
+    Let \Rmc be an RBox, let $\phi$ be a \SHOQ-LTL-formula w.r.t.~\Rmc, and let
+    $\psf\colon\Ax(\phi)\to\Pmc_\phi$ be a bijection.  Again, we use
+    Lemma~\ref{lem:r-sat-t-sat} for deciding whether $\phi$ is satisfiable
+    w.r.t.~\Rmc.  We first non-deterministically guess a set
+    $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$, which is of size at most
+    exponential in the size of~$\phi$ and~\Rmc.
+    %
+    Next, we check whether $\phi^\psf$ is t-satisfiable w.r.t.~\Wmf, which can
+    be done in time exponential in the size of~$\phi^\psf$ (and thus in time
+    exponential in the size of~$\phi$) and linear in the size of~\Wmf by
+    Lemma~\ref{lem:t-sat}.
+
+    For the r-consistency check, we use Lemma~\ref{lem:dmc-tau}.  For that, we
+    non-deterministically guess a set $\Ymc\subseteq 2^{\RCon(\phi)}$ and a
+    mapping $\tau\colon\Ind(\phi)\to\Ymc$, which also can be done in time
+    exponential in the size of~$\phi$ and~\Rmc.
+    %
+    We define $\Dmc:=(\RCon(\phi),\Ymc)$.  For every $i$, $1\le i\le k$, we
+    construct the Boolean knowledge base $(\Psi_{X_i}\land\Psi_\tau,\Rmc)$,
+    which is of size polynomial in the size of~$\phi$ and~\Rmc, and can be
+    constructed in time exponential in the size of~$\phi$ and~\Rmc (due to the
+    mapping~$\tau$).  Thus, it is only left to show that we can check whether
+    the Boolean knowledge base $(\Psi_{X_i}\land\Psi_\tau,\Rmc)$ has a model
+    that respects~\Dmc in time exponential in the size of the Boolean knowledge
+    base, and thus exponential in the size of~$\phi$ and~\Rmc.  This follows
+    immediately from Theorem~\ref{thm:cons-bmc-dmc}, which we show in
+    Section~\ref{sec:consistency-boolean-shoqcap-kb}.
+
+    Thus, overall, we can decide whether $\phi$ is satisfiable w.r.t.~\Rmc in
+    \NExpTime.
+\end{proof}
+
+\noindent
+Together with Theorem~\ref{thm:lower-bounds-shoq-ltl}, we obtain now that the
+satisfiability problem in \SHOQ-LTL is \NExpTime-complete if only concept names
+are allowed to be rigid.
+
+
+\subsection{Consistency of Boolean \texorpdfstring{\SHOQcap}{SHOQ\^{}cap}-knowledge bases}\label{sec:consistency-boolean-shoqcap-kb}
+
+In this section, we prove the result that is needed to finish the proof of
+Theorem~\ref{thm:upper-bound-shoq-ltl-rigid-concepts}, namely, that the
+consistency of a Boolean \SHOQ-knowledge base w.r.t.\ a pair~\Dmc can be checked
+in time exponential in the size of this Boolean knowledge base, where we call a
+Boolean KB \emph{consistent w.r.t.\ a pair~\Dmc} if it has a model that
+respects~\Dmc.  Moreover, we derive the corollary that checking the consistency
+of a Boolean \SHOQ-knowledge base (without~\Dmc) can also be done in time
+exponential in the size of this Boolean knowledge base.  This result then
+finishes the proofs of Theorems~\ref{thm:upper-bound-shoq-ltl-no-rigid}
+and~\ref{thm:upper-bound-shoq-ltl-rigid-roles}.
+
+In Chapter~\ref{ch:tcqs}, we deal with Boolean \SHQcap-knowledge bases.  The
+description logic \SHQcap extends \SHQ with \emph{role conjunctions} of the form
+$r_1\sqcap\dots\sqcap r_\ell$, $\ell\ge 1$, where $r_1,\dots,r_\ell$ are
+\emph{simple} role names.  Such role conjunctions are allowed to occur in
+existential restrictions instead of a single role, but not in at-least
+restrictions or role assertions.  An interpretation~\Imc is extended to role
+conjunction as follows:
+$(r_1\sqcap\dots\sqcap r_\ell)^\Imc:=r_1^\Imc\cap\dots\cap r_\ell^\Imc$.
+Therefore, in this section, we consider Boolean \SHOQcap-knowledge bases rather
+than Boolean \SHOQ-knowledge bases.
+
+In the following, let $\Bmc=(\Psi,\Rmc)$ be a Boolean \SHOQcap-knowledge base,
+and let $\Dmc=(\Umc,\Ymc)$ be a pair such that \Umc is a set of concept names
+occurring in~\Bmc and $\Ymc\subseteq 2^\Umc$.
+%
+We assume here that all GCIs occurring in~$\Psi$ are of the form
+$\top\sqsubseteq C$; this is without loss of generality since any GCI
+$C\sqsubseteq D$ is equivalent to $\top\sqsubseteq\lnot(C\sqcap\lnot D)$.
+
+We show that consistency of~\Bmc w.r.t.~\Dmc can be decided in time exponential
+in the size of~\Bmc.  This complexity result is tight since
+already for \enquote{classical} \SHQcap-knowledge bases (without nominals), the
+consistency problem (without~\Dmc) is
+\ExpTime-complete~\cite{Tob-PhD01,Lut-IJCAR08}.
+%
+The complexity of this problem even remains in \ExpTime when simple role
+conjunctions are allowed to occur in at-least restrictions and non-simple roles
+are allowed in role conjunctions in existential restrictions~\cite{GlKa-LPAR08}.
+%
+However, if we move to \SHOQcap, i.e.~we consider \enquote{classical}
+\SHOQcap-knowledge bases where simple role conjunctions are allowed to occur in
+at-least restrictions and non-simple roles are allowed in role conjunctions in
+existential restrictions, the best known upper bound of the consistency problem
+(without~\Dmc) is \TwoExpTime~\cite{GlHS-KR08,Gli-PhD07}.
+
+The proof of our result is an adaptation of the proof of Lemma~6.4
+in~\cite{BaGL-ToCL12}, which is again an adaptation of the proof of Theorem~2.27
+in~\cite{GKW+-03}, which shows that consistency of Boolean \ALC-knowledge bases
+can be decided in exponential time.
+%
+An earlier version of this proof for \ALCcap can be found
+in~\cite{BaBL-LTCS-13-01,BaBL-CADE13}.
+%
+There, for role conjunctions, additional concept names are introduced that
+function as so-called \emph{pebbles} that mark elements that have specific role
+predecessors, an idea borrowed from~\cite{Dan-SCT84,DeMa-IC00,Mas-IJCAI01}.
+%
+%TODO
+%Moreover, in~\cite{tcq-journal}, the result was shown for Boolean
+%\SHQcap-knowledge bases.  However, this proof uses the forest-model property of
+%\SHQcap (see Definition~\ref{def:forest-model} for a definition of forest
+%models), which does not hold for \SHOQcap.  Moreover, the proof gets simpler if
+%nominals are allowed.
+%
+%Similar to the proof in~\cite{tcq-journal}, 
+Here, we employ systems of equations over
+non-negative integers to deal with role conjunctions, transitivity axioms,
+role-inclusion axioms, and at-least restrictions simultaneously.
+
+For the subsequent construction, we extend the notion of a \emph{quasimodel}
+from~\cite{BaGL-ToCL12}, which is an abstract description of a model.
+Quasimodels characterise domain elements by the concepts they satisfy.
+%
+We start by introducing several auxiliary notions that we need in the
+construction.
+
+We define $\Con(\Psi)$ to be the set of all concepts occurring in~$\Psi$,
+$\Ind(\Psi)$ to be the set of all individual names occurring in~$\Psi$, and
+$\Rol(\Bmc)$ to the set of all role names occurring in~\Bmc.  Then, $\CCl(\Bmc)$
+is defined to be the closure under negation of the set
+\begin{align*}
+    \Con(\Psi)
+    &\cup\bigl\{\exists r.C\mid\exists s.C\in\Con(\Psi),\Rmc\models r\sqsubseteq s,\ \text{and}\ \Rmc\models\trans(r)\bigr\}\\
+    &\cup\bigl\{\{a\}\mid a\in\Ind(\Psi)\bigr\}\\
+    &\cup\bigl\{\exists r.\{a\}\mid r\in\Rol(\Bmc)\ \text{and}\ a\in\Ind(\Psi)\bigr\}.
+\end{align*}
+%
+The reason why we consider these additional sets is that they are needed to
+properly deal with transitive roles and nominals (see
+Definition~\ref{def:concept-type}).
+%
+Similarly, we define $\FCl(\Psi)$ to be the closure under negation of the set of
+all subformulas of~$\Psi$.
+
+In the following, we identify $\lnot\lnot\psi$ with $\psi$ for every
+concept~$\psi$.  Similarly, we identify $\lnot\lnot\Psi$ with $\Psi$ for every
+Boolean axiom formula~$\Psi$.  Thus, all sets introduced above are of size
+polynomial in the size of~\Bmc, and can also be constructed in time polynomial
+in the size of~\Bmc.
+
+\begin{definition}[Concept type]\label{def:concept-type}
+    A \emph{concept type} for~\Bmc is a set $\cbb\subseteq\CCl(\Bmc)$ such that:
+    \begin{itemize}
+        \item for every $C\sqcap D\in\CCl(\Bmc)$, we have $C\sqcap D\in\cbb$ iff
+            $\{C,D\}\subseteq\cbb$;
+        \item for every $\lnot C\in\CCl(\Bmc)$, we have $\lnot C\in\cbb$ iff
+            $C\notin\cbb$;
+        \item for every $\{a\}\in\CCl(\Bmc)$, we have $\{a\}\in\cbb$
+            implies $\{b\}\notin\cbb$ for every $\{b\}\in\CCl(\Bmc)$ with
+            $\{b\}\ne\{a\}$; and
+        \item for every $\exists r.\{a\}\in\CCl(\Bmc)$, we have that if $\exists
+            r.\{a\}\in\cbb$ and $\Rmc\models r\sqsubseteq s$, then $\exists
+            s.\{a\}\in\cbb$.
+    \end{itemize}
+    %
+    Given two concept types $\cbb,\dbb$ for~\Bmc and a role name
+    $r\in\Rol(\Bmc)$, we say that \cbb and \dbb are \emph{$r$-compatible
+    w.r.t.~\Rmc} (written $\rcomp{\cbb}{\dbb}{r}{\Rmc}$)
+    if the following conditions
+    are satisfied:
+    \begin{itemize}
+        \item for every $\lnot(\exists r.D)\in\cbb$, we have $\lnot D\in\dbb$;
+            and
+        \item for every $s\in\Rol(\Bmc)$ with $\Rmc\models r\sqsubseteq s$,
+            $\Rmc\models\trans(r)$, and $\lnot(\exists s.D)\in\cbb$, we have
+            $\lnot(\exists r.D)\in\dbb$.
+    \end{itemize}
+\end{definition}
+
+\noindent
+Obviously, the number of concept types for~\Bmc is exponential in the size
+of~\Bmc.
+%
+Intuitively, the $r$-compatibility of two concept types $\cbb,\dbb$ w.r.t.~\Rmc
+indicates that it is possible to connect them with an $r$-edge without violating
+the value restrictions in~\cbb.  These conditions are very similar to the
+tableau rules $(\forall)$ and $(\forall_+)$ that deal with value restrictions in
+the presence of role-inclusion axioms and transitivity axioms (see
+e.g.~\cite{HoST-IGPL00}).
+
+\begin{definition}[Role type]\label{def:role-type}
+    A \emph{role type} for~\Bmc is a set $\rbb\subseteq\Rol(\Bmc)$ such that:
+    \begin{itemize}
+        \item if $\Rmc\models s\sqsubseteq r$, then $s\in\rbb$ implies
+            $r\in\rbb$.
+    \end{itemize}
+    We denote the set of all role types for~\Bmc by $\Rmf(\Bmc)$.
+
+    Given two concept types $\cbb,\dbb$ for~\Bmc and a role type
+    $\rbb\in\Rmf(\Bmc)$, we say that \cbb and \dbb are \emph{\rbb-compatible
+    w.r.t.~\Rmc} (written $\rcomp{\cbb}{\dbb}{\rbb}{\Rmc}$) iff
+    $\rcomp{\cbb}{\dbb}{r}{\Rmc}$ for every $r\in\rbb$.
+\end{definition}
+
+\noindent
+Again, the number of role types for~\Bmc is exponential in the size of~\Bmc.
+%
+Finally, a quasimodel also has to determine which of the axioms in~$\Psi$ it
+satisfies.
+
+\begin{definition}[Formula type]\label{def:formula-type}
+    A \emph{formula type} for~\Bmc is a set $\fbb\subseteq\FCl(\Psi)$ such that:
+    \begin{itemize}
+        \item $\Psi\in\fbb$;
+        \item for every $\lnot\psi\in\FCl(\Psi)$, we have $\lnot\psi\in\fbb$ iff
+            $\psi\notin\fbb$; and
+        \item for every $\Psi_1\land\Psi_2\in\FCl(\Psi)$, we have
+            $\Psi_1\land\Psi_2\in\fbb$ iff $\{\Psi_1,\Psi_2\}\subseteq\fbb$.
+    \end{itemize}
+\end{definition}
+
+\noindent
+The number of formula types for~\Bmc is exponential in the size of~\Bmc.
+%
+Using these definitions, we can now define the notion of a model candidate, and
+later refine this notion to characterise quasimodels.
+
+\begin{definition}[Model candidate]\label{def:model-candidate}
+    A \emph{model candidate} for~\Bmc is a triple $\Mmc=(\Wmc,\iota,\fbb)$ such
+    that:
+    \begin{itemize}
+        \item \Wmc is a set of concept types for~\Bmc such that for any
+            $\cbb,\dbb\in\Wmc$ with $\cbb\ne\dbb$, we have
+            $\cbb\cap\dbb\cap\bigl\{\{a\}\mid a\in\Ind(\Psi)\bigr\}=\emptyset$;
+        \item $\iota\colon\Ind(\Psi)\to\Wmc$ is a function such that
+            $\{a\}\in\iota(a)$ for every $a\in\Ind(\Psi)$; and
+        \item \fbb is a formula type for~\Bmc.
+    \end{itemize}
+\end{definition}
+
+\noindent
+Intuitively, the set~\Wmc determines the behaviour of the domain elements, while
+the function~$\iota$ fixes the interpretation of the named domain elements, and
+the formula type~\fbb ensures that~\Bmc is satisfied.
+%
+In the following, we denote by~\Wmcu the set $\Wmc\setminus\iota(\Ind(\Psi))$,
+i.e.~the set of all those concept types for~\Bmc that do not contain a nominal
+concept $\{a\}$ with $a\in\Ind(\Psi)$.  Those types represent the unnamed domain
+elements of the model candidate.
+%
+To define quasimodels, we add to the definition of a model candidate several
+conditions that ensure that it can indeed be transformed into a model of~\Bmc.
+
+To satisfy the (negated) at-least restrictions in the concept types of a model
+candidate $\Mmc=(\Wmc,\iota,\fbb)$, we introduce for each $\cbb\in\Wmc$, a
+system of equations $E_{\Mmc,\cbb}$ with variables ranging over the non-negative
+integers.
+%
+In $E_{\Mmc,\cbb}$, we use variables of the form $x_{\cbb,\rbb,\dbb}$, which
+determine for a domain element of type~\cbb, the number of \emph{unnamed} role
+successors of type~\rbb (called \rbb-successors) of concept type~\dbb, where we
+require that $\rcomp{\cbb}{\dbb}{\rbb}{\Rmc}$ and $\dbb\in\Wmcu$, i.e.~\cbb
+and~\dbb are \rbb-compatible w.r.t.~\Rmc and \dbb does not represent a named
+individual.
+
+Given $\cbb\in\Wmc$, $C\in\CCl(\Bmc)$, and $\rbb\in\Rmf(\Bmc)$, we can now count
+the number of \emph{unnamed} $\rbb$-successors of~\cbb that satisfy~$C$ using
+the following expression:
+\[\Xi_{\Mmc,\cbb,\rbb,C}:=
+    \sum_{C\in\dbb\in\Wmcu,\ \rcomp{\cbb}{\dbb}{\rbb}{\Rmc}}
+    x_{\cbb,\rbb,\dbb}.\]
+%
+To count the \emph{named} $\rbb$-successors of~\cbb that satisfy~$C$, we define
+the following constant:
+\[\Gamma_{\Mmc,\cbb,\rbb,C}:=
+    \bigl\lvert\bigl\{b\in\Ind(\Psi)\mid\text{$C\in\iota(b)$, and $\exists
+        r.\{b\}\in\cbb$ iff $r\in\rbb$}\bigr\}\bigr\rvert.\]
+%
+To ensure that the at-least restrictions in~\cbb are satisfied, we add the
+following equation to $E_{\Mmc,\cbb}$ for each $\atLeast{n}{r}{C}\in\cbb$:
+\begin{equation}\label{eq:atleast}\tag{E1}
+    -y_{\cbb,\atLeast{n}{r}{C}}+
+    \sum_{r\in\rbb\in\Rmf(\Bmc)}(\Xi_{\Mmc,\cbb,\rbb,C}+\Gamma_{\Mmc,\cbb,\rbb,C})=n,
+\end{equation}
+where $y_{\cbb,\atLeast{n}{r}{C}}$ is a slack variable that is used to obtain an
+equation instead of an inequation.
+%
+Similarly, for each $\lnot(\atLeast{n}{r}{C})\in\cbb$, we add
+\begin{equation}\label{eq:atmost}\tag{E2}
+    y_{\cbb,\lnot(\atLeast{n}{r}{C})}+
+    \sum_{r\in\rbb\in\Rmf(\Bmc)}(\Xi_{\Mmc,\cbb,\rbb,C}+\Gamma_{\Mmc,\cbb,\rbb,C})=n-1.
+\end{equation}
+%
+For each existential restriction $D=\exists(r_1\sqcap\dots\sqcap r_\ell).C\in\cbb$,
+we add the following equation to $E_{\Mmc,\cbb}$:
+\begin{equation}\label{eq:exists}\tag{E3}
+    -y_{\cbb,D}+
+    \sum_{\{r_1,\dots,r_\ell\}\subseteq\rbb\in\Rmf(\Bmc)}(\Xi_{\Mmc,\cbb,\rbb,C}+\Gamma_{\Mmc,\cbb,\rbb,C})=1.
+\end{equation}
+%
+Finally, for each $\lnot(\exists(r_1\sqcap\dots\sqcap r_\ell).C)\in\cbb$, we
+add the equation
+\begin{equation}\label{eq:forall}\tag{E4}
+    \sum_{\{r_1,\dots,r_\ell\}\subseteq\rbb\in\Rmf(\Bmc)}(\Xi_{\Mmc,\cbb,\rbb,C}+\Gamma_{\Mmc,\cbb,\rbb,C})=0,
+\end{equation}
+where no slack variable is needed since the sum cannot be smaller than $0$.
+
+This finishes the description of the system of equations $E_{\Mmc,\cbb}$.  Note
+that this system contains \emph{exponentially} many variables in the size
+of~\Bmc, but only \emph{polynomially} many equations, and thus it can be solved
+in exponential time, even if the numbers are given in binary
+encoding~\cite{Pap-JACM81} (for details, see the proof of
+Theorem~\ref{thm:cons-bmc-dmc}).
+
+Now we are ready to introduce the notion of a quasimodel.
+
+\begin{definition}[Quasimodel]\label{def:quasimodel}
+    The model candidate $\Mmc=(\Wmc,\iota,\fbb)$ for~\Bmc is a \emph{quasimodel}
+    for~\Bmc if it satisfies the following properties:
+    \begin{enumerate}[label=(\alph*)]
+        \item\label{enum:qm-nonempty}
+            \Wmc is not empty;
+        \item\label{enum:qm-concept}
+            for every $A(a)\in\FCl(\Psi)$, we have $A(a)\in\fbb$ iff
+            $A\in\iota(a)$;
+        \item\label{enum:qm-role}
+            for every $r(a,b)\in\FCl(\Psi)$, we have $r(a,b)\in\fbb$ iff
+            $\exists r.\{b\}\in\iota(a)$;
+        \item\label{enum:qm-gci}
+            for every $\top\sqsubseteq C\in\fbb$ and every $\cbb\in\Wmc$, we
+            have $C\in\cbb$;
+        \item\label{enum:qm-gci-neg}
+            for every $\lnot(\top\sqsubseteq C)\in\fbb$, there is a
+            $\cbb\in\Wmc$ such that $C\notin\cbb$;
+        \item\label{enum:qm-rcomp}
+            for every $\cbb\in\Wmc$, if $\exists r.\{a\}\in\cbb$, then
+            $\rcomp{\cbb}{\iota(a)}{r}{\Rmc}$; and
+        \item\label{enum:qm-equations}
+            for every $\cbb\in\Wmc$, the system of equations $E_{\Mmc,\cbb}$ has
+            a solution over the non-negative integers.
+    \end{enumerate}
+    %
+    The quasimodel $\Mmc=(\Wmc,\iota,\fbb)$ for~\Bmc
+    \emph{respects~$\Dmc=(\Umc,\Ymc)$} if it additionally satisfies:
+    \begin{enumerate}[label=(\alph*),resume]
+        \item\label{enum:qm-dmc1}
+            for every $\cbb\in\Wmc$, there is a set $Y\in\Ymc$ such that
+            $Y=\cbb\cap\Umc$; and
+        \item\label{enum:qm-dmc2}
+            for every $Y\in\Ymc$, there is a concept type $\cbb\in\Wmc$ such
+            that $Y=\cbb\cap\Umc$.
+    \end{enumerate}
+\end{definition}
+
+\noindent
+We can show to in order to check consistency of~\Bmc w.r.t.~\Dmc it suffices to
+search for a quasimodel for~\Bmc that respects~\Dmc.
+
+\begin{lemma}\label{lem:quasimodels}
+    Let \Bmc be a Boolean \SHOQcap-knowledge base, and let
+    $\Dmc=(\Umc,\Ymc)$ be a pair such that \Umc is a set of concept
+    names occurring in~\Bmc and $\Ymc\subseteq 2^\Umc$.  Then, \Bmc is
+    consistent w.r.t.~\Dmc iff there is a quasimodel for~\Bmc that
+    respects~\Dmc.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{if} direction, suppose that $\Mmc=(\Wmc,\iota,\fbb)$ is a
+    quasimodel for $\Bmc=(\Psi,\Rmc)$ that respects~\Dmc.
+    %
+    Then by Condition~\ref{enum:qm-equations}, for each $\cbb\in\Wmc$, the
+    system of equations $E_{\Mmc,\cbb}$ has a solution $\nu_{\cbb}$ that maps
+    the variables in $E_{\Mmc,\cbb}$ to non-negative integers.  Let $z_\Mmc$ be
+    the greatest non-negative integer that occurs in any of these solutions, and
+    let \Zmf denote the set $\{1,\dots,z_\Mmc\}$.
+
+    We define the interpretation $\Jmc=(\Delta^\Jmc,\cdot^\Jmc)$ as follows:
+    \begin{itemize}
+        \item $\Delta^\Jmc:=\Anon\cup\Ind(\Psi)$, where
+            $\Anon:=\Wmcu\times\Zmf\times\Rmf(\Bmc)$;
+        \item $a^\Jmc:=a$ for every $a\in\Ind(\Psi)$;\footnote{%
+                For now, we ignore the individual names in
+                $\NI\setminus\Ind(\Psi)$ since they are irrelevant for the
+                consistency of~\Bmc.  After constructing the model~\Imc below,
+                one can ensure that it respects the UNA by constructing the
+                countably infinite disjoint union of~\Imc with itself to allow
+                for different interpretations of each of these individual names.}
+        \item $A^\Jmc:=\{(\cbb,i,\rbb)\in\Anon\mid A\in\cbb\}\cup\{a\in\Ind(\Psi)\mid A\in\iota(a)\}$
+            for every $A\in\NC$; and
+        \item for every $r\in\NR$, $(\cbb,i,\rbb),(\dbb,j,\sbb)\in\Anon$, and
+            $a,b\in\Ind(\Psi)$, we define:
+            \[\begin{array}{lcl}
+                (a,b)\in r^\Jmc
+                    &\text{iff}
+                    &\text{$\exists r.\{b\}\in\iota(a)$;}\\
+                \bigl((\cbb,i,\rbb),b\bigr)\in r^\Jmc
+                    &\text{iff}
+                    &\text{$\exists r.\{b\}\in\cbb$;}\\
+                (a,(\dbb,j,\sbb))\in r^\Jmc
+                    &\text{iff}
+                    &\text{$r\in\sbb$, $\rcomp{\iota(a)}{\dbb}{\sbb}{\Rmc}$, and
+                        $\nu_{\iota(a)}(x_{\iota(a),\sbb,\dbb})\ge j$;}\\
+                \bigl((\cbb,i,\rbb),(\dbb,j,\sbb)\bigr)\in r^\Jmc
+                    &\text{iff}
+                    &\text{$r\in\sbb$, $\rcomp{\cbb}{\dbb}{\sbb}{\Rmc}$, and
+                        $\nu_{\cbb}(x_{\cbb,\sbb,\dbb})\ge j$.}
+            \end{array}\]
+    \end{itemize}
+    %
+    Note that $\Delta^\Jmc\ne\emptyset$ since even if $\Ind(\Psi)=\emptyset$, we
+    have that $\Wmcu\ne\emptyset$ by Condition~\ref{enum:qm-nonempty}.
+
+    Now we construct a model $\Imc=(\Delta^\Imc,\cdot^\Imc)$ of~\Bmc by defining
+    $\Delta^\Imc:=\Delta^\Jmc$, for each $A\in\NC$, $A^\Imc:=A^\Jmc$, for each
+    $a\in\Ind(\Psi)$, $a^\Imc:=a^\Jmc$, and for each $r\in\NR$,
+    \[r^\Imc:=r^\Jmc\cup\bigcup_{\Rmc\models s\sqsubseteq r,\ \Rmc\models\trans(s)}(s^\Jmc)^+,\]
+    where $\cdot^+$ denotes the transitive closure.
+
+    We denote by $\kappa\colon\Delta^\Imc\to\Wmc$ the following function:
+    \[\kappa(d):=\begin{cases}
+            \cbb        &\text{if $d=(\cbb,i,\rbb)\in\Anon$, and}\\
+            \iota(b)    &\text{if $d=b\in\Ind(\Psi)$.}
+        \end{cases}\]
+    %
+    The following claim can be proved by a careful case distinction.
+
+    \begin{claim}\label{claim:qm-kappa}
+        Let $d\in\Delta^\Imc$.  If $\lnot(\exists r.D)\in\kappa(d)$, and there
+        is an $s\in\Rol(\Bmc)$ and an $e\in\Delta^\Imc$ with $\Rmc\models
+        s\sqsubseteq r$ and $(d,e)\in s^\Jmc$, then we have:
+        \begin{itemize}
+            \item $\lnot D\in\kappa(e)$, and
+            \item if $\Rmc\models\trans(s)$, then $\lnot(\exists
+                s.D)\in\kappa(e)$.
+        \end{itemize}
+    \end{claim}
+
+    \noindent
+    Assume first that $e=b\in\Ind(\Psi)$.  Then the definition of~\Jmc yields
+    that $\exists s.\{b\}\in\kappa(d)$.  Since $\kappa(d)$ is a concept type, we
+    by Definition~\ref{def:concept-type} that $\exists r.\{b\}\in\kappa(d)$.  By
+    Condition~\ref{enum:qm-rcomp}, this implies
+    $\rcomp{\kappa(d)}{\iota(b)}{r}{\Rmc}$, and thus
+    $\rcomp{\kappa(d)}{\kappa(e)}{r}{\Rmc}$.  By
+    Definition~\ref{def:concept-type}, we obtain $\lnot D\in\kappa(e)$.
+    Moreover, by Condition~\ref{enum:qm-rcomp}, we have
+    $\rcomp{\kappa(d)}{\iota(b)}{s}{\Rmc}$, and thus
+    $\rcomp{\kappa(d)}{\kappa(e)}{s}{\Rmc}$.  Hence, if $\Rmc\models\trans(s)$,
+    we have by Definition~\ref{def:concept-type} also that $\lnot(\exists
+    s.D)\in\kappa(e)$.
+
+    Assume now that $e=(\dbb,j,\sbb)\in\Anon$.  The definition of~\Jmc yields
+    that $s\in\sbb$, $\rcomp{\kappa(d)}{\dbb}{\sbb}{\Rmc}$, and
+    $\nu_{\kappa(d)}(x_{\kappa(d),\sbb,\dbb})\ge j$.  Since \sbb is a role type,
+    and $\Rmc\models s\sqsubseteq r$, we have $r\in\sbb$.  Thus, we have by
+    Definition~\ref{def:role-type} that $\rcomp{\kappa(d)}{\dbb}{r}{\Rmc}$.  By
+    Definition~\ref{def:concept-type}, we obtain $\lnot D\in\dbb$, and thus
+    $\lnot D\in\kappa(e)$.  Moreover, since $s\in\sbb$, we have by
+    Definition~\ref{def:role-type} that $\rcomp{\kappa(d)}{\dbb}{s}{\Rmc}$.
+    Hence, if $\Rmc\models\trans(s)$, we have by
+    Definition~\ref{def:concept-type} also that $\lnot(\exists s.D)\in\dbb$, and
+    thus $\lnot(\exists s.D)\in\kappa(e)$.
+    %
+    This finishes the proof of Claim~\ref{claim:qm-kappa}.
+
+    Using Claim~\ref{claim:qm-kappa}, we now prove the following claim by
+    structural induction.
+    \begin{claim}\label{claim:qm-concepts}
+        For every concept $C\in\CCl(\Bmc)$, we have
+        $C^\Imc=\{d\in\Delta^\Imc\mid C\in\kappa(d)\}$.
+    \end{claim}
+
+    \noindent
+    For the base case, $C$ being a concept name, the definition of~\Imc nd the
+    definition of~$\kappa$ immediately imply the claim.
+
+    For the case that $C$ is of the form $\lnot D$, we have by the semantics of
+    \SHOQcap, the induction hypothesis, the definition of~\Imc, the definition
+    of~$\kappa$, and the definition of concept types the following for every
+    $d\in\Delta^\Imc$:
+    \[d\in(\lnot D)^\Imc\text{ \emph{iff} } d\notin D^\Imc\text{ \emph{iff} }
+        D\notin\kappa(d)\text{ \emph{iff} }\lnot D\in\kappa(d).\]
+
+    \noindent
+    For the case that $C$ is of the form $D\sqcap E$, we have by similar
+    arguments the following for every $d\in\Delta^\Imc$:
+    \[d\in(D\sqcap E)^\Imc\text{ \emph{iff} }d\in D^\Imc\text{ and }d\in E^\Imc
+        \text{ \emph{iff} }D\in\kappa(d)\text{ and }E\in\kappa(d)\text{ \emph{iff} }
+        D\sqcap E\in\kappa(d).\]
+
+    \noindent
+    For the case that $C$ is of the form $\exists(r_1\sqcap\dots\sqcap
+    r_\ell).D$, we have by similar arguments the following:
+    \begin{multline*}
+        (\exists(r_1\sqcap\dots\sqcap r_\ell).D)^\Imc\\
+        \begin{aligned}
+            &=\{d\in\Delta^\Imc\mid\text{there is an $e\in\Delta^\Imc$ with
+                $(d,e)\in r_1^\Imc\cap\dots\cap r_\ell^\Imc$ and $e\in D^\Imc$}\}\\
+            &=\{d\in\Delta^\Imc\mid\text{there is an $e\in\Delta^\Imc$ with
+                $(d,e)\in r_1^\Imc\cap\dots\cap r_\ell^\Imc$ and $D\in\kappa(e)$}\}\\
+            &\overset{\ast}{=}\{d\in\Delta^\Imc\mid\exists(r_1\sqcap\dots\sqcap r_\ell).D\in\kappa(d)\}
+        \end{aligned}
+    \end{multline*}
+    %
+    The starred equality $\overset{\ast}{=}$ holds due to the following
+    arguments.
+    %
+    Assume, for the direction~($\supseteq$), that $d\in\Delta^\Imc$ and
+    $\exists(r_1\sqcap\dots\sqcap r_\ell).D\in\kappa(d)$.  Since
+    $\nu_{\kappa(d)}$ solves~\eqref{eq:exists}, there is
+    an $\rbb\in\Rmc(\Bmc)$ such that
+    $\{r_1,\dots,r_\ell\}\subseteq\rbb$ and
+    \begin{itemize}
+        \item either there is a $\dbb\in\Wmcu$ with $D\in\dbb$,
+            $\rcomp{\kappa(d)}{\dbb}{\rbb}{\Rmc}$, and
+            $\nu_{\kappa(d)}(x_{\kappa(d),\rbb,\dbb})\ge 1$; or
+        \item there is a $b\in\Ind(\Psi)$ such that $D\in\iota(b)$ and
+            $\bigl\{\exists r_1.\{b\},\dots,\exists
+            r_\ell.\{b\}\bigr\}\subseteq\kappa(d)$.
+    \end{itemize}
+    The definition of $r_1^\Jmc,\dots,r_\ell^\Jmc$ yields in the first case that
+    \[(d,(\dbb,1,\rbb))\in r_1^\Jmc\cap\dots\cap
+        r_\ell^\Jmc\subseteq r_1^\Imc\cap\dots\cap r_\ell^\Imc,\]
+    and in the second case that
+    \[(d,b)\in r_1^\Jmc\cap\dots\cap
+        r_\ell^\Jmc\subseteq r_1^\Imc\cap\dots\cap r_\ell^\Imc.\]
+    %
+    Since we have also $D\in\kappa\bigl((\dbb,1,\rbb)\bigr)$ and
+    $D\in\kappa(b)$, this finishes this direction.
+
+    For the other direction~($\subseteq$), take any $d\in\Delta^\Imc$ such that
+    there is an $e\in\Delta^\Imc$ with the property that
+    $(d,e)\in r_1^\Imc\cap\dots\cap r_\ell^\Imc$ and $D\in\kappa(e)$.  We show
+    that $C=\exists(r_1\sqcap\dots\sqcap r_\ell).D\in\kappa(d)$.  Assume to the
+    contrary that $C\notin\kappa(d)$, and thus $\lnot C\in\kappa(d)$.
+    \begin{itemize}
+        \item For the case $\ell>1$, we have that $r_1,\dots,r_\ell$ are
+            \emph{simple} role names, and thus that $(d,e)\in
+            r_1^\Jmc\cap\dots\cap r_\ell^\Jmc$.  For the case that
+            $e=b\in\Ind(\Psi)$, we have by the definition of~\Jmc that
+            $\bigl\{\exists r_1.\{b\},\dots,\exists
+            r_\ell.\{b\}\bigr\}\in\kappa(d)$.  Take the set
+            $\rbb:=\bigl\{r\in\Rol(\Bmc)\mid\exists r.\{b\}\in\kappa(d)\bigr\}$.
+            Since $\kappa(d)$ is a concept type, we have by
+            Definition~\ref{def:concept-type} that \rbb is a role type that
+            contains $r_1,\dots,r_\ell$.  Since $D\in\kappa(e)=\iota(b)$, we
+            have that $\Gamma_{\Mmc,\kappa(d),\rbb,D}\ge 1$, which contradicts
+            the assumption that~\eqref{eq:forall} has a solution.
+            %
+            For the case that $e=(\dbb,j,\sbb)\in\Anon$, we have by the
+            definition of~\Jmc that $\{r_1,\dots,r_\ell\}\subseteq\sbb$,
+            $\rcomp{\kappa(d)}{\dbb}{\sbb}{\Rmc}$, and
+            $\nu_{\kappa(d)}(x_{\kappa(d),\sbb,\dbb})\ge j\ge 1$.  Since
+            $\nu_{\kappa(d)}$ is a solution of~\eqref{eq:forall}, we must have
+            $\nu_{\kappa(d)}(x_{\kappa(d),\sbb,\dbb})=0$, which is again a
+            contradiction.
+        \item For the case $\ell=1$, we have by the definition of $r_1^\Imc$
+            that $(d,e)\in r_1^\Jmc$ or $(d,e)\in (s^\Jmc)^+$ for some $s\in\NR$
+            with $\Rmc\models s\sqsubseteq r_1$ and $\Rmc\models\trans(s)$.  The
+            first case can be handled as in the case of $\ell>1$.  In the second
+            case, there is a sequence $d_0,\dots,d_n$ in $\Delta^\Imc$ such
+            that $n\ge 1$, $d_0=d$, $d_n=e$, and for every $k$, $0\le k\le n-1$,
+            we have that $(d_k,d_{k+1})\in s^\Jmc$.
+            \begin{itemize}
+                \item If $n=1$, then we have $(d,e)\in s^\Jmc$.  Thus, we have
+                    by Claim~\ref{claim:qm-kappa} that $\lnot D\in\kappa(e)$,
+                    which is a contradiction.
+                \item If $n>1$, we have by Claim~\ref{claim:qm-kappa} that
+                    $\lnot(\exists s.D)\in\kappa(d_1)$.  Since $\Rmc\models
+                    s\sqsubseteq s$, using Claim~\ref{claim:qm-kappa} again, we
+                    obtain that $\lnot(\exists s.D)\in\kappa(d_{n-1})$.  By
+                    Claim~\ref{claim:qm-kappa}, we have $\lnot
+                    D\in\kappa(d_n)=\kappa(e)$, which is again a contradiction.
+            \end{itemize}
+    \end{itemize}
+
+    \noindent
+    Finally, consider the case that $C$ is of the form $\atLeast{n}{r}{D}$.
+    Recall that $r$ must be \emph{simple}, and thus $r^\Imc=r^\Jmc$.
+    %
+    We first count, for any element $d\in\Delta^\Imc$, the number $n_1$ of
+    \emph{unnamed} $r^\Jmc$-successors that satisfy $D$.  For a fixed role type
+    $\sbb\in\Rmf(\Bmc)$ and concept type $\dbb\in\Wmcu$ with $r\in\sbb$,
+    $D\in\dbb$, and $\rcomp{\kappa(d)}{\dbb}{\sbb}{\Rmc}$, we have by definition
+    of~\Jmc that $(d,(\dbb,j,\sbb))\in r^\Jmc$ iff
+    $\nu_{\kappa(d)}(x_{\kappa(d),\sbb,\dbb})\ge j$.  Thus, the number of
+    $r^\Jmc$-successors of $d$ that are of the form $(\dbb,j,\sbb)$ is exactly
+    $\nu_{\kappa(d)}(x_{\kappa(d),\sbb,\dbb})$.  By induction, we obtain the
+    following:
+    \begin{align*}
+        n_1
+        &=\lvert\{(\dbb,j,\sbb)\in\Anon\mid(d,(\dbb,j,\sbb))\in r^\Jmc,\ (\dbb,j,\sbb)\in D^\Imc\}\rvert\\[1ex]
+        &=\lvert\{(\dbb,j,\sbb)\in\Anon\mid(d,(\dbb,j,\sbb))\in r^\Jmc,\ D\in\dbb\}\rvert\\[1ex]
+        &=\sum_{\substack{r\in\sbb\in\Rmf(\Bmc)\\[.5ex] D\in\dbb\in\Wmcu,\ \rcomp{\kappa(d)}{\dbb}{\sbb}{\Rmc}}}
+            \lvert\{j\in\Zmf\mid(d,(\dbb,j,\sbb))\in r^\Jmc\}\rvert\\[1ex]
+        &=\sum_{\substack{r\in\sbb\in\Rmf(\Bmc)\\[.5ex] D\in\dbb\in\Wmcu,\ \rcomp{\kappa(d)}{\dbb}{\sbb}{\Rmc}}}
+            \nu_{\kappa(d)}(x_{\kappa(d),\sbb,\dbb})\
+        =\sum_{r\in\sbb\in\Rmf(\Bmc)}\nu_{\kappa(d)}(\Xi_{\Mmc,\kappa(d),\sbb,D}).
+    \end{align*}
+    %
+    Similarly, we count the number $n_2$ of \emph{named} $r^\Jmc$-successors of
+    $d\in\Delta^\Imc$ that satisfy~$D$.  Take again the set
+    $\rbb:=\bigl\{r\in\Rol(\Bmc)\mid\exists r.\{b\}\in\kappa(d)\bigr\}$.  Since
+    $\kappa(d)$ is a concept type, we have by Definition~\ref{def:concept-type}
+    that \rbb is a role type.  By the definition of~\Jmc, this yields for every
+    $b\in\Ind(\Psi)$ that $(d,b)\in r^\Jmc$ iff $\exists r.\{b\}\in\kappa(d)$
+    iff $r\in\rbb$.  Thus, by induction, we obtain the following:
+    \begin{align*}
+        n_2
+        &=\lvert\{b\in\Ind(\Psi)\mid(d,b)\in r^\Jmc,\ b\in D^\Imc\}\rvert\\[1ex]
+        &=\lvert\{b\in\Ind(\Psi)\mid(d,b)\in r^\Jmc,\ D\in\iota(b)\}\rvert\\[1ex]
+        &=\sum_{r\in\sbb\in\Rmf(\Bmc)}
+            \lvert\{b\in\Ind(\Psi)\mid\text{$D\in\iota(b)$, and $(d,b)\in s^\Jmc$ iff $s\in\sbb$}\}\rvert\\[1ex]
+        &=\sum_{r\in\sbb\in\Rmf(\Bmc)}
+            \bigl\lvert\bigl\{b\in\Ind(\Psi)\mid\text{$D\in\iota(b)$, and $\exists
+            s.\{b\}\in\kappa(d)$ iff $s\in\sbb$}\bigr\}\bigr\rvert\\[1ex]
+        &=\sum_{r\in\sbb\in\Rmf(\Bmc)}
+            \Gamma_{\Mmc,\kappa(d),\sbb,D}.
+    \end{align*}
+    %
+    For every $d\in\Delta^\Imc$, we know that $\nu_{\kappa(d)}$ solves the
+    equations in~\eqref{eq:atleast} and~\eqref{eq:atmost}.  Thus, we have
+    $\atLeast{n}{r}{D}\in\kappa(d)$ iff the sum of $n_1$ and $n_2$ is greater or
+    equal to $n$ iff $d\in(\atLeast{n}{r}{D})^\Imc$.
+    %
+    This finishes the proof of Claim~\ref{claim:qm-concepts}.
+
+    To show that \Imc is indeed a model of~\Bmc, we first show the following
+    claim by structural induction.
+
+    \begin{claim}\label{claim:qm-formula-type}
+        For all $\psi\in\FCl(\Psi)$, we have $\psi\in\fbb$ iff
+        $\Imc\models\psi$.
+    \end{claim}
+
+    \noindent
+    For the first base case, assume that $\psi$ is of the form $A(a)$ for
+    $A\in\NC$ and $a\in\NI$.  We have $A(a)\in\fbb$ iff $A\in\iota(a)$ by
+    Condition~\ref{enum:qm-concept}.  Thus, $A(a)\in\fbb$ iff
+    $a^\Imc=a^\Jmc=a\in A^\Jmc=A^\Imc$ iff $\Imc\models A(a)$.
+
+    For the second base case, assume that $\psi$ is of the form $r(a,b)$ for
+    $a,b\in\NI$ and $r\in\NR$.  If $r(a,b)\in\fbb$, we have by
+    Condition~\ref{enum:qm-role} that $\exists r.\{b\}\in\iota(a)$, and thus
+    $(a,b)\in r^\Jmc$ by the definition of~$r^\Jmc$.  Since $r^\Jmc\subseteq
+    r^\Imc$, $a=a^\Imc$, and $b=b^\Imc$, we obtain $(a^\Imc,b^\Imc)\in r^\Imc$,
+    and thus $\Imc\models r(a,b)$.
+
+    Conversely, if $\Imc\models r(a,b)$, we have by the definition of~$r^\Imc$
+    that $(a,b)\in r^\Jmc$ or $(a,b)\in(s^\Jmc)^+$ for some $s\in\NR$ with
+    $\Rmc\models s\sqsubseteq r$ and $\Rmc\models\trans(s)$.  If $(a,b)\in
+    r^\Jmc$, the definition of $r^\Jmc$ implies that $\exists
+    r.\{b\}\in\iota(a)$.  This yields by Condition~\ref{enum:qm-role} that
+    $r(a,b)\in\fbb$.
+    %
+    Otherwise, there is a sequence $d_0,\dots,d_n$ in $\Delta^\Imc$ such that
+    $n\ge 1$, $d_0=a$, $d_n=b$, and for every $k$, $0\le k\le n-1$, we have that
+    $(d_k,d_{k+1})\in s^\Jmc$.  Assume to the contrary that $\exists
+    s.\{b\}\notin\iota(a)$.  Thus, $\lnot(\exists s.\{b\})\in\iota(a)$.
+    \begin{itemize}
+        \item If $n=1$, then we have $(a,b)\in s^\Jmc$.  Thus, we have by
+            Claim~\ref{claim:qm-kappa} that $\lnot\{b\}\in\iota(b)$, which is a
+            contradiction.
+        \item If $n>1$, we have by Claim~\ref{claim:qm-kappa} that
+            $\lnot(\exists s.\{b\})\in\kappa(d_1)$.  Using
+            Claim~\ref{claim:qm-kappa} again, we obtain that $\lnot(\exists
+            s.\{b\})\in\kappa(d_{n-1})$.  By Claim~\ref{claim:qm-kappa}, we have
+            $\lnot\{b\}\in\kappa(d_n)=\iota(b)$, which is again a contradiction.
+    \end{itemize}
+    Hence, $\exists s.\{b\}\in\iota(a)$.  Since $\iota(a)$ is a concept type,
+    Definition~\ref{def:concept-type} yields that $\exists r.\{b\}\in\iota(a)$.
+    Thus, by Condition~\ref{enum:qm-role}, we obtain $r(a,b)\in\fbb$.
+
+    For the third base case, assume that $\psi$ is of the form $\top\sqsubseteq
+    C$.  If $\top\sqsubseteq C\in\fbb$, then for every $\cbb\in\Wmc$, we have
+    $C\in\cbb$ by Condition~\ref{enum:qm-gci}.  Since $\iota$ maps into~\Wmc, we
+    have that $C\in\kappa(d)$ for every $d\in\Delta^\Imc$.  Hence,
+    Claim~\ref{claim:qm-concepts} yields $C^\Imc=\Delta^\Imc$.
+    %
+    For the converse direction, if $\top\sqsubseteq C\notin\fbb$, then by the
+    definition of a formula type, $\lnot(\top\sqsubseteq C)\in\fbb$.  Then, by
+    Condition~\ref{enum:qm-gci-neg}, there is a $\cbb\in\Wmc$ such that
+    $C\notin\cbb$, which implies $\lnot C\in\cbb$, because \cbb is a concept
+    type.  Hence, there is a $d\in\Delta^\Imc$ such that $\lnot C\in\kappa(d)$.
+    Claim~\ref{claim:qm-concepts} yields that $d\in(\lnot C)^\Imc$.  Thus, we
+    have that $C^\Imc\ne\Delta^\Imc$.
+
+    For the induction step, assume first that $\psi$ is of the
+    form~$\lnot\psi_1$.  By induction, we have $\psi\in\fbb$ iff
+    $\psi_1\notin\fbb$ iff $\Imc\not\models\psi_1$ iff $\Imc\models\lnot\psi_1$.
+    %
+    Similarly, if $\psi$ is of the form $\psi_1\land\psi_2$, then $\psi\in\fbb$
+    iff $\{\psi_1,\psi_2\}\subseteq\fbb$ iff $\Imc\models\psi_1$ and
+    $\Imc\models\psi_2$ iff $\Imc\models\psi_1\land\psi_2$.
+    %
+    This finishes the proof of Claim~\ref{claim:qm-formula-type}.
+
+    Since \fbb is a formula type for~$\Psi$, we have $\Psi\in\fbb$, and thus
+    together with Claim~\ref{claim:qm-formula-type} that $\Imc\models\Psi$.  We
+    now show that \Imc is also a model of~\Rmc.
+
+    \begin{claim}\label{claim:qm-rbox}
+        For every $\alpha\in\Rmc$, we have $\Imc\models\alpha$.
+    \end{claim}
+
+    \noindent
+    Assume first that $\alpha$ is of the form $r\sqsubseteq s$.  Since
+    $r\sqsubseteq s\in\Rmc$, we have also $\Rmc\models r\sqsubseteq s$.  We
+    first show that $r^\Jmc\subseteq s^\Jmc$.  For this, take $(d,e)\in r^\Jmc$.
+    There are two cases to consider:
+    \begin{itemize}
+        \item If $e=b\in\Ind(\Psi)$, then the definition of~$r^\Jmc$ yields that
+            $\exists r.\{b\}\in\kappa(d)$.  Since $\Rmc\models r\sqsubseteq s$,
+            we have $\exists s.\{b\}\in\kappa(d)$ since $\kappa(d)$ is a concept
+            type (see Definition~\ref{def:concept-type}).  The definition of
+            $s^\Jmc$ yields that $(d,b)\in s^\Jmc$.
+        \item If $e=(\dbb,j,\sbb)\in\Anon$, then the definition of~$r^\Jmc$
+            yields that $r\in\sbb$, $\rcomp{\kappa(d)}{\dbb}{\sbb}{\Rmc}$, and
+            $\nu_{\kappa(d)}(x_{\kappa(d),\sbb,\dbb})\ge j$.  Then, $\Rmc\models
+            r\sqsubseteq s$ yields $s\in\sbb$ since \sbb is a role type (see
+            Definition~\ref{def:role-type}).  Hence, the definition of $s^\Jmc$
+            yields that $(d,(\dbb,j,\sbb))\in s^\Jmc$.
+    \end{itemize}
+    %
+    To show that $r^\Imc\subseteq s^\Imc$, take $(d,e)\in r^\Imc$.  If $(d,e)\in
+    r^\Jmc$, we have $(d,e)\in s^\Jmc$, and thus $(d,e)\in s^\Imc$.  Otherwise,
+    we have $(d,e)\in(t^\Jmc)^+$ with $\Rmc\models t\sqsubseteq r$ and
+    $\Rmc\models\trans(t)$.  Since $\Rmc\models r\sqsubseteq s$, we also have
+    $\Rmc\models t\sqsubseteq s$.  The definition of $s^\Imc$ yields that
+    $(t^\Jmc)^+\subseteq s^\Imc$, and hence $(d,e)\in s^\Imc$.
+
+    Assume now that $\alpha$ is of the form $\trans(r)$.  Since
+    $\trans(r)\in\Rmc$, we have also that $\Rmc\models\trans(r)$.  Obviously,
+    also $\Rmc\models r\sqsubseteq r$ holds.  By the same arguments as above, we
+    have that for each $t$ with $\Rmc\models t\sqsubseteq r$ that
+    $t^\Jmc\subseteq r^\Jmc$, and thus $(t^\Jmc)^+\subseteq(r^\Jmc)^+$ since the
+    transitive closure is monotonic.  This yields that $r^\Imc=(r^\Jmc)^+$, and
+    thus $\Imc\models\trans(r)$.
+    %
+    This finishes the proof of Claim~\ref{claim:qm-rbox}.
+
+    Thus, we have shown that \Imc is indeed a model of~\Bmc.  It only remains to
+    be shown that \Imc respects~\Dmc.
+
+    By Condition~\ref{enum:qm-dmc1}, we have for every $d\in\Delta^\Imc$ that
+    there is a set $Y\in\Ymc$ such that $Y=\kappa(d)\cap\Umc$.
+    Claim~\ref{claim:qm-concepts} yields that $d\in(C_{\Umc,Y})^\Imc$.
+    %
+    By Condition~\ref{enum:qm-dmc2}, we have for every $Y\in\Ymc$ that there is
+    a $d\in\Delta^\Imc$ such that $Y=\kappa(d)\cap\Umc$.
+    Claim~\ref{claim:qm-concepts} yields again that $d\in(C_{\Umc,Y})^\Imc$.
+    %
+    This shows that \Imc respects~\Dmc, and finishes the proof of the
+    \enquote{if} direction of the lemma.
+
+    For the \enquote{only if} direction, assume that there is a model
+    $\Imc=(\Delta^\Imc,\cdot^\Imc)$ of $\Bmc=(\Psi,\Rmc)$ that
+    respects~\Dmc.
+    %
+    We now construct a quasimodel for~\Bmc.  Let $\tau(d):=\{C\in\CCl(\Bmc)\mid
+    d\in C^\Imc\}$ for $d\in\Delta^\Imc$.  We define $\Mmc=(\Wmc,\iota,\fbb)$ as
+    follows:
+    \begin{itemize}
+        \item $\Wmc:=\{\tau(d)\mid d\in\Delta^\Imc\}$;
+        \item $\iota(a):=\tau(a^\Imc)$ for every $a\in\Ind(\Psi)$; and
+        \item $\fbb:=\{\psi\in\FCl(\Psi)\mid\Imc\models\psi\}$.
+    \end{itemize}
+    %
+    We first show that \Wmc is a set of concept types for~\Bmc.  For this, we
+    take any $d\in\Delta^\Imc$, and show that $\tau(d)$ is a concept type
+    for~\Bmc.  The semantics of~\SHOQcap and the definition of~$\tau$ yield
+    immediately that for every $C\sqcap D\in\CCl(\Bmc)$, we have $C\sqcap
+    D\in\tau(d)$ iff $\{C,D\}\subseteq\tau(d)$.  Similarly, for every $\lnot
+    C\in\CCl(\Bmc)$, we have $\lnot C\in\tau(d)$ iff $C\notin\tau(d)$.  Because
+    of the UNA, we have also that for every $\{a\}\in\CCl(\Bmc)$,
+    $\{a\}\in\tau(d)$ implies that $\{b\}\notin\tau(d)$ for every
+    $\{b\}\in\CCl(\Bmc)$ with $\{b\}\ne\{a\}$.  The semantics of~\SHOQcap and
+    the definition of~$\tau$ yield also that for every $\exists
+    r.\{a\}\in\CCl(\Bmc)$, we have that if $\exists r.\{a\}\in\tau(d)$ and
+    $\Rmc\models r\sqsubseteq s$, then $\exists s.\{a\}\in\tau(d)$.
+
+    Obviously, \fbb is a formula type for~\Bmc, and
+    we have also, by the UNA, that for any $\cbb,\dbb\in\Wmc$ with $\cbb\ne\dbb$
+    that $\cbb\cap\dbb\cap\bigl\{\{a\}\mid a\in\Ind(\Psi)\bigr\}=\emptyset$.  By
+    definition, $\{a\}\in\tau(a^\Imc)=\iota(a)$ for every $a\in\Ind(\Psi)$.
+    Hence, \Mmc is a model candidate for~\Bmc.  We continue showing the
+    following claim.
+
+    \begin{claim}\label{claim:qm-rcomp}
+        For every $d,e\in\Delta^\Imc$ and every $r\in\Rol(\Bmc)$, we have that
+        $(d,e)\in r^\Imc$ implies $\rcomp{\tau(d)}{\tau(e)}{r}{\Rmc}$.
+    \end{claim}
+
+    \noindent
+    To prove the claim, take any $(d,e)\in r^\Imc$.  For the first condition of
+    $r$-compatibility (see Definition~\ref{def:concept-type}), take any
+    $\lnot(\exists r.D)\in\tau(d)$, which implies that $d\in(\lnot\exists
+    r.D)^\Imc$.  By the semantics of~\SHOQcap, we have $e\in(\lnot D)^\Imc$, and
+    thus $\lnot D\in\tau(e)$.
+
+    For the second condition of $r$-compatibility, take any $s\in\Rol(\Bmc)$
+    with $\Rmc\models r\sqsubseteq s$, $\Rmc\models\trans(r)$, and
+    $\lnot(\exists s.D)\in\tau(d)$.  Since \Imc is a model of~\Rmc, we have that
+    $r^\Imc\subseteq s^\Imc$ and that $r^\Imc$ is transitive.  Suppose that
+    $\lnot(\exists r.D)\notin\tau(e)$, and thus $\exists r.D\in\tau(e)$.  Then
+    there is an $e'\in\Delta^\Imc$ with $e'\in D^\Imc$ and $(e,e')\in r^\Imc$.
+    Since $r^\Imc$ is transitive, we have also $(d,e')\in r^\Imc$, and thus
+    $(d,e')\in s^\Imc$, which yields a contradiction to $\lnot(\exists
+    s.D)\in\tau(d)$.
+    %
+    This finishes the proof of Claim~\ref{claim:qm-rcomp}.
+
+    We now use this claim to show that \Mmc is a quasimodel for~\Bmc that
+    respects~\Dmc.
+    %
+    Condition~\ref{enum:qm-nonempty} is obviously satisfied since
+    $\Delta^\Imc\ne\emptyset$ by definition.
+
+    For Condition~\ref{enum:qm-concept}, we have for every $A(a)\in\FCl(\Psi)$
+    that $A(a)\in\fbb$ iff $\Imc\models A(a)$ iff $a^\Imc\in A^\Imc$ iff
+    $A\in\tau(a^\Imc)=\iota(a)$.
+
+    For Condition~\ref{enum:qm-role}, we have for every $r(a,b)\in\FCl(\Psi)$
+    that $r(a,b)\in\fbb$ iff $\Imc\models r(a,b)$ iff $(a^\Imc,b^\Imc)\in
+    r^\Imc$ iff $a^\Imc\in(\exists r.\{b\})^\Imc$ iff $\exists
+    r.\{b\}\in\tau(a^\Imc)=\iota(a)$.
+
+    For Condition~\ref{enum:qm-gci}, take any $\top\sqsubseteq C\in\fbb$ and any
+    $\cbb\in\Wmc$.  The definition of \fbb yields $\Imc\models\top\sqsubseteq
+    C$, and thus $C^\Imc=\Delta^\Imc$.  Hence, $C\in\tau(d)$ for any
+    $d\in\Delta^\Imc$, which yields by the definition of \Wmc that $C\in\cbb$.
+
+    For Condition~\ref{enum:qm-gci-neg}, take any $\lnot(\top\sqsubseteq
+    C)\in\fbf$.  By the definition of \fbb, this implies
+    $\Imc\not\models\top\sqsubseteq C$.  Thus, there is a $d\in\Delta^\Imc$ with
+    $d\notin C^\Imc$.  Thus, we have $C\notin\tau(d)\in\Wmc$.
+
+    For Condition~\ref{enum:qm-rcomp}, take any $d\in\Delta^\Imc$ with $\exists
+    r.\{a\}\in\tau(d)$.  Then, $d\in(\exists r.\{a\})^\Imc$, and thus
+    $(d,a^\Imc)\in r^\Imc$.  Claim~\ref{claim:qm-rcomp} yields that
+    $\rcomp{\tau(d)}{\tau(a^\Imc)}{r}{\Rmc}$,
+    i.e.~$\rcomp{\tau(d)}{\iota(a)}{r}{\Rmc}$.
+
+    For Condition~\ref{enum:qm-equations}, take any $d\in\Delta^\Imc$.  We
+    construct a solution $\nu_{\tau(d)}$ of the system of equations
+    $E_{\Mmc,\tau(d)}$.
+    %
+    Let $z$ denote the maximal integer that occurs in any number restriction
+    in~\Bmc.
+    %
+    We denote by $\Deltau^\Imc$ the set $\{d\in\Delta^\Imc\mid d\ne a^\Imc\text{
+    for every $a\in\NI$}\}$ of \emph{unnamed} domain elements, and by
+    $\Deltan^\Imc$ the set $\Delta^\Imc\setminus\Deltau^\Imc$ of \emph{named}
+    domain elements.
+    %
+    We first consider the variables $x_{\tau(d),\rbb,\dbb}$.  Take any
+    $\rbb\in\Rmf(\Bmc)$ and any $\dbb\in\Wmcu$ such that
+    $\rcomp{\tau(d)}{\dbb}{\rbb}{\Rmc}$.  Then we define
+    \[\nu_{\tau(d)}(x_{\tau(d),\rbb,\dbb}):=\min\bigl\{z,\ \lvert\{e\in\Deltau^\Imc\mid%
+        \text{$\tau(e)=\dbb$, and $(d,e)\in s^\Imc$ iff $s\in\rbb$}\}\rvert\bigr\}.\]
+    %
+    We set $\nu_{\tau(d)}(x_{\tau(d),\rbb,\dbb})$ to at most $z$ to ensure that
+    this value is finite.  Note that this value counts the \emph{unnamed} role
+    successors of type~$\rbb$ of concept type~$\dbb$.
+
+    The following claim implies that the equations of the
+    form~\eqref{eq:atleast} and~\eqref{eq:atmost} are satisfiable by
+    appropriately defining $\nu_{\tau(d)}(y_{\tau(d),\atLeast{n}{r}{C}})$ and
+    $\nu_{\tau(d)}(y_{\tau(d),\lnot(\atLeast{n}{r}{C})})$.
+
+    \begin{claim}\label{claim:qm-eq1}
+        For every $\atLeast{n}{r}{C}\in\CCl(\Bmc)$, we have
+        \[\atLeast{n}{r}{C}\in\tau(d)\text{ iff }
+            \sum_{r\in\rbb\in\Rmf(\Bmc)}
+            (\nu_{\tau(d)}(\Xi_{\Mmc,\tau(d),\rbb,C})+\Gamma_{\Mmc,\tau(d),\rbb,C})\ge n.\]
+    \end{claim}
+
+    \noindent
+    Assume first that there are $\dbb\in\Wmcu$ and $\rbb\in\Rmf(\Bmc)$ such that
+    $C\in\dbb$, $r\in\rbb$, $\rcomp{\tau(d)}{\dbb}{\rbb}{\Rmc}$, and
+    $\nu_{\tau(d)}(x_{\tau(d),\rbb,\dbb})=z\ge n$.  Then by definition of
+    $\nu_{\tau(d)}$, there are at least $n$ unnamed domain elements
+    $e\in\Deltau^\Imc$ with $C\in\dbb=\tau(e)$ and $(d,e)\in r^\Imc$, which
+    implies that $d\in(\atLeast{n}{r}{C})^\Imc$, and thus
+    $\atLeast{n}{r}{C}\in\tau(d)$.  Additionally,
+    $\nu_{\tau(d)}(\Xi_{\Mmc,\tau(d),\rbb,C})\ge z\ge n$, which shows that
+    Claim~\ref{claim:qm-eq1} holds.
+
+    We assume in the following that for every $\dbb\in\Wmcu$ and
+    $\rbb\in\Rmf(\Bmc)$ with $C\in\dbb$, $r\in\rbb$, and
+    $\rcomp{\tau(d)}{\dbb}{\rbb}{\Rmc}$, we have
+    $\nu_{\tau(d)}(x_{\tau(d),\rbb,\dbb})=\lvert\{e\in\Deltau^\Imc\mid\text{$\tau(e)=\dbb$,
+    and $(d,e)\in s^\Imc$ iff $s\in\rbb$}\}\rvert\le z$.
+    %
+    It now follows that, for each $\rbb\in\Rmf(\Bmc)$, we have
+    \begin{align*}
+        \nu_{\tau(d)}(\Xi_{\Mmc,\tau(d),\rbb,C})
+        &=\sum_{C\in\dbb\in\Wmcu,\ \rcomp{\tau(d)}{\dbb}{\rbb}{\Rmc}}
+            \nu_{\tau(d)}(x_{\tau(d),\rbb,\dbb})\\[1ex]
+        &=\sum_{C\in\dbb\in\Wmcu,\ \rcomp{\tau(d)}{\dbb}{\rbb}{\Rmc}}
+            \lvert\{e\in\Deltau^\Imc\mid\text{$\tau(e)=\dbb$, and $(d,e)\in s^\Imc$
+            iff $s\in\rbb$}\}\rvert\\[1ex]
+        &=\lvert\{e\in C^\Imc\cap\Deltau^\Imc\mid\text{$(d,e)\in s^\Imc$ iff
+            $s\in\rbb$}\}\rvert,
+    \end{align*}
+    where the third equality follows by Claim~\ref{claim:qm-rcomp}.
+    %
+    Thus,
+    \[\sum_{r\in\rbb\in\Rmf(\Bmc)}\nu_{\tau(d)}(\Xi_{\Mmc,\tau(d),\rbb,C})
+        =\lvert\{e\in C^\Imc\cap\Deltau^\Imc\mid(d,e)\in r^\Imc\}\rvert.\]
+
+    Moreover, we have
+    \begin{align*}
+        \sum_{r\in\rbb\in\Rmf(\Bmc)}\Gamma_{\Mmc,\tau(d),\rbb,C}
+        &=\sum_{r\in\rbb\in\Rmf(\Bmc)}
+            \bigl\lvert\bigl\{b\in\Ind(\Psi)\mid\text{$C\in\iota(b)$, and $\exists
+            s.\{b\}\in\tau(d)$ iff $s\in\rbb$}\bigr\}\bigr\rvert\\[1ex]
+        &=\bigl\lvert\bigl\{b\in\Ind(\Psi)\mid\text{$C\in\iota(b)$ and $\exists
+            r.\{b\}\in\tau(d)$}\bigr\}\bigr\rvert\\[1ex]
+        &=\lvert\{b\in\Ind(\Psi)\mid\text{$b^\Imc\in C^\Imc$ and $(d,b^\Imc)\in
+            r^\Imc$}\}\rvert\\[1ex]
+        &=\lvert\{e\in C^\Imc\cap\Deltan^\Imc\mid(d,e)\in r^\Imc\}\rvert.
+    \end{align*}
+
+    Since $\{\Deltau^\Imc,\Deltan^\Imc\}$ is a partition of $\Delta^\Imc$, we
+    have that $\atLeast{n}{r}{C}\in\tau(d)$ \emph{iff} $d\in(\atLeast{n}{r}{C})^\Imc$
+    \emph{iff} $\lvert\{e\in C^\Imc\mid(d,e)\in r^\Imc\}\rvert\ge n$ \emph{iff}
+    \[\sum_{r\in\rbb\in\Rmf(\Bmc)}(\nu_{\cbb}(\Xi_{\Mmc,\cbb,\rbb,C})+\Gamma_{\Mmc,\cbb,\rbb,C})\ge n\]
+    by the above equations, which finishes the proof of
+    Claim~\ref{claim:qm-eq1}.
+
+    Consider now any $E=\exists(r_1\sqcap\dots\sqcap r_\ell).C\in\CCl(\Bmc)$.
+    As above, if there are $\dbb\in\Wmcu$ and $\rbb\in\Rmf(\Bmc)$ such that
+    $C\in\dbb$, $\{r_1,\dots,r_\ell\}\subseteq\rbb$,
+    $\rcomp{\tau(d)}{\dbb}{\rbb}{\Rmc}$, and
+    $\nu_{\tau(d)}(x_{\tau(d),\rbb,\dbb})=z\ge 1$, then there is at least one
+    unnamed domain element $e\in\Deltau^\Imc$ with $C\in\dbb=\tau(e)$ and
+    $(d,e)\in r_1^\Imc\cap r_\ell^\Imc$.  This implies that $d\in E^\Imc$, and
+    thus $E\in\tau(d)$.  Also, $\nu_{\tau(d)}(\Xi_{\Mmc,\tau(d),\rbb,C})\ge z\ge
+    1$, which shows that the corresponding equation of the
+    form~\eqref{eq:exists} is satisfied if $\nu_{\tau(d)}(y_{\tau(d),E})$ is set
+    appropriately.
+
+    We consider now the case where for every $\dbb\in\Wmcu$ and every
+    $\rbb\in\Rmf(\Bmc)$ with $C\in\dbb$, $\{r_1,\dots,r_\ell\}\subseteq\rbb$,
+    and $\rcomp{\tau(d)}{\dbb}{\rbb}{\Rmc}$, we have
+    $\nu_{\tau(d)}(x_{\tau(d),\rbb,\dbb})\le z$.
+    %
+    Then, by similar arguments as above, we have:
+    \[\sum_{\{r_1,\dots,r_\ell\}\subseteq\rbb\in\Rmf(\Bmc)}\nu_{\tau(d)}(\Xi_{\Mmc,\tau(d),\rbb,C})
+        =\lvert\{e\in C^\Imc\cap\Deltau^\Imc\mid(d,e)\in r_1^\Imc\cap\dots\cap r_\ell^\Imc\}\rvert,\]
+    and also
+    \[\sum_{\{r_1,\dots,r_\ell\}\subseteq\rbb\in\Rmf(\Bmc)}\Gamma_{\Mmc,\tau(d),\rbb,C}
+        =\lvert\{e\in C^\Imc\cap\Deltan^\Imc\mid(d,e)\in r_1^\Imc\cap\dots\cap r_\ell^\Imc\}\rvert.\]
+
+    Again, this yields that we have $E\in\tau(d)$ \emph{iff} $d\in E^\Imc$
+    \emph{iff} there is at least one $e\in C^\Imc$ with
+    $(d,e)\in r_1^\Imc\cap\dots\cap r_\ell^\Imc$ \emph{iff}
+    \[\sum_{\{r_1,\dots,r_\ell\}\subseteq\rbb\in\Rmf(\Bmc)}
+        (\nu_{\tau(d)}(\Xi_{\Mmc,\tau(d),\rbb,C})+\Gamma_{\Mmc,\tau(d),\rbb,C})\ge 1,\]
+    which shows that the equations of the form~\eqref{eq:exists}
+    and~\eqref{eq:forall} can be satisfied by appropriately setting
+    $\nu_{\tau(d)}(y_{\tau(d),E})$.
+    %
+    This finishes the proof that \Mmc satisfies
+    Condition~\ref{enum:qm-equations}.
+
+    For Condition~\ref{enum:qm-dmc1}, take any $d\in\Delta^\Imc$.  Since \Imc
+    respects~\Dmc, there must be a set $Y\in\Ymc$ such that
+    $d\in(C_{\Umc,Y})^\Imc$.  Hence, by definition of $\tau(d)$, we have
+    $Y=\tau(d)\cap\Umc$.
+
+    For Condition~\ref{enum:qm-dmc2}, let $Y\in\Ymc$.  Since \Imc respects~\Dmc,
+    there must be a $d\in(C_{\Umc,Y})^\Imc$.  Thus, by definition of $\tau(d)$,
+    we have $Y=\tau(d)\cap\Umc$ with $\tau(d)\in\Wmc$.
+\end{proof}
+
+\noindent
+It remains to be shown that one can check the existence of a quasimodel for~\Bmc
+that respects~\Dmc in time exponential in the size of~\Bmc.  For this, consider
+the following algorithm.
+%
+Given $\Bmc=(\Psi,\Rmc)$ and~\Dmc, it enumerates all model
+candidates $(\Wmc,\iota,\fbb)$ for~\Bmc, where \Wmc is the set of \emph{all}
+concept types for~\Bmc.  We denote these candidates by $\Mmc_1,\dots,\Mmc_N$.
+Note that each of them is of size exponential in the size of~\Bmc.  It should be
+clear that
+\[N\le 2^{\lvert\CCl(\Bmc)\rvert\cdot\lvert\Ind(\Psi)\rvert}\cdot
+    2^{\lvert\FCl(\Psi)\rvert},\]
+and thus the enumeration of $\Mmc_1,\dots,\Mmc_N$ can be done in exponential
+time since $\CCl(\Bmc)$ and $\FCl(\Psi)$ are of size polynomial in the size
+of~\Bmc.
+
+The algorithm works as follows.  First, initialise $i:=1$ and consider
+$\Mmc_i=(\Wmc,\iota,\fbb)$.
+\begin{enumerate}[label=\emph{Step~\arabic*.},ref=Step~\arabic*,leftmargin=4em]
+    \item\label{step:assertions}
+        Check whether $\Mmc_i$ satisfies Conditions~\ref{enum:qm-concept}
+        and~\ref{enum:qm-role}.
+
+        If it does, continue with \ref{step:defective}.  Otherwise, stop
+        considering $\Mmc_i$ and go to \ref{step:iteration}.
+
+    \item\label{step:defective}
+        Check each concept type $\cbb\in\Wmc$.  We call a concept
+        type~$\cbb\in\Wmc$ \emph{defective} if it violates
+        Condition~\ref{enum:qm-gci} for some $\top\sqsubseteq C\in\fbb$, it
+        violates Condition~\ref{enum:qm-rcomp}, or it violates
+        Condition~\ref{enum:qm-dmc1}.
+
+        If we find a defective concept type~\cbb, and have $\cbb\in\Wmcu$, then
+        we set $\Wmc:=\Wmc\setminus\{\cbb\}$ and continue with
+        \ref{step:defective}.
+        %
+        If we find a defective $\cbb\notin\Wmcu$,
+        i.e.~$\cbb\in\iota(\Ind(\Psi))$, then stop considering $\Mmc_i$ and go
+        to \ref{step:iteration}.
+        %
+        If we have found no defective concept types in~\Wmc, continue with
+        \ref{step:equations}.
+
+    \item\label{step:equations}
+        Consider the model candidate $\Mmc'=(\Wmc',\iota,\fbb)$ obtained from
+        the previous step.  For every $\cbb\in\Wmc'$, check whether
+        $E_{\Mmc',\cbb}$ has a solution.
+
+        If we find a $\cbb\in\Wmcu'$ such that $E_{\Mmc',\cbb}$ has no solution,
+        then set $\Wmc':=\Wmc'\setminus\{\cbb\}$ and redo \ref{step:equations}.
+        %
+        If we find a $\cbb\in\iota(\Ind(\Psi))$ such that $E_{\Mmc',\cbb}$ has
+        no solution, then go to \ref{step:iteration}.
+        %
+        If we have found no such concept type in~$\Wmc'$, continue with
+        \ref{step:final}.
+
+    \item\label{step:final}
+        Check whether the model candidate $\Mmc''=(\Wmc'',\iota,\fbb)$ obtained
+        from \ref{step:equations} satisfies Conditions~\ref{enum:qm-nonempty},
+        \ref{enum:qm-gci-neg}, and~\ref{enum:qm-dmc2}.
+
+        If it does, stop with output \enquote{quasimodel that respects~\Dmc found}.
+        %
+        Otherwise, continue with \ref{step:iteration}.
+
+    \item\label{step:iteration}
+        Set $i:=i+1$. If $i\leq N$, continue with \ref{step:assertions}.
+        Otherwise, stop with output \enquote{no quasimodel that respects~\Dmc
+        exists}.
+\end{enumerate}
+%
+Using this algorithm, we are now ready to prove one of the main results of this
+section.
+
+\begin{theorem}\label{thm:cons-bmc-dmc}
+    Let \Bmc be a Boolean \SHOQcap-knowledge base, and let
+    $\Dmc=(\Umc,\Ymc)$ be a pair such that \Umc is a set of concept
+    names occurring in~\Bmc and $\Ymc\subseteq 2^\Umc$.  Then, consistency
+    of~\Bmc w.r.t.~\Dmc can be decided in time exponential in the size of~\Bmc.
+\end{theorem}
+
+\begin{proof}
+    By Lemma~\ref{lem:quasimodels}, it suffices to show that the algorithm
+    described above to find quasimodels for~\Bmc that respect~\Dmc is sound,
+    complete, and terminates in time exponential in the size of~\Bmc.
+
+    If the algorithm has constructed a model candidate $\Mmc=(\Wmc,\iota,\fbb)$
+    that passed all tests, then \Mmc obviously satisfies
+    Conditions~\ref{enum:qm-nonempty}--\ref{enum:qm-dmc2} of
+    Definition~\ref{def:quasimodel}.
+
+    Conversely, if $\Mmc=(\Wmc,\iota,\fbb)$ is a quasimodel for~\Bmc that
+    respects~\Dmc, then $\iota$ and \fbb must be enumerated by the algorithm at
+    some point.  Since $\iota$ and~\fbb satisfy Conditions~\ref{enum:qm-concept}
+    and~\ref{enum:qm-role}, they pass the tests in \ref{step:assertions}, and we
+    continue with \ref{step:defective}.  There, a model candidate
+    $\Mmc'=(\Wmc',\iota,\fbb)$ is constructed.  Note that the concept types
+    in~\Wmc cannot be defective because of Conditions~\ref{enum:qm-gci},
+    \ref{enum:qm-rcomp}, and~\ref{enum:qm-dmc1}.  Since $\iota$ maps to concept
+    types in~\Wmc, we indeed obtain $\Mmc'$ with $\Wmc\subseteq\Wmc'$, and
+    continue with \ref{step:equations}.  There, a model candidate
+    $\Mmc''=(\Wmc'',\iota,\fbb)$ is constructed.  Since for every $\cbb\in\Wmc$,
+    $E_{\Mmc,\cbb}$ has a solution, also $E_{\Mmc'',\cbb}$ has a solution.
+    Indeed, the additional variables that occur in $E_{\Mmc'',\cbb}$ but not in
+    $E_{\Mmc,\cbb}$ can be set to $0$.  Since $\iota$ maps to the concept types
+    in~\Wmc, we indeed obtain a model candidate $\Mmc''$ with
+    $\Wmc\subseteq\Wmc''$ that satisfies Condition~\ref{enum:qm-equations}, and
+    continue with \ref{step:final}.  Finally, $\Wmc''$ satisfies the
+    Conditions~\ref{enum:qm-nonempty}, \ref{enum:qm-gci-neg},
+    and~\ref{enum:qm-dmc2}, because $\Wmc\subseteq\Wmc''$.  This shows that the
+    algorithm detects the existence of a quasimodel for~\Bmc that respects~\Dmc.
+
+    To analyse the running time of the algorithm, observe first that
+    $r$-compatibility w.r.t.~\Rmc can be checked in polynomial time since this
+    only involves inclusion tests for two concept types, which are sets of
+    polynomial size, and entailment tests of role axioms w.r.t.~\Rmc, which can
+    be done in time polynomial in the size of~\Rmc~\cite{HoST-IGPL00}.
+
+    As mentioned above, the number~$N$ of model candidates is at most
+    exponential in the size of~\Bmc, while each model candidate $\Mmc_i$ is of
+    size exponential in the size of~\Bmc.  Also the sequence of model candidates
+    $\Mmc_1,\dots,\Mmc_N$ can be enumerated in time exponential in the size
+    of~\Bmc.
+
+    For each of these exponentially many model candidates, the checks in
+    \ref{step:assertions} can be done in time polynomial in the size of~\Bmc,
+    and the checks in \ref{step:defective} are done at most exponentially often
+    since each time one of the exponentially many concept types in~\Wmc is
+    removed.  Each of these checks can be done in time exponential in the size
+    of~\Bmc since the following conditions are checked for at most exponentially
+    many concept types~\cbb:
+    \begin{itemize}
+        \item for Condition~\ref{enum:qm-gci}, we check for inclusion of
+            polynomially many concepts in~\cbb;
+        \item for Condition~\ref{enum:qm-rcomp}, we have polynomially many
+            $r$-compatibility tests; and
+        \item for Condition~\ref{enum:qm-dmc1}, we enumerate all (at most
+            exponentially many) elements of~\Ymc and do a simple test.
+    \end{itemize}
+    %
+    By similar arguments as above, the checks in \ref{step:equations} are done
+    at most exponentially often since each time one of the exponentially many
+    concept types in~$\Wmc'$ is removed.  Each time \ref{step:equations} is
+    performed, for exponentially many concept types $\cbb\in\Wmc'$, it must be
+    checked whether $E_{\Mmc',\cbb}$ has a solution.  We denote the number of
+    variables in $E_{\Mmc',\cbb}$ by $n$, and the number of equations in
+    $E_{\Mmc',\cbb}$ by $m$.  Note that $n$ may be exponential in the size
+    of~\Bmc since there are exponentially many concept types and role types.
+    However, $m$ is polynomial in the size of~\Bmc since we have one equation
+    per at-least and existential restriction occurring in~$\Psi$.
+    In~\cite{Pap-JACM81}, it was shown that $E_{\Mmc',\cbb}$ can be solved in
+    time $O(n^{2m+2}(ma)^{(m+1)(2m+1)})$, where $a$ denotes the value of the
+    largest number appearing in the equations.  Thus, even if the numbers in
+    the at-least restrictions occurring in~$\Psi$ are given in binary encoding,
+    checking whether the system of equations $E_{\Mmc',\cbb}$ has a solution can
+    be done in time exponential in the size of~\Bmc.  Overall,
+    \ref{step:equations} takes only time exponential in the size of~\Bmc.
+
+    Finally, \ref{step:final} can also be done in time exponential in the size
+    of~\Bmc.  Checking Condition~\ref{enum:qm-nonempty} is trivial.  Checking
+    Condition~\ref{enum:qm-gci-neg} involves enumerating polynomially many
+    $\lnot(\top\sqsubseteq C)\in\fbb$ and at most exponentially many concept
+    types in $\Wmc''$ to do an inclusion test.  For
+    Condition~\ref{enum:qm-dmc2}, we enumerate at most exponentially many
+    elements of~\Ymc and at most exponentially many concept types in $\Wmc''$ to
+    do a simple test.
+
+    Overall, the algorithm runs in time exponential in the size of~\Bmc.
+\end{proof}
+
+\noindent
+The following corollary captures the special case of Boolean \SHOQ-knowledge
+bases without a set~\Dmc.
+
+\begin{corollary}\label{cor:cons-boolean-shoq-kb}
+    Let \Bmc be a Boolean \SHOQ-knowledge base.  Then, consistency of~\Bmc can
+    be decided in time exponential in the size of~\Bmc.
+\end{corollary}
+
+\begin{proof}
+    Obviously, \Bmc is also a Boolean \SHOQcap-knowledge base as \SHOQ is a
+    fragment of \SHOQcap.  We define $\Dmc:=(\Umc,\Ymc)$ with $\Umc:=\emptyset$
+    and $\Ymc:=\{\emptyset\}$.  It is easy to see that \Bmc is consistent iff
+    \Bmc is consistent w.r.t.~\Dmc.  Indeed, the \enquote{if} direction is
+    trivial.  For the \enquote{only if} direction, assume that \Bmc is
+    consistent.  Then, there is a model $\Imc=(\Delta^\Imc,\cdot^\Imc)$ of~\Bmc.
+    Note that $C_{\emptyset,\emptyset}$ is equivalent to $\top$, and thus
+    $(C_{\emptyset,\emptyset})^\Imc=\Delta^\Imc\ne\emptyset$.  Hence, we have
+    \[\Ymc=\{\emptyset\}=\bigl\{Y\subseteq\Umc=\emptyset\mid%
+        \text{there is a $d\in\Delta^\Imc$ with $d\in(C_{\Umc,Y})^\Imc$}\bigr\},\]
+    which shows that \Imc respects~\Dmc.
+    %
+    Thus, Theorem~\ref{thm:cons-bmc-dmc} yields that consistency of~\Bmc can be
+    decided in time exponential in the size of~\Bmc.
+\end{proof}
+
+\noindent
+Theorem~\ref{thm:cons-bmc-dmc} and Corollary~\ref{cor:cons-boolean-shoq-kb}
+yield the results that are needed in the proofs of
+Theorems~\ref{thm:upper-bound-shoq-ltl-no-rigid},
+\ref{thm:upper-bound-shoq-ltl-rigid-roles},
+and~\ref{thm:upper-bound-shoq-ltl-rigid-concepts}.
+
+
+\section{Summary}\label{sec:shoq-ltl-summary}
+
+In this chapter, we obtained complexity results for the satisfiability problem
+in the temporalised description logic \SHOQ-LTL as shown in
+Table~\ref{tab:shoq-ltl-results}.  More precisely, we considered the
+satisfiability problem in the settings where (i)~neither concept names nor role
+names are allowed to be rigid, (ii)~only concept names may be rigid, and
+(iii)~both concept names and role names may be rigid.  It turned out that in all
+three settings, the satisfiability problem in \SHOQ-LTL has the same complexity
+as the satisfiability problem in the less expressive temporalised description
+logic \ALC-LTL\@.  Hence, for every description logic~\Lmc between \ALC and
+\SHOQ, we have that the satisfiability problem in \Lmc-LTL is \ExpTime-complete
+in Setting~(i), which is the same complexity as the satisfiability problem
+in~\Lmc.  Moreover, the satisfiability problem in \Lmc-LTL is \NExpTime-complete
+if we allow rigid concept names (but no rigid role names), i.e.~in Setting~(ii),
+and \TwoExpTime-complete in Setting~(iii), where we further allow rigid role
+names.

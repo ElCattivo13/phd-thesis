@@ -1,0 +1,143 @@
+\chapter{Conclusions}\label{ch:conclusions}
+
+In this chapter, we first provide a brief summary in
+Section~\ref{sec:main-results} about what was achieved in the present
+thesis.  Then, in Section~\ref{sec:future-work}, we mention some future work.
+
+
+\section{Main Results}\label{sec:main-results}
+
+In this thesis, we have shown how to verify properties of dynamical systems
+whose behaviour can be partially observed.  Whereas we assumed that we do not
+have a complete description of neither the system itself nor the current state
+of the system, we assumed that we have access to some background knowledge that
+encodes basic knowledge about the functioning of the observed system.  Moreover,
+since the systems' states may have a complex internal structure, the expressive
+power of the formalism for representing the observations should go beyond
+propositional logic.
+%
+We used description logics and extensions of them as one way to address these
+requirements.
+
+After introducing the temporalised description logic \SHOQ-LTL in
+Chapter~\ref{ch:shoq-ltl}, which extends propositional LTL by allowing
+\SHOQ-axioms to occur in place of propositional variables, we have shown
+complexity results for the satisfiability problem in that temporalised DL\@.
+We have considered the problem in three different settings:
+\begin{enumerate}[label=(\roman*)]
+    \item\label{enum:setting-no-rigid}
+        neither concept names nor role names are allowed to be rigid,
+    \item\label{enum:setting-rigid-concepts}
+        only concept names are allowed to be rigid, and
+    \item\label{enum:setting-rigid-roles}
+        both concept and role names are allowed to be rigid.
+\end{enumerate}
+We have shown that the complexity is the same as in the less expressive
+temporalised description logic \ALC-LTL~\cite{BaGL-ToCL12}, namely
+\ExpTime-complete in Setting~\ref{enum:setting-no-rigid}, \NExpTime-complete in
+Setting~\ref{enum:setting-rigid-concepts}, and \TwoExpTime-complete in
+Setting~\ref{enum:setting-rigid-roles}.  Table~\ref{tab:shoq-ltl-results}
+mentions the respective theorems that state those results.  Moreover, we have
+shown in this chapter that the consistency problem for (an extension of) Boolean
+\SHOQ-knowledge bases (w.r.t.\ some side condition) can be decided in
+exponential time.
+
+Using these results, we considered in the following three different contexts.
+Firstly, in Chapter~\ref{ch:monitor}, we have shown how to perform runtime
+verification using \SHOQ-LTL\@.  In this chapter, we provided a construction for
+monitors that runs in doubly exponential time, and produces monitors of doubly
+exponential size, even in the most complex case where both rigid concept names
+and rigid role names are allowed, i.e.~in
+Setting~\ref{enum:setting-rigid-roles}.  For that we have shown how to construct
+Büchi-automata for \SHOQ-LTL-formulas using results from
+Chapter~\ref{ch:shoq-ltl}.  Moreover, we have shown that this doubly exponential
+blow-up in the construction of the monitor cannot be avoided as it already
+occurs for propositional LTL\@.  Finally, we have considered the related
+decision problems of liveness and monitorability and have shown some complexity
+results for them.  Our results are only tight in
+Setting~\ref{enum:setting-rigid-roles}.  In this setting, both problems are
+\TwoExpTime-complete.  For the other cases, a gap remains: both problems are
+\ExpTime-hard and in \TwoExpTime in Setting~\ref{enum:setting-no-rigid}, and
+\coNExpTime-hard and in \TwoExpTime in
+Setting~\ref{enum:setting-rigid-concepts}.  However, the exact complexity of
+these problems are not even known for propositional LTL\@.
+
+Secondly, in Chapter~\ref{ch:tcqs}, we have considered a temporal version of
+ontology-based data access.  More precisely, we proved complexity results for
+query entailment in a temporal query language that extends propositional LTL by
+allowing conjunctive queries in place of propositional variables.  Moreover,
+background knowledge is encoded in a TBox that is formulated in a description
+logic between \ALC and \SHQ.  We considered both the data complexity and the
+combined complexity for this problem for the three settings above.  In
+Setting~\ref{enum:setting-no-rigid}, temporalised query entailment is
+\coNP-complete w.r.t.\ data complexity and \ExpTime-complete w.r.t.\ combined
+complexity.  In Setting~\ref{enum:setting-rigid-concepts}, the problem is
+\coNP-complete w.r.t.\ data complexity and \coNExpTime-complete w.r.t.\ combined
+complexity.  Finally, in Setting~\ref{enum:setting-rigid-roles}, the problem is
+\coNP-hard and in \ExpTime w.r.t.\ data complexity and \TwoExpTime-complete
+w.r.t.\ combined complexity.  For showing these results, some results of
+Chapter~\ref{ch:shoq-ltl} are used.  The obtained results are summarised in
+Table~\ref{tab:tcq-results}, where also the respective theorems and corollaries
+that state these results are listed.
+
+Thirdly, in Chapter~\ref{ch:ramifications}, we have considered an action
+formalism based on any description logic between \ALC and \ALCQIO that is
+capable of treating ramifications that arise naturally if domain constraints are
+encoded in general TBoxes.  For this, we have extended the DL-based action
+formalism introduced in~\cite{BLM+-AAAI05} (which could deal only with acyclic
+TBoxes) with causal relationships.  We have shown that important inference
+problems such as the consistency problem and the projection problem are
+decidable in our new formalism, and continue the work of~\cite{BaLM-ECAI10} by
+generalising the verification problem.  We have derived a number of complexity
+results from the obtained decision procedures.  Depending on the base DL, the
+complexity results range from \PSpace-complete to \coNExpTime-hard and in
+\PTimeToNExpTime for the consistency problem, and from \PSpace-complete to
+\coNExpTime-complete for the projection problem.  For the verification problem,
+the complexity ranges from in \ExpSpace to in \coTwoNExpTime, and it is unknown
+whether these bounds are tight.  The obtained results are summarised in
+Table~\ref{tab:ramification-results}.
+
+
+\section{Future Work}\label{sec:future-work}
+
+Some more technical directions for future work have been already mentioned at
+the end of each chapter.  These include tightening some complexity bounds and
+considering slight extensions of the approaches introduced.
+
+We now give some more general remarks on future research.  Throughout the
+thesis, we have considered extensions of propositional LTL for specifying
+temporal properties.  It would be interesting to consider also different
+temporal formalisms.  Especially in the area of DL-based action formalisms, it
+is worthwile to examine the verification problem for extensions of the temporal
+logic CTL~\cite{ClEm-LP81} and its extension CTL$^*$~\cite{EmHa-JACM86} that
+encompasses propositional LTL\@.  Furthermore, it might make sense to consider
+\emph{real-time extensions} of temporal logics; see
+e.g.~\cite{Koy-RTS90,AlHe-IC93,AlFH-JACM96,RaSc-JALC99}.
+
+With respect to temporal query languages, it is interesting to consider
+light-weight description logics such as members of the
+\DLLite-family~\cite{CDL+-AAAI05,ACK+-JAIR09,CDL+-RW09} in our context since
+they allow first-order rewritability, i.e.~query answering can be reduced to
+classical database reasoning.  It is interesting to see whether the approaches
+considered in the present thesis work also for \DLLite.  First steps in that
+direction have been done in~\cite{BoLT-FroCoS13,BoLT-DL13,BoLT-LTCS-13-05}.
+
+Additionally, it makes sense to consider extensions of the presented approaches
+that are capable of dealing with faulty sensor information.  For instance,
+temporal extensions of (decidable) \emph{probabilistic description
+logics}~\cite{Luk-AIJ08,LuSc-KR10} and (decidable) \emph{fuzzy description
+logics}~\cite{Str-JAIR01,BoSt-FSS09,BDG+-IJUF12,BoPe-JoDS13,BoPe-IJAR14} may be
+useful.
+%
+Moreover, one may want to deal with concrete numerical values, and thus it is
+interesting to consider also temporal extensions of description logics with
+\emph{concrete
+domains}~\cite{BaHa-IJCAI91,Lut-AiML02,BaSa-IS03,Lut-ToCL04,LAHS-JAIR05,LuMi-JAR07}.
+Concrete domains allow to use concrete values such as numbers or strings within
+concepts.  Description logics with concrete domains allow furthermore to use
+predicates on such concrete values. Thus, one can, for instance, compare
+concrete values.
+
+Moreover, it would be interesting to combine some of the above mentioned
+extensions.  It is very challenging, however, to find a useful combination that
+remains decidable.

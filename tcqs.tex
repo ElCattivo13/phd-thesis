@@ -1,0 +1,2824 @@
+\chapter[Temporalised Query Entailment in~\texorpdfstring{\SHQ}{SHQ}]{%
+    Temporalised Query Entailment in the Description~Logic~\texorpdfstring{\SHQ}{SHQ}}\label{ch:tcqs}
+
+Ontology-based data access (OBDA)~\cite{DEF+-DS99,PCD+-JoDS08} generalises query
+answering in databases: firstly, the data are not assumed to be complete,
+i.e.~we do not make the closed-world assumption, and secondly, the
+interpretation of the predicates occurring in the queries is constrained by
+background knowledge encoded in a knowledge base.
+
+In this chapter, we investigate a \emph{temporalised} version of OBDA and its
+corresponding decision problem: temporalised query entailment.  We show how
+temporalised query entailment can be decided in the description logic~\SHQ, and
+provide complexity results.
+%
+Most of the results contained in this chapter have already been published
+in~\cite{BaBL-CADE13,BaBL-LTCS-13-01}.
+%in~\cite{tcq-journal,BaBL-CADE13,BaBL-LTCS-13-01}.
+
+This chapter is organised as follows.  In Section~\ref{sec:temporal-queries}, we
+formally introduce the temporal query language that we investigate in this
+chapter and discuss similar approaches to temporalising OBDA\@.  After that, in
+Section~\ref{sec:complexity-query-entailment}, we show complexity results for
+temporalised query entailment in our temporal query language.  Finally, in
+Section~\ref{sec:tcqs-summary}, we give a brief summary of the results that we
+have obtained in this chapter.
+
+
+\section{The Temporal Query Language}\label{sec:temporal-queries}
+
+Unless stated otherwise, we assume throughout this chapter that all ABoxes are
+\emph{simple} (see Definition~\ref{def:syntax-abox}).  Note that, however, every
+complex ABox can be rewritten to a simple ABox using a set of GCIs.  More
+precisely, one can rewrite that concept assertion $C(a)$ to $A(a)$ where
+$A\in\NC$ is a fresh concept name, and add the GCIs $A\sqsubseteq C$ and
+$C\sqsubseteq A$ to the TBox.  However, this restriction is useful to separate
+the influence of the ABox and the TBox on the complexity of reasoning problems.
+
+Our temporal query language is a combination of conjunctive
+queries~\cite{AbHV-95} and propositional LTL~\cite{Pnu-FOCS77}.  This language
+is very similar to the temporalised description logics
+\ALC-LTL~\cite{BaGL-ToCL12} and \SHOQ-LTL introduced in
+Section~\ref{sec:syntax-semantics-shoq-ltl}.  The main difference is that we
+allow conjunctive queries to occur in place of description logic axioms.
+%
+Thus, the results we obtained build on existing results about \ALC-LTL and also
+\SHOQ-LTL\@.  Since our temporal query language generalises \ALC-LTL, some of
+our hardness results for complexity follow easily from the results
+in~\cite{BaGL-ToCL12}.  Moreover, we will use the results obtained in
+Section~\ref{sec:consistency-boolean-shoqcap-kb} about the consistency problem
+for Boolean \SHOQcap-knowledge bases.  For more information about temporalising
+description logics, see Section~\ref{sec:temporalised-dls}.
+
+However, most work on temporalised description logics focuses on the
+satisfiability problem in such logics rather than query answering.  In the
+following, we describe relevant related work in temporalising OBDA\@.  The
+approaches from the literature have mainly been developed for light-weight
+languages of the \DLLite family~\cite{CDL+-RW09}.
+
+For instance, in~\cite{AKL+-TIME07}, various light-weight DLs are extended by
+allowing the temporal operators to interfere with the DL-component.  Extending
+the work of~\cite{AKL+-TIME07}, in~\cite{AKW+-IJCAI13} a temporal extension of
+\DLLite is presented, which allows the temporal operators $\Diamondm$ and
+$\Diamond$ on the left-hand side of GCIs and role-inclusion axioms.  In this
+logic, \emph{first-order rewritability} of conjunctive queries w.r.t.\
+\DLLite-knowledge bases is preserved from the atemporal case, i.e.~answering a
+query over a knowledge base can be reduced to answering a rewritten query (in a
+different language) over a database induced by the knowledge base.  This means
+that techniques from temporal relational databases can be used to answer
+temporal queries that can refer to specific points in time.
+
+An approach to temporal query answering in \DLLite that is more similar to the
+one considered in this chapter is presented
+in~\cite{BoLT-FroCoS13,BoLT-DL13,BoLT-LTCS-13-05}.  There, conjunctive queries
+are used as atoms in negation-free temporal formulas.  This allows for reuse of
+results about atemporal first-order rewritability in \DLLite.  The paper also
+presents an algorithm to answer such temporal queries over temporal relational
+databases, which generalises an algorithm from~\cite{Chom-ToDS95,ChTo-05}.  The
+main advantage of this algorithm is that it achieves a so-called
+\emph{bounded-history encoding}, i.e.~the amount of space needed to answer a
+temporal query does not depend on the length of the observed history.  Thus, it
+is enough to keep track of the relevant data and storing it in the database
+instead of storing all information from the past.
+
+A similar approach is pursued in~\cite{GuKl-RR12}.  There, the authors propose a
+generic framework to combine a generic DL-query component with a linear temporal
+dimension.  To simplify the decision procedures, both components are decoupled
+via an autoepistemic modal operator.  This allows to use atemporal
+query-answering algorithms as a black-box inside a temporal satisfiability
+algorithm.
+
+In~\cite{Mot-JWS12}, temporal query answering over temporalised
+RDF-triples~\cite{GuHV-ESWC05} using an extension of the query language SPARQL
+is considered.
+
+Furthermore, in~\cite{AFW+-JELIA02}, the very expressive temporalised
+description logic \DLRUS is introduced, which is an extension of \DLR that
+allows temporal operators to occur within concepts and roles.  Moreover, the
+query-containment problem of non-recursive Datalog queries under constraints
+defined in \DLRUS is investigated.  It turns out that this problem is in general
+undecidable, but becomes decidable in the fragment \DLRUSminus, where no
+temporal operators are allowed to occur within roles.  The query-containment
+problem is then in \TwoExpTime, whereas other reasoning problems such as the
+satisfiability problem and the subsumption problem in \DLRUSminus are
+\ExpSpace-complete.
+
+Whilst in principle our temporal query language can be parametrised with any
+description logic, we focus in this chapter on the description logics between
+\ALC and~\SHQ.  The relative expressivity of these DLs is depicted in
+Figure~\ref{fig:alc-shq}.
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}[%
+            semithick,
+            auto,
+            on grid,
+            node distance=8ex and 8em,
+            element/.style={rectangle,draw=gray,minimum height=2ex,minimum width=5em}]
+
+        \node[element]                 (shq)    {\SHQ};
+        \node[element,below=of shq]    (sq)     {\SQ};
+        \node[element,left=of sq]      (sh)     {\SH};
+        \node[element,right=of sq]     (alchq)  {\ALCHQ};
+        \node[element,below=of sq]     (alch)   {\ALCH};
+        \node[element,left=of alch]    (s)      {\Smc};
+        \node[element,right=of alch]   (alcq)   {\ALCQ};
+        \node[element,below=of alch]   (alc)    {\ALC};
+
+        \draw[gray] (shq)--(sh);
+        \draw[gray] (shq)--(sq);
+        \draw[gray] (shq)--(alchq);
+        \draw[gray] (sh)--(s);
+        \draw[gray] (sh)--(alch);
+        \draw[gray] (sq)--(s);
+        \draw[gray] (sq)--(alcq);
+        \draw[gray] (alchq)--(alch);
+        \draw[gray] (alchq)--(alcq);
+        \draw[gray] (s)--(alc);
+        \draw[gray] (alch)--(alc);
+        \draw[gray] (alcq)--(alc);
+    \end{tikzpicture}
+    \caption{The relative expressivity of the DLs between \ALC and~\SHQ}
+    \label{fig:alc-shq}
+\end{figure}
+
+To summarise, the work described
+in~\cite{AKW+-IJCAI13,BoLT-FroCoS13,AFW+-JELIA02,GuKl-RR12} is most closely
+related to our approach.  Nonetheless, this related work differs from our
+approach in several ways:
+\begin{enumerate}
+    \item We consider the expressive description logic \SHQ instead of
+        inexpressive description logics such as members of the \DLLite
+        family~\cite{AKW+-IJCAI13,BoLT-FroCoS13}.
+    \item We consider a temporal query language instead of temporalising the
+        ontology language~\cite{AKW+-IJCAI13,AFW+-JELIA02}.
+    \item In contrast to~\cite{GuKl-RR12}, we consider also the case of rigid
+        concept and role names.
+        In~\cite{BoLT-FroCoS13,BoLT-DL13,BoLT-LTCS-13-05,AKW+-IJCAI13}, rigid
+        names are also used, but in the context of inexpressive DLs.
+\end{enumerate}
+
+Since we deal with the expressive description logic~\SHQ, we take up on the
+results about the complexity of atemporal conjunctive-query entailment in
+expressive description logics~\cite{OrCE-AAAI06,Lut-IJCAR08,GHL+-JAIR08}.  For
+the proofs of our results, it is, however, not sufficient to only apply these
+results, but we need to adapt the proof methods that were developed in these
+papers to show these results.  To be more precise, we adapt, for instance, the
+constructions involving forest models and equivalence relations over individual
+names from~\cite{GHL+-JAIR08}, and we use the results about spoilers in \SHQcap
+from~\cite{Lut-IJCAR08}.  We make this connection explicit in later sections of
+this chapter.
+
+As the temporal component of our query language is propositional LTL, we also
+use well-known results from that area of research.  As such, we adapt the
+automata construction for propositional LTL satisfiability
+from~\cite{WoVS-FOCS83,VaWo-IC94}, which is mentioned in
+Section~\ref{sec:ltl-automata}.
+
+For our temporal query language, we investigate both the \emph{combined
+complexity} and the \emph{data complexity} of the temporalised query-entailment
+problem in three different settings as summarised in
+Table~\ref{tab:tcq-results}.  These results hold for all description logics
+between \ALC and~\SHQ.  In fact, we show that the hardness results already hold
+for \ALC, and we prove the complexity upper bounds for the more expressive
+description logic~\SHQ.
+%
+\begin{table}[t]
+    \centering
+    \caption{The complexity of temporalised query entailment for all DLs between
+        \ALC and~\SHQ in three different settings}
+    \label{tab:tcq-results}
+    \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}ll}
+        \toprule
+            &\emph{Data complexity}
+            &\emph{Combined complexity}\\
+        \midrule
+        \emph{Setting~(i)}
+            &\coNP-complete
+            &\ExpTime-complete\\
+            &(Corollary~\ref{cor:lower-bounds-data-complexity} and Theorem~\ref{thm:upper-bounds-no-rigid-names})
+            &(Theorems~\ref{thm:lower-bounds-combined-complexity} and~\ref{thm:upper-bounds-no-rigid-names})\\
+        \midrule
+        \emph{Setting~(ii)}
+            &\coNP-complete
+            &\coNExpTime-complete\\
+            &(Corollary~\ref{cor:lower-bounds-data-complexity} and Theorem~\ref{thm:upper-bound-rigid-concepts-data-compl})
+            &(Theorems~\ref{thm:lower-bounds-combined-complexity} and~\ref{thm:combined-complexity-rigid-concept-names})\\
+        \midrule
+        \emph{Setting~(iii)}
+            &\coNP-hard\,/\,in \ExpTime
+            &\TwoExpTime-complete\\
+            &(Corollary~\ref{cor:lower-bounds-data-complexity} and Theorem~\ref{thm:upper-bounds-rigid-names})
+            &(Theorems~\ref{thm:lower-bounds-combined-complexity} and~\ref{thm:upper-bounds-rigid-names})\\
+        \bottomrule
+    \end{tabular*}
+    \\[1ex]
+    \caption*{Settings: (i)~neither concept names nor role names are allowed to
+        be rigid; (ii)~only concept names may be rigid; and (iii)~both concept
+        names and role names may be rigid.}
+\end{table}
+
+Note that in~\cite{BaBL-LTCS-13-01,BaBL-CADE13}, the complexity results were
+shown only for~\ALC.  Even though our complexity results are the same for \ALC
+and~\SHQ, and in principle the approaches used below to prove
+the upper bounds for~\SHQ are similar to the ones employed
+in~\cite{BaBL-LTCS-13-01,BaBL-CADE13}, the proof details are considerably more
+complex for~\SHQ.
+%
+For the combined complexity, the complexity results listed in
+Table~\ref{tab:tcq-results} are actually identical to the ones for
+\ALC-LTL~\cite{BaGL-ToCL12}, though the upper bounds are considerably harder to
+show.  The data complexity results in Settings~(i) and~(ii) coincide with the
+ones for atemporal query entailment, which is \coNP-complete w.r.t.\ data
+complexity.  For Setting~(iii), we can show that the temporalised query
+entailment problem is in \ExpTime w.r.t.\ data complexity (in contrast to
+\TwoExpTime-completeness w.r.t.\ combined complexity), but we do not have a
+matching lower bound.
+
+From now on, we consider an arbitrary (but fixed) DL between \ALC and \SHQ.
+Before we formally define our temporal query language in Section~\ref{sec:tcqs},
+we first introduce \emph{conjunctive queries} and related notions in
+Section~\ref{sec:cqs}, and \emph{temporal knowledge bases} in
+Section~\ref{sec:tkbs}.
+
+
+\subsection{Conjunctive Queries}\label{sec:cqs}
+
+Our query language is based on conjunctive queries~\cite{AbHV-95}, which is a
+subset of first-order queries that are well-investigated in database theory.
+Basically, conjunctive queries correspond to select-project-join queries in
+relational algebra, and to select-from-where queries in SQL\@.
+
+\begin{definition}[Syntax of conjunctive queries]\label{def:syntax-cqs}
+    Let \NV be a set of variables. A \emph{conjunctive query (CQ)} is
+    of the form $\phi=\exists y_1,\dots,y_m.\psi$, where $y_1,\dots,y_m\in\NV$,
+    and $\psi$ is a (possibly empty) finite conjunction of \emph{atoms} of the
+    form
+    \begin{itemize}
+        \item $A(z)$ with $A\in\NC$ and $z\in\NV\cup\NI$ \emph{(concept atom)};
+            or
+        \item $r(z_1,z_2)$ with $r\in\NR$ and $z_1,z_2\in\NV\cup\NI$ \emph{(role
+            atom)}.
+    \end{itemize}
+    The empty conjunction is denoted by \true.
+
+    A \emph{union of conjunctive queries} (UCQ) is of the form
+    $\phi_1\lor\dots\lor\phi_n$ with $n\ge 1$, where $\phi_1,\dots,\phi_n$ are
+    CQs.
+\end{definition}
+
+\noindent
+We denote the set of individual names occurring in a (U)CQ~$\phi$ by
+$\Ind(\phi)$, the set of variables occurring in $\phi$ by $\Var(\phi)$, the set
+of free variables occurring in $\phi$ by $\FVar(\phi)$, and the set of atoms
+occurring in $\phi$ by $\At(\phi)$.
+%
+We call $\phi$ \emph{Boolean} if $\FVar(\phi)=\emptyset$.
+%
+Moreover, we denote the set of individual names occurring in a knowledge
+base~\Kmc by $\Ind(\Kmc)$.
+
+Given a (U)CQ~$\phi$ and a knowledge base~\Kmc, a basic reasoning task is
+finding so-called \emph{certain answers} to~$\phi$ w.r.t.~\Kmc,
+i.e.~instantiations of the free variables in~$\phi$ with individual names from
+$\Ind(\Kmc)$ such that the resulting formula is satisfied in every model
+of~\Kmc.  Thus, answering (U)CQs w.r.t.\ knowledge bases generalises the
+entailment of ABox-axioms, i.e.~deciding whether $\Kmc\models\alpha$ holds for a
+given knowledge base~\Kmc and a given ABox-axiom~$\alpha$.
+
+We now define the semantics of Boolean (U)CQs, using the notion of
+homomorphisms~\cite{ChMe-STOC77}.  This is then extended to answering arbitrary
+UCQs.
+
+\begin{definition}[Homomorphism, entailment, certain answer]
+    Let $\Imc=(\Delta,\cdot^\Imc)$ be an interpretation and $\phi$ be a Boolean
+    CQ\@. A mapping $\pi\colon\Var(\phi)\cup\Ind(\phi)\to\Delta$ is a
+    \emph{homomorphism} of $\phi$ into \Imc if
+    \begin{itemize}
+        \item $\pi(a)=a^\Imc$ for every $a\in\Ind(\phi)$;
+        \item $\pi(z)\in A^\Imc$ for every concept atom $A(z)\in\At(\phi)$;
+            and
+        \item $(\pi(z_1),\pi(z_2))\in r^\Imc$ for every role atom
+            $r(z_1,z_2)\in\At(\phi)$.
+    \end{itemize}
+    %
+    We say that \Imc is a \emph{model} of~$\phi$ (written $\Imc\models\phi$) if
+    there is such a homomorphism.  Moreover, \Imc is a \emph{model} of a Boolean
+    UCQ $\phi_1\lor\dots\lor\phi_n$ if it is a model of $\phi_i$ for some~$i$,
+    $1\le i\le n$.
+
+    A Boolean UCQ~$\phi$ is \emph{entailed} by a knowledge base~\Kmc (written
+    $\Kmc\models\phi$) if every model of~\Kmc is also a model of~$\phi$.
+
+    Given a (not necessarily Boolean) UCQ $\phi$, we call a mapping
+    $\amf\colon\FVar(\phi)\to\Ind(\Kmc)$ a \emph{certain answer} to~$\phi$
+    w.r.t.~\Kmc if $\Kmc\models\amf(\phi)$, where $\amf(\phi)$ is the Boolean
+    UCQ obtained from~$\phi$ by replacing the free variables according to~\amf.
+\end{definition}
+
+\noindent
+For a UCQ $\phi$ and a knowledge base \Kmc, one can compute all certain answers
+by enumerating all candidate mappings $\amf\colon\FVar(\phi)\to\Ind(\Kmc)$ and
+then solving the entailment problem $\Kmc\models\amf(\phi)$ for each $\amf$.
+Since there are $\lvert\Ind(\Kmc)\rvert^{\lvert\FVar(\phi)\rvert}$ such
+mappings, we have to solve exponentially many such entailment problems.
+
+To analyse the complexity of deciding the entailment $\Kmc\models\amf(\phi)$, it
+obviously suffices to consider the case where the UCQ is Boolean.  As discussed
+in Section~\ref{sec:intro-tcqs}, usually one considers two kinds of complexity
+measures: the combined complexity and data complexity.
+%
+For the \emph{combined complexity}, all parts of the input, i.e.~the UCQ~$\phi$
+and the knowledge base $\Kmc=(\Amc,\Tmc,\Rmc)$, are taken into
+account.  For the \emph{data complexity}, however, $\phi$, \Tmc, and~\Rmc are
+assumed to be of constant size, and the complexity is measured only w.r.t.\ the
+data, i.e.~the ABox~\Amc.
+%
+For this analysis, we assume in the following that the query does not introduce
+new names, i.e.~it contains only concept and role names that also occur in the
+TBox or the RBox.
+%
+This is without loss of generality since we can always introduce trivial axioms
+like $A\sqsubseteq A$ or $r\sqsubseteq r$ into the TBox and RBox without
+affecting data complexity or combined complexity.
+
+Regarding data complexity, the entailment problem for \emph{concept assertions}
+and \ALC-know\-ledge bases is already \coNP-hard~\cite{Sch-JIIS93,DLN+-JLC94},
+and a matching upper bound has been established for the entailment problem for
+UCQs and \SHQ-knowledge bases~\cite{GHL+-JAIR08}.
+
+The entailment problem for concept assertions and \ALC-knowledge bases is
+\ExpTime-hard w.r.t.\ combined complexity~\cite{DLhandbook-07}, and a matching
+upper bound is known for the entailment problem for UCQs and \ALCHQ-knowledge
+bases~\cite{Lut-IJCAR08}.  For the description logic~\Wmc, the problem is
+already \coNExpTime-hard, while it becomes \TwoExpTime-hard for the description
+logic \SH~\cite{ELO+-IJCAI09}.
+%
+In this chapter, we focus on a variant of the UCQ-entailment problem that is
+\ExpTime-complete even for \SHQ-knowledge bases, namely, we restrict to
+\emph{simple} queries, which are not allowed to use non-simple role names.  Note
+that this is only a restriction in extensions of~\Wmc.
+
+Before we are ready to consider the temporalised query-entailment problem, we
+formally introduce temporal knowledge bases.
+
+
+\subsection{Temporal Knowledge Bases}\label{sec:tkbs}
+
+We extend the notion of knowledge bases and models into the temporal setting.
+The setting is that there is a global TBox and a global RBox that define the
+terminology, and several ABoxes that contain information about the state of the
+world at the time points we have observed so far.
+
+\begin{definition}[Syntax of temporal knowledge bases]\label{def:syntax-tkb}
+    A \emph{temporal knowledge base (temporal KB)}
+    $\Kmc=((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)$ consists of a non-empty
+    finite sequence of ABoxes $\Amc_i$, $0\le i\le n$, of \emph{length}
+    $n+1>0$, a TBox~\Tmc, and an RBox~\Rmc.
+\end{definition}
+
+\noindent
+As for atemporal knowledge bases, we denote by $\Ind(\Kmc)$ the set of all
+individual names occurring in a temporal KB~\Kmc.
+%
+The semantics of temporal KBs is based on DL-LTL-structures, which were introduced in
+Definition~\ref{def:semantics-shoq-ltl}.
+
+\begin{definition}[Semantics of temporal knowledge bases]\label{def:semantics-tkb}
+    We call the DL-LTL-structure $\Imf=(\Imc_i)_{i\ge 0}$ a \emph{model} of the
+    temporal KB $\Kmc=((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)$ (written
+    $\Imf\models\Kmc$) if
+    \begin{itemize}
+        \item $\Imc_i\models\Amc_i$ for every $i$, $0\le i\le n$; and
+        \item $\Imc_i\models\Tmc$ and $\Imc_i\models\Rmc$ for every $i\ge 0$.
+    \end{itemize}
+\end{definition}
+
+\noindent
+Recall that according to Definition~\ref{def:dl-ltl-structure}, we make the
+constant-domain assumption and the rigid-individual assumption.
+
+Now we are ready to formally introduce our temporal query language.
+
+
+\subsection{Temporal Conjunctive Queries}\label{sec:tcqs}
+
+We combine the notions of conjunctive queries and propositional LTL-formulas
+into a new formalism, which we call \emph{temporal conjunctive queries}.
+
+\begin{definition}[Syntax of temporal conjunctive queries]
+    The set of \emph{temporal conjunctive queries} (TCQs) is the smallest set
+    such that
+    \begin{itemize}
+        \item every conjunctive query is a TCQ; and
+        \item if $\phi_1$ and $\phi_2$ are TCQs, then so are: $\lnot\phi_1$
+            (negation), $\phi_1\land\phi_2$ (conjunction), $\Next\phi_1$ (next),
+            $\Previous\phi_1$ (previous), $\phi_1\Until\phi_2$ (until), and
+            $\phi_1\Since\phi_2$ (since).
+    \end{itemize}
+\end{definition}
+
+\noindent
+As for UCQs, we denote the set of individual names occurring in a TCQ~$\phi$ by
+$\Ind(\phi)$, and the set of free variables occurring in~$\phi$ by
+$\FVar(\phi)$.  Moreover, a \emph{Boolean TCQ} is a TCQ without free variables.
+
+As usual in temporal logics, we use again
+\begin{itemize}
+    \item $\phi_1\lor\phi_2$ (disjunction) as an abbreviation for
+        $\lnot(\lnot\phi_1\land\lnot\phi_2)$;
+    \item $\phi_1\to\phi_2$ (implication) as an abbreviation for
+        $\lnot\phi_1\lor\phi_2$;
+    \item \false as an abbreviation for $\lnot\true$;\footnote{%
+            Recall that \true denotes the empty conjunction, which is a CQ and
+            thus also a TCQ (see Definition~\ref{def:syntax-cqs}).}
+    \item $\Diamond\phi$ (diamond, which should be read as \enquote{eventually}
+        or \enquote{some time in the future}) as an abbreviation for
+        $\true\Until\phi$;
+    \item $\Box\phi$ (box, which should be read as \enquote{always} or
+        \enquote{always in the future}) as an abbreviation for
+        $\lnot\Diamond\lnot\phi$;
+    \item $\Diamondm\phi$ (which should be read as \enquote{once}
+        or \enquote{some time in the past}) as an abbreviation for
+        $\true\Since\phi$; and
+    \item $\Boxm\phi$ (which should be read as \enquote{historically} or
+        \enquote{always in the past}) as an abbreviation for
+        $\lnot\Diamondm\lnot\phi$.
+\end{itemize}
+
+\noindent
+We denote the set of conjunctive queries occurring in a TCQ~$\phi$ by
+$\CQ(\phi)$.  As before, we first define the semantics for Boolean TCQs, which
+is a straightforward extension of the semantics of CQs and propositional
+LTL-formulas (see Definition~\ref{def:semantics-ltl}), similar to the semantics
+of \SHOQ-LTL from Definition~\ref{def:semantics-shoq-ltl}.
+%
+Also, the notion of certain answers can then be defined exactly as in the
+atemporal case.
+
+\begin{definition}[Semantics of TCQs]\label{def:semantics-tcqs}
+    For a Boolean TCQ~$\phi$, a DL-LTL-structure $\Imf=(\Imc_i)_{i\ge 0}$, and
+    a time point $i\ge 0$, \emph{validity of~$\phi$ in~\Imf at time~$i$}
+    (written $\Imf,i\models\phi$) is defined inductively as follows:
+    \[\begin{array}{lcl}
+        \Imf,i\models\exists y_1,\dots,y_m.\psi
+            &\text{iff}
+            &\Imc_i\models\exists y_1,\dots,y_m.\psi\\
+        \Imf,i\models\lnot\phi_1
+            &\text{iff}
+            &\Imf,i\not\models\phi_1,\ \text{i.e.~not}\ \Imf,i\models\phi_1\\
+        \Imf,i\models\phi_1\land\phi_2
+            &\text{iff}
+            &\Imf,i\models\phi_1\ \text{and}\ \Imf,i\models\phi_2\\
+        \Imf,i\models\Next\phi_1
+            &\text{iff}
+            &\Imf,i+1\models\phi_1\\
+        \Imf,i\models\Previous\phi_1
+            &\text{iff}
+            &i>0\ \text{and}\ \Imf,i-1\models\phi_1\\
+        \Imf,i\models\phi_1\Until\phi_2
+            &\text{iff}
+            &\text{there is some $k\geq i$ such that $\Imf,k\models\phi_2$, and}\\
+            & &\text{$\Imf,j\models\phi_1$ for every $j$, $i\le j<k$}\\
+        \Imf,i\models\phi_1\Since\phi_2
+            &\text{iff}
+            &\text{there is some $k$, $0\le k\le i$, such that $\Imf,k\models\phi_2$, and}\\
+            & &\text{$\Imf,j\models\phi_1$ for every $j$, $k<j\le i$}
+    \end{array}\]
+    %
+    Given a temporal KB $\Kmc=((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)$,
+    we say that \Imf is a \emph{model of~$\phi$ w.r.t.~\Kmc} if
+    $\Imf\models\Kmc$ and $\Imf,n\models\phi$.  We call $\phi$ \emph{satisfiable
+    w.r.t.~\Kmc} if it has a model w.r.t.~\Kmc, and it is \emph{entailed
+    by~\Kmc} (written $\Kmc\models\phi$) if every model~\Imf of~\Kmc satisfies
+    $\Imf,n\models\phi$.
+
+    Let~\Lmc be a description logic.  The \emph{TCQ-satisfiability problem
+    in~\Lmc} is to decide, given a TCQ~$\phi$ and a temporal \Lmc-KB~\Kmc,
+    whether $\phi$ is satisfiable w.r.t.~\Kmc.
+    %
+    Moreover, the \emph{temporalised query-entailment problem in~\Lmc} is the
+    problem of deciding, given a TCQ~$\phi$ and a temporal \Lmc-KB~\Kmc, whether
+    $\phi$ is entailed by~\Kmc.
+
+    Given a (not necessarily Boolean) TCQ~$\phi$, we call a mapping
+    $\amf\colon\FVar(\phi)\to\Ind(\Kmc)$ a \emph{certain answer} to~$\phi$
+    w.r.t.~\Kmc if $\Kmc\models\amf(\phi)$, where $\amf(\phi)$ is the Boolean
+    TCQ obtained from~$\phi$ by replacing the free variables according to~\amf.
+\end{definition}
+
+\noindent
+Note that in this definition of a model, the point of reference is not the first
+time point~$0$, as in propositional LTL and \SHOQ-LTL, but rather the last time
+point~$n$ of a given temporal knowledge base.  Intuitively, this can be seen as
+the current time point, at which we have information (e.g.~sensor data) about
+the past, but not yet about the future.
+
+As in the atemporal case, one can compute all certain answers to a TCQ~$\phi$
+w.r.t.\ a temporal KB~\Kmc by enumerating the (exponentially many) mappings
+$\amf\colon\FVar(\phi)\to\Ind(\Kmc)$ and then solving the entailment problem
+$\Kmc\models\amf(\phi)$ for each~\amf.  We therefore focus on deciding the
+entailment problem for the case where $\phi$ is Boolean.
+%
+It turns out to be easier to analyse the complexity of deciding the temporalised
+query \emph{non-entailment} problem $\Kmc\not\models\phi$.  This problem has the
+same complexity as the TCQ-satisfiability problem of~$\phi$ w.r.t.~\Kmc.  In
+fact, $\Kmc\not\models\phi$ iff $\lnot\phi$ has a model w.r.t.~\Kmc, and
+conversely $\phi$ has a model w.r.t.~\Kmc iff $\Kmc\not\models\lnot\phi$.
+
+Note that, for the data complexity, we have to measure the complexity in the
+size of the sequence of ABoxes in the temporal knowledge base, instead of just a
+single ABox.
+%
+In the following, we assume without loss of generality that the query contains
+only concept and role names that also occur in the global TBox or the global
+RBox.
+
+Obviously, the temporalised query-entailment problem includes as a special case
+the entailment of CQs by atemporal knowledge bases, which can be seen as
+temporal knowledge bases with a sequence of ABoxes of length~$1$, i.e.~having
+$n=0$.  Although models of such temporal knowledge bases are formally infinite
+sequences of interpretations (DL-LTL-structures), all but the first
+interpretation are irrelevant for the semantics of~CQs.
+
+On the temporal side, the TCQ-satisfiability problem generalises the
+satisfiability problem in \ALC-LTL (and \SHQ-LTL) since assertions can be seen
+as simple instances of Boolean CQs.
+%
+Although \ALC-LTL-formulas may additionally contain GCIs, they can equivalently
+be expressed by negated CQs (see the proof of
+Theorem~\ref{thm:lower-bounds-combined-complexity} for details).
+%
+On the other hand, TCQs are more expressive than \SHQ-LTL-formulas since CQs
+such as $\exists y.r(y,y)$, which says that there is a loop in the model without
+naming the individual which has the loop, can clearly not even be expressed in
+\ALC.
+
+An assumption on TCQs that was made in~\cite{BaBL-CADE13} is that
+all Boolean CQs we encounter are \emph{connected} in the sense that the
+variables and individual names are related by roles, as defined e.g.\
+in~\cite{Tes-PhD01,RuGl-JAIR10}.
+
+\begin{definition}[Connected Boolean CQs]
+    We call a Boolean CQ~$\phi$ \emph{connected} if for all
+    $x,y\in\Var(\phi)\cup\Ind(\phi)$, there exists a sequence
+    $x_1,\dots,x_n\in\Var(\phi)\cup\Ind(\phi)$ such that $x_1=x$, $x_n=y$, and
+    for every $i$, $1\le i<n$, there is an $r\in\NR$ such that either
+    $r(x_i,x_{i+1})\in\At(\phi)$ or $r(x_{i+1},x_i)\in\At(\phi)$.
+
+    A collection of Boolean CQs $\phi_1,\dots,\phi_n$ is a \emph{partition}
+    of~$\phi$ if
+    \begin{itemize}
+        \item $\At(\phi)=\At(\phi_1)\cup\dots\cup\At(\phi_n)$;
+        \item the sets $\Var(\phi_i)\cup\Ind(\phi_i)$, $1\le i\le n$, are
+            pairwise disjoint; and
+        \item each $\phi_i$, $1\le i\le n$, is connected.
+    \end{itemize}
+\end{definition}
+
+\noindent
+Similar to~\cite{Tes-PhD01,RuGl-JAIR10}, in~\cite{BaBL-CADE13}, it is assumed
+without loss of generality that Boolean TCQs contain only connected CQs.
+%
+Indeed, if a Boolean TCQ~$\phi$ contains a CQ~$\psi$ that is not connected, we
+can replace $\psi$ by the conjunction $\psi_1\land\dots\land\psi_n$, where
+$\psi_1,\dots,\psi_n$ is a partition of~$\psi$.  This conjunction is of linear
+size in the size of~$\psi$, and the resulting TCQ has exactly the same models
+as~$\phi$ since every homomorphism of~$\psi$ into an interpretation~\Imc can be
+uniquely represented as a collection of homomorphisms of $\psi_1,\dots,\psi_n$
+into~\Imc.
+%
+Thus, in~\cite{BaBL-CADE13} it was always assumed without loss of generality
+that Boolean TCQs contain only connected CQs.  Even though this assumption is
+without loss of generality, it turns out that we can show the results in this
+chapter also without making this assumption.
+
+Before we investigate the complexity of the temporalised query-entailment
+problem, we recall all the assumptions that we have made so far:
+\begin{itemize}
+    \item Every at-least restriction contains only simple roles, since otherwise
+        even the problem of deciding whether a knowledge base is consistent
+        would be undecidable~\cite{HoST-IGPL00}.
+    \item Every role atom in a query contains only simple roles.  We make this
+        restriction since then the combined complexity of atemporal query
+        entailment is \ExpTime-complete in all description logics between \ALC
+        and \SHQ.
+        %
+        This enables us to state our complexity results for all these logics at
+        the same time.
+        %
+        Without this restriction, the combined complexity would increase
+        whenever transitivity axioms are allowed~\cite{ELO+-IJCAI09}.
+    \item The queries contain only concept and role names that also occur
+        in the TBox or the RBox.  This restriction is without loss of
+        generality.
+\end{itemize}
+
+In the next section, we will investigate the complexity of temporalised query
+entailment in our temporal query language.  We show how to obtain the results of
+Table~\ref{tab:tcq-results}.
+
+
+\section{The Complexity of Temporalised Query Entailment}\label{sec:complexity-query-entailment}
+
+In this section, we analyse the complexity of the temporalised query-entailment
+problem in DLs between \ALC and~\SHQ.
+%
+As mentioned before, all our complexity results hold for any DL between \ALC
+and~\SHQ, i.e.~we show the lower bounds for \ALC and the upper bounds for~\SHQ.
+
+We first take a look at an atemporal special case of the TCQ-satisfiability
+problem, which will prove to be useful for analysing the temporalised
+query-entailment problem for arbitrary TCQs.  A \emph{CQ-literal} is either a
+Boolean CQ or a negated Boolean CQ\@.  Note that a \emph{conjunction of
+CQ-literals}~$\phi$ is a special case of a Boolean TCQ\@.  Since $\phi$ does not
+contain any temporal operators, for the deciding satisfiability, it suffices to
+consider a single interpretation instead of a DL-LTL-structure
+$\Imf=(\Imc_i)_{i\ge 0}$.  Extending the notation for UCQs, we often write
+$\Imc_i\models\phi$ instead of $\Imf,i\models\phi$ in this case.  Moreover, it
+is sufficient to consider temporal KBs with only one ABox, which can be viewed
+as \enquote{normal} knowledge bases.
+%
+The following theorem states the complexity of deciding satisfiability in this
+special case.
+
+\begin{theorem}\label{thm:complexity-conjunction-cq-literals}
+    Let \Lmc be a DL between \ALC and \SHQ.  Deciding whether a conjunction of
+    CQ-literals is satisfiable w.r.t.\ an \Lmc-knowledge base is
+    \begin{itemize}
+        \item \ExpTime-complete w.r.t.\ combined complexity, and
+        \item \NP-complete w.r.t.\ data complexity.
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    The problem of deciding the entailment of concept assertions w.r.t.\
+    \ALC-knowledge bases is \ExpTime-hard w.r.t.\ combined
+    complexity~\cite{DLhandbook-07} and \coNP-hard w.r.t.\ data
+    complexity~\cite{CDL+-KR06,Sch-JIIS93,DLN+-JLC94}.  Note that this
+    entailment problem is a special case of the complement of our problem.
+
+    Let now $\Kmc=(\Amc,\Tmc,\Rmc)$ be an \SHQ-knowledge base, and
+    let $\zeta$ be a conjunction of CQ-literals.
+    %
+    To check whether there is an interpretation~\Imc with $\Imc\models\Kmc$ and
+    $\Imc\models\zeta$, we reduce this problem to a query non-entailment problem
+    of known complexity.  Let
+    \[\zeta=\chi_1\land\dots\land\chi_\ell\land\lnot\rho_1\land\dots\land\lnot\rho_m\]
+    for Boolean CQs $\chi_1,\dots,\chi_\ell$, $\rho_1,\dots,\rho_m$.  First, we
+    instantiate the non-negated CQs $\chi_1,\dots,\chi_\ell$ by omitting the
+    existential quantifiers and replacing the variables with fresh individual
+    names.  The set $\Amc'$ of all resulting atoms can thus be viewed as an
+    additional ABox that restricts the interpretation~\Imc.
+
+    However, we also have to ensure that the UNA is respected for the newly
+    introduced individual names.  To achieve this, we employ a trick
+    from~\cite{GHL+-JAIR08}, which consists in guessing an equivalence
+    relation~$\approx$ on $\Ind(\Amc\cup\Amc')$ (i.e.~the set of individual
+    names occurring in~\Amc or~$\Amc'$) that specifies which individual names
+    are allowed to be mapped to the same domain element, with the additional
+    restriction that each equivalence class can contain at most one element from
+    $\Ind(\Amc)$.  For such a relation~$\approx$, we fix a representative for
+    each equivalence class such that every class that contains an
+    $a\in\Ind(\Amc)$ has $a$ as its representative.
+    %
+    We denote by $\Amc_\approx$ the ABox resulting from $\Amc'$ by replacing
+    each new individual name by the representative of its equivalence class.
+    %
+    Note that there are exponentially many such equivalence relations, each of
+    which is of size polynomial in the size of~$\zeta$.
+
+    We now show that the existence of an interpretation~\Imc with
+    $\Imc\models\Kmc$ and $\Imc\models\zeta$ is equivalent to the existence of
+    an equivalence relation~$\approx$ as above and an interpretation~$\Imc'$
+    with $\Imc'\models(\Amc\cup\Amc_\approx,\Tmc,\Rmc)$ and
+    $\Imc'\models\lnot\rho_1\land\dots\land\lnot\rho_m$.
+
+    For the \enquote{if} direction, assume that $\approx$ is an equivalence
+    relation on the individual names and $\Imc'$ is a model of~\Amc, \Tmc, \Rmc,
+    $\Amc_\approx$, and $\lnot\rho_1\land\dots\land\lnot\rho_m$.  By mapping
+    each variable occurring in $\chi_1\land\dots\land\chi_\ell$ to the
+    interpretation of the representative of the equivalence class of the
+    corresponding fresh individual name, we obtain homomorphisms from~$\chi_i$
+    into~$\Imc'$ for each~$i$, $1\le i\le n$.  This shows that $\Imc'$ is also a
+    model of~$\zeta$.
+
+    For the \enquote{only if} direction, assume that $\Imc\models\Kmc$ and
+    $\Imc\models\zeta$.  Thus, there are homomorphisms from~$\chi_i$ into~\Imc
+    for every $i$, $1\le i\le n$.  We define any pair of individual names
+    occurring in $\Amc\cup\Amc'$ equivalent w.r.t.~$\approx$ iff they are mapped
+    to the same domain element by their respective homomorphisms or~\Imc.  The
+    extension of~\Imc that maps each representative of its equivalence class to
+    exactly this domain element is obviously a model of~$\Amc_\approx$.  It
+    still satisfies \Amc, \Tmc, \Rmc, and
+    $\lnot\rho_1\land\dots\land\lnot\rho_m$ since they do not contain the new
+    individual names, and thus it is of the required form.
+
+    The above problem is thus equivalent to finding an equivalence
+    relation~$\approx$ and an interpretation~\Imc with
+    $\Imc\models(\Amc\cup\Amc_\approx,\Tmc,\Rmc)$ and
+    $\Imc\not\models\rho$ where $\rho:=\rho_1\lor\dots\lor\rho_m$ is the Boolean
+    UCQ that results from negating the conjunction of all negated CQs
+    in~$\zeta$.  This is the same as asking whether
+    $(\Amc\cup\Amc_\approx,\Tmc,\Rmc)$ does not entail~$\rho$.
+
+    For the combined complexity, we can enumerate all equivalence
+    relations~$\approx$ in exponential time, and check the above non-entailment
+    for the polynomial-size \SHQ-knowledge base and UCQ resulting from each
+    relation~$\approx$, which can be done in \ExpTime~\cite{Lut-IJCAR08}.
+    %
+    For the data complexity, we can guess a relation~$\approx$ in
+    non-deterministic polynomial time, and check the non-entailment in
+    \NP~\cite{OrCE-AAAI06}.
+    %
+    Hence, we obtain the desired complexity results for the satisfiability
+    problem of a conjunction of CQ-literals.
+\end{proof}
+
+\noindent
+In the remainder of this section, we  present several constructions, most
+of which use the above theorem, to derive the complexity results shown in
+Table~\ref{tab:tcq-results} for temporalised query entailment.
+%
+As mentioned several times, the results depend on which symbols are allowed to
+be rigid.  It is well-known that one can simulate rigid concept names by rigid
+role names~\cite{BaGL-ToCL12}, which is why there are only three cases to
+consider.
+
+As argued above, we show the lower bounds for the DL \ALC, and the upper bounds
+for the DL \SHQ.
+%
+Hence, in Section~\ref{sec:tcq-lower-bounds}, we consider the lower bounds for
+temporalised query entailment in \ALC, whereas in
+Section~\ref{sec:tcq-upper-bounds}, we consider the upper bounds for
+temporalised query entailment in \SHQ.  However, the upper bounds for the most
+complex case of rigid concept names are treated separately in
+Sections~\ref{sec:tcq-data-complexity-rigid-concepts}
+and~\ref{sec:tcq-combined-complexity-rigid-concepts}.
+
+
+\subsection{Lower Bounds for Temporalised Query Entailment in~\texorpdfstring{\ALC}{ALC}}\label{sec:tcq-lower-bounds}
+
+In this section, we investigate the lower bounds for temporalised query
+entailment of Table~\ref{tab:tcq-results}.
+
+For the combined complexity, we obtain the lower bounds by a simple reduction of
+the satisfiability problem of~\ALC-LTL~\cite{BaGL-ToCL12}.
+
+\begin{theorem}\label{thm:lower-bounds-combined-complexity}
+    With respect to combined complexity, the temporalised query-entailment
+    problem in \ALC is
+    \begin{itemize}
+        \item \ExpTime-hard if $\NRC=\NRR=\emptyset$;
+        \item \coNExpTime-hard if $\NRC\ne\emptyset$ and $\NRR=\emptyset$; and
+        \item \TwoExpTime-hard if $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$.
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    As shown in~\cite{BaGL-ToCL12}, the satisfiability problem of \ALC-LTL is
+    \ExpTime-complete if $\NRC=\NRR=\emptyset$, \NExpTime-complete if
+    $\NRC\ne\emptyset$ and $\NRR=\emptyset$, and \TwoExpTime-complete if
+    $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$.
+
+    Let now $\phi$ be an \ALC-LTL-formula, $C_1\sqsubseteq D_1$,~\dots,
+    $C_p\sqsubseteq D_p$ be all GCIs occurring in~$\phi$, and $E_1(a_1)$,~\dots,
+    $E_m(a_m)$ be all concept assertions occurring in~$\phi$, where
+    $E_1,\dots,E_m$ are arbitrary concepts.
+    %
+    We define $\psi$ to be the Boolean TCQ obtained from~$\phi$ by replacing
+    each $C_i\sqsubseteq D_i$ by $\lnot(\exists x.A_i(x))$ and each $E_j$ by
+    $B_j$, where $A_i,B_j$ are concept names that do not occur in~$\phi$, for
+    every~$i$, $1\le i\le p$, and every~$j$, $1\le j\le m$.
+    %
+    Moreover, we define
+    \[\Tmc:=\{A_i\equiv C_i\sqcap\lnot D_i\mid 1\leq i\leq p\}\cup%
+        \{B_j\equiv E_j\mid 1\leq j\leq m\}.\]
+    %
+    Then $\phi$ is satisfiable iff
+    $(\emptyset,\Tmc,\emptyset)\not\models\lnot\psi$.
+    We have thus reduced the satisfiability problem in \ALC-LTL to the
+    temporalised query \emph{non-entailment} problem in \ALC, which yields the
+    claimed lower bounds.
+\end{proof}
+
+\noindent
+For the data complexity, we obtain the lower bounds directly from
+Theorem~\ref{thm:complexity-conjunction-cq-literals}.
+
+\begin{corollary}\label{cor:lower-bounds-data-complexity}
+    With respect to data complexity, the temporalised query-entailment problem
+    in~\ALC is \coNP-hard.
+\end{corollary}
+
+\begin{proof}
+    Theorem~\ref{thm:complexity-conjunction-cq-literals} states that deciding
+    whether a conjunction of CQ-literals~$\zeta$ is satisfiable w.r.t.\ an
+    atemporal \ALC-knowledge base~\Kmc is \NP-complete w.r.t.\ data complexity.
+    %
+    Since $\zeta$ is a special TCQ and rigid names are irrelevant in the
+    atemporal case, we obtain \coNP-hardness w.r.t.\ data complexity for the
+    temporalised query-entailment problem in all the settings listed in
+    Table~\ref{tab:tcq-results}.
+\end{proof}
+
+\noindent
+Theorem~\ref{thm:lower-bounds-combined-complexity} and
+Corollary~\ref{cor:lower-bounds-data-complexity} yield the lower bounds for
+temporalised query entailment as shown in Table~\ref{tab:tcq-results}.
+
+In the following sections, we present the ideas for the upper bounds w.r.t.\
+combined complexity and data complexity.  For the former, we can match all lower
+bounds that we have from Theorem~\ref{thm:lower-bounds-combined-complexity}.
+For the latter, however, we cannot match the lower bound of \coNP in the
+case where both concept names and role names may be rigid.
+%
+While our constructions need to deal with CQs and the additional expressivity
+of \SHQ in an appropriate way, the basic ideas are similar to those presented
+for \SHOQ-LTL in Chapter~\ref{ch:shoq-ltl}.  However, there are several
+differences to the constructions of Chapter~\ref{ch:shoq-ltl}.  Firstly, we have
+to deal with conjunctive queries instead of axioms, and secondly, we do not
+allow nominals in this chapter.  Thirdly, in the semantics of TCQs (see
+Definition~\ref{def:semantics-tcqs}), the point of reference is the last time
+point~$n$ and a temporal knowledge base has to be taken into account.  Hence,
+although similar, the constructions in the subsequent sections differ from the
+ones in Chapter~\ref{ch:shoq-ltl}.
+
+
+\subsection{Upper Bounds for Temporalised Query Entailment in~\texorpdfstring{\SHQ}{SHQ}}\label{sec:tcq-upper-bounds}
+
+Similar to what was done for \ALC-LTL in Lemma~4.3 in~\cite{BaGL-ToCL12} and
+also for \SHOQ-LTL in Lemma~\ref{lem:r-sat-t-sat}, we reduce the
+\emph{TCQ-satisfiability problem} in \SHQ to two separate satisfiability
+problems.
+
+In the following, let $\Kmc=((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)$ be a temporal
+\SHQ-KB, and let $\phi$ be a Boolean TCQ, for which we want to decide whether
+$\phi$ has a model w.r.t.~\Kmc.
+
+We again consider the propositional abstraction of~$\phi$.  Its definition is
+very similar to propositional abstraction of a \SHOQ-LTL-formula (see
+Definition~\ref{def:prop-abs}).
+
+\begin{definition}[Propositional abstraction]
+    Let $\phi$ be a TCQ, and let $\Pmc_\phi$ be a finite set of propositional
+    variables such that there is a bijection $\psf\colon\CQ(\phi)\to\Pmc_\phi$.
+    \begin{enumerate}
+        \item The propositional LTL-formula~$\phi^\psf$ is obtained from~$\phi$
+            by replacing every occurrence of a CQ~$\psi$ in~$\phi$ by its
+            \psf-image $\psf(\psi)$.  We call $\phi^\psf$ the
+            \emph{propositional abstraction of~$\phi$ w.r.t.~\psf}.
+        \item Given a DL-LTL-structure $\Imf=(\Imc_i)_{i\ge 0}$, its
+            \emph{propositional abstraction w.r.t.~\psf} is the propositional
+            LTL-structure $\Imf^\psf=(w_i)_{i\ge 0}$ with
+            \[w_i:=\bigl\{\psf(\psi)\mid\psi\in\CQ(\phi)\ \text{and} \
+                \Imc_i\models\alpha\bigr\}\]
+            for every $i\ge 0$.
+    \end{enumerate}
+\end{definition}
+
+\noindent
+In the following, we assume that $\psf\colon\CQ(\phi)\to\Pmc_\phi$ is a
+bijection.%
+\footnote{As for \SHOQ-LTL-formulas, it is obvious that such a set $\Pmc_\phi$
+    and such a bijection~\psf exists for every TCQ\@.}
+%
+Again for simplicity, for a sub-TCQ~$\psi$ of~$\phi$, we denote by~$\psi^\psf$
+the propositional abstraction of~$\psi$ w.r.t.\ the restriction of~\psf
+to~$\CQ(\psi)$.
+%
+The propositional abstraction~$\phi^\psf$ of~$\phi$ w.r.t.~\psf is a
+propositional LTL-formula that allows us to analyse the temporal structure
+of~$\phi$ separately from the CQ-component.  The following lemma is very similar
+to Lemma~\ref{lem:prop-abs}, and its proof is analogous.
+
+\begin{lemma}\label{lem:tcq-prop-abs}
+    Let \Imf be a DL-LTL-structure with $\Imf\models\Kmc$.  Then, \Imf is a
+    model of~$\phi$ w.r.t.~\Kmc iff $\Imf^\psf$ is a model of~$\phi^\psf$.
+\end{lemma}
+
+\begin{proof}
+    Let $\Imf=(\Imc_i)_{i\ge 0}$ be a DL-LTL-structure with $\Imf\models\Kmc$,
+    and $\Imf^\psf=(w_i)_{i\ge 0}$ its propositional abstraction w.r.t.~\psf.
+    Moreover, let $i\ge 0$.  We prove this lemma by showing that
+    $\Imf,i\models\phi$ iff $\Imf^\psf,i\models\phi^\psf$ by induction of the
+    structure of~$\phi$.
+
+    For the base case, let $\phi$ be an CQ\@.  Then, we have
+    $\Imf,i\models\phi$ \emph{iff} $\Imc_i\models\phi$ \emph{iff}
+    $\psf(\phi)\in w_i$ \emph{iff} $w_i\models\phi^\psf$ \emph{iff}
+    $\Imf^\psf,i\models\phi^\psf$.
+
+    For the induction steps, we obtain the claim by using the definition of the
+    semantics and the induction hypothesis.  This can be done exactly as we did
+    in the proof of Lemma~\ref{lem:prop-abs}.
+\end{proof}
+
+\noindent
+Again, the \enquote{only if} direction of this lemma yields that satisfiability
+of~$\phi$ w.r.t.~\Kmc implies satisfiability of~$\phi^\psf$.  Note that, however, the
+\enquote{if} direction does not yield the converse of this implication as
+already argued for Lemma~\ref{lem:prop-abs}.
+
+We again consider
+a set $\Wmc\subseteq 2^{\Pmc_\phi}$, which intuitively
+specifies the worlds that are allowed to occur in an LTL-structure
+satisfying~$\phi^\psf$.  To express this restriction, we define the
+propositional LTL-formula
+\[\phi^\psf_\Wmc:=\phi^\psf\land%
+    \Boxm\Box\Biggl(\bigvee_{X\in\Wmc}\Biggl(\bigwedge_{p\in X}p\land%
+    \bigwedge_{p\in\Pmc_\phi\setminus X}\lnot p\Biggr)\Biggr).\]
+%
+Note that a propositional LTL-formula $\Boxm\Box\psi$ is satisfied iff $\psi$
+holds at every point in time.%
+\footnote{Note also that the propositional LTL-formula~$\phi^\psf_\Wmc$ for a
+    \SHOQ-LTL-formula~$\phi$ as defined in Section~\ref{sec:complexity-shoq-ltl}
+    does not use the $\Boxm$-operator.  We need this here due to the definition of
+    the semantics where the point of reference is time point~$n$ rather
+    than~$0$.}
+%
+The next lemma formalises the immediate connection between~$\phi$
+and~$\phi^\psf_\Wmc$.
+
+\begin{lemma}\label{lem:tcq-prop-abs-wmc}
+    If $\phi$ is satisfiable w.r.t.~\Kmc, then there is a set
+    $\Wmc\subseteq 2^{\Pmc_\phi}$ and a propositional LTL-structure~\Wmf such
+    that $\phi^\psf_\Wmc$ is valid in~\Wmf at time~$n$.
+\end{lemma}
+
+\begin{proof}
+    Let \Imf be a DL-LTL-structure that is a model of~$\phi$ w.r.t.~\Kmc, and
+    let $\Imf^\psf=(w_i)_{i\ge 0}$ be its propositional abstraction w.r.t.~\psf.
+    We consider the finite set $\Wmc:=\{w_i\mid i\ge 0\}$ induced by~\Imf.
+    %
+    Using Lemma~\ref{lem:tcq-prop-abs}, it is easy to verify that the fact that
+    $\Imf\models\Kmc$ and $\phi$ is valid in~\Imf at time~$n$ implies that
+    $\phi^\psf_\Wmc$ is valid in~$\Imf^\psf$ at time~$n$.
+\end{proof}
+
+\noindent
+As argued above, guessing a set~\Wmc and then checking whether there is a
+propositional LTL-structure~\Wmf such that the induced propositional
+LTL-formula~$\phi^\psf_\Wmc$ is valid in~\Wmf at time~$n$ is not sufficient for
+checking whether~$\phi$ has a model w.r.t.~\Kmc.  We must also check whether
+\Wmc can indeed be induced by some DL-LTL-structure that is a model of~\Kmc.
+For that, we extend the notion of r-satisfiability from
+Definition~\ref{def:r-sat}.
+
+\begin{definition}[R-satisfiability]\label{def:tcq-r-sat}
+    Let $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$, and let $\iota$ be a
+    mapping from $\{0,\dots,n\}$ into $\{1,\dots,k\}$.  We call \Wmc
+    \emph{r-satisfiable w.r.t.~$\iota$ and~\Kmc} if there exist interpretations
+    $\Jmc_1=(\Delta,\cdot^{\Jmc_1})$,~\dots, $\Jmc_k=(\Delta,\cdot^{\Jmc_k})$,
+    and $\Imc_0=(\Delta,\cdot^{\Imc_0})$,~\dots,
+    $\Imc_n=(\Delta,\cdot^{\Imc_n})$ such that
+    \begin{itemize}
+        \item $a^{\Jmc_i}=a^{\Jmc_j}=a^{\Imc_\ell}$ holds for every $a\in\NI$
+            and all $i,j,\ell$, $1\le i<j\le k$ and $0\le\ell\le n$;
+        \item $A^{\Jmc_i}=A^{\Jmc_j}=A^{\Imc_\ell}$ holds for every $A\in\NRC$
+            and all $i,j,\ell$, $1\le i<j\le k$ and $0\le\ell\le n$;
+        \item $r^{\Jmc_i}=r^{\Jmc_j}=r^{\Imc_\ell}$ holds for every $r\in\NRR$
+            and all $i,j,\ell$, $1\le i<j\le k$ and $0\le\ell\le n$; and
+        \item every $\Jmc_i$, $1\le i\le k$, and every $\Imc_j$, $0\le j\le n$,
+            is a model of~\Tmc and~\Rmc;
+        \item every $\Jmc_i$, $1\le i\le k$, is a model of the conjunction of
+            CQ-literals
+            \[\zeta_{X_i}:=\bigwedge_{p\in X_i}\psf^{-1}(p)\land%
+                \bigwedge_{p\in\Pmc_\phi\setminus X_i}\lnot\psf^{-1}(p);\ \text{and}\]
+        \item every $\Imc_i$, $0\le i\le n$, is a model of~$\Amc_i$ and
+            $\zeta_{X_{\iota(i)}}$.
+    \end{itemize}
+\end{definition}
+
+\noindent
+The intuition underlying this definition is the following.  The existence of the
+interpretations~$\Jmc_i$, $1\le i\le k$, ensures that the conjunction
+$\zeta_{X_i}$ of the CQ-literals induced by~$X_i$ is consistent.  In fact, a
+set~\Wmc containing a set~$X_i$ for which this does not hold cannot be induced
+by a DL-LTL-structure.  The interpretations~$\Imc_i$, $0\le i\le n$, constitute
+the first $n+1$ interpretations in such a DL-LTL-structure.  In addition to
+inducing a set~$X_{\iota(i)}\in\Wmc$ and thus satisfying the corresponding
+conjunction~$\zeta_{X_{\iota(i)}}$, the interpretation~$\Imc_i$ must also
+satisfy the ABox~$\Amc_i$.  Moreover, we ensure that the interpretations share
+the same domain, respect rigid names, and satisfy the TBox~\Tmc and the
+RBox~\Rmc.
+%
+Note that we can use Theorem~\ref{thm:complexity-conjunction-cq-literals} to
+check whether interpretations satisfying the last three conditions of
+Definition~\ref{def:tcq-r-sat} exist.  As we will see below,
+the difficulty lies in ensuring that the interpretations share the same domain
+and respect rigid names.
+
+Satisfaction of the temporal structure of~$\phi$ by a DL-LTL-structure built
+this way is ensured by testing $\phi^\psf_\Wmc$ for satisfiability w.r.t.\ a
+side condition that ensures that the first $n$ worlds are those chosen
+by~$\iota$.  For that, we extend the notion of t-satisfiability from
+Definition~\ref{def:t-sat}.
+
+\begin{definition}[T-satisfiability]\label{def:tcq-t-sat}
+    Let $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$, and let $\iota$ be a
+    mapping from $\{0,\dots,n\}$ into $\{1,\dots,k\}$.  We call the
+    propositional LTL-formula~$\phi^\psf$ \emph{t-satisfiable w.r.t.~\Wmc
+    and~$\iota$} if there exists a propositional LTL-structure
+    $\Wmf=(w_i)_{i\ge 0}$ such that
+    \begin{itemize}
+        \item $\Wmf,n\models\phi^\psf_\Wmc$, and
+        \item $w_i=X_{\iota(i)}$ for every $i$, $0\le i\le n$.
+    \end{itemize}
+\end{definition}
+
+\noindent
+The next lemma shows that these two satisfiability problems, namely,
+t-satisfiability and r-satisfiability, can be combined to decidable the
+TCQ-satisfiability problem in \SHQ.  The proof of the lemma is very similar to
+the proofs of Lemmas~\ref{lem:ltl-structure-r-sat} and~\ref{lem:r-sat-t-sat}.
+
+\begin{lemma}\label{lem:tcq-r-sat-t-sat}
+    The TCQ~$\phi$ is satisfiable w.r.t.\ the temporal knowledge base~\Kmc iff
+    there is a set $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ and a mapping
+    $\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$ such that
+    \begin{itemize}
+        \item \Wmc is r-satisfiable w.r.t.~$\iota$ and~\Kmc, and
+        \item $\phi^\psf$ is t-satisfiable w.r.t.~\Wmc and~$\iota$.
+    \end{itemize}
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{only if} direction, assume that there is a DL-LTL-structure
+    $\Imf=(\Imc_i)_{i\ge 0}$ that is a model of~$\phi$ w.r.t.~\Kmc,
+    i.e.~$\Imf\models\Kmc$ and $\Imf,n\models\phi$.
+    %
+    Let $\Imf^\psf=(w_i)_{i\ge 0}$ be the propositional abstraction of~\Imf
+    w.r.t.~\psf.
+    %
+    Recall that we have already seen in the proof of
+    Lemma~\ref{lem:tcq-prop-abs-wmc} that \Imf induces a finite set
+    $\Wmc:=\{w_i\mid i\ge 0\}=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ such
+    that $\phi^\psf_\Wmc$ is valid in~$\Imf^\psf$ at time~$n$.
+    %
+    Moreover, we have that for every $i\ge 0$, there is an index
+    $\nu_i\in\{1,\dots,k\}$ such that $\Imc_i$ induces the set~$X_{\nu_i}$,
+    i.e.\
+    \[X_{\nu_i}=\bigl\{\psf(\psi)\mid\psi\in\CQ(\phi)\ \text{and}\
+        \Imc_i\models\psi\bigr\},\]
+    and, conversely, for every $\nu\in\{1,\dots,k\}$, there is an index $i\ge 0$
+    such that $\nu=\nu_i$.
+    %
+    We define the mapping $\iota$ as follows: $\iota(i)=\nu_i$ for every~$i$,
+    $0\le i\le n$.
+    %
+    By definition of~$\iota$, $X_{\nu_i}$ and~$\Imf^\psf$, we also have
+    $w_i=X_{\iota(i)}$ for every~$i$, $0\le i\le n$.
+    %
+    Thus, $\phi^\psf$ is t-satisfiable w.r.t.~\Wmc and~$\iota$.
+    %
+    For every $i$, $1\le i\le k$, the interpretation~$\Jmc_i$ is obtained as
+    follows.  Let $\ell_1,\dots,\ell_k$ be such that $\nu_{\ell_1}=1$,~\dots,
+    $\nu_{\ell_k}=k$.  Now, if we set $\Jmc_i:=\Imc_{\ell_i}$, then we clearly
+    have that $\Jmc_i$ is a model of~$\zeta_{X_i}$.  It is now easy to see that
+    the interpretations $\Jmc_1,\dots,\Jmc_k$, and $\Imc_0,\dots,\Imc_n$ satisfy
+    the conditions for r-satisfiability of~\Wmc w.r.t.~$\iota$ and~\Kmc.
+
+    For the \enquote{if} direction, assume that there is a set
+    $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ and a mapping
+    $\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$ such that \Wmc is r-satisfiable
+    w.r.t.~$\iota$ and~\Kmc and $\phi^\psf$ is t-satisfiable w.r.t.~\Wmc
+    and~$\iota$.  Hence, there is a propositional LTL-structure
+    $\Wmf=(w_i)_{i\ge 0}$ such that $\phi^\psf_\Wmc$ is valid in~\Wmf at
+    time~$n$ and $w_i=X_{\iota(i)}$ for every~$i$, $0\le i\le n$, and there are
+    interpretations $\Jmc_1,\dots,\Jmc_k$, and $\Imc_0,\dots,\Imc_n$ such that
+    the conditions in Definition~\ref{def:tcq-r-sat} are satisfied.
+
+    By the definition of $\phi^\psf_\Wmc$, we have that for
+    every world~$w_i$, there is exactly one index $\nu_i\in\{1,\dots,k\}$ such
+    that $w_i$ satisfies
+    \[\bigwedge_{p\in X_{\nu_i}}p\land\bigwedge_{p\in\Pmc_\phi\setminus X_{\nu_i}}\lnot p.\]
+    Since every~$w_i$, $0\le i\le n$, satisfies exactly the propositional
+    variables of~$X_{\iota(i)}$, we have $\iota(i)=\nu_i$.
+    %
+    We can now define a DL-LTL-structure $\Imf:=(\Imc_i)_{i\ge 0}$ as follows.
+    We set $\Imc_i:=\Jmc_{\nu_i}$ for $i>n$.  By Definition~\ref{def:tcq-r-sat},
+    each~$\Imc_i$ is a model of $\zeta_{X_{\nu_i}}$, i.e.~it satisfies exactly
+    the CQs specified by the propositional variables in~$X_{\nu_i}$.  This
+    yields since $\Wmf,n\models\phi^\psf_\Wmc$, that $\Imf,n\models\phi$.  It
+    also follows directly from Definition~\ref{def:tcq-r-sat} that
+    $\Imf\models\Kmc$.  Hence, we have that $\phi$ is satisfiable w.r.t.~\Kmc.
+\end{proof}
+
+\noindent
+To obtain a decision procedure for the TCQ-satisfiability problem in \SHQ, we
+have to non-deterministically guess or construct the set~\Wmc and the
+mapping~$\iota$, and then check the two conditions of
+Lemma~\ref{lem:tcq-r-sat-t-sat}.
+%
+Depending on which symbols are allowed to be rigid, we use different
+constructions to achieve that.
+%
+First, we focus on deciding t-satisfiability w.r.t.\ a given set~\Wmc and a
+given mapping~$\iota$.
+
+
+\subsubsection{Deciding T-satisfiability}
+
+From now on, let $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$, and let
+$\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$ be a mapping that specifies a
+set~$X_{\iota(i)}$ for each of the ABoxes~$\Amc_i$, $0\le i\le n$.
+%
+We proceed similar to the proof of Lemma~\ref{lem:t-sat}, where we have shown
+that we can decide t-satisfiability of the propositional abstraction of a
+\SHOQ-LTL-formula w.r.t.\ a set of worlds~\Wmc in time exponential in the size
+of the propositional abstraction and linear in the size of~\Wmc.  For that, we
+constructed a Büchi-automaton for the propositional abstraction and removed all
+transitions that are labelled with a letter that is not contained in~\Wmc.
+However, the difference here is that we have to take care of the second
+condition of t-satisfiability (see Definition~\ref{def:tcq-t-sat}), and that we
+have to ensure that $\phi^\psf$ is satisfied as time point~$n$ rather than~$0$.
+
+We check this by using the same idea that we employed in
+Section~\ref{sec:aut-for-ltl} when we constructed a Büchi-automaton that ensures
+that a propositional LTL-formula is satisfied at a given time point.
+%
+We attach a counter from $\{0,\dots,n+1\}$ to the states of the
+Büchi-automaton.  Transitions where the counter is $i<n+1$ check if the current
+world corresponds to $X_{\iota(i)}$ and increase the counter by~$1$.
+
+In the following, let $\Nmc=(Q,\Sigma_{\Pmc_\phi},\Delta,Q_0,F)$ be a
+Büchi-automaton such that for every $\omega$-word
+$w=w_0w_1w_2\dotso\in\Sigma_{\Pmc_\phi}^\omega$, we have that
+$w\in L_\omega(\Nmc)$ iff $\phi^\psf$ is valid in the propositional
+LTL-structure $\Wmf=(w_i)_{i\ge 0}$ at time~$n$.  We have shown in
+Section~\ref{sec:aut-for-ltl} how such a Büchi-automaton can be constructed.
+Moreover, we have shown in Lemma~\ref{lem:ba-phi-n-exp} that we can construct
+such a Büchi-automaton in time exponential in the size of~$\phi^\psf$ and
+polynomial in~$n$.
+
+We define the Büchi-automaton $\Nmc'=(Q',\Sigma_{\Pmc_\phi},\Delta',Q_0',F')$ as
+follows:
+\begin{itemize}
+    \item $Q':=Q\times\{0,\dots,n+1\}$;
+    \item $((q,\ell),\ \sigma,\ (q',\ell'))\ \in\ \Delta'$ iff
+        \begin{itemize}
+            \item $(q,\sigma,q')\in\Delta$,
+            \item $\sigma\in\Wmc$,
+            \item $\ell\le n$ implies $\sigma=X_{\iota(\ell)}$, and
+            \item $\ell'=\begin{cases}
+                    \ell+1 &\text{if $\ell\le n$, and}\\
+                    \ell   &\text{otherwise;}
+                \end{cases}$
+        \end{itemize}
+    \item $Q_0':=Q_0\times\{0\}$; and
+    \item $F':=F\times\{n+1\}$.
+\end{itemize}
+%
+The next lemma shows that this Büchi-automaton is correct.
+
+\begin{lemma}
+    For every $\omega$-word $w=w_0w_1w_2\dotso\in\Sigma_{\Pmc_\phi}^\omega$, we
+    have $w\in L_\omega(\Nmc')$ iff $\phi^\psf_\Wmc$ is valid in the
+    propositional LTL-structure $\Wmf=(w_i)_{i\ge 0}$ at time~$n$, and
+    $w_i=X_{\iota(i)}$ for every~$i$, $0\le i\le n$.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{only if} direction, assume that $\phi^\psf_\Wmc$ is valid
+    in the propositional LTL-structure $\Wmf=(w_i)_{i\ge 0}$ at time~$n$, and
+    that we have $w_i=X_{\iota(i)}$ for every~$i$, $0\le i\le n$.
+    %
+    Obviously, we have also $\Wmf,n\models\phi^\psf$ since $\phi^\psf$ is a
+    conjunct of~$\phi^\psf_\Wmc$.  This yields that
+    $w=w_0w_1w_2\dotso\in L_\omega(\Nmc)$.  Thus, there is a run $S_0S_1S_2\dots$
+    of~\Nmc on~$w$.  Then,
+    \[(S_0,0)(S_1,1)\dots(S_n,n)(S_{n+1},n+1)(S_{n+2},n+1)\dots\]
+    is a accepting run of~$\Nmc'$ on~$w$ due to the following reasons:
+    \begin{itemize}
+        \item Obviously, we have $(S_i,\ell)\in Q'$ for every $i\ge 0$ and
+            every~$\ell$, $0\le k\le n+1$.
+        \item We have for every~$i$, $0\le i\le n$, that
+            \[((S_i,i),\ w_i,\ (S_{i+1},i+1))\ \in\ \Delta',\]
+            and for every $i\ge n+1$ that
+            \[((S_i,n+1),\ w_i,\ (S_{i+1},n+1))\ \in\ \Delta'\]
+            since:
+            \begin{itemize}
+                \item $(S_i,w_i,S_{i+1})\in\Delta$ by construction;
+                \item $w_i\in\Wmc$ since \Wmf is a model of~$\phi^\psf_\Wmc$;
+                \item $i\le n$ implies $w_i=X_{\iota(i)}$ by construction; and
+                \item the condition for incrementing the second component of a
+                    state (until $n+1$ is reached) is obviously also satisfied.
+            \end{itemize}
+        \item Since $S_0\in Q_0$, we have $(S_0,0)\in Q_0'$.
+        \item Since $S_0S_1S_2\dots$ is an accepting run of~\Nmc on~w, there are
+            infinitely many $j\ge 0$ such that $S_j\in F$.  The definition
+            of~$F'$ yields now that the above run is accepting.
+    \end{itemize}
+
+    For the \enquote{if} direction, assume that
+    $w=w_0w_1w_2\dotso\in L_\omega(\Nmc')$, i.e.~there is an accepting run
+    \[(S_0,0)(S_1,1)\dots(S_n,n)(S_{n+1},n+1)(S_{n+2},n+1)\dots\]
+    of~$\Nmc'$ on~$w$.
+
+    By the definition of~$\Delta'$, we have $w_i=X_{\iota(i)}$ for every~$i$,
+    $0\le i\le n$.
+    %
+    To show that $\phi^\psf_\Wmc$ is valid in $\Wmf:=(w_i)_{i\ge 0}$ at time~$n$
+    observe that we have $w_i\in\Wmc$ for every $i\ge 0$ again by the definition
+    of~$\Delta'$.  Thus, the conjunct
+    \[\Boxm\Box\Biggl(\bigvee_{X\in\Wmc}\Biggl(\bigwedge_{p\in X}p\land%
+        \bigwedge_{p\in\Pmc_\phi\setminus X}\lnot p\Biggr)\Biggr)\]
+    of~$\phi^\psf_\Wmc$ is clearly satisfied by~\Wmf (at any time point).
+
+    Moreover, we have that $S_0S_1S_2\dots$ is an accepting run of~\Nmc on~$w$
+    by the definition of~$Q_0'$, $\Delta'$, and~$F'$.  Thus, $\phi^\psf$ is
+    valid in~\Wmf at time~$n$.
+    %
+    Hence, we obtain that $\phi^\psf_\Wmc$ is valid in~\Wmf at time~$n$.
+\end{proof}
+
+\noindent
+This lemma implies that $L_\omega(\Nmc')\ne\emptyset$ iff $\phi^\psf$ is
+t-satisfiable w.r.t.~\Wmc and~$\iota$.  We can thus decide the latter problem by
+checking~$\Nmc'$ for emptiness, which yields the following complexity result.
+
+\begin{lemma}\label{lem:tcq-t-sat}
+    Deciding whether $\phi^\psf$ is t-satisfiable w.r.t.~\Wmc and~$\iota$ can be
+    done in time exponential in the size of~$\phi^\psf$, linear in the size
+    of~\Wmc, and polynomial in~$n$.
+\end{lemma}
+
+\begin{proof}
+    As mentioned above the Büchi-automaton~\Nmc can be constructed in time
+    exponential in the size of~$\phi^\psf$ and polynomial in~$n$ (see
+    Lemma~\ref{lem:ba-phi-n-exp}).
+    %
+    Note that the Büchi-automaton~$\Nmc'$ can be constructed in time linear
+    in the size of~\Nmc, the size of~\Wmc, and~$n$, and thus the
+    size of~$\Nmc'$ is linear in the size of~\Nmc and~$n$, and thus
+    exponential in the size of~$\phi^\psf$ and polynomial in~$n$.
+    %
+    Since the emptiness problem for Büchi-automata can be solved in polynomial
+    time~\cite{VaWo-IC94}, this yields that t-satisfiability of~$\phi^\psf$
+    w.r.t.~\Wmc and~$\iota$ can be decided in time exponential in the size
+    of~$\phi^\psf$, linear in the size of~\Wmc, and polynomial in~$n$.
+\end{proof}
+
+\noindent
+However, due to Lemma~\ref{lem:tcq-r-sat-t-sat}, the complexity of the
+TCQ-satisfiability problem also depend on the complexity of deciding whether
+\Wmc is r-satisfiable w.r.t.~$\iota$ and~\Kmc.  This depends again on the fact
+whether there are concept or role names that are allowed to be rigid.
+
+In the following sections, we establish some results as to this complexity in
+the cases without rigid names, and with rigid concept and role names.
+%
+The case without rigid role names, but with
+rigid concept names, is considered in
+Section~\ref{sec:tcq-data-complexity-rigid-concepts} for data
+complexity and in Section~\ref{sec:tcq-combined-complexity-rigid-concepts} for
+combined complexity.
+
+
+\subsubsection{The Case without Rigid Names}
+
+In this section, we consider the case where neither concept names nor role names
+are allowed to be rigid, i.e.~$\NRC=\NRR=\emptyset$.  We establish the following
+complexity results.
+
+\begin{theorem}\label{thm:upper-bounds-no-rigid-names}
+    If $\NRC=\NRR=\emptyset$, the temporalised query-entailment problem in \SHQ
+    is
+    \begin{itemize}
+        \item in \ExpTime w.r.t.\ combined complexity and
+        \item in \coNP w.r.t.\ data complexity.
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    Let $\phi$ be a Boolean TCQ, and let
+    $\Kmc=((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)$ be a temporal \SHQ-knowledge base.
+    As argued above, the temporalised query \emph{non-entailment} problem has
+    the same complexity as the TCQ-satisfiability problem.
+    %
+    We can decide whether $\phi$ is satisfiable w.r.t.~\Kmc using
+    Lemma~\ref{lem:tcq-r-sat-t-sat}.  For that, let
+    $\psf\colon\CQ(\phi)\to\Pmc_\phi$ be a bijection.
+
+    For combined complexity, we proceed as follows.  We define
+    \[\Wmc:=\{X\in 2^{\Pmc_\phi}\mid%
+        \text{$\zeta_X$ is satisfiable w.r.t.~$(\emptyset,\Tmc,\Rmc)$}\},\]
+    where $\zeta_X$ is defined as in Definition~\ref{def:tcq-r-sat}.
+    %
+    Note that~$\Wmc=\{X_1,\dots,X_k\}$ can be constructed in time exponential in
+    the size of~$\phi$, \Tmc, and~\Rmc.  Indeed, there are exponentially many
+    sets $X\in 2^{\Pmc_\phi}$, but each $\zeta_X$ can be constructed in time
+    polynomial in the size of~$\phi$, and is thus of size polynomial in the size
+    of~$\phi$.  By Theorem~\ref{thm:complexity-conjunction-cq-literals}, the
+    problem of checking whether the conjunction of CQ-literals~$\zeta_X$ is
+    satisfiable w.r.t.~$(\emptyset,\Tmc,\Rmc)$ is \ExpTime-complete.  Thus, we
+    obtain the set~\Wmc after exponentially many \ExpTime-tests, i.e.~in time
+    exponential in the size of~$\phi$, \Tmc, and~\Rmc.
+    %
+    Moreover, we enumerate all possible mappings
+    $\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$ in time exponential in the size
+    of~$\phi$ and~\Kmc.  For each such~$\iota$ and every~$i$, $0\le i\le n$, we
+    check whether the conjunction of CQ-literals~$\zeta_{X_{\iota(i)}}$ is
+    satisfiable w.r.t.~$(\Amc_i,\Tmc,\Rmc)$ in time exponential in the size
+    of~$\phi$ and~\Kmc (using again
+    Theorem~\ref{thm:complexity-conjunction-cq-literals}).
+    %
+    After that, we check for ever mapping~$\iota$ that passes this test, whether
+    $\phi^\psf$ is t-satisfiable w.r.t.~\Wmc and~$\iota$, which, by
+    Lemma~\ref{lem:tcq-t-sat}, can be done in time exponential in the size
+    of~$\phi^\psf$ (and thus in time exponential in the size of~$\phi$), linear
+    in the size of~\Wmc, and polynomial in~$n$.
+
+    We now show that for every mapping~$\iota$ that passes the above tests, we
+    have that \Wmc is r-satisfiable w.r.t.~$\iota$ and~\Kmc.
+    %
+    Since every~$\zeta_{X_i}$, $1\le i\le k$ is satisfiable
+    w.r.t.~$(\emptyset,\Tmc,\Rmc)$, there are models $\Jmc_1,\dots,\Jmc_k$ such
+    that every~$\Jmc_i$, $1\le i\le k$, is a model of~$\zeta_{X_i}$
+    w.r.t.~$(\emptyset,\Tmc,\Rmc)$.  Moreover, since
+    every~$\zeta_{X_{\iota(j)}}$, $0\le j\le n$, is satisfiable
+    w.r.t.~$(\Amc_j,\Tmc,\Rmc)$, there are models
+    $\Imc_0,\dots,\Imc_n$ such that every~$\Imc_i$, $0\le j\le n$, is a model
+    of~$\zeta_{X_{\iota(j)}}$ w.r.t.~$(\emptyset,\Tmc,\Rmc)$.  We can assume
+    w.l.o.g.\ that all of these models have the same domain since we can assume
+    w.l.o.g.\ that their domains are countably infinite due to to the
+    Löwenheim-Skolem theorem~\cite{Loe-MA15,Sko-VS20}.  Furthermore, we can
+    assume w.l.o.g.\ that all individual names are interpreted by the same
+    domain elements in all models.  Since $\NRC=\NRR=\emptyset$, this yields
+    that \Wmc is r-satisfiable w.r.t.~$\iota$ and~\Kmc.
+
+    Thus, we have by Lemma~\ref{lem:tcq-r-sat-t-sat} that if such a
+    mapping~$\iota$ exists, then $\phi$ is satisfiable w.r.t.~\Kmc.
+    %
+    Conversely, again by Lemma~\ref{lem:tcq-r-sat-t-sat}, we have that if $\phi$ is
+    satisfiable w.r.t.~\Kmc, then there is a set
+    $\Wmc'=\{X_1',\dots,X_{k'}'\}\subseteq 2^{\Pmc_\phi}$ and a
+    mapping~$\iota'\colon\{0,\dots,n\}\to\{1,\dots,k'\}$ such that $\Wmc'$ is
+    r-satisfiable w.r.t.~$\iota'$ and~\Kmc, and $\phi^\psf$ is t-satisfiable
+    w.r.t.~$\Wmc'$ and~$\iota'$.  The definition of~\Wmc above yields that
+    $\Wmc'\subseteq\Wmc$, and thus $k'\le k$.  We define the mapping
+    $\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$ such that
+    $X_{\iota(i)}=X'_{\iota'(i)}$ for every $i$, $0\le i\le n$.  Hence, we have
+    that \Wmc is r-satisfiable w.r.t.~$\iota$ and~\Kmc.  Moreover, it is easy to
+    see that the t-satisfiability of~$\phi^\psf$ w.r.t.~$\Wmc'$ and~$\iota'$
+    implies that $\phi^\psf$ is t-satisfiable w.r.t.~\Wmc and~$\iota$.
+
+    Hence, we can check whether $\phi$ is satisfiable w.r.t.~\Kmc using the
+    above decision procedure, which shows that the TCQ-satisfiability problem
+    in~\SHQ is in \ExpTime w.r.t.\ combined complexity.  Since \ExpTime is
+    closed under complement, we obtain that the temporalised query-entailment
+    problem is in \ExpTime w.r.t.\ combined complexity.
+
+    For data complexity, we non-deterministically guess a set
+    $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ and a mapping
+    $\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$.  Note that since $\Pmc_\phi$
+    does not depend on the ABoxes in~\Kmc, we have that \Wmc is of constant size
+    w.r.t.\ the ABoxes and~$\iota$ is of size linear in~$n$.  Thus, we can
+    perform these guesses in time polynomial in the size of the ABoxes.
+    %
+    Moreover, for checking whether \Wmc is r-satisfiable w.r.t.~$\iota$
+    and~\Kmc, all conditions of Definition~\ref{def:tcq-r-sat} can be checked in
+    non-deterministic polynomial time w.r.t.\ data complexity using
+    Theorem~\ref{thm:complexity-conjunction-cq-literals}.
+    %
+    By Lemma~\ref{lem:tcq-t-sat}, deciding whether $\phi^\psf$ is t-satisfiable
+    w.r.t.~\Wmc and~$\iota$ can be done in time polynomial in~$n$ w.r.t.\ data
+    complexity.
+    %
+    Then, by Lemma~\ref{lem:tcq-r-sat-t-sat}, we obtain that the
+    TCQ-satisfiability problem in~\SHQ is in \NP w.r.t.\ data complexity.  Thus,
+    we obtain that the temporalised query-entailment problem in \SHQ is in \coNP
+    w.r.t.\ data complexity.
+\end{proof}
+
+\noindent
+Together with Theorem~\ref{thm:lower-bounds-combined-complexity} and
+Corollary~\ref{cor:lower-bounds-data-complexity}, we obtain that the
+temporalised query-entailment problem in \SHQ is \ExpTime-complete w.r.t.\
+combined complexity and \coNP-complete w.r.t.\ data complexity if neither
+concept nor role names are allowed to be rigid.
+
+
+\subsubsection{The Case of Rigid Concept and Role Names}
+
+In this section, we consider the case where both concept and role names may be
+rigid, i.e.~$\NRC\ne\emptyset$ and $\NRR\ne\emptyset$.
+
+Let us assume in the following that a set
+$\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$, and a mapping
+$\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$ is given.
+%
+Note that if concept and role names may be rigid, the satisfiability checks
+employed in the previous section (see the proof of
+Theorem~\ref{thm:upper-bounds-no-rigid-names}) for deciding whether \Wmc is
+r-satisfiable w.r.t.~$\iota$ and~\Kmc are no longer independent from each other.
+To make sure that the models respect the rigid names, we use a renaming
+technique similar to the one we used in Section~\ref{sec:sat-rigid}, which was
+adopted from~\cite{BaGL-ToCL12}.  The difference here is that we have to
+introduce more copies of the flexible symbols.
+
+For every~$i$, $1\le i\le k+n+1$, every \emph{flexible} concept name~$A$
+occurring in~\Tmc, and every \emph{flexible} role name~$r$ occurring in~\Tmc
+or~\Rmc, we introduce copies $A^{(i)}$ and~$r^{(i)}$.  We call $A^{(i)}$ the
+$i$-th copy of~$A$, and similarly $r^{(i)}$ the $i$-th copy of~$r$.  The
+conjunctive query~$\alpha^{(i)}$ (the axiom~$\beta^{(i)}$) is obtained from a
+conjunctive query~$\alpha$ (an axiom~$\beta$) by replacing every occurrence of a
+flexible name by its $i$-th copy.  Similarly, for $1\le\ell\le k$, the
+conjunction of CQ-literals~$\zeta_{X_\ell}^{(i)}$ is obtained
+from~$\zeta_{X_\ell}$ (see Definition~\ref{def:tcq-r-sat}) by replacing each
+CQ~$\alpha$ occurring in $\zeta_{X_\ell}$ by~$\alpha^{(i)}$.
+%
+Finally, we define
+\begin{align*}
+    \zeta_{\Wmc,\iota}
+    &:=\bigwedge_{1\le i\le k}\zeta_{X_i}^{(i)}\land%
+        \bigwedge_{0\le i\le n}\Biggl(\zeta_{X_{\iota(i)}}^{(k+i+1)}\land
+        \bigwedge_{\alpha\in\Amc_i}\alpha^{(k+i+1)}\Biggr),\\
+    \Tmc_{\Wmc,\iota}
+    &:=\bigl\{\beta^{(i)}\mid\beta\in\Tmc\ \text{and}\ 1\le i\le k+n+1\bigr\},\ \text{and}\\
+    \Rmc_{\Wmc,\iota}
+    &:=\bigl\{\gamma^{(i)}\mid\gamma\in\Rmc\ \text{and}\ 1\le i\le k+n+1\bigr\}.
+\end{align*}
+%
+Note that in the definition of $\zeta_{\Wmc,\iota}$ it is essential that the
+ABoxes do not contain complex concepts, otherwise they could not be viewed as
+sets of conjunctive queries, and hence $\zeta_{\Wmc,\iota}$ would not be a
+conjunction of CQ-literals.
+
+\begin{lemma}\label{lem:zeta-wmc-iota}
+    The set~\Wmc is r-satisfiable w.r.t.~$\iota$ and~\Kmc iff the conjunction of
+    CQ-literals~$\zeta_{\Wmc,\iota}$ is satisfiable w.r.t.\ the knowledge base
+    $(\Tmc_{\Wmc,\iota},\Rmc_{\Wmc,\iota})$.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{only if} direction, let
+    $\Jmc_1=(\Delta,\cdot^{\Jmc_1})$,~\dots, $\Jmc_k=(\Delta,\cdot^{\Jmc_k})$,
+    and $\Imc_0=(\Delta,\cdot^{\Imc_0})$,~\dots,
+    $\Imc_n=(\Delta,\cdot^{\Imc_n})$ be the interpretations required by
+    Definition~\ref{def:tcq-r-sat} for the r-satisfiability of~\Wmc
+    w.r.t.~$\iota$ and~\Kmc.  We construct the interpretation
+    $\Jmc=(\Delta,\cdot^\Jmc)$ as follows:
+    \begin{itemize}
+        \item every individual name and every rigid name is interpreted as
+            in~$\Jmc_1$;
+        \item the $i$-th copy, $1\le i\le k$, of each flexible name is
+            interpreted like the original name in~$\Jmc_i$; and
+        \item the $i$-th copy, $k+1\le i\le k+n+1$, of each flexible name is
+            interpreted like the original name in~$\Imc_{i-k-1}$.
+    \end{itemize}
+    %
+    It is easy to verify that \Jmc is a model of~$\zeta_{\Wmc,\iota}$ and
+    $(\Tmc_{\Wmc,\iota},\Rmc_{\Wmc,\iota})$.
+
+    For the \enquote{if} direction, let~\Jmc be a model of~$\zeta_{\Wmc,\iota}$
+    w.r.t.\ $(\Tmc_{\Wmc,\iota},\Rmc_{\Wmc,\iota})$.  We obtain the
+    interpretations $\Jmc_1,\dots,\Jmc_k$, and $\Imc_0,\dots,\Imc_n$ by the
+    inverse construction to the one above:
+    \begin{itemize}
+        \item the domain of all these interpretations is the domain of~\Jmc;
+        \item every individual name and every rigid name is interpreted by these
+            interpretations as in~\Jmc;
+        \item every flexible name is interpreted in~$\Jmc_i$, $1\le i\le k$, as
+            its $i$-th copy is interpreted in~\Jmc; and
+        \item every flexible name is interpreted in $\Imc_i$, $0\le i\le n$, as
+            its $(k+i+1)$-st copy is interpreted in~\Jmc.
+    \end{itemize}
+    %
+    Again, it is easy to verify that these interpretations satisfy the
+    conditions for r-satisfiability of~\Wmc w.r.t.~$\iota$ and~\Kmc.
+\end{proof}
+
+\noindent
+Using this lemma, we can prove the following complexity results.
+
+\begin{theorem}\label{thm:upper-bounds-rigid-names}
+    If $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$, the temporalised
+    query-entailment problem in \SHQ is
+    \begin{itemize}
+        \item in \TwoExpTime w.r.t.\ combined complexity and
+        \item in \ExpTime w.r.t.\ data complexity.
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    Let $\phi$ be a Boolean TCQ, and let
+    $\Kmc=((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)$ be a temporal \SHQ-knowledge base.
+    %
+    We again consider the TCQ-satisfiability problem, which has the same
+    complexity as the temporalised query non-entailment problem.  We decide
+    whether $\phi$ is satisfiable w.r.t.~\Kmc using
+    Lemma~\ref{lem:tcq-r-sat-t-sat}.  For that, let
+    $\psf\colon\CQ(\phi)\to\Pmc_\phi$ be a bijection.
+    %
+    We first enumerate all sets $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$
+    and all mappings $\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$, which can be
+    done in time doubly exponential in the size of~$\phi$ and exponential
+    in~$n$.
+
+    For every such pair~$(\Wmc,\iota)$, we check t-satisfiability of
+    $\phi^\psf_\Wmc$ w.r.t.~\Wmc and~$\iota$ in time exponential in the size
+    of~$\phi^\psf$ (and thus in time exponential in the size of~$\phi$), linear
+    in the size of~\Wmc, and polynomial in~$n$ (by Lemma~\ref{lem:tcq-t-sat}),
+    and check \Wmc for r-satisfiability w.r.t.~$\iota$ and~\Kmc.  By
+    Lemma~\ref{lem:tcq-r-sat-t-sat}, $\phi$ has a model w.r.t.~\Kmc iff at least
+    one pair passes both tests.
+
+    For the r-satisfiability check, we use Lemma~\ref{lem:zeta-wmc-iota}.  We
+    construct the conjunction of CQ-literals~$\zeta_{\Wmc,\iota}$ and the
+    knowledge base $(\Tmc_{\Wmc,\iota},\Rmc_{\Wmc,\iota})$, which can be done in
+    time exponential in the size of~$\phi$, \Tmc, and~\Rmc, and in time linear
+    in the size of $\Amc_1,\dots,\Amc_n$.  Moreover, the size
+    of~$\zeta_{\Wmc,\iota}$ and $(\Tmc_{\Wmc,\iota},\Rmc_{\Wmc,\iota})$ is at
+    most exponential in the size of~$\phi$, \Tmc, and~\Rmc, and linear in the
+    size of $\Amc_1,\dots,\Amc_n$.
+
+    By Theorem~\ref{thm:complexity-conjunction-cq-literals} we can check whether
+    $\zeta_{\Wmc,\iota}$ is satisfiable w.r.t.\
+    $(\Tmc_{\Wmc,\iota},\Rmc_{\Wmc,\iota})$ in time \emph{doubly exponential} in
+    the size of~$\phi$, \Tmc, and~\Rmc, and \emph{exponential} in the size of
+    $\Amc_1,\dots,\Amc_n$.
+    %
+    Using this decision procedure, we can check whether $\phi$ is satisfiable
+    w.r.t.~\Kmc.  Thus, the TCQ-satisfiability problem in \SHQ is in \TwoExpTime
+    w.r.t.\ combined complexity and in \ExpTime w.r.t.\ data complexity.  Since
+    both \TwoExpTime and \ExpTime are closed under complement, we obtain that
+    the temporalised query-entailment problem is in \TwoExpTime w.r.t.\ combined
+    complexity and in \ExpTime w.r.t.\ data complexity.
+\end{proof}
+
+\noindent
+Together with Theorem~\ref{thm:lower-bounds-combined-complexity} and
+Corollary~\ref{cor:lower-bounds-data-complexity}, we obtain that the
+temporalised query-entailment problem in \SHQ is \TwoExpTime-complete w.r.t.\
+combined complexity, and \coNP-hard and in \ExpTime w.r.t.\ data complexity if
+both concept and role names may be rigid.
+
+Unfortunately, the above approach does not allow us to match the lower bound
+for data complexity, and thus leaves a gap in the data complexity results.  As
+seen in the proof of Theorem~\ref{thm:upper-bounds-rigid-names}, the issue is
+that the size of~$\zeta_{\Wmc,\iota}$ depends
+on~$n$.  More precisely, recall that constructing $\zeta_{\Wmc,\iota}$ involves
+copying the type~$\zeta_{X_{\iota(i)}}$ assigned to the ABox~$\Amc_i$ for
+every~$i$, $1\le i\le n$.  Thus, we introduce linearly many \emph{negated} CQs
+in~$\zeta_{\Wmc,\iota}$, and
+Theorem~\ref{thm:complexity-conjunction-cq-literals} yields only an upper bound
+of \ExpTime for the satisfiability problem.  Note that linearly many non-negated
+CQs in $\zeta_{\Wmc,\iota}$ are not problematic, as they can be instantiated and
+viewed as part of the ABox, as detailed in the proof of
+Theorem~\ref{thm:complexity-conjunction-cq-literals}.
+%
+However, we can match the lower bound of \coNP for the data complexity in the
+following special cases.
+
+\begin{lemma}\label{lem:special-cases}
+    If $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$, the temporalised
+    query-entailment problem in \SHQ is in \coNP w.r.t.\ data complexity if any
+    of the following conditions apply:
+    \begin{enumerate}
+        \item The number~$n$ of the input ABoxes is bounded by a constant.
+        \item The set of individual names allowed to occur in the input ABoxes
+            is fixed.
+    \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+    As done in the proof of Theorem~\ref{thm:upper-bounds-no-rigid-names}, we
+    decide the TCQ-satisfiability problem as follows.  We first
+    non-deterministically guess a set
+    $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ and a mapping
+    $\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$ in time polynomial in the size of
+    the input ABoxes.
+    %
+    By Lemma~\ref{lem:tcq-t-sat}, deciding whether $\phi^\psf$ is t-satisfiable
+    w.r.t.~\Wmc and~$\iota$ can be done in time polynomial in~$n$ w.r.t.\ data
+    complexity.  Thus, due to Lemma~\ref{lem:tcq-r-sat-t-sat}, is suffices to
+    show that in the above mentioned special cases r-satisfiability of~\Wmc
+    w.r.t.~$\iota$ and~\Kmc can be checked in non-deterministic polynomial time
+    w.r.t.\ data complexity.  For that, we use again
+    Lemma~\ref{lem:zeta-wmc-iota}.
+    \begin{enumerate}
+        \item If $n$ is bounded by a constant, then the number of negated CQs
+            in $\zeta_{\Wmc,\iota}$ is constant, and thus
+            Theorem~\ref{thm:complexity-conjunction-cq-literals} yields the
+            desired upper bound of \NP for the TCQ-satisfiability problem.
+        \item If the set of individual names is fixed, then the number of
+            possible assertions involving concept names opccurring in the TBox
+            is constant.  Note that the concept names occurring only in the
+            ABoxes do not affect the entailment of the TCQ, as they can only
+            occur in \emph{positive} assertions, and can thus always be
+            satisfied by appropriately interpreting the new names.
+            %
+            This allows us to restrict the formula $\zeta_{\Wmc,\iota}$ to
+            contain at most one copy of~$\zeta_{X_{\iota(i)}}$ for each distinct
+            combination of~$\zeta_{X_{\iota(i)}}$ and~$\Amc_i$ (ignoring
+            assertions about names that do not occur in the TBox).  Clearly, the
+            satisfiability of each combination of an ABox with such a
+            conjunction of CQ-literals need to be checked only once.  Since
+            there are only constantly many such combinations, the modified TCQ
+            $\zeta_{\Wmc,\iota}'$ again contains only constantly many negated
+            CQs.  As in the previous case,
+            Theorem~\ref{thm:complexity-conjunction-cq-literals} yields again
+            that the TCQ-satisfiability problem is in \NP.
+    \end{enumerate}
+    %
+    Since the TCQ-satisfiability problem has the same complexity as the
+    temporalised query non-entailment problem, we obtain the desired complexity
+    results.
+\end{proof}
+
+\noindent
+It is still open, however, where any of these conditions is necessary.
+
+
+\subsection{Data Complexity for the Case of Rigid Concept Names}\label{sec:tcq-data-complexity-rigid-concepts}
+
+In this section, we consider the case where only concept names are allowed to be
+rigid, i.e.~$\NRC\ne\emptyset$ and $\NRR=\emptyset$.  We show that, in this
+case, the temporalised query-entailment problem is in \coNP w.r.t.\ data
+complexity.
+
+For that, we again first assume that a set
+$\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ and a mapping
+$\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$ are given.
+%
+We first show how to decide r-satisfiability of~\Wmc w.r.t.~$\iota$ and~\Kmc in
+non-deterministic polynomial time w.r.t.\ data complexity.
+
+Similar to what we did in the previous sections, we construct conjunctions of
+CQ-literals which we check for satisfiability.  The approach is a mixture of
+those of employed for the case without rigid names and for the case with rigid
+concept and role names.  More precisely, we combine several satisfiability
+checks required for r-satisfiability, but we do not go as far as compiling all
+of them into just one conjunction as done to obtain
+Lemma~\ref{lem:zeta-wmc-iota}.  For that we use the ideas of
+Section~\ref{sec:sat-rigid-concepts} and of the proof of Lemma~6.3
+in~\cite{BaGL-ToCL12}.
+
+We consider the conjunctions of CQ-literals $\xi_i\land\zeta_\Wmc$,
+$0\le i\le n$, and the knowledge base $(\Tmc_\Wmc,\Rmc_\Wmc)$, where
+\begin{align*}
+    \xi_i
+    &:=\bigwedge_{\alpha\in\Amc_i}\alpha^{(\iota(i))},
+    &\zeta_\Wmc
+    &:=\bigwedge_{1\le i\le k}\zeta_{X_i}^{(i)},\\
+    \Tmc_\Wmc
+    &:=\bigl\{\beta^{(i)}\mid\beta\in\Tmc\ \text{and}\ 1\le i\le k\bigr\},
+    &\Rmc_\Wmc
+    &:=\bigl\{\gamma^{(i)}\mid\gamma\in\Rmc\ \text{and}\ 1\le i\le k\bigr\}.
+\end{align*}
+
+However, for r-satisfiability we have to make sure that rigid consequences of
+the form $A(a)$ for a rigid concept name $A\in\NRC$ and an individual name
+$a\in\NI$ are shared between all of these conjunctions $\xi_i\land\zeta_\Wmc$.
+%
+It suffices to do this for the set $\RCon(\Tmc)$ of rigid concept names
+occurring in~\Tmc since those occurring only in ABox-assertions cannot affect
+the entailment of the TCQ~$\phi$.
+
+Let $\Dmc=(\RCon(\Tmc),\Ymc)$ with $\Ymc\subseteq 2^{\RCon(\Tmc)}$ be arbitrary,
+and let $\tau$ be a mapping from $\Ind(\phi)\cup\Ind(\Kmc)$ to~\Ymc.  Recall
+that as in Definition~\ref{def:respects-dmc}, the idea is that \Dmc fixes the
+combinations of rigid concept names that are allowed to occur in the models of
+$\xi_i\land\zeta_\Wmc$, $0\le i\le n$.  The mapping~$\tau$ assigns to each
+individual name occurring in~$\phi$ or~\Kmc one such combination.
+%
+To express this formally, we extend the TBox by the axioms in
+\[\Tmc_\tau:=\bigl\{A_{\tau(a)}\equiv C_{\RCon(\Tmc),\tau(a)}\mid%
+    a\in\Ind(\phi)\cup\Ind(\Kmc)\bigr\},\]
+where $A_{\tau(a)}$ are fresh rigid concept names and, for every
+$Y\subseteq\RCon(\Tmc)$, the concept~$C_{\RCon(\Tmc),Y}$ is defined as
+in Definition~\ref{def:respects-dmc}.
+%
+Correspondingly, we extend the conjunctions $\xi_i\land\zeta_\Wmc$ by
+\[\xi_\tau:=\bigwedge_{a\in\Ind(\phi)\cup\Ind(\Kmc)}A_{\tau(a)}\]
+in order to fix the behaviour of the rigid concept names on the named
+individuals.
+
+The next lemma states how these notions can be used to characterise
+r-satisfiability of~\Wmc w.r.t.~$\iota$ and~\Kmc.  Its proof is very similar to
+the proof of Lemma~\ref{lem:dmc-tau}.
+
+\begin{lemma}\label{lem:tcq-dmc-tau}
+    If $\NRC\ne\emptyset$ and $\NRR=\emptyset$, then \Wmc is r-satisfiable
+    w.r.t.~$\iota$ and~\Kmc iff there exist a pair $\Dmc=(\RCon(\Tmc),\Ymc)$
+    with $\Ymc\subseteq 2^{\RCon(\Tmc)}$ and a mapping
+    $\tau\colon\Ind(\phi)\cup\Ind(\Kmc)\to\Ymc$ such that for every~$i$,
+    $0\le i\le n$, the conjunction of CQ-literals
+    $\xi_i\land\zeta_\Wmc\land\xi_\tau$ has a model w.r.t.\
+    $(\Tmc_\Wmc\cup\Tmc_\tau,\Rmc_\Wmc)$ that respects~\Dmc.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{if} direction, assume that $\Imc_i$, $0\le i\le n$, are the
+    models of $\xi_i\land\zeta_\Wmc\land\xi_\tau$ w.r.t.\
+    $(\Tmc_\Wmc\cup\Tmc_\tau,\Rmc_\Wmc)$, respectively, that respect~\Dmc; see
+    Definition~\ref{def:respects-dmc}.
+    %
+    Similar to the proof of Lemma~\ref{lem:dmc-tau} (and Lemma~6.3
+    in~\cite{BaGL-ToCL12}), we can assume w.l.o.g.\ that their domains
+    $\Delta_i$ are countably infinite and for each $Y\in\Ymc$ there are
+    countably infinitely many elements $d\in(C_{\RCon(\Tmc),Y})^{\Imc_i}$, where
+    $C_{\RCon(\Tmc),Y}$ is defined in Definition~\ref{def:respects-dmc}.  This
+    is a consequence of the Löwenheim-Skolem theorem~\cite{Loe-MA15,Sko-VS20}
+    and the fact that the countably infinite disjoint union of~$\Imc_i$ with
+    itself is again a model of $\xi_i\land\zeta_\Wmc\land\xi_\tau$ w.r.t.\
+    $(\Tmc_\Wmc\cup\Tmc_\tau,\Rmc_\Wmc)$.  The latter follows from the
+    observation that for every CQ~$\psi$, there is a homomorphism of~$\psi$
+    into~$\Imc_i$ iff there is a homomorphism of~$\psi$ into the disjoint union
+    of~$\Imc_i$ with itself.
+    %
+    One direction is trivial, while whenever there is a homomorphism of~$\psi$
+    into the disjoint union of~$\Imc_i$ with itself, we can construct a
+    homomorphism of~$\psi$ into $\Imc_i$ by replacing the elements in the image
+    of this homomorphism by the corresponding elements of $\Delta_i$.  It is
+    easy to see that the resulting homomorphism still satisfies all atoms of the
+    CQ~$\psi$.
+
+    Consequently, we can partition the domains~$\Delta_i$ into the countably
+    infinite sets
+    \[\Delta_i(Y):=\bigl\{d\in\Delta_i\mid d\in(C_{\RCon(\Tmc),Y})^{\Imc_i}\bigr\}\]
+    for $Y\in\Ymc$.
+    %
+    By the assumptions above and the fact that every~$\Imc_i$
+    satisfies~$\xi_\tau$ and~$\Tmc_\tau$, there are bijections
+    $\pi_i\colon\Delta_0\to\Delta_i$, $1\le i\le n$, such that
+    \begin{itemize}
+        \item $\pi_i(\Delta_0(Y))=\Delta_i(Y)$ for every $Y\in\Ymc$, and
+        \item $\pi_i(a^{\Imc_0})=a^{\Imc_i}$ for every
+            $a\in\Ind(\phi)\cup\Ind(\Kmc)$.
+    \end{itemize}
+    %
+    Thus, we can assume in the following that the models~$\Imc_i$,
+    $0\le i\le n$, actually share the same domain~$\Delta$ and interpret the
+    concept names in $\RCon(\Tmc)$ and the individual names occurring in~$\phi$
+    or~\Kmc in the same way.
+    %
+    We can now construct the interpretations required by
+    Definition~\ref{def:tcq-r-sat} by appropriately relating the flexible names
+    and their copies.  For every $j$, $1\le j\le k$, we define
+    $\Jmc_j=(\Delta,\cdot^{\Jmc_j})$ by interpreting
+    the concept names in $\RCon(\Tmc)$ and the individual names occurring
+    in~$\phi$ or~\Kmc as in~$\Imc_0$, and the flexible names as their $j$-th
+    copies in~$\Imc_0$.  Since $\Imc_0$ is a model of~$\zeta_\Wmc$ and
+    $(\Tmc_\Wmc,\Rmc_\Wmc)$, we have that $\Jmc_j$ is a model of~$\zeta_{X_j}$,
+    \Tmc, and~\Rmc.
+
+    Similarly, for every~$i$, $0\le i\le n$, we define
+    $\Imc_i'=(\Delta,\cdot^{\Imc_i'})$ by interpreting the concept names in
+    $\RCon(\Tmc)$ and the individual names occurring in~$\phi$ or~\Kmc as
+    in~$\Imc_i$, and the flexible names as their $\iota(i)$-th copies
+    in~$\Imc_i$.  Since $\Imc_i$ is a model of~$\xi_i$, $\zeta_\Wmc$, and
+    $(\Tmc_\Wmc,\Rmc_\Wmc)$, we obtain that $\Imc_i$ is a model of~$\Amc_i$,
+    $\zeta_{X_{\iota(i)}}$, \Tmc, and~\Rmc.
+    %
+    All these models share the same domain and interpret the rigid concept names
+    in $\RCon(\Tmc)$ and the individual names occurring in~$\phi$ or~\Kmc in the
+    same way.  Note that the interpretation of the names that occur neither~\Kmc
+    nor in in~$\phi$ is irrelevant and can be fixed arbitrarily, as long as the
+    UNA is satisfied.
+
+    Thus, it remains to consider those rigid concept names~$A$ occurring
+    in~$(\Amc_i)_{0\le i\le n}$, but not in~\Tmc.  Since they are not
+    constrained by the TBox, it suffices to interpret them in such a way that
+    they satisfy all ABox-assertions.  But since these assertions can only occur
+    positively in the ABoxes, the set
+    $\{a^{\Imc_0}\mid A(a)\in\Amc_i,\ 0\le i\le n\}$ fulfils this restriction.
+    %
+    Thus, the conditions required for r-satisfiability of~\Wmc w.r.t.~$\iota$
+    and~\Kmc by Definition~\ref{def:tcq-r-sat} are satisfied.
+
+    For the \enquote{only if} direction, assume that
+    $\Jmc_j=(\Delta,\cdot^{\Jmc_j})$, $1\le j\le k$, and
+    $\Imc_i=(\Delta,\cdot^{\Imc_i})$, $0\le i\le n$, are the interpretations
+    required for r-satisfiability of~\Wmc w.r.t.~$\iota$ and~\Kmc by
+    Definition~\ref{def:tcq-r-sat}.
+    %
+    It is easy to see that for every~$i$, $0\le i\le n$, one can combine the
+    interpretations $\Imc_i$, $\Jmc_1$,~\dots, $\Jmc_k$ to obtain a
+    model~$\Imc_i'$ of $\xi_i\land\zeta_\Wmc$ w.r.t.\ $(\Tmc_\Wmc,\Rmc_\Wmc)$ by
+    interpreting the $\iota(i)$-th copy of a flexible name as the original name
+    in~$\Imc_i$, and the $j$-th copy of a flexible name as the original name
+    in~$\Jmc_j$ for each $j$, $1\le j\le k$, with $j\ne\iota(i)$.  Obviously,
+    the interpretations $\Imc_0',\dots,\Imc_n'$ share the same domain, interpret
+    individual names in the same way, and respect rigid concept names.  Thus,
+    for every $Y\subseteq\RCon(\Tmc)$, we have that
+    $(C_{\RCon(\phi),Y})^{\Imc_0'}=(C_{\RCon(\phi),Y})^{\Imc_i'}$ for every~$i$,
+    $1\le i\le n$.
+    %
+    We define $\Dmc:=(\RCon(\Tmc),\Ymc)$ with
+    \[\Ymc:=\bigl\{Y\subseteq\RCon(\phi)\mid%
+        \text{there is some $d\in\Delta$ with $d\in(C_{\RCon(\Tmc),Y})^{\Imc_0'}$}\bigr\}.\]
+    %
+    By construction of~\Dmc, we obtain that the interpretations~$\Imc_i'$,
+    $0\le i\le n$, respect~\Dmc.
+    %
+    Moreover, for every $a\in\Ind(\phi)\cup\Ind(\Kmc)$, we define
+    $\tau(a):=Y\subseteq\RCon(\Tmc)$ iff $a\in(C_{\RCon(\Tmc),Y})^{\Imc_0'}$,
+    which ensures that the interpretations~$\Imc_i'$ can be extended to models
+    of~$\xi_\tau$ and~$\Tmc_\tau$ by appropriately interpreting the new concept
+    names~$A_{\tau(a)}$.
+    %
+    Hence, we obtain models of $\xi_i\land\zeta_\Wmc\land\xi_\tau$ w.r.t.\
+    $(\Tmc_\Wmc\cup\Tmc_\tau,\Rmc_\Wmc)$ that respect~\Dmc as required.
+\end{proof}
+
+\noindent
+Using this lemma, we can prove our complexity result.
+
+\begin{theorem}\label{thm:upper-bound-rigid-concepts-data-compl}
+    If $\NRC\ne\emptyset$ and $\NRR=\emptyset$, the temporalised
+    query-entailment problem in \SHQ is in \coNP w.r.t.\ data complexity.
+\end{theorem}
+
+\begin{proof}
+    Let $\phi$ be a Boolean TCQ, and let
+    $\Kmc=((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)$ be a temporal \SHQ-knowledge base.
+    %
+    We again consider the TCQ-satisfiability problem, which has the same
+    complexity as the temporalised query non-entailment problem.  We decide
+    whether $\phi$ is satisfiable w.r.t.~\Kmc using
+    Lemma~\ref{lem:tcq-r-sat-t-sat}.  For that, let
+    $\psf\colon\CQ(\phi)\to\Pmc_\phi$ be a bijection.
+    %
+    We first non-deterministically guess a set
+    $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ and a mapping
+    $\iota\colon\{0,\dots,n\}\to\{1,\dots,k\}$ in time polynomial in the size of
+    the input ABoxes.
+    %
+    By Lemma~\ref{lem:tcq-t-sat}, deciding whether $\phi^\psf$ is t-satisfiable
+    w.r.t.~\Wmc and~$\iota$ can be done in time polynomial in~$n$ w.r.t.\ data
+    complexity.
+
+    Thus, due to Lemma~\ref{lem:tcq-r-sat-t-sat}, is suffices to show that
+    r-satisfiability of~\Wmc w.r.t.~$\iota$ and~\Kmc can be checked in
+    non-deterministic polynomial time w.r.t.\ data complexity.  For that, we use
+    Lemma~\ref{lem:tcq-dmc-tau}.
+    %
+    We non-deterministically guess a set $\Ymc\subseteq 2^{\RCon(\Tmc)}$ and a
+    mapping $\tau\colon\Ind(\phi)\cup\Ind(\Kmc)\to\Ymc$, which can be done in
+    time polynomial in the size of the input ABoxes.  Indeed, \Ymc only depends
+    on~\Tmc, and $\tau$ is of size linear in the size of the input ABoxes.
+    %
+    We define $\Dmc:=(\RCon(\Tmc),\Ymc)$.  Next, we construct for every~$i$,
+    $0\le i\le n$, the conjunction of CQ-literals
+    $\xi_i\land\zeta_\Wmc\land\xi_\tau$ and the knowledge base
+    $(\Tmc_\Wmc\cup\Tmc_\tau,\Rmc_\Wmc)$.  Note that $\xi_i$ and~$\xi_\tau$
+    are of size polynomial in the size of the input ABoxes, and that the sizes
+    of~$\zeta_\Wmc$, $\Tmc_\Wmc$, $\Tmc_\tau$, and~$\Rmc_\Wmc$ do not depend on
+    the input ABoxes.  Furthermore, only $\zeta_\Wmc$ may contain negated CQs,
+    and thus their size does not depend on the size of the input ABoxes.
+    %
+    It remains to show that we can check the existence of a model of
+    $\xi_i\land\zeta_\Wmc\land\xi_\tau$ w.r.t.\
+    $(\Tmc_\Wmc\cup\Tmc_\tau,\Rmc_\Wmc)$ that respects~\Dmc in non-deterministic
+    polynomial time w.r.t.\ data complexity.
+    %
+    For that, observe that the restriction imposed by~\Dmc can equivalently be
+    expressed as the conjunction of CQ-literals
+    \[\zeta_\Dmc:=\bigl(\lnot\exists x.A_\Dmc(x)\bigr)\land\bigwedge_{Y\in\Ymc}\exists x.A_Y(x),\]
+    where $A_\Dmc$ and $A_Y$ are fresh concept names that are restricted by
+    adding the following axioms to the TBox:
+    $A_Y\equiv C_{\RCon(\Tmc),Y}$ and
+    $C_{\RCon(\Tmc),Y}\sqsubseteq A_Y$ for every $Y\in\Ymc$, and
+    $A_\Dmc\equiv\bigsqcap_{Y\in\Dmc}\lnot A_Y$.\footnote{%
+        We did not add all the axioms $A_Y\equiv C_{\RCon(\Tmc),Y}$ earlier
+        since we reuse Lemma~\ref{lem:tcq-dmc-tau} in the following section
+        about combined complexity, and these additional axioms cause an
+        exponential blow-up in the size of the TBox.}
+    We denote by~$\Tmc_\Wmc'$ the resulting extension of the
+    TBox~$\Tmc_\Wmc\cup\Tmc_\tau$.  Thus, it is enough to check whether
+    $\xi_i\land\zeta_\Wmc\land\xi_\tau\land\zeta_\Dmc$ has a model w.r.t.\
+    $(\Tmc_\Wmc',\Rmc_\Wmc)$.
+    %
+    Note that neither $\zeta_\Dmc$ nor~$\Tmc_\Wmc'$ depend on the input ABoxes.
+    Hence, one can see from the proof of
+    Theorem~\ref{thm:complexity-conjunction-cq-literals} that this
+    satisfiability problem can be decided in non-deterministic polynomial time
+    w.r.t.\ data complexity.  Thus, we obtain that the TCQ-satisfiability
+    problem in \SHQ is in \NP w.r.t.\ data complexity, which shows that the
+    temporalised query-entailment problem in \SHQ is in \coNP w.r.t.\ data
+    complexity.
+\end{proof}
+
+\noindent
+Together with Corollary~\ref{cor:lower-bounds-data-complexity}, this yields that
+the temporalised query-entailment problem in \SHQ is \coNP-complete w.r.t.\ data
+complexity if only concept names are allowed to be rigid.
+
+
+\subsection{Combined Complexity for the Case of Rigid Concept Names}\label{sec:tcq-combined-complexity-rigid-concepts}
+
+In this section, we again consider the case where only concept names are allowed
+to be rigid, i.e.~$\NRC\ne\emptyset$ and $\NRR=\emptyset$.  However, we consider
+the combined complexity of the temporalised query-entailment problem.
+%
+Unfortunately, the approach used in the previous section does not yield a
+combined complexity of \coNExpTime.  The reason is that the conjunctions of
+CQ-literals $\zeta_\Wmc$ and $\zeta_\Dmc$ are of size exponential in the size
+of~$\phi$, and thus Theorem~\ref{thm:complexity-conjunction-cq-literals} only
+yields an upper bound of \TwoExpTime.
+%
+Therefore, we describe a different approach with a combined complexity of
+\coNExpTime.
+
+As a first step, we rewrite the Boolean TCQ~$\phi$ into a Boolean TCQ~$\psi$ of
+size polynomial in the size of~$\phi$ and the temporal KB~\Kmc such that
+answering $\phi$ at time~$n$ w.r.t.~\Kmc is equivalent to answering $\psi$ at
+time~$0$ w.r.t.\ a temporal KB containing only a trivial sequence of ABoxes.
+This is done by compiling the ABoxes into the query and postponing the
+query~$\phi$ using the $\Next$-operator.
+
+\begin{lemma}\label{lem:initial-validity}
+    Let $\Kmc=((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)$ be a temporal KB
+    and $\phi$ be a Boolean TCQ\@.
+    %
+    Then there is a Boolean TCQ~$\psi$ of size polynomial in the size of~$\phi$
+    and~\Kmc such that $\Kmc\models\phi$ iff $(\emptyset,\Tmc,\Rmc)\models\psi$.
+\end{lemma}
+
+\begin{proof}
+    We define the Boolean TCQ
+    \[\psi:=(\gamma_0\land\Next\gamma_1\land\dots\land\Next^n\gamma_n)\to\Next^n\phi,\]
+    where $\gamma_i:=\bigwedge\Amc_i$ for $i$, $0\le i\le n$, and $\Next^j$
+    abbreviates $j$ nested $\Next$-operators.  Obviously, the size of~$\psi$ is
+    polynomial in the size of~$\phi$ and~\Kmc.
+    %
+    It remains to prove that $\Kmc\models\phi$ iff
+    $\Kmc':=(\emptyset,\Tmc,\Rmc)\models\psi$.  We have:
+    \begin{itemize}
+        \item[]
+            $\Kmc\models\phi$
+        \item[\emph{iff}]
+            $((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)\models\phi$
+        \item[\emph{iff}]
+            $\Imf,n\models\phi$ for every~\Imf with
+            $\Imf\models((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)$
+        \item[\emph{iff}]
+            $\Imf,n\models\phi$ for every~\Imf with
+            $\Imf\models(\emptyset,\Tmc,\Rmc)$ and
+            $\Imf,0\models\gamma_0$;
+            $\Imf,1\models\gamma_1$;~\dots;
+            $\Imf,n\models\gamma_n$
+        \item[\emph{iff}]
+            $\Imf,0\models\Next^n\phi$ for every~\Imf with
+            $\Imf\models\Kmc'$ and
+            $\Imf,0\models\gamma_0$;
+            $\Imf,0\models\Next\gamma_1$;~\dots;
+            $\Imf,0\models\Next^n\gamma_n$
+        \item[\emph{iff}]
+            $\Imf,0\models\psi$ for every~\Imf with $\Imf\models\Kmc'$
+        \item[\emph{iff}]
+            $\Kmc'\models\psi$.
+            %\qedhere
+    \end{itemize}
+\end{proof}
+
+\noindent
+To obtain our complexity result, we can thus focus on deciding whether a Boolean
+TCQ~$\phi$ has a model w.r.t.\ a temporal KB $\Kmc=(\emptyset,\Tmc,\Rmc)$
+containing only one empty ABox, i.e.~we have $n=0$.
+%
+Note that this compilation approach does not yield a low \emph{data
+complexity} for the TCQ-satisfiability problem since, after encoding the ABoxes
+into~$\phi$, the size of the conjunction of CQ-literals~$\zeta_\Wmc$ is
+exponential in the size of the input ABoxes.  Moreover, then
+Lemma~\ref{lem:tcq-t-sat} yields that the t-satisfiability check is exponential
+in the size of the input ABoxes.
+
+Assume from now on that a set
+$\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ and a mapping
+$\iota\colon\{0\}\to\{1,\dots,k\}$ are given.
+%
+We first show how to decide r-satisfiability of~\Wmc w.r.t.~$\iota$ and~\Kmc in
+non-deterministic exponential time w.r.t.\ combined complexity.
+
+For that, we use the idea of Lemma~\ref{lem:tcq-dmc-tau}.  Since $\xi_0=\true$,
+according to this lemma, it suffices to non-deterministically guess a pair~\Dmc
+and a mapping~$\tau$ such that $\zeta_\Wmc\land\xi_\tau$ has a model w.r.t.\
+$(\Tmc_\Wmc\cup\Tmc_\tau,\Rmc_\Wmc)$ that respects~\Dmc.
+%
+Instead of constructing the conjunction of CQ-literals~$\zeta_\Dmc$, and then
+applying Theorem~\ref{thm:complexity-conjunction-cq-literals}
+directly to this problem, which would yield a complexity of \TwoExpTime, we
+split the problem into separate sub-problems for each $\zeta_{X_i}$.
+
+\begin{lemma}\label{lem:tcq-dmc-tau-combined}
+    If $\NRC\ne\emptyset$ and $\NRR=\emptyset$, then \Wmc is r-satisfiable
+    w.r.t.~$\iota$ and $\Kmc=(\emptyset,\Tmc,\Rmc)$ iff there exist a pair
+    $\Dmc=(\RCon(\Tmc),\Ymc)$ with $\Ymc\subseteq 2^{\RCon(\Tmc)}$ and a mapping
+    $\tau\colon\Ind(\phi)\to\Ymc$ such that for every~$i$, $1\le i\le k$, the
+    conjunction of CQ-literals $\zeta_{X_i}\land\xi_\tau$ has a model
+    w.r.t.\ $(\Tmc\cup\Tmc_\tau,\Rmc)$ that respects~\Dmc.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{if} direction, assume that $\Imc_i$, $1\le i\le k$, are the
+    models of $\zeta_{X_i}\land\xi_\tau$ w.r.t.\ $(\Tmc\cup\Tmc_\tau,\Rmc)$ that
+    respect~\Dmc.  As in the proof of Lemma~\ref{lem:tcq-dmc-tau}, we can ensure
+    that they share the same domain and interpret the rigid concept names in
+    $\RCon(\Tmc)$ and the individual names in $\Ind(\phi)$ in the same way.
+    %
+    Similar to before, we construct a model~\Jmc of $\zeta_\Wmc\land\xi_\tau$
+    and $(\Tmc_\Wmc\cup\Tmc_\tau,\Rmc_\Wmc)$ over the shared domain of
+    $\Imc_1,\dots,\Imc_k$ as follows: interpret the $i$-th copy of a flexible
+    name as the original name in~$\Imc_i$, and every rigid name as in~$\Imc_1$.
+    Since the interpretations of the names in $\RCon(\Tmc)$ are not changed,
+    \Jmc also respects~\Dmc.  By Lemma~\ref{lem:tcq-dmc-tau}, we obtain that
+    \Wmc is r-satisfiable w.r.t.~$\iota$ and~\Kmc.
+
+    For the \enquote{only if} direction, assume that \Wmc is r-satisfiable
+    w.r.t.~$\iota$ and~\Kmc.  Lemma~\ref{lem:tcq-dmc-tau} yields that there
+    exist a pair $\Dmc=(\RCon(\Tmc),\Ymc)$ with $\Ymc\subseteq 2^{\RCon(\Tmc)}$
+    and a mapping $\tau\colon\Ind(\phi)\to\Ymc$ such that
+    $\zeta_\Wmc\land\xi_\tau$ has a model~\Jmc w.r.t.\
+    $(\Tmc_\Wmc\cup\Tmc_\tau,\Rmc_\Wmc)$ that respects~\Dmc.
+    %
+    As before, for every~$i$, $1\le i\le k$, we obtain a model~$\Imc_i$ of
+    $\zeta_{X_i}\land\xi_\tau$ and $(\Tmc\cup\Tmc_\tau,\Rmc)$ over the domain
+    of~\Jmc by interpreting the rigid names as in~\Jmc and the flexible names as
+    their $i$-th copies in~\Jmc.  Again, these models still respect~\Dmc.
+\end{proof}
+
+\noindent
+To obtain our complexity result, we show how to decide whether the conjunction
+of CQ-literals~$\zeta_{X_i}\land\xi_\tau$ has a model w.r.t.\
+$(\Tmc\cup\Tmc_\tau,\Rmc)$ that respects~\Dmc in time exponential in the size
+of~$\phi$ and~\Kmc.
+%
+Similar to the proof of Theorem~\ref{thm:complexity-conjunction-cq-literals}, we
+can reduce this problem to a \emph{non-entailment problem for a union of Boolean
+CQs}: there is a model of~$\zeta_{X_i}\land\xi_\tau$ w.r.t.\
+$(\Tmc\cup\Tmc_\tau,\Rmc)$ that respects~\Dmc iff there is a model of
+$\Kmc_i:=(\Amc_i,\Tmc\cup\Tmc_\tau,\Rmc)$ that respects~\Dmc and is not a model
+of~$\rho_i$ (written $\Kmc_i\not\models\rho_i$ w.r.t.~\Dmc), where $\Amc_i$ is
+an ABox obtained by instantiating the non-negated CQs
+of~$\zeta_{X_i}\land\xi_\tau$ with fresh individual names and $\rho_i$ is a
+union of CQs constructed from the negated CQs of~$\zeta_{X_i}\land\xi_\tau$.
+%
+Since all $\Kmc_i$ and~$\rho_i$ are of size polynomial in the size of~$\phi$
+and~\Kmc, it thus suffices to show that we can decide the query non-entailment
+$\Kmc_i\not\models\rho_i$ w.r.t.~\Dmc in time exponential in the size
+of~$\Kmc_i$ and~$\rho_i$.
+
+It is known that $\Kmc_i\not\models\rho_i$ iff there is a \emph{forest model}~\Imc
+of~$\Kmc_i$ such that $\Imc\not\models\rho_i$~\cite{GHL+-JAIR08,Lut-IJCAR08}.
+%
+We define here forest models for the more general case of \emph{Boolean
+\SHQcap-knowledge bases} since this will be needed later.
+
+As introduced in Chapter~\ref{ch:shoq-ltl}, the description logic \SHQcap extends
+\SHQ with \emph{role conjunctions}.  Recall that role conjunctions are of the
+form $r_1\sqcap\dots\sqcap r_\ell$, $\ell\ge 1$, where $r_1,\dots,r_\ell$ are
+\emph{simple} role names.
+%
+Such role conjunctions are allowed to occur in existential restrictions instead
+of a single role, but not in at-least restrictions or role axioms.
+%
+An interpretation~\Imc is extended to a role conjunction as follows:
+$(r_1\sqcap\dots\sqcap r_\ell)^\Imc:=r_1^\Imc\cap\dots\cap r_\ell^\Imc$.
+
+In the following, we denote by $\Ind(\Psi)$ the set of individuals occurring in
+the Boolean knowledge base $\Bmc=(\Psi,\Rmc)$.
+%
+We are now ready to define forest models over Boolean knowledge bases
+(for a similar definition, see~\cite{GHL+-JAIR08}).
+
+\begin{definition}[Forest model]\label{def:forest-model}
+    A \emph{tree} is a non-empty prefix-closed subset of $\Nbb^*$, where
+    $\Nbb^*$ denotes the set of all finite words over the non-negative integers.
+
+    Let $\Imc=(\Delta^\Imc,\cdot^\Imc)$ be an interpretation, and let
+    $\Bmc=(\Psi,\Rmc)$ be a Boolean knowledge base.  We say that
+    \Imc is a \emph{forest base for~\Bmc} if
+    \begin{itemize}
+        \item $\Delta^\Imc\subseteq\Ind(\Psi)\times\Nbb^*$ such that for every
+            $a\in\Ind(\Psi)$, the set $\{u\mid(a,u)\in\Delta^\Imc\}$ is a tree;
+        \item if $((a,u),(b,v))\in r^\Imc$, then either $u=v=\varepsilon$, or
+            $a=b$ and $v=u\cdot c$ for some $c\in\Nbb$, where $\cdot$ denotes
+            concatenation; and
+        \item for every $a\in\Ind(\Psi)$, we have $a^\Imc=(a,\varepsilon)$.
+    \end{itemize}
+    %
+    We call a model $\Jmc=(\Delta^\Jmc,\cdot^\Jmc)$ of~\Bmc a \emph{forest model
+    of~\Bmc{}} if there is a forest base $\Imc=(\Delta^\Imc,\cdot^\Imc)$
+    for~\Bmc such that $\Delta^\Imc=\Delta^\Jmc$, for each $A\in\NC$, we have
+    $A^\Imc=A^\Jmc$, for each $a\in\NI$, we have $a^\Imc=a^\Jmc$, and for each
+    $r\in\NR$, we have
+    \[r^\Jmc=r^\Imc\cup\bigcup_{\Rmc\models s\sqsubseteq r,\
+        \Rmc\models\trans(s)}(s^\Imc)^+,\]
+    where $\cdot^+$ denotes the transitive closure.
+\end{definition}
+
+\noindent
+As an example of a forest model, consider Figure~\ref{fig:forest-model}, where a
+graphical representation of a forest model is given.  It depicts the individual
+names $a$, $b$, and $c$, which represent the roots $(a,\varepsilon)$,
+$(b,\varepsilon)$, and $(c,\varepsilon)$ of three trees.  Moreover, $s$ is a
+simple role name, and $r$ is a transitive role name.  The solid arrows denote
+the role connections that are present in the corresponding forest base, and the
+dashed arrows denote role connection that are introduced due to transitivity.
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}[>=stealth',semithick,bend angle=20,shorten <=4pt,shorten >=4pt]
+        \draw[draw=none,fill=gray!30]           (0,0)--(-2.1,-3)--(2.1,-3)--cycle;
+        \draw[draw=none,fill=gray!30]           (5,0)--(2.9,-3)--(7.1,-3)--cycle;
+        \draw[draw=none,fill=gray!30]           (10,0)--(7.9,-3)--(12.1,-3)--cycle;
+        \draw[gray,shorten <=0pt,shorten >=0pt] (0,0)       edge (-2.1,-3);
+        \draw[gray,shorten <=0pt,shorten >=0pt] (0,0)       edge (2.1,-3);
+        \draw[gray,shorten <=0pt,shorten >=0pt] (5,0)       edge (2.9,-3);
+        \draw[gray,shorten <=0pt,shorten >=0pt] (5,0)       edge (7.1,-3);
+        \draw[gray,shorten <=0pt,shorten >=0pt] (10,0)      edge (7.9,-3);
+        \draw[gray,shorten <=0pt,shorten >=0pt] (10,0)      edge (12.1,-3);
+        \draw[fill]                             (0,0)       circle (2pt);
+        \draw[fill]                             (5,0)       circle (2pt);
+        \draw[fill]                             (10,0)      circle (2pt);
+        \draw                                   (0,0)       edge [->] node [yshift=5pt] {$r$} (5,0);
+        \draw                                   (5,0)       edge [->,bend left] node [yshift=5pt] {$s$} (10,0);
+        \draw                                   (10,0)      edge [->,bend left] node [yshift=-5pt] {$s$} (5,0);
+        \draw[fill]                             (4.7,-1.5)  circle (2pt);
+        \draw                                   (5,0)       edge [->] node [xshift=-4pt] {$r$} (4.7,-1.5);
+        \draw[fill]                             (5.25,-2.5) circle (2pt);
+        \draw                                   (4.7,-1.5)  edge [->] node [xshift=-5pt] {$r$} (5.25,-2.5);
+        \draw[dashed]                           (0,0)       edge [->] node [yshift=5pt] {$r$} (4.7,-1.5);
+        \draw[dashed]                           (0,0)       edge [->] node [yshift=-6pt] {$r$} (5.25,-2.5);
+        \draw[dashed]                           (5,0)       edge [->] node [xshift=5pt] {$r$} (5.25,-2.5);
+        \draw                                   (-.3,.28)   node [right] {$a$};
+        \draw                                   (4.7,.28)   node [right] {$b$};
+        \draw                                   (9.85,.28)  node [right] {$c$};
+    \end{tikzpicture}
+    \caption{An example of a forest model}\label{fig:forest-model}
+\end{figure}
+
+In the following, we call a model $\Jmc=(\Delta^\Jmc,\cdot^\Jmc)$ a forest model
+of a knowledge base $\Kmc=(\Amc,\Tmc,\Rmc)$ if \Jmc is a forest
+model of the induced Boolean knowledge base
+$(\bigwedge\Amc\land\bigwedge\Tmc,\Rmc)$.
+
+We show now that the restriction to forest models when checking for the
+consistency of a Boolean \SHQcap-knowledge base w.r.t.\ a pair
+$\Dmc=(\Umc,\Ymc)$ is without loss of generality.
+%
+First, note that $\Bmc=(\Psi,\Rmc)$ has a model that respects~\Dmc
+iff $(\Psi\land A(a),\Rmc)$ has a model that respects~\Dmc, where
+$a$ is a fresh individual name and $A$ is a fresh concept name.  In the
+following, we thus assume without loss of generality that $\Psi$ contains
+at least one individual name.  This is necessary to ensure that there is a
+non-empty forest base for~\Bmc.
+%
+The construction in the proof of the following lemma is very similar to the one
+in~\cite{GHL+-JAIR08}, but we extend the previous result to \emph{Boolean}
+knowledge bases, and take a pair~\Dmc into account.
+
+\begin{lemma}\label{lem:forest-model}
+    Let \Bmc be a Boolean \SHQcap-knowledge base, and let
+    $\Dmc=(\Umc,\Ymc)$ be a pair such that \Umc is a set of concept
+    names occurring in~\Bmc and $\Ymc\subseteq 2^\Umc$.  Then \Bmc is consistent
+    w.r.t.~\Dmc iff it has a forest model that respects~\Dmc.
+\end{lemma}
+
+\begin{proof}
+    The \enquote{if} direction is trivial.  For the \enquote{only if} direction,
+    assume that $\Imc=(\Delta^\Imc,\cdot^\Imc)$ is a model of
+    $\Bmc=(\Phi,\Rmc)$ that respects~\Dmc.
+    %
+    Moreover, we assume that $\Delta^\Imc$ is countable, which is without loss
+    of generality due to the downward Löwenheim-Skolem
+    theorem~\cite{Loe-MA15,Sko-VS20}.  We can thus assume that
+    $\Delta^\Imc\subseteq\Nbb$.
+    %
+    We define now a forest base $\Jmc=(\Delta^\Jmc,\cdot^\Jmc)$ for~\Bmc with
+    domain
+    \begin{align*}
+        \Delta^\Jmc:=\bigl\{(a,d_1\dots d_m)\mid{}
+            &\text{$a\in\Ind(\Psi)$, $m\ge 0$, $d_1,\dots,d_m\in\Delta^\Imc$, and}\\
+            &\text{there is no $b\in\Ind(\Psi)$ with $d_1=b^\Imc$}\bigr\}
+    \end{align*}
+    as follows:
+    \begin{itemize}
+        \item $a^\Jmc:=(a,\varepsilon)$ for every $a\in\Ind(\Psi)$;
+        \item $b^\Jmc$ for each $b\in\NI\setminus\Ind(\Psi)$ can be fixed
+            arbitrarily, as long as the UNA is satisfied;
+        \item $A^\Jmc:=\{(a,\varepsilon)\mid a^\Imc\in A^\Imc\}\cup%
+            \{(a,d_1\dots d_m)\mid d_m\in A^\Imc\}$; and
+        \item $\displaystyle\begin{aligned}[t]
+                r^\Jmc:={}
+                &\{((a,\varepsilon),(b,\varepsilon))\mid(a^\Imc,b^\Imc)\in r^\Imc\}\cup{}\\
+                &\{((a,\varepsilon),(a,d))\mid(a^\Imc,d)\in r^\Imc\}\cup{}\\
+                &\{((a,d_1\dots d_m),(a,d_1\dots d_md_{m+1}))\mid\text{$m>0$, $(d_m,d_{m+1})\in r^\Imc$}\}.
+            \end{aligned}$
+    \end{itemize}
+    %
+    Obviously, \Jmc satisfies the conditions of a forest base for~\Bmc.  We
+    construct now a forest model $\Jmc'=(\Delta^{\Jmc'},\cdot^{\Jmc'})$
+    for~\Bmc.  For that, we define $\Delta^{\Jmc'}:=\Delta^\Jmc$, for each
+    $A\in\NC$, $A^{\Jmc'}:=A^\Jmc$ for each $a\in\NI$, $a^{\Jmc'}:=a^\Jmc$, and
+    for each $r\in\NR$:
+    \[r^{\Jmc'}:=r^\Jmc\cup\bigcup_{\Rmc\models s\sqsubseteq r,\ \Rmc\models\trans(s)}(s^\Jmc)^+.\]
+    %
+    To prove that $\Jmc'$ is indeed a forest model for~\Bmc, we first show the
+    following claim by structural induction.
+
+    \begin{claim}\label{claim:forest-model-concepts}
+        For every $(a,d_1\dots d_m)\in\Delta^{\Jmc'}$ and every concept $C$, we
+        have $(a,d_1\dots d_m)\in C^{\Jmc'}$ iff either $m=0$ and $a^\Imc\in
+        C^\Imc$, or $d_m\in C^\Imc$.
+    \end{claim}
+
+    \noindent
+    For the base case, where $C$ is a concept name, the claim is directly
+    implied by the definition of~$\Jmc'$.
+
+    For the case where $C$ is of the form $\lnot D$, we have:
+    \begin{itemize}
+        \item[]
+            $(a,d_1\dots d_m)\in(\lnot D)^{\Jmc'}$
+        \item[\emph{iff}]
+            $(a,d_1\dots d_m)\notin D^{\Jmc'}$
+        \item[\emph{iff}]
+            either $m=0$ and $a^\Imc\notin D^\Imc$, or $d_m\notin D^\Imc$
+        \item[\emph{iff}]
+            either $m=0$ and $a^\Imc\in(\lnot D)^\Imc$, or $d_m\in(\lnot D)^\Imc$.
+    \end{itemize}
+
+    \noindent
+    For the case where $C$ is of the form $D\sqcap E$, we have:
+    \begin{itemize}
+        \item[]
+            $(a,d_1\dots d_m)\in(D\sqcap E)^{\Jmc'}$
+        \item[\emph{iff}]
+            $(a,d_1\dots d_m)\in D^{\Jmc'}$ and $(a,d_1\dots d_m)\in E^{\Jmc'}$
+        \item[\emph{iff}]
+            either $m=0$ and $a^\Imc\in D^\Imc$ and $a^\Imc\in E^\Imc$, or
+            $d_m\in D^\Imc$ and $d_m\in E^\Imc$
+        \item[\emph{iff}]
+            either $m=0$ and $a^\Imc\in(D\sqcap E)^\Imc$, or
+            $d_m\in(D\sqcap E)^\Imc$.
+    \end{itemize}
+
+    \noindent
+    For the case where $C$ is of the form $\exists(r_1\sqcap\dots\sqcap
+    r_\ell).D$ with $\ell>1$, we have that
+    $r_1,\dots,r_\ell$ are simple role names, and thus
+    $r_1^{\Jmc'}\cap\dots\cap r_\ell^{\Jmc'}=r_1^\Jmc\cap\dots\cap r_\ell^\Jmc$.
+    This yields:
+    \begin{itemize}
+        \item[]
+            $(a,d_1\dots d_m)\in(\exists(r_1\sqcap\dots\sqcap
+            r_\ell).D)^{\Jmc'}$
+        \item[\emph{iff}]
+            either $m=0$ and
+            \begin{itemize}
+              \item there is a $(b,\varepsilon)\in D^{\Jmc'}$ such that
+                  $((a,\varepsilon),(b,\varepsilon))\in r_1^\Jmc\cap\dots\cap
+                  r_\ell^\Jmc$, or
+              \item there is a $(a,d)\in D^{\Jmc'}$ such that
+                  $((a,\varepsilon),(a,d))\in r_1^\Jmc\cap\dots\cap
+                  r_\ell^\Jmc$;
+            \end{itemize}
+            or there is a $(a,d_1\dots d_m d_{m+1})\in D^{\Jmc'}$ such that
+            $((a,d_1\dots d_m),(a,d_1\dots d_m d_{m+1}))$ is in
+            $r_1^\Jmc\cap\dots\cap r_\ell^\Jmc$
+        \item[\emph{iff}]
+            either $m=0$ and there is a $d\in D^\Imc$ such that $(a^\Imc,d)\in
+            r_1^\Imc\cap\dots\cap r_\ell^\Imc$, or there is a $d\in D^\Imc$ such
+            that $(d_m,d)\in r_1^\Imc\cap\dots\cap r_\ell^\Imc$
+        \item[\emph{iff}]
+            either $m=0$ and $a^\Imc\in(\exists(r_1\sqcap\dots\sqcap
+            r_\ell).D)^\Imc$, or $d_m\in(\exists(r_1\sqcap\dots\sqcap
+            r_\ell).D)^\Imc$.
+    \end{itemize}
+
+    \noindent
+    For the case where $C$ is of the form $\exists r.D$, we have
+    \begin{itemize}
+        \item[]
+            $(a,d_1\dots d_m)\in(\exists r.D)^{\Jmc'}$
+        \item[\emph{iff}]
+            there is an $x\in D^{\Jmc'}$ with either $((a,d_1\dots d_m),x)\in
+            r^\Jmc$ or there is an $s\in\NR$ with $\Rmc\models s\sqsubseteq r$,
+            $\Rmc\models\trans(s)$, and $((a,d_1\dots d_m),x)\in (s^\Jmc)^+$
+        \item[\emph{iff}]
+            either $m=0$ and
+            \begin{itemize}
+                \item there is a $(b,\varepsilon)\in D^{\Jmc'}$ with
+                    $((a,\varepsilon),(b,\varepsilon))\in r^\Jmc$,
+                \item there is a $(a,d)\in D^{\Jmc'}$ with
+                    $((a,\varepsilon),(a,d))\in r^\Jmc$, or
+                \item there is an $s\in\NR$ with $\Imc\models s\sqsubseteq r$
+                    and $\Imc\models\trans(s)$, and a sequence
+                    $(a_0,\varepsilon)$, $(a_1,\varepsilon)$, \dots,
+                    $(a_n,\varepsilon)$, $(a_n,e_1)$, \dots, $(a_n,e_1\dots e_k)$
+                    of elements of~$\Delta^{\Jmc'}$ such that $a_0=a$,
+                    $(a_n,e_1\dots e_k)\in D^{\Jmc'}$, and each two consecutive
+                    elements of this sequence are connected via $s^\Jmc$;
+            \end{itemize}
+            or there is a sequence $(a,d_1\dots d_m)$, $(a,d_1\dots d_{m+1})$,
+            \dots, $(a,d_1\dots d_{m+n})$ of elements of $\Delta^{\Jmc'}$ such
+            that $n\ge 1$, $(a,d_1\dots d_{m+n})\in D^{\Jmc'}$, and each two
+            consecutive elements of this sequence are connected via $s^\Jmc$,
+            where $s$ is a role name such that either $n=1$ and $s=r$, or
+            $\Imc\models s\sqsubseteq r$ and $\Imc\models\trans(s)$
+        \item[\emph{iff}]
+            either $m=0$ and
+            \begin{itemize}
+                \item there is a $d\in D^\Imc$ such that $(a^\Imc,d)\in r^\Imc$,
+                    or
+                \item there is an $s\in\NR$ with $\Imc\models s\sqsubseteq r$
+                    and $\Imc\models\trans(s)$, and an $e_k\in\Delta^\Imc$ such
+                    that $(a^\Imc,e_k)\in s^\Imc\subseteq r^\Imc$ and $e_k\in
+                    D^\Imc$;
+            \end{itemize}
+            or there is a $d\in D^\Imc$ such that $(d_m,d)\in s^\Imc\subseteq
+            r^\Imc$, where $s$ is a role name such that either $s=r$, or
+            $\Imc\models s\sqsubseteq r$ and $\Imc\models\trans(s)$
+        \item[\emph{iff}]
+            either $m=0$ and $a^\Imc\in(\exists r.D)^\Imc$, or $d_m\in(\exists
+            r.D)^\Imc$.
+    \end{itemize}
+
+    \noindent
+    For the case where $C$ is of the form $\atLeast{n}{r}{D}$ for a simple role
+    name $r$, we again have $r^{\Jmc'}=r^\Jmc$, and thus
+    \begin{itemize}
+        \item[]
+            $(a,d_1\dots d_m)\in(\atLeast{n}{r}{D})^{\Jmc'}$
+        \item[\emph{iff}]
+            there is a subset $X\subseteq D^{\Jmc'}$ with $\lvert X\rvert=n$
+            such that $((a,\varepsilon),x)\in r^\Jmc$ for every $x\in X$, and
+            either
+            \begin{itemize}
+                \item $m=0$ and every $x\in X$ is either of the form
+                    $(b,\varepsilon)$ or $(a,d)$, or
+                \item every $x\in X$ is of the form $(a,d_1\dots d_m d_{m+1})$
+            \end{itemize}
+        \item[\emph{iff}]
+            there is a subset $Y\subseteq D^\Imc$ with $\lvert Y\rvert=n$ such
+            that $m=0$ and $(a^\Imc,y)\in r^\Imc$ for every $y\in Y$, or
+            $(d_m,y)\in r^\Imc$ for every $y\in Y$
+        \item[\emph{iff}]
+            either $m=0$ and $a^\Imc\in(\atLeast{n}{r}{D})^\Imc$, or
+            $d_m\in(\atLeast{n}{r}{D})^\Imc$.
+    \end{itemize}
+    %
+    The second equivalence holds since each $r^\Imc$-successor of a named
+    domain element $a^\Imc\in\Delta^\Imc$ is represented by \emph{exactly one}
+    $r^{\Jmc'}$-successor of $(a,\varepsilon)\in\Delta^{\Jmc'}$, which holds due
+    the fact that $\Delta^{\Jmc'}$ does not contain domain elements of the form
+    $(a,b^\Imc)$ for $b\in\Ind(\Psi)$.
+    %
+    This finishes the proof of Claim~\ref{claim:forest-model-concepts}.
+
+    It remains only to be shown that $\Jmc'$ is indeed a model of~\Bmc that
+    respects~\Dmc.  For this, we prove first the following claim by structural
+    induction.
+
+    \begin{claim}\label{claim:forest-model-fcl}
+        For every $\psi\in\FCl(\Psi)$, we have $\Jmc'\models\psi$ iff
+        $\Imc\models\psi$.
+    \end{claim}
+
+    \noindent
+    For the first base case, assume that $\psi$ is of the form $A(a)$ for some
+    $A\in\NC$ and $a\in\NI$.  We have $a^\Imc\in A^\Imc$ iff
+    $a^{\Jmc'}=a^\Jmc=(a,\varepsilon)\in A^\Jmc=A^{\Jmc'}$ by definition.
+
+    For the second base case, assume that $\psi$ is of the form $r(a,b)$ for
+    some $r\in\NR$ and $a,b\in\NI$.  If $\Imc\models r(a,b)$, then
+    $(a^\Imc,b^\Imc)\in r^\Imc$, and thus
+    \[(a^{\Jmc'},b^{\Jmc'})=(a^\Jmc,b^\Jmc)=((a,\varepsilon),(b,\varepsilon))\in
+        r^\Jmc\subseteq r^{\Jmc'}.\]
+    Conversely, if $((a,\varepsilon),(b,\varepsilon))\in r^{\Jmc'}$, then there
+    is an $s\in\NR$ and a sequence $(a_0,\varepsilon)$,~\dots,
+    $(a_n,\varepsilon)$ of elements of $\Delta^{\Jmc'}$ with $n\ge 1$ such that
+    $a_0=a$, $a_n=b$, each two consecutive elements of this sequence are
+    connected via $s^\Jmc$, and either $n=1$ and $s=r$, or $\Rmc\models
+    s\sqsubseteq r$ and $\Rmc\models\trans(s)$.  By the definition of~$s^\Jmc$,
+    the properties of~$s$, and since $\Imc\models\Rmc$, we can infer that
+    $(a^\Imc,b^\Imc)\in r^\Imc$, and thus $\Imc\models r(a,b)$.
+
+    For the third base case, assume that $\psi$ is of the form $C\sqsubseteq D$.
+    For the \enquote{if} direction, assume that $\Imc\models C\sqsubseteq D$ and
+    thus $C^\Imc\subseteq D^\Imc$.  Suppose that there is a $(a,d_1\dots d_m)\in
+    C^{\Jmc'}$ with $(a,d_1\dots d_m)\notin D^{\Jmc'}$.  By
+    Claim~\ref{claim:forest-model-concepts}, either $m=0$ and we have $a^\Imc\in
+    C^\Imc$ and $a^\Imc\notin D^\Imc$, or $d_m\in C^\Imc$ and $d_m\notin
+    D^\Imc$, which contradicts our assumption that $C^\Imc\subseteq D^\Imc$.
+
+    For the \enquote{only if} direction, assume that $C^{\Jmc'}\subseteq
+    D^{\Jmc'}$.  Suppose that there is a $d\in C^\Imc$ with $d\notin D^\Imc$.
+    By the definition of $\Delta^{\Jmc'}$, we have $(a,d'd)\in\Delta^{\Jmc'}$
+    for any $a\in\Ind(\Psi)$ and $d'\in\Delta^\Imc$ such that there is no
+    $b\in\Ind(\Psi)$ with $d'=b^\Imc$.  By
+    Claim~\ref{claim:forest-model-concepts}, we obtain $(a,d'd)\in C^{\Jmc'}$
+    and $(a,d'd)\notin D^{\Jmc'}$, which again yields a contradiction.
+
+    For the induction step, assume first that $\psi$ is of the form
+    $\lnot\psi'$.  We have that $\Jmc'\models\lnot\psi'$ iff
+    $\Jmc'\not\models\psi'$ iff $\Imc\not\models\psi'$ iff
+    $\Imc\models\lnot\psi'$.
+    %
+    Assume now that $\psi$ is of the form $\psi_1\land\psi_2$.  We have that
+    $\Jmc'\models\psi_1\land\psi_2$ iff $\Jmc'\models\psi_1$ and
+    $\Jmc'\models\psi_2$ iff $\Imc\models\psi_1$ and $\Imc\models\psi_2$ iff
+    $\Imc\models\psi_1\land\psi_2$.
+    %
+    This finishes the proof of Claim~\ref{claim:forest-model-fcl}.
+
+    Since $\Psi\in\FCl(\Psi)$, this shows that $\Jmc'$ is indeed a model
+    of~$\Psi$.
+    %
+    We show that $\Jmc'$ is also a model of~\Rmc in the following claim.
+
+    \begin{claim}\label{claim:forest-model-rbox}
+        For every $\alpha\in\Rmc$, we have $\Jmc'\models\alpha$.
+    \end{claim}
+
+    \noindent
+    Assume first that $\alpha$ is of the form $r\sqsubseteq s$.  Since
+    $\Imc\models\Rmc$, we have $\Imc\models r\sqsubseteq s$ and thus
+    $r^\Imc\subseteq s^\Imc$.  We first show that $r^\Jmc\subseteq s^\Jmc$.  For
+    this, take $(x,y)\in r^\Jmc$.  There are three cases to consider:
+    \begin{itemize}
+        \item If $x=(a,\varepsilon)$ and $y=(b,\varepsilon)$ with
+            $a,b\in\Ind(\Psi)$, we have $(a^\Imc,b^\Imc)\in r^\Imc$ and thus
+            $(a^\Imc,b^\Imc)\in s^\Imc$.  Hence, the definition of $s^\Jmc$
+            yields that $(x,y)\in s^\Jmc$.
+        \item If $x=(a,\varepsilon)$ and $y=(a,d)$ with
+            $a\in\Ind(\Psi)$ and $d\in\Delta^\Imc$, we have $(a^\Imc,d)\in
+            r^\Imc$ and thus $(a^\Imc,d)\in s^\Imc$.  Again, the definition of
+            $s^\Jmc$ yields that $(x,y)\in s^\Jmc$.
+        \item If we have $x=(a,d_1\dots d_m)$ and $y=(a,d_1\dots d_m d_{m+1})$
+            with $a\in\Ind(\Psi)$, $m>0$, and $d_1,\dots,d_{m+1}\in\Delta^\Imc$,
+            we have also $(d_m,d_{m+1})\in r^\Imc$ and thus
+            $(d_m,d_{m+1})\in s^\Imc$.  Again, the definition of $s^\Jmc$ yields
+            that $(x,y)\in s^\Jmc$.
+    \end{itemize}
+    %
+    To show that $r^{\Jmc'}\subseteq s^{\Jmc'}$, take $(x,y)\in r^{\Jmc'}$.  If
+    $(x,y)\in r^\Jmc$, we have $(x,y)\in s^\Jmc$ and thus $(x,y)\in s^{\Jmc'}$.
+    Otherwise, we have that $(x,y)\in(t^\Jmc)^+$ with $\Rmc\models t\sqsubseteq
+    r$ and $\Rmc\models\trans(t)$.  Since $r\sqsubseteq s\in\Rmc$, we have
+    obviously $\Rmc\models r\sqsubseteq s$.  It is easy to see that this implies
+    $\Rmc\models t\sqsubseteq s$.  Then the definition of $s^{\Jmc'}$ yields
+    that $(t^\Jmc)^+\subseteq s^{\Jmc'}$.  Hence $(x,y)\in s^{\Jmc'}$.
+
+    Assume now that $\psi$ is of the form $\trans(r)$.  Since $\Imc\models\Rmc$,
+    we have $\Imc\models\trans(r)$ and thus $r^\Imc\circ r^\Imc\subseteq
+    r^\Imc$.  By the same arguments as above, we have for every $t\in\NR$ with
+    $t^\Imc\subseteq r^\Imc$, that $t^\Jmc\subseteq r^\Jmc$, and thus
+    $(t^\Jmc)^+\subseteq(r^\Jmc)^+$ since the transitive closure is monotonic.
+    Since $r^\Imc\subseteq r^\Imc$, we have also $\Imc\models r\sqsubseteq r$.
+    The definition of $r^{\Jmc'}$ yields now that $r^{\Jmc'}=(r^\Jmc)^+$, and
+    hence $\Jmc'$ is a model of $\trans(r)$.
+    %
+    This finishes the proof of Claim~\ref{claim:forest-model-rbox}.
+
+    Claim~\ref{claim:forest-model-fcl}, the fact that $\Psi\in\FCl(\Psi)$, and
+    Claim~\ref{claim:forest-model-rbox} yield that $\Jmc'$ is indeed a model
+    of $\Bmc=(\Psi,\Rmc)$.
+    %
+    Finally, we show that $\Jmc'$ respects $\Dmc=(\Umc,\Ymc)$.
+    %
+    Since \Imc respects~\Dmc, we have
+    \[\Ymc=\bigl\{Y\subseteq\Umc\mid%
+        \text{there is a $d\in\Delta^\Imc$ with $d\in(C_{\Umc,Y})^\Imc$}\bigr\},\]
+    where $C_{\Umc,Y}$ is defined as in Definition~\ref{def:respects-dmc}.
+    %
+    We now set $\Dmc':=(\Umc,\Ymc')$ where
+    \[\Ymc':=\bigl\{Y\subseteq\Umc\mid%
+        \text{there is an $x\in\Delta^{\Jmc'}$ with $x\in(C_{\Umc,Y})^{\Jmc'}$}\bigr\},\]
+    and show that $\Dmc=\Dmc'$.
+    %
+    Since $\Jmc'$ respects~$\Dmc'$, this implies that $\Jmc'$ respects~\Dmc.
+
+    For the direction~($\subseteq$), assume that $Y\in\Ymc$, and thus there is a
+    $d\in(C_{\Umc,Y})^\Imc$.  By Claim~\ref{claim:forest-model-concepts} and the
+    definition of~$\Delta^{\Jmc'}$, there is a $(a,d'd)\in(C_{\Umc,Y})^{\Jmc'}$,
+    and hence $Y\in\Ymc'$.
+    %
+    Conversely, for the direction~($\supseteq$), assume that $Y\in\Ymc'$,
+    i.e.~there is a $(a,d_1\dots d_m)\in(C_{\Umc,Y})^{\Jmc'}$.  By
+    Claim~\ref{claim:forest-model-concepts} and the definition
+    of~$\Delta^{\Jmc'}$, there is a $d\in(C_{\Umc,Y})^\Imc$, where for $m=0$, we
+    can set $d:=a^\Imc$, and for $m>0$, we can take $d:=d_m$.  Hence, we have
+    that $Y\in\Ymc$.
+\end{proof}
+
+\noindent
+Moreover, we can extend the aforementioned result about the non-entailment
+problem for UCQs from~\cite{GHL+-JAIR08,Lut-IJCAR08} to our setting.  In the
+following, we assume that the UCQ~$\rho$ contains only individual names that
+also occur in the ABox (or Boolean axiom formula).  This is without loss of
+generality, because for any individual name~$a$ not occurring in the ABox (or
+Boolean axiom formula), we can simply add the assertion $A(a)$ to the ABox,
+where $A$ is a fresh concept name.
+
+\begin{lemma}\label{lem:forest-model-non-entailment}
+    Let $\Kmc:=(\Amc,\Tmc,\Rmc)$ be a knowledge base, let $\rho$ be
+    a union of Boolean CQs, and let $\Dmc=(\Umc,\Ymc)$ be a pair
+    such that \Umc is a set of concept names and $\Ymc\subseteq 2^\Umc$.
+    %
+    Then, we have $\Kmc\not\models\rho$ w.r.t.~\Dmc iff there is a forest
+    model~\Jmc of~\Kmc that respects \Dmc with $\Jmc\not\models\rho$.
+\end{lemma}
+
+\begin{proof}
+    The \enquote{if} direction is trivial.  For the \enquote{only if} direction,
+    assume that there is a model $\Imc=(\Delta^\Imc,\cdot^\Imc)$ of~\Kmc that
+    respects~\Dmc such that $\Imc\not\models\rho$.  As shown in the proof of
+    Lemma~\ref{lem:forest-model}, the model~\Imc can be transformed into a
+    forest model $\Jmc'=(\Delta^{\Jmc'},\cdot^{\Jmc'})$ of~\Kmc that
+    respects~\Dmc.
+    %
+    Assume that \Jmc and $\Jmc'$ are the forest base and the forest model,
+    respectively, obtained from~\Imc as in the proof of
+    Lemma~\ref{lem:forest-model}.
+
+    It is left to be shown that $\Jmc'\not\models\rho$.  Assume to the contrary
+    that $\Jmc'\models\rho$.  Then, there is a Boolean CQ~$\rho_i$ in the
+    UCQ~$\rho$ such that there is a homomorphism~$\pi$ from~$\rho_i$
+    into~$\Jmc'$.  We define a homomorphism~$\pi'$ from~$\rho_i$ into~\Imc as
+    follows:
+    \begin{itemize}
+        \item $\pi'(a):=a^\Imc$ for every individual name~$a\in\Ind(\Amc)$; and
+        \item for every $v\in\Var(\rho_i)$, we define
+            \[\pi'(v):=\begin{cases}
+                    a^\Imc
+                    &\text{if $\pi(v)=(a,\varepsilon)$ with $a\in\Ind(\Amc)$, and}\\
+                    d_m
+                    &\text{if $\pi(v)=(a,d_1\dots d_m)$ with $m>0$.}
+                \end{cases}\]
+    \end{itemize}
+    %
+    We now show that $\pi'$ is indeed a homomorphism from~$\rho_i$ into~\Imc.
+
+    Consider first a concept atom $A(a)\in\At(\rho_i)$ with $a\in\Ind(\Amc)$.
+    Since $\pi$ is a homomorphism from~$\rho_i$ into~$\Jmc'$, we have
+    $\pi(a)=a^{\Jmc'}=(a,\varepsilon)\in A^{\Jmc'}$.  By
+    Claim~\ref{claim:forest-model-concepts}, we obtain
+    $a^\Imc\in A^\Imc$, and thus $\pi'(a)\in A^\Imc$.
+
+    Similarly, for a concept atom $A(v)\in\At(\rho_i)$ with $v\in\Var(\rho_i)$,
+    we have $\pi(v)\in A^{\Jmc'}$, and thus $\pi'(v)\in A^\Imc$ again by
+    Claim~\ref{claim:forest-model-concepts}.
+
+    For a role atom $r(a,b)\in\At(\rho_i)$, we can show
+    $(\pi'(a),\pi'(b))=(a^\Imc,b^\Imc)\in r^\Imc$ using the same arguments as in
+    the proof of Claim~\ref{claim:forest-model-fcl}: Since $\pi$ is a
+    homomorphism from~$\rho_i$ into~$\Jmc'$, we have
+    $(\pi(a),\pi(b))=(a^{\Jmc'},b^{\Jmc'})=((a,\varepsilon),(b,\varepsilon))\in r^{\Jmc'}$,
+    and thus that there is an $s\in\NR$ and a sequence
+    $(a_0,\varepsilon)$,~\dots, $(a_n,\varepsilon)$ of elements of
+    $\Delta^{\Jmc'}$ with $n\ge 1$ such that $a_0=a$, $a_n=b$, each two
+    consecutive elements of this sequence are connected via~$s^\Jmc$, and either
+    $n=1$ and $s=r$, or $\Rmc\models s\sqsubseteq r$ and $\Rmc\models\trans(s)$.
+    By the definition of~$s^\Jmc$, the properties of~$s$, and since
+    $\Imc\models\Rmc$, we can infer that $(a^\Imc,b^\Imc)\in r^\Imc$.
+
+    If there is a role atom of the form $r(a,v)\in\At(\rho_i)$ with
+    $a\in\Ind(\Amc)$ and $v\in\Var(\rho_i)$, we have
+    $(\pi(a),\pi(v))=(a^{\Jmc'},\pi(v))=((a,\varepsilon),\pi(v))\in r^{\Jmc'}$.
+    If $\pi(v)=(b,\varepsilon)$ with $b\in\Ind(\Amc)$, we can argue as in the
+    previous case that $(a^\Imc,b^\Imc)=(\pi'(a),\pi'(b))\in r^\Imc$.  Otherwise
+    there are again two cases to consider.
+    %
+    First, if we have $((a,\varepsilon),\pi(v))\in r^\Jmc$, then we have also
+    $(a^\Imc,\pi'(v))=(\pi'(a),\pi'(v))\in r^\Imc$ by the definitions of~\Jmc
+    and~$\pi'$.  Otherwise, there must be a role name $s\in\NR$ such that
+    $\Rmc\models s\sqsubseteq r$, $\Rmc\models\trans(s)$, and
+    $((a,\varepsilon),\pi(v))\in(s^\Jmc)^+$.  This yields that there is a
+    sequence $(a_0,\varepsilon)$, $(a_1,\varepsilon)$,~\dots,
+    $(a_n,\varepsilon)$, $(a_n,e_1)$,~\dots, $(a_n,e_1\dots e_k)$ of elements
+    of~$\Delta^{\Jmc'}$ with $n\ge 1$ and $k\ge 1$ such that $a_0=a$,
+    $\pi(v)=(a_n,e_1\dots e_k)$, and each two consecutive elements of this
+    sequence are connected via~$s^\Jmc$.  By the definitions of~$s^\Jmc$
+    and~$\pi'$, we obtain $(a^\Imc,\pi'(v))\in s^\Imc$, and thus since
+    $s^\Imc\subseteq r^\Imc$, also $(\pi'(a),\pi'(v))\in r^\Imc$.
+
+    For any role atom $r(v,a)\in\At(\rho_i)$ with $v\in\Var(\rho_i)$ and
+    $a\in\Ind(\Amc)$, we have that
+    $(\pi(v),\pi(a))=(\pi(v),a^{\Jmc'})=(\pi(v),(a,\varepsilon))\in r^{\Jmc'}$.
+    By the definition of $r^{\Jmc'}$, this implies that there is a sequence
+    $(a_0,\varepsilon)$,~\dots, $(a_n,\varepsilon)$ of elements
+    of~$\Delta^{\Jmc'}$ with $n\ge 1$ such that $a_n=a$,
+    $\pi(v)=(a_0,\varepsilon)$, and each two consecutive elements of this
+    sequence are connected via~$s^\Jmc$, where $s$ is a role name such that
+    either $n=1$ and $s=r$, or $\Rmc\models s\sqsubseteq r$ and
+    $\Rmc\models\trans(s)$.  By the definitions of~$s^\Jmc$ and~$\pi'$, the
+    properties of~$s$, and since $\Imc\models\Rmc$, this yields that
+    $(\pi'(v),\pi'(a))=(\pi'(v),a^\Imc)=(a_0^\Imc,a_n^\Imc)\in r^\Imc$.
+
+    Finally, consider a role atom $r(v,v')\in\At(\rho_i)$ with
+    $v,v'\in\Var(\rho_i)$.  Again, since $\pi$ is a homomorphism from~$\rho_i$
+    into~$\Jmc'$, we have $(\pi(v),\pi(v'))\in r^{\Jmc'}$.  If
+    $\pi(v)=(a,\varepsilon)$ for some $a\in\Ind(\Amc)$, we can show as in
+    second-last case that $(\pi'(v),\pi'(v'))=(a^\Imc,\pi'(v'))\in r^\Imc$.
+    Otherwise, we have $\pi(v)=(a,d_1\dots d_m)$ with $m>0$ and that there is a
+    sequence $(a,d_1\dots d_m)$, $(a,d_1\dots d_{m+1})$,~\dots,
+    $(a,d_1\dots d_{m+n})$ of elements of the domain~$\Delta^{\Jmc'}$ such that
+    we have that $n\ge 1$, $\pi(v')=(a,d_1\dots d_{m+n})$, and each two
+    consecutive elements of this sequence are connected via~$s^\Jmc$, where $s$
+    is a role name such that either $n=1$ and $s=r$, or
+    $\Rmc\models s\sqsubseteq r$ and $\Rmc\models\trans(s)$.  Thus, we obtain
+    $(\pi'(v),\pi'(v'))=(d_m,d_{m+n})\in s^\Imc\subseteq r^\Imc$ by similar
+    arguments as before.
+
+    Hence, $\pi'$ is a homomorphism from~$\rho_i$ into~\Imc, and thus
+    $\Imc\models\rho_i$.  But this yields that $\Imc\models\rho$, which
+    contradicts our assumption that $\Imc\not\models\rho$.
+\end{proof}
+
+\noindent
+Recall that we want to decide the existence of such a forest model in time
+exponential in the size of $\Kmc=(\Amc,\Tmc,\Rmc)$, and~$\rho$.
+%
+To achieve this, we further reduce this decision problem following an idea
+from~\cite{Lut-IJCAR08}.  There, the notion of a spoiler is introduced.
+According to~\cite{Lut-IJCAR08}, a \emph{spoiler for~\Kmc and~$\rho$} is an
+\SHQcap-knowledge base $\Kmc'=(\Amc',\Tmc',\emptyset)$ that states
+properties that must be satisfied such that $\rho$ is not entailed by~\Kmc.
+Note that the ABox~$\Amc'$ of such a spoiler may also contain \emph{negated}
+assertions.  Furthermore, a spoiler may contain role conjunctions.  Thus,
+according to our notation, $\Kmc'$ is a Boolean \SHQcap-knowledge base,
+i.e.~$\Kmc'=(\bigwedge\Amc'\land\bigwedge\Tmc',\emptyset)$.  The following
+proposition is shown in~\cite{Lut-IJCAR08}.
+
+\begin{proposition}
+    Let $\Kmc:=(\Amc,\Tmc,\Rmc)$ be a \SHQ-knowledge base, and let
+    $\rho$ be a union of Boolean CQs.
+    %
+    Then, we have $\Kmc\not\models\rho$ iff there is a spoiler
+    $\Kmc'=(\bigwedge\Amc'\land\bigwedge\Tmc',\emptyset)$ for~\Kmc
+    and~$\rho$ such that
+    $(\bigwedge\Amc\land\bigwedge\Amc'\land\bigwedge\Tmc\land\bigwedge\Tmc',\Rmc)$
+    is consistent.
+\end{proposition}
+
+\noindent
+In addition, it is shown in~\cite{Lut-IJCAR08} that all spoilers for~\Kmc
+and~$\rho$ can be computed in time exponential in the size of~\Kmc and~$\rho$,
+and that each spoiler is of polynomial size.
+%
+In the proof of these results, one only has to deal with forest models, which
+furthermore do not need to be modified.
+%
+More formally, for any forest model~\Imc of $(\Amc,\Tmc,\Rmc)$ that
+does not satisfy~$\rho$ there is a spoiler
+$(\bigwedge\Amc'\land\bigwedge\Tmc',\emptyset)$ that also has \Imc
+as a model and, conversely, every forest model of the knowledge base
+$(\Amc,\Tmc,\Rmc)$ that also satisfies a spoiler
+$(\bigwedge\Amc'\land\bigwedge\Tmc',\emptyset)$ does not
+satisfy~$\rho$ (see the proof of Lemma~3 in~\cite{Lut-DL08}).
+%
+This yields the following more general result that also takes into account the
+pair~\Dmc.
+
+\begin{proposition}\label{prop:spoilers}
+    Let $\Kmc:=(\Amc,\Tmc,\Rmc)$ be a \SHQ-knowledge base, let
+    $\rho$ be a union of Boolean CQs, and let $\Dmc=(\Umc,\Ymc)$ be a pair
+    such that \Umc is a set of concept names and $\Ymc\subseteq 2^\Umc$.
+    %
+    Then, we have $\Kmc\not\models\rho$ w.r.t.~\Dmc iff there is a spoiler
+    $\Kmc'=(\bigwedge\Amc'\land\bigwedge\Tmc',\emptyset)$ for~\Kmc
+    and~$\rho$ such that there is a model of
+    $(\bigwedge\Amc\land\bigwedge\Amc'\land\bigwedge\Tmc\land\bigwedge\Tmc',\Rmc)$
+    that respects~\Dmc.
+\end{proposition}
+
+\noindent
+It remains to show that the existence of such a model can be checked in time
+exponential in the size of
+$(\bigwedge\Amc\land\bigwedge\Amc'\land\bigwedge\Tmc\land\bigwedge\Tmc',\Rmc)$.
+%
+But this follows directly from Theorem~\ref{thm:cons-bmc-dmc}, where it is shown
+that consistency of Boolean \SHOQcap-knowledge base~\Bmc w.r.t.\ a pair~\Dmc can be
+decided in time exponential in the size of~\Bmc.
+%
+Thus, we obtain the following theorem.
+
+\begin{theorem}\label{thm:non-entailment-exp}
+    Let $\Kmc:=(\Amc,\Tmc,\Rmc)$ be a \SHQ-knowledge base, let
+    $\rho$ be a union of Boolean CQs, and let $\Dmc=(\Umc,\Ymc)$ be a pair
+    such that \Umc is a set of concept names and $\Ymc\subseteq 2^\Umc$.
+    %
+    Then, we can decide whether $\Kmc\not\models\rho$ w.r.t.~\Dmc in time
+    exponential in the size of~\Kmc and~$\rho$.
+\end{theorem}
+
+\noindent
+Combining this with the reductions in Lemmas~\ref{lem:initial-validity}
+and~\ref{lem:tcq-dmc-tau-combined}, we obtain the desired complexity result.
+
+\begin{theorem}\label{thm:combined-complexity-rigid-concept-names}
+    If $\NRC\ne\emptyset$ and $\NRR=\emptyset$, the
+    temporalised query-entailment problem in \SHQ is in \coNExpTime w.r.t.\
+    combined complexity.
+\end{theorem}
+
+\begin{proof}
+    Let $\phi$ be a Boolean TCQ, and let
+    $\Kmc=((\Amc_i)_{0\le i\le n},\Tmc,\Rmc)$ be a temporal \SHQ-knowledge base.
+    %
+    By Lemma~\ref{lem:initial-validity}, we can construct a Boolean TCQ~$\psi$
+    polynomial in the size of~$\phi$ and~\Kmc such that $\Kmc\models\phi$ iff
+    $\Kmc':=(\emptyset,\Tmc,\Rmc)\models\psi$.
+    %
+    We again consider the TCQ-satisfiability problem, which has the same
+    complexity as the temporalised query non-entailment problem.  We decide
+    whether $\psi$ is satisfiable w.r.t.~$\Kmc'$ using
+    Lemma~\ref{lem:tcq-r-sat-t-sat}.  For that, let
+    $\psf\colon\CQ(\psi)\to\Pmc_\psi$ be a bijection.
+    %
+    We first non-deterministically guess a set
+    $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\psi}$ and a mapping
+    $\iota\colon\{0\}\to\{1,\dots,k\}$ in time exponential in the size of~$\psi$
+    and~$\Kmc'$.
+    %
+    By Lemma~\ref{lem:tcq-t-sat}, deciding whether $\psi^\psf$ is t-satisfiable
+    w.r.t.~\Wmc and~$\iota$ can be done in time exponential in the size
+    of~$\psi^\psf$ (and thus also in time exponential in the size of~$\psi$),
+    linear in the size of~\Wmc, and polynomial in~$n$.
+
+    Thus, due to Lemma~\ref{lem:tcq-r-sat-t-sat}, is suffices to show that
+    r-satisfiability of~\Wmc w.r.t.~$\iota$ and~$\Kmc'$ can be checked in
+    non-deterministic exponential time w.r.t.\ combined complexity.  For that,
+    we use Lemma~\ref{lem:tcq-dmc-tau-combined}.
+    %
+    We non-deterministically guess a set $\Ymc\subseteq 2^{\RCon(\Tmc)}$ and a
+    mapping $\tau\colon\Ind(\psi)\to\Ymc$, which can be done in
+    time exponential in the size of~$\psi$ and~$\Kmc'$ since \Ymc is of size
+    exponential in~\Tmc and~$\tau$ is of size polynomial in the size of~$\psi$
+    and~\Tmc.
+    %
+    We define $\Dmc:=(\RCon(\Tmc),\Ymc)$.  Next, we construct for every~$i$,
+    $1\le i\le k$, the conjunction of CQ-literals
+    $\zeta_{X_i}\land\xi_\tau$, the knowledge base~$\Kmc_i$ and the Boolean
+    union of CQs~$\rho_i$.
+    %
+    Note that the size of each $\zeta_{X_i}\land\xi_\tau$, $\Kmc_i$,
+    and~$\rho_i$ is polynomial in the size of~$\psi$ and~$\Kmc'$ and the
+    number~$k$ of these conjunctions is exponential in the size of~$\psi$.
+    %
+    Thus, it remains to show that we can decide every query non-entailment
+    $\Kmc_i\not\models\rho_i$ w.r.t.~\Dmc in time exponential in the size
+    of~$\Kmc_i$ and~$\rho_i$, and thus in time exponential in the size of~$\psi$
+    and~$\Kmc'$, which we obtain by Theorem~\ref{thm:non-entailment-exp}.
+
+    Hence, we can check whether~$\phi$ is satisfiable w.r.t.~\Kmc using the
+    above decision procedure, which shows that the TCQ-satisfiability problem in
+    \SHQ is in \NExpTime w.r.t.\ combined complexity.  Thus, we obtain that the
+    temporalised query-entailment problem is in \coNExpTime w.r.t.\ combined
+    complexity.
+\end{proof}
+
+\noindent
+Together with Theorem~\ref{thm:lower-bounds-combined-complexity}, we obtain that
+the temporalised query-entailment problem in \SHQ is \coNExpTime-complete
+w.r.t.\ combined complexity if only concept names are allowed to be rigid.
+
+
+\section{Summary}\label{sec:tcqs-summary}
+
+In this chapter, we have shown all the complexity results that are summarised in
+Table~\ref{tab:tcq-results} for the proposed temporal query language.  More
+precisely, we considered both the combined complexity and the data complexity of
+temporalised query entailment for all description logics between \ALC and \SHQ
+in the settings where (i)~neither concept names nor role names are allowed to be
+rigid, (ii)~only concept names may be rigid, and (iii)~both concept names and
+role names may be rigid.  It turned out that in Setting~(i), the temporalised
+query-entailment problem is as hard as entailment of conjunctive queries w.r.t.\
+atemporal \ALC- and \SHQ-knowledge bases, namely \coNP-complete w.r.t.\ data
+complexity and \ExpTime-complete w.r.t.\ combined complexity.  However, if we
+allow rigid concept names (but no rigid role names), the picture changes.
+Whilst the data complexity remains the same as in the atemporal case, the
+combined complexity of the temporalised query-entailment problem increases to
+\coNExpTime, i.e.~the temporalised query non-entailment problem is as hard as
+the satisfiability problem in the temporalised description logic \ALC-LTL\@.  If
+we further allow rigid role names, the combined complexity of the temporalised
+query (non-)entailment problem again increases in accordance with the complexity
+of the satisfiability problem in \ALC-LTL\@.  In fact, all three problems are
+\TwoExpTime-complete.  For the data complexity, it is still open whether adding
+rigid role names results in an increase of the complexity.  We have shown an
+upper bound of \ExpTime---which is one exponential better than the combined
+complexity---, but the only lower bound we have is the trivial one of \coNP.
+
+Further work will include trying to close this gap.  Moreover, it would be
+interesting to find out what effect the addition of inverse roles has on the
+complexity of query entailment in the temporal case.  Given the results for
+\ALCI and \SHIQ in the atemporal case, where the query entailment problem is
+\TwoExpTime-complete w.r.t.\ combined complexity~\cite{Lut-IJCAR08} and
+\coNP-complete w.r.t.\ data complexity~\cite{OrCE-AAAI06}, there is the
+possibility that also in the temporal case, the query entailment problem remains
+\coNP-complete w.r.t.\ data complexity and \TwoExpTime-complete w.r.t.\ combined
+complexity for all three settings considered in this chapter.  But showing this
+will require considerable extensions of the proof techniques employed until now
+since the presence of inverse roles creates additional problems.
+%
+We have also left open the complexity of the temporalised query entailment
+problem for the case where non-simple roles are allowed to occur in the queries.
+This problem is, however, already \TwoExpTime-hard w.r.t.\ combined complexity
+for the description logic~\SH~\cite{ELO+-IJCAI09} in the atemporal case.

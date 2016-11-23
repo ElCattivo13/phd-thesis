@@ -1,0 +1,1860 @@
+\chapter[Runtime Verification Using \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL}]{%
+    Runtime Verification Using the Temporalised Description Logic \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL}}\label{ch:monitor}
+
+Runtime verification deals with the problem of verifying properties about the
+behaviour of observed systems.
+%
+In this chapter, we investigate runtime verification using the temporalised
+description logic \SHOQ-LTL\@.  We show how monitors for \SHOQ-LTL-formulas can
+be constructed and establish complexity results for related decision problems.
+%
+Some of the results of this chapter have already been published
+in~\cite{BaLi-LTCS-14-01}.
+
+This chapter is organised as follows.  In Section~\ref{sec:monitor-ltl}, we
+first consider propositional runtime verification, and revisit known results to
+be able to compare them to one we establish.  Then, in
+Section~\ref{sec:ba-for-shoq-ltl} we show how to construct Büchi-automata for
+\SHOQ-LTL-formulas.  This section is very related to Chapter~\ref{ch:shoq-ltl}
+where we established complexity results for the satisfiability problem in
+\SHOQ-LTL\@.  After that, we consider the actual monitor construction for
+\SHOQ-LTL in Section~\ref{sec:monitor}.  Then, in
+Section~\ref{sec:liveness-monitorability}, we show some complexity results about
+the important related decision problems \enquote{liveness} and
+\enquote{monitorability}.  Finally, Section~\ref{sec:monitor-summary} gives a
+brief summary of the main results of this chapter.
+
+
+\section{Runtime Verification Using Propositional LTL}\label{sec:monitor-ltl}
+
+In propositional runtime verification~\cite{BaLS-JLC10,BaLS-ToSEM11}, one
+observes the actual behaviour of the given system since it started, which at any
+point in time can be described by a finite word~$u$ over~$\Sigma_\Pmc$.  Here
+\Pmc is a finite set of propositional variables whose truth values at any point
+in time can be determined by observing the system.
+%
+Given such a word $u=u_0u_1\dots u_t\in\Sigma_\Pmc^*$, we say that the
+propositional LTL-structure $\Wmf=(w_i)_{i\ge 0}$ \emph{extends~$u$} if
+$u_i=w_i$ for every~$i$, $0\le i\le t$.  In this case, we also call~\Wmf an
+\emph{extension of~$u$}.
+%
+In principle, a monitor for a propositional LTL-formula~$\phi$ needs to realise
+the following \emph{monitoring function}
+$\msf_\phi\colon\Sigma_\Pmc^*\to\{\top,\bot,{?}\}$:
+\[\msf_\phi(u):=\begin{cases}
+        \top &\text{if $\Wmf,0\models\phi$ for every propositional LTL-structure~\Wmf that extends~$u$;}\\
+        \bot &\text{if $\Wmf,0\models\lnot\phi$ for every propositional LTL-structure~\Wmf that extends~$u$; and}\\
+        {?}  &\text{otherwise.}
+    \end{cases}\]
+
+\noindent
+As mentioned above, this function should not be computed from scratch whenever a
+new observation $\sigma\in\Sigma_\Pmc$ is added.  In particular, the time needed
+for computing the next function value $\msf_\phi(u\sigma)$ should not depend on
+the length of the already observed word~$u$.  This can be achieved by
+constructing a deterministic Moore-automaton as monitor.
+
+\begin{definition}[Deterministic Moore-automaton]
+    A \emph{deterministic Moore-automaton} is a tuple
+    $\Mmc=(S,\Sigma,\delta,s_0,\Gamma,\lambda)$ consisting of a finite set of
+    states~$S$, a finite input alphabet~$\Sigma$, a transition function
+    $\delta\colon S\times\Sigma\to S$, an initial state $s_0\in S$, a finite
+    output alphabet~$\Gamma$, and an output function $\lambda\colon S\to\Gamma$.
+
+    The transition function and the output function can be extended to functions
+    $\delta^*\colon S\times\Sigma^*\to S$ and $\lambda^*\colon\Sigma^*\to\Gamma$
+    as follows:
+    \begin{itemize}
+        \item $\delta^*(s,\varepsilon):=s$ where $\varepsilon$ denotes the empty
+            word;
+        \item $\delta^*(s,u\sigma):=\delta(\delta^*(s,u),\sigma)$ where
+            $u\in\Sigma^*$ and $\sigma\in\Sigma$; and
+    \end{itemize}
+    for every $u\in\Sigma^*$, $\lambda^*(u):=\lambda(\delta^*(s_0,u))$.
+\end{definition}
+
+\noindent
+Such a deterministic Moore-automaton is a monitor for~$\phi$ if its extended
+output function is the monitoring function for~$\phi$.
+
+\begin{definition}[Monitor for propositional LTL-formula]
+    Let~\Pmc be a finite set of propositional variables, and let~$\phi$ be a
+    propositional LTL-formula over~\Pmc.
+    %
+    The deterministic Moore-automaton
+    $\Mmc=(S,\Sigma_\Pmc,\delta,s_0,\{\top,\bot,{?}\},\lambda)$
+    is a \emph{monitor for~$\phi$} if $\lambda^*(u)=\msf_\phi(u)$ holds for
+    every $u\in\Sigma_\Pmc^*$.
+\end{definition}
+
+\noindent
+Given a propositional LTL-formula~$\phi$ over~\Pmc, a monitor for~$\phi$ can
+effectively be computed~\cite{BaLS-ToSEM11}.  Basically, on proceeds as follows.
+First, one computes Büchi-automata for~$\phi$ and~$\lnot\phi$.  These automata
+are then determinised (viewed as finite automata rather than Büchi-automata).
+Finally, one builds the product of the two deterministic automata.  The output
+function is computed using reachability tests in the Büchi-automata
+(see~\cite{BaLS-ToSEM11} and the monitor construction for \SHOQ-LTL in
+Section~\ref{sec:monitor} below for details).  The monitor obtained this way is
+in the worst case of doubly exponential size and be be computed in doubly
+exponential time.
+
+One can actually show that this doubly exponential blow-up in the construction
+of the monitor cannot be avoided.  Such a doubly exponential lower bound was
+already claimed in~\cite{BaLS-ToSEM11}, referring to a result of Kupferman and
+Vardi~\cite{KuVa-FMSD01}.  However, a closer look at Theorem~3.3
+in~\cite{KuVa-FMSD01} shows that it only yields a lower bound
+of~$2^{2^{\sqrt{n}}}$.  Fortunately, a more recent result by Kupferman and
+Rosenberg~\cite{KuRo-MoChArt10} can be used to show a lower bound of~$2^{2^n}$.
+We include a proof of this tight lower bound for the monitor construction here
+for the sake of completeness.  This lower bound can also be used to show
+optimality of our monitor constructions for \SHOQ-LTL\@.
+
+Kupferman and Rosenberg show (see Theorem~3 in~\cite{KuRo-MoChArt10}) that there
+exists a sequence $(L_n)_{n\ge 1}$ of $\omega$-languages and a sequence
+$(\phi_n)_{n\ge 1}$ of propositional LTL-formulas such that the following holds
+for every $n\ge 1$:
+\begin{enumerate}
+    \item the $\omega$-language~$L_n$ can be accepted by a deterministic
+        Büchi-automaton, but the number of states of any deterministic
+        Büchi-automaton accepting $L_n$ is at least~$2^{2^n}$; and
+    \item $L_n=L_\omega(\phi_n)$ and the size of~$\phi_n$ is linear in~$n$.
+\end{enumerate}
+
+\noindent
+Using an argument similar to the one employed in~\cite{KuRo-MoChArt10}, we can
+show that the number of states of any monitor for~$\phi_n$ is at
+least~$2^{2^n}$.  For this purpose, we first recall the definition of the
+languages~$L_n$ from~\cite{KuRo-MoChArt10}.
+
+For every $n\ge 0$, we consider the alphabet
+$\Sigma_n:=\{a_1,\dots,a_n\}\cup\{b_1,\dots,b_n\}\cup\{\#,\$\}$, and define
+\begin{align*}
+    T_n &:=\{a_1,b_1\}\cdot\dotso\cdot\{a_n,b_n\},\\[1ex]
+    S_n &:=\{\#\}\cdot(T_n\cdot\{\#\})^*\cdot\{\$\}\cdot T_n\cdot\{\#\}^\omega,\\[1ex]
+    R_n &:=\bigcup_{w\in T_n}\Sigma_n^*\cdot\{\#\}\cdot\{w\}\cdot\{\#\}\cdot\Sigma_n^*\cdot\{\$\}\cdot\Sigma_n^*\cdot\{w\}\cdot\{\#\}^\omega,\\
+    L_n &:=S_n\cap R_n.
+\end{align*}
+
+\noindent
+Thus, the language~$T_n$ consist of the words of length~$n$ such that the letter
+at position~$i$ is~$a_i$ or~$b_i$.  Obviously, there are $2^n$ such words.
+%
+The $\omega$-language~$S_n$ consists of $\omega$-words that start with a finite
+sequence of elements of~$T_n$, which are separated by the $\#$-symbol.  This
+sequence is terminated by the $\$$-symbol, which is followed by exactly one
+element of~$T_n$.  Then comes an infinite sequence of $\#$-symbols.
+%
+Intersecting the $\omega$-language~$S_n$ with the $\omega$-language~$R_n$ has
+the following effect: it ensures that the element~$w$ of~$T_n$ that follows the
+$\$$-symbol has already occurred in the sequence of elements of~$T_n$ before the
+$\$$-symbol.
+
+The propositional LTL-formulas~$\phi_n$ representing the
+$\omega$-languages~$L_n$ are built over sets of propositional variables with
+$2n+2$ elements, i.e.~over $\Pmc_n:=\{p_1,\dots,p_{2n+2}\}$.
+%
+Recall that such a propositional LTL-formula defines a $\omega$-language over
+the alphabet~$\Sigma_{\Pmc_n}$, whose letters are the subsets of~$\Pmc_n$.  Of
+these exponentially many letters, the language~$L_n$ uses only the (linearly
+many) singleton sets, where
+\begin{itemize}
+    \item $\{p_i\}$ represents the letter~$a_i$ for~$i$, $1\le i\le n$;
+    \item $\{p_{n+i}\}$ represents the letter~$b_i$ for~$i$, $1\le i\le n$;
+    \item $\{p_{2n+1}\}$ represents the letter~$\#$; and
+    \item $\{p_{2n+2}\}$ represents the letter~$\$$.
+\end{itemize}
+
+\noindent
+In order to increase readability, we continue to use the letters from~$\Sigma_n$
+rather than these singleton sets in our argument below.
+
+\begin{theorem}\label{thm:monitor-size}
+    There is a sequence $(\phi_n)_{n\ge 1}$ of propositional LTL-formulas of
+    size linear in~$n$ such that the number of states of any monitor
+    for~$\phi_n$ is at least~$2^{2^n}$.
+\end{theorem}
+
+\begin{proof}
+    Let $(\phi_n)_{n\ge 1}$ be the sequence of propositional LTL-formulas
+    constructed in the proof of Theorem~3 of~\cite{KuRo-MoChArt10}.  It is shown
+    in that proof that $L_n=L_\omega(\phi_n)$ and that the size of~$\phi_n$ is
+    linear in~$n$.
+
+    Now assume that
+    $\Mmc_n=(S_n,\Sigma_n,\delta_n,s_{0,n},\{\top,\bot,{?}\},\lambda_n)$ is a
+    monitor for~$\phi_n$ with less than $2^{2^n}$ states.
+    %
+    Given a set $T\subseteq T_n$, we enumerate its elements in
+    lexicographic order (where $a_i$ comes before $b_i$).  Assume that
+    $w_1,\dots,w_m$ is the enumeration of the elements of~$T$ in this order.
+    Then we define
+    \[\wsf(T):=\#w_1\#\dots\#w_m\#.\]
+    %
+    Moreover, let $\ssf(T)$ be the state reached in~$\Mmc_n$ with
+    input~$\wsf(T)$ when starting at the initial state~$s_{0,n}$.
+    %
+    Since there are $2^{2^n}$ different subsets of~$T_n$, but less than
+    $2^{2^n}$ states, there must be two different such subsets $T,T'$ such that
+    $\ssf(T)=\ssf(T')$.  We assume without loss of generality that
+    there is a word $w\in T\setminus T'$.\footnote{%
+        The case where $T'\setminus T$ is non-empty can be treated
+        symmetrically.}
+    %
+    Now consider the state~$s$ reached from~$s_{0,n}$ on input~$\wsf(T)w\#$.
+    Since $\ssf(T)=\ssf(T')$, this is the same state as the one reached from
+    $s_{0,n}$ on input~$\wsf(T')w\#$.  Since $\Mmc_n$ is a monitor for~$\phi_n$,
+    this implies that
+    \[\msf_{\phi_n}(\wsf(T)w\#)=\lambda_n(s)=\msf_{\phi_n}(\wsf(T')w\#).\]
+
+    \noindent
+    This, however, yields a contradiction since actually we have
+    \[\msf_{\phi_n}(\wsf(T)w\#)={?}\ne\bot=\msf_{\phi_n}(\wsf(T')w\#).\]
+    %
+    In fact, we can extend $\wsf(T)w\#$ to an $\omega$-word belonging to~$L_n$
+    (and thus satisfying~$\phi_n$) by adding an infinite sequence of
+    $\#$-symbols.  Any other extension of $\wsf(T)w\#$ does not belong to~$L_n$.
+    This shows that $\msf_{\phi_n}(\wsf(T)w\#)={?}$.  The word $\wsf(T')w\#$,
+    however, cannot be extended to an element of~$L_n$ since $w$ does not occur
+    in the sequence before the $\$$-symbol.  This shows that
+    $\msf_{\phi_n}(\wsf(T')w\#)=\bot$.
+
+    Summing up, we have seen that our assumption that there is a monitor
+    for~$\phi_n$ with less than $2^{2^n}$ states leads to a contradiction, which
+    shows that any monitor for~$\phi_n$ must have at least $2^{2^n}$ states.
+\end{proof}
+
+\noindent
+Before building a monitor for a propositional LTL-formula~$\phi$, it makes sense
+to check whether the monitor will actually be able to give reasonable answers.
+For example, a monitor that always, i.e.~for every finite word, returns the
+answer~${?}$ is clearly useless.  Similarly, when running the monitor, it makes
+sense to check whether, according to what has been seen of the system's
+behaviour until now, i.e.~the finite word read by the monitor until now, it
+makes sense to continue running the monitor.  This leads to the following
+definition of monitorability~\cite{PnZa-FM06,FaFM-RV09,Bau-CoRR10}.
+
+\begin{definition}[Monitorability]\label{def:monitorability-ltl}
+    Let $\phi$ be a propositional LTL-formula over~\Pmc, and let $u$ be a finite
+    word over~$\Sigma_\Pmc$.  We say that $\phi$ is \emph{$u$-monitorable} if
+    there is a finite word $v\in\Sigma^*$ such that $\msf_\phi(uv)\ne{?}$.
+    Moreover, we call $\phi$ \emph{monitorable} if it is $u$-monitorable for
+    every finite word $u\in\Sigma_\Pmc^*$.
+\end{definition}
+
+\noindent
+Given a monitor~\Mmc for~$\phi$, one can easily decide monitorability through
+reachability tests in~\Mmc.  We call a state in~\Mmc \emph{good} if one can
+reach from it a state whose output is different to~${?}$.  Then
+\begin{itemize}
+    \item $\phi$ is $u$-monitorable iff the state reached from the initial state
+        with input~$u$ is good; and
+    \item $\phi$ is monitorable iff every state reachable from the initial state
+        is good.
+\end{itemize}
+%
+This shows that monitorability can be decided in time doubly exponential in the
+size of the input formula.  More precisely, one can obtain an upper bound of
+\ExpSpace by constructing the relevant parts of the monitor on-the-fly while
+performing the reachability test.\footnote{%
+    This is the same idea underlying the automata-based \PSpace satisfiability
+    check for propositional LTL~\cite{SiCl-JACM85,LiPZ-CLP85} mentioned in
+    Section~\ref{sec:aut-for-ltl}.}
+%
+To the best of our knowledge, it is an open problem whether this upper
+bound of \ExpSpace is tight.  The only known lower
+bound is one of \PSpace, which can be obtained using a reduction from the
+satisfiability problem.\footnote{%
+    Note that the proof of an upper bound of \PSpace given in~\cite{Bau-CoRR10}
+    actually does not go through.}
+%
+Interestingly, the same is true for the related but simpler-looking problem of
+liveness~\cite{AlSc-IPL85}.
+
+\begin{definition}[Liveness]\label{def:liveness-ltl}
+    Let $\phi$ be a propositional LTL-formula over~\Pmc.  We say that $\phi$
+    \emph{expresses a liveness property} if every finite word
+    $u\in\Sigma_\Pmc^*$ has an extension to an $\omega$-word that
+    satisfies~$\phi$.
+\end{definition}
+
+\noindent
+Using the monitoring function, liveness of~$\phi$ can thus be expressed as
+follows: $\phi$ expresses a liveness property iff $\msf_\phi(u)\ne\bot$ for
+every $u\in\Sigma_\Pmc^*$.  Consequently, given a monitor for~$\phi$, liveness
+of~$\phi$ can again be tested by checking reachability in the monitor, which
+yields an upper bound of \ExpSpace.  Again, it is open whether
+this upper bound is tight.  The only known lower bound is again one of \PSpace,
+which can again be obtained using a reduction from satisfiability.\footnote{%
+    Note that the proof of an upper bound of \PSpace sketched
+    in~\cite{UlWo-CoRR01} actually does not go through.}
+
+In the next sections, we show how to extend the notions of this section to
+obtain monitors for \SHOQ-LTL-formulas.
+
+
+\section{Büchi-Automata for \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL}-Formulas}\label{sec:ba-for-shoq-ltl}
+
+The decision procedures in Section~\ref{sec:complexity-shoq-ltl} for the
+satisfiability problem in \SHOQ-LTL are not based on Büchi-automata.  We show in
+this section, however, that the ideas underlying these decision procedures can
+be used to obtain automata-based decision procedures.  The Büchi-automata
+constructed in this section will be the building blocks of our monitors.
+
+In the following, let~\Rmc be an RBox, and let~$\phi$ be a \SHOQ-LTL-formula
+w.r.t.~\Rmc.  In principle, we want to construct a
+Büchi-automaton~$\Nmc_{\phi,\Rmc}$ that accepts exactly the models of~$\phi$
+w.r.t.~\Rmc.  This is very similar to what is done for propositional LTL\@; see
+Definition~\ref{def:ba-for-ltl}.  Since there are infinitely many
+interpretations, we would end up with an infinite alphabet for this
+Büchi-automaton.  For this reason, we abstract from specific interpretations and
+consider only the axioms in~$\phi$ that they satisfy.
+
+For a given interpretation~\Imc, we denote by $\tau_\phi(\Imc)$ the set of all
+axioms in $\Ax(\phi)$ that \Imc is a model of, i.e.\
+\[\tau_\phi(\Imc):=\{\alpha\in\Ax(\phi)\mid\Imc\models\alpha\}.\]
+%
+Note that if $\Imc\models\Rmc$, we have that \Imc is a model of the Boolean
+knowledge base
+\[\Biggl(\bigwedge_{\alpha\in\tau_\phi(\Imc)}\alpha\land%
+    \bigwedge_{\alpha\in\Ax(\phi)\setminus\tau_\phi(\Imc)}\lnot\alpha,\quad\Rmc\Biggr).\]
+%
+This motivates the following definition.
+
+\begin{definition}[Axiom type]
+    The set of axioms~$T$ is an \emph{axiom type for~$\phi$ w.r.t.~\Rmc} if the
+    following two properties are satisfied:
+    \begin{itemize}
+        \item $T\subseteq\Ax(\phi)$; and
+        \item the Boolean knowledge base
+            \[\Bmc_T:=\Biggl(\bigwedge_{\alpha\in T}\alpha\land%
+                \bigwedge_{\alpha\in\Ax(\phi)\setminus T}\lnot\alpha,\quad\Rmc\Biggr)\]
+            is consistent.
+    \end{itemize}
+\end{definition}
+
+\noindent
+We denote the set of all axiom types for~$\phi$ w.r.t.~\Rmc
+with~$\Tmf_{\phi,\Rmc}$.
+%
+The following lemma is an easy consequence of this definition.
+
+\begin{lemma}\label{lem:interpretation-axiom-type}
+    Let \Imc be an interpretation, and let $T$ be a set of axioms.
+    \begin{enumerate}
+        \item If \Imc is a model of~\Rmc, then $\tau_\phi(\Imc)$ is an axiom
+            type for~$\phi$ w.r.t.~\Rmc.
+        \item If $T$ is any axiom type for~$\phi$ w.r.t.~\Rmc, then there is a
+            model~\Jmc of~\Rmc such that $T=\tau_\phi(\Jmc)$.
+    \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+    For Part~1 of the lemma, assume that \Imc is a model of~\Rmc.  We have
+    $\tau_\phi(\Imc)\subseteq\Ax(\phi)$ by definition, and as argued above that
+    $\Imc\models\Bmc_{\tau_\phi(\Imc)}$.
+
+    For Part~2 of the lemma, assume that $T$ is an axiom type for~$\phi$
+    w.r.t.~\Rmc.  Hence, $\Bmc_T$ is consistent.  Let~\Jmc be a model
+    of~$\Bmc_T$.  Note that we have $\Jmc\models\Rmc$.  Furthermore, it is easy
+    to see that, by construction of~$\Bmc_T$, we have that $T=\tau_\phi(\Jmc)$.
+\end{proof}
+
+\noindent
+In the following, for $\Imc\models\Rmc$, we call $\tau_\phi(\Imc)$ the
+\emph{axiom type of~\Imc}.  This notion can be further extended to
+DL-LTL-structures.  For a given DL-LTL-structure $\Imf=(\Imc_i)_{i\ge 0}$, we
+define
+\[\tau_\phi(\Imf):=\tau_\phi(\Imc_0)\tau_\phi(\Imc_1)\tau_\phi(\Imc_2)\dots,\]
+and, for $\Imf\models\Rmc$, we call $\tau_\phi(\Imf)$ the \emph{axiom type
+of~\Imf}.  Note that the axiom type of~\Imf is an $\omega$-word over the
+alphabet~$\Tmf_{\phi,\Rmc}$.
+
+Whether a given DL-LTL-structure~\Imf with $\Imf\models\Rmc$ is a model
+of~$\phi$ w.r.t.~\Rmc only depends on its axiom type.  This is stated formally
+in the following lemma.
+
+\begin{lemma}\label{lem:equal-type}
+    Let \Imf and \Jmf be DL-LTL-structures such that $\Imf\models\Rmc$,
+    $\Jmf\models\Rmc$, and $\tau_\phi(\Imf)=\tau_\phi(\Jmf)$.  Then, \Imf is a
+    model of~$\phi$ w.r.t.~\Rmc iff \Jmf is a model of~$\phi$ w.r.t.~\Rmc.
+\end{lemma}
+
+\begin{proof}
+    Let $\Imf=(\Imc_i)_{i\ge 0}$ and $\Jmf=(\Jmc_i)_{i\ge 0}$ be
+    DL-LTL-structures such that $\Imf\models\Rmc$, $\Jmf\models\Rmc$, and
+    $\tau_\phi(\Imf)=\tau_\phi(\Jmf)$.  It is enough to
+    prove that $\Imf,i\models\phi$ iff $\Jmf,i\models\phi$ for every~$i\ge 0$,
+    which we show by induction on the structure of~$\phi$.
+
+    For the case where $\phi$ is an axiom, we have for every~$i\ge 0$ that
+    $\Imf,i\models\phi$ \emph{iff} $\Imc_i\models\phi$ \emph{iff}
+    $\phi\in\tau_\phi(\Imc_i)$ \emph{iff} $\phi\in\tau_\phi(\Jmc_i)$ \emph{iff}
+    $\Jmc_i\models\phi$ \emph{iff} $\Jmf,i\models\phi$.
+
+    If $\phi$ is of the form $\lnot\phi_1$, we have for every~$i\ge 0$ that
+    $\Imf,i\models\lnot\phi_1$ \emph{iff} $\Imf,i\not\models\phi_1$ \emph{iff}
+    $\Jmf,i\not\models\phi_1$ \emph{iff} $\Jmf,i\models\lnot\phi_1$.
+
+    If $\phi$ is of the form $\phi_1\land\phi_2$, we have for every~$i\ge 0$
+    that $\Imf,i\models\phi_1\land\phi_2$ \emph{iff} $\Imf,i\models\phi_1$ and
+    $\Imf,i\models\phi_2$ \emph{iff} $\Jmf,i\models\phi_1$ and
+    $\Jmf,i\models\phi_2$ \emph{iff} $\Jmf,i\models\phi_1\land\phi_2$.
+
+    If $\phi$ is of the form $\Next\phi_1$, we have for every~$i\ge 0$ that
+    $\Imf,i\models\Next\phi_1$ \emph{iff} $\Imf,i+1\models\phi_1$ \emph{iff}
+    $\Jmf,i+1\models\phi_1$ \emph{iff} $\Jmf,i\models\Next\phi_1$.
+
+    If $\phi$ is of the form $\Previous\phi_1$, we have for every~$i\ge 0$ that
+    $\Imf,i\models\Previous\phi_1$ \emph{iff} $i>0$ and $\Imf,i-1\models\phi_1$
+    \emph{iff} $i>0$ and $\Jmf,i-1\models\phi_1$ \emph{iff}
+    $\Jmf,i\models\Previous\phi_1$.
+
+    If $\phi$ is of the form $\phi_1\Until\phi_2$, we have for every~$i\ge 0$
+    that $\Imf,i\models\phi_1\Until\phi_2$ \emph{iff} there is some $k\ge i$
+    such that $\Imf,k\models\phi_2$, and $\Imf,j\models\phi_1$ for every~$j$,
+    $i\le j<k$ \emph{iff} there is some $k\ge i$ such that
+    $\Jmf,k\models\phi_2$, and $\Jmf,j\models\phi_1$ for every~$j$, $i\le j<k$
+    \emph{iff} $\Jmf,i\models\phi_1\Until\phi_2$.
+
+    Finally, if $\phi$ is of the form $\phi_1\Since\phi_2$, we have for
+    every~$i\ge 0$ that $\Imf,i\models\phi_1\Since\phi_2$ \emph{iff} there is
+    some $k$, $0\le k\le i$, such that $\Imf,k\models\phi_2$, and
+    $\Imf,j\models\phi_1$ for every~$j$, $k<j\le i$ \emph{iff} there is some
+    $k$, $0\le k\le i$, such that $\Jmf,k\models\phi_2$, and
+    $\Jmf,j\models\phi_1$ for every~$j$, $k<j\le i$ \emph{iff}
+    $\Jmf,i\models\phi_1\Since\phi_2$.
+\end{proof}
+
+\noindent
+This lemma justifies considering Büchi-automata that receive axiom types of
+DL-LTL-structures as input rather than the DL-LTL-structures themselves.  The
+next definition is very similar to the one for propositional LTL\@; see
+Definition~\ref{def:ba-for-ltl}.
+
+\begin{definition}[Büchi-automaton for \SHOQ-LTL-formula]
+    Let \Rmc be an RBox, let $\phi$ be a \SHOQ-LTL-formula w.r.t.~\Rmc, and let
+    \Nmc be a Büchi-automaton working on the alphabet~$\Tmf_{\phi,\Rmc}$.  We
+    define
+    \[L_\omega(\phi,\Rmc):=\bigl\{\tau_\phi(\Imf)\in\Tmf_{\phi,\Rmc}^\omega\mid%
+        \Imf=(\Imc_i)_{i\ge 0}\ \text{is a model of~$\phi$ w.r.t.~\Rmc}\bigr\},\]
+    and say that \Nmc is a \emph{Büchi-automaton for~$\phi$ w.r.t.~\Rmc} if
+    $L_\omega(\Nmc)=L_\omega(\phi,\Rmc)$.
+\end{definition}
+
+\noindent
+Instead of constructing such Büchi-automata directly for \SHOQ-LTL-formulas, we
+build their propositional abstractions and then reuse the known construction for
+the propositional case.\footnote{%
+    One could also define the Büchi-automata directly as done
+    in~\cite{BaBL-FroCoS09,Lip-Dipl09}, but the approach developed below is more
+    modular and also easier to implement.  In fact, the approach does not depend
+    on a specific algorithm for generating Büchi-automata for propositional
+    LTL-formulas.  Thus, any existing tool for transforming a propositional
+LTL-formula into a Büchi-automaton can be used.}
+%
+For that, we reuse also the results shown in Chapter~\ref{ch:shoq-ltl}.  In the
+following, let $\psf\colon\Ax(\phi)\to\Pmc_\phi$ be a bijection.
+%
+It turns out that it is convenient to define the notion of r-satisfiability (see
+Definition~\ref{def:r-sat}) on the level of axiom types.
+
+\begin{definition}[R-consistency]\label{def:r-cons}
+    Let $\Tmf=\{T_1,\dots,T_k\}\subseteq\Tmf_{\phi,\Rmc}$.  We call \Tmf
+    \emph{r-consistent} if there exist interpretations
+    $\Imc_1=(\Delta,\cdot^{\Imc_1})$,~\dots, $\Imc_k=(\Delta,\cdot^{\Imc_k})$
+    such that
+    \begin{itemize}
+        \item $a^{\Imc_i}=a^{\Imc_j}$ holds for every $a\in\NI$ and all $i,j$,
+            $1\le i<j\le k$;
+        \item $A^{\Imc_i}=A^{\Imc_j}$ holds for every $A\in\NRC$ and all $i,j$,
+            $1\le i<j\le k$;
+        \item $r^{\Imc_i}=r^{\Imc_j}$ holds for every $r\in\NRR$ and all $i,j$,
+            $1\le i<j\le k$; and
+        \item $\Imc_i\models\Rmc$ and $\tau_\phi(\Imc_i)=T_i$ holds for
+            every~$i$, $1\le i\le k$.
+    \end{itemize}
+\end{definition}
+
+\noindent
+Note that any subset of an r-consistent set of axiom types for~$\phi$
+w.r.t.~\Rmc is again r-consistent.  In particular, the empty set is always
+r-consistent.
+
+We denote the set of all r-consistent sets of axiom types for~$\phi$ w.r.t.~\Rmc
+with~$\Cmf_{\phi,\Rmc}$.
+%
+Moreover, we denote by $\psf(T)$, for $T\subseteq\Ax(\phi)$, the following
+subset of~$\Pmc_\phi$:
+\[\psf(T):=\bigl\{\psf(\alpha)\mid\alpha\in T\bigr\}.\]
+Conversely, we denote by $\psf^{-1}(w)$, for $w\subseteq\Pmc_\phi$, the
+following subset of~$\Ax(\phi)$:
+\[\psf^{-1}(w):=\bigl\{\psf^{-1}(p)\mid p\in w\bigr\}.\]
+%
+It is easy to see that for any DL-LTL-structure $\Imf=(\Imc_i)_{i\ge 0}$, we
+have that $\Imf^\psf=(\psf(\tau_\phi(\Imc_i)))_{i\ge 0}$.
+%
+Moreover, we obtain the following relationship between r-satisfiability and
+r-consistency.
+
+\begin{lemma}\label{lem:r-cons-r-sat}
+    Let $\Tmf=\{T_1,\dots,T_k\}\subseteq\Tmf_{\phi,\Rmc}$, and let
+    $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$.
+    \begin{enumerate}
+        \item If \Tmf is r-consistent, then
+            $\bigl\{\psf(T_1),\dots,\psf(T_k)\bigr\}$ is r-satisfiable
+            w.r.t.~\Rmc.
+        \item If \Wmc is r-satisfiable w.r.t.~\Rmc, then
+            $\bigl\{\psf^{-1}(X_1),\dots,\psf^{-1}(X_k)\bigr\}$ is r-consistent.
+    \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+    For Part~1 of the lemma, assume that
+    $\Tmf=\{T_1,\dots,T_k\}\subseteq\Tmf_{\phi,\Rmc}$ is r-consistent.  Then
+    there are interpretations $\Imc_1=(\Delta,\cdot^{\Imc_1})$,~\dots,
+    $\Imc_k=(\Delta,\cdot^{\Imc_k})$ such that the conditions of
+    Definition~\ref{def:r-cons} are satisfied.  Note that the first three
+    conditions coincide with the ones of Definition~\ref{def:r-sat}.  Thus, to
+    show that $\bigl\{\psf(T_1),\dots,\psf(T_k)\bigr\}$ is r-satisfiable
+    w.r.t.~\Rmc, it only remains to show that every~$\Imc_i$, $1\le i\le k$, is
+    a model of the Boolean knowledge base~$\Bmc_{\psf(T_i)}$, which is defined
+    as in Definition~\ref{def:r-sat}.  This is satisfied, since for every~$i$,
+    $1\le i\le k$, we have by Definition~\ref{def:r-cons} and the arguments
+    above that~$\Imc_i$ is a model of
+    \[\Bmc_{\psf(T_i)}:=%
+        \Biggl(\bigwedge_{p\in\psf(T_i)}\psf^{-1}(p)\land%
+        \bigwedge_{p\in\Pmc_\phi\setminus\psf(T_i)}\lnot\psf^{-1}(p),\quad\Rmc\Biggr)=%
+        \Biggl(\bigwedge_{\alpha\in\tau_\phi(\Imc_i)}\alpha\land%
+        \bigwedge_{\alpha\in\Ax(\phi)\setminus\tau_\phi(\Imc_i)}\lnot\alpha,\quad\Rmc\Biggr).\]
+
+    For Part~2 of the lemma, assume that
+    $\Wmc=\{X_1,\dots,X_k\}\subseteq 2^{\Pmc_\phi}$ is r-satisfiable
+    w.r.t.~\Rmc.  Then there are interpretations
+    $\Imc_1=(\Delta,\cdot^{\Imc_1})$,~\dots, $\Imc_k=(\Delta,\cdot^{\Imc_k})$
+    such that the conditions of Definition~\ref{def:r-sat} are satisfied.  Note
+    again that the first three conditions coincide with the ones of
+    Definition~\ref{def:r-cons}.  Thus, to show that
+    $\bigl\{\psf^{-1}(X_1),\dots,\psf^{-1}(X_k)\bigr\}$ is r-consistent, it only
+    remains to show that for every~$i$, $1\le i\le k$, we have that
+    $\Imc_i\models\Rmc$ and $\tau_\phi(\Imc_i)=\psf^{-1}(X_i)$.  This is
+    satisfied, since for every~$i$, $1\le i\le k$, we have by
+    Definition~\ref{def:r-sat} that~$\Imc_i$ is a model of
+    \[\Bmc_{X_i}:=%
+        \Biggl(\bigwedge_{p\in X_i}\psf^{-1}(p)\land%
+        \bigwedge_{p\in\Pmc_\phi\setminus X_i}\lnot\psf^{-1}(p),\quad\Rmc\Biggr)=%
+        \Biggl(\bigwedge_{\alpha\in\psf^{-1}(X_i)}\alpha\land%
+        \bigwedge_{\alpha\in\Ax(\phi)\setminus\psf^{-1}(X_i)}\lnot\alpha,\quad\Rmc\Biggr),\]
+    which yields that $\Imc_i\models\Rmc$ and
+    $\tau_\phi(\Imc_i)=\{\alpha\in\Ax(\phi)\mid\Imc_i\models\alpha\}=\psf^{-1}(X_i)$.
+\end{proof}
+
+\noindent
+We are now ready to define Büchi-automata for \SHOQ-LTL-formulas.
+%
+We consider here only the case without rigid names, i.e.~$\NRC=\NRR=\emptyset$,
+and the case with rigid concept and role names, i.e.~$\NRC\ne\emptyset$ and
+$\NRR\ne\emptyset$.  These two cases are treated in
+Sections~\ref{sec:ba-no-rigid} and~\ref{sec:ba-rigid}.
+%
+The intermediate case where only concept names are allowed to be rigid,
+i.e.~$\NRC\ne\emptyset$ and $\NRR=\emptyset$, is not considered.  As we will see
+below, the corresponding monitors are of size doubly exponential in the size of
+the input \SHOQ-LTL-formula (and the RBox) irrespective of the fact whether
+rigid names are allowed or not.
+
+
+\subsection{The Case without Rigid Names}\label{sec:ba-no-rigid}
+
+In this section, we consider the case where neither concept names nor role names
+are allowed to be rigid, i.e.~$\NRC=\NRR=\emptyset$.  With the lemmas above, we
+are able to establish the following result.
+
+\begin{theorem}\label{thm:ba-shoq-ltl-no-rigid}
+    Let \Rmc be an RBox, let $\phi$ a \SHOQ-LTL-formula w.r.t.~\Rmc, and let
+    $\psf\colon\Ax(\phi)\to\Pmc_\phi$ be a bijection.
+    %
+    If $\NRC=\NRR=\emptyset$ and
+    $\Nmc_{\phi^\psf}=(Q,\Sigma_{\Pmc_\phi},\Delta,Q_0,F)$ is a Büchi-automaton
+    for the propositional abstraction~$\phi^\psf$ of~$\phi$, then
+    $\Nmc_{\phi,\Rmc}:=(Q,\Tmf_{\phi,\Rmc},\Delta',Q_0,F)$ with
+    \[\Delta':=\bigl\{(q,T,q')\mid%
+        (q,\psf(T),q')\in\Delta\ \text{and}\ T\in\Tmf_{\phi,\Rmc}\bigr\}\]
+    is a Büchi-automaton for~$\phi$ w.r.t.~\Rmc.
+\end{theorem}
+
+\begin{proof}
+    We have to show that $L_\omega(\Nmc_{\phi,\Rmc})=L_\omega(\phi,\Rmc)$.
+
+    For the direction~\enquote{$\subseteq$}, assume that
+    $T_0T_1T_2\dotso\in L_\omega(\Nmc_{\phi,\Rmc})$.  The definition
+    of~$\Nmc_{\phi,\Rmc}$ yields that
+    $\psf(T_0)\psf(T_1)\psf(T_2)\dotso\in L_\omega(\Nmc_{\phi^\psf})$.  Since
+    $\Nmc_{\phi^\psf}$ is a Büchi-automaton for~$\phi^\psf$, we obtain that
+    $\Wmf=(\psf(T_i))_{i\ge 0}$ is a model of~$\phi^\psf$.
+    %
+    We define $\Tmf:=\{T_i\mid i\ge 0\}$.  Since for every $i\ge 0$, we have
+    $T_i\in\Tmf_{\phi,\Rmc}$, it follows that
+    $\Tmf=\{T_1',\dots,T_k'\}\subseteq\Tmf_{\phi,\Rmc}$.  By
+    Lemma~\ref{lem:interpretation-axiom-type}, we have that for every~$i$,
+    $1\le i\le k$, there is a model~$\Jmc_i$ of~\Rmc such that
+    $T_i'=\tau_\phi(\Jmc)$.  We can assume w.l.o.g.\ that all of these models
+    have the same domain since we can assume w.l.o.g.\ that their domains are
+    countably infinite due to the Löwenheim-Skolem
+    theorem~\cite{Loe-MA15,Sko-VS20}.  Moreover, we can assume w.l.o.g.\ that
+    all individual names are interpreted by the same domain elements in all
+    models.  Since $\NRC=\NRR=\emptyset$, this yields that \Tmf is r-consistent.
+    By Lemma~\ref{lem:r-cons-r-sat}, we have that
+    $\Wmc:=\{\psf(T_1'),\dots,\psf(T_k')\}=\{\psf(T_i)\mid i\ge 0\}$ is
+    r-satisfiable w.r.t.~\Rmc.  Then, Lemma~\ref{lem:ltl-structure-r-sat} yields
+    that there is a model \Imf of~$\phi$ w.r.t.~\Rmc with $\Imf^\psf=\Wmf$.
+    Consequently, $\tau_\phi(\Imf)=T_0T_1T_2\dotso\in L_\omega(\phi,\Rmc)$.
+
+    For the direction~\enquote{$\supseteq$}, assume that
+    $T=T_0T_1T_2\dotso\in L_\omega(\phi,\Rmc)$.  Then there is a model
+    $\Imf=(\Imc_i)_{i\ge 0}$ of~$\phi$ w.r.t.~\Rmc with $\tau_\phi(\Imf)=T$.  By
+    Lemma~\ref{lem:interpretation-axiom-type}, for every $i\ge 0$, the
+    letter~$T_i$ is an axiom type for~$\phi$ w.r.t.~\Rmc,
+    i.e.~$T_i\in\Tmf_{\phi,\Rmc}$.
+    %
+    By Lemma~\ref{lem:ltl-structure-r-sat}, we have that
+    $\Imf^\psf=(\psf(T_i))_{i\ge 0}$ is a model of~$\phi^\psf$, and thus the
+    $\omega$-word $\psf(T_0)\psf(T_1)\psf(T_2)\dots$ is accepted
+    by~$\Nmc_{\phi^\psf}$.  Consequently, we have
+    $T_0T_1T_2\dotso\in L_\omega(\Nmc_{\phi,\Rmc})$.
+\end{proof}
+
+\noindent
+As an immediate consequence of this theorem, the satisfiability problem in
+\SHOQ-LTL (for the case $\NRC=\NRR=\emptyset$) can be reduced to the emptiness
+problem for Büchi-automata.
+
+\begin{corollary}
+    If $\NRC=\NRR=\emptyset$, the \SHOQ-LTL-formula~$\phi$ is satisfiable
+    w.r.t.\ the RBox~\Rmc iff $L_\omega(\Nmc_{\phi,\Rmc})\ne\emptyset$.
+\end{corollary}
+
+\noindent
+It remains to analyse the complexity of the decision procedure for the
+satisfiability problem obtained by this reduction.
+
+The size of the Büchi-automaton~$\Nmc_{\phi,\Rmc}$ is obviously exponential in
+the size of~$\phi$ (and~\Rmc) since the Büchi-automaton~$\Nmc_{\phi^\psf}$
+for~$\phi^\psf$ is of size exponential in the size of~$\phi^\psf$ (and thus
+exponential in the size of~$\phi$ since the size of~$\phi^\psf$ is linearly
+bounded by the size of~$\phi$) as discussed in Section~\ref{sec:aut-for-ltl}.
+%
+In addition, the Büchi-automaton~$\Nmc_{\phi,\Rmc}$ can be constructed in
+exponential time.  As shown in Section~\ref{sec:aut-for-ltl}, a Büchi-automaton
+for a propositional LTL-formula can be constructed in time exponential in the
+size of the input formula.  Thus, we can construct $\Nmc_{\phi^\psf}$ in time
+exponential in the size of~$\phi^\psf$ (and thus in time exponential in the size
+of~$\phi$).  To obtain $\Nmc_{\phi,\Rmc}$ from~$\Nmc_{\phi^\psf}$, we basically
+have to remove all transitions labelled with a letter~$\sigma$ such that
+$\psf^{-1}(\sigma)\notin\Tmf_{\phi,\Rmc}$.  For the remaining transitions, we
+then simply replace the letter~$\sigma$ with $\psf^{-1}(\sigma)$.  In order to
+check whether $\psf^{-1}(\sigma)$ belongs to~$\Tmf_{\phi,\Rmc}$, we need to
+check the Boolean knowledge base~$\Bmc_{\psf^{-1}(\sigma)}$ for consistency.  By
+Corollary~\ref{cor:cons-boolean-shoq-kb}, this can be done in time exponential
+in the size of this Boolean knowledge base.  Since there are exponentially many
+letters~$\sigma$, but the size of each Boolean knowledge
+base~$\Bmc_{\psf^{-1}(\sigma)}$ is linearly bounded by the size of~$\phi$
+and~\Rmc, we need to perform exponentially many checks (where each needs
+exponential time), which yields an overall complexity of exponential time for
+the construction of~$\Nmc_{\phi,\Rmc}$.
+
+Since the emptiness problem for Büchi-automata can be solved in time polynomial
+in the size of the Büchi-automaton~\cite{VaWo-IC94}, this yields an alternative
+proof of the fact that the satisfiability problem in \SHOQ-LTL is in \ExpTime if
+$\NRC=\NRR=\emptyset$ (see Theorem~\ref{thm:upper-bound-shoq-ltl-no-rigid}).
+
+
+\subsection{The Case of Rigid Concept and Role Names}\label{sec:ba-rigid}
+
+In this section, we consider the case where both concept and role names may be
+rigid, i.e.~$\NRC\ne\emptyset$ and $\NRR\ne\emptyset$.
+%
+If rigid names are allowed, the Büchi-automaton needs to check whether the set
+of axiom types seen within a run are r-consistent.  This is achieved by using
+tuples $(q_1,q_2)$ as states, where $q_1$ is a state of the
+Büchi-automaton~$\Nmc_{\phi,\Rmc}$ introduced in
+Theorem~\ref{thm:ba-shoq-ltl-no-rigid}, and $q_2$ is an r-consistent set of
+axiom types for~$\phi$ w.r.t.~\Rmc.
+
+\begin{theorem}\label{thm:ba-for-shoq-ltl-rigid}
+    Let \Rmc be an RBox, let $\phi$ a \SHOQ-LTL-formula w.r.t.~\Rmc, and let
+    $\psf\colon\Ax(\phi)\to\Pmc_\phi$ be a bijection.
+    %
+    If $\Nmc_{\phi^\psf}=(Q,\Sigma_{\Pmc_\phi},\Delta,Q_0,F)$ is a
+    Büchi-automaton for the propositional abstraction~$\phi^\psf$ of~$\phi$,
+    then
+    $\Nmc_{\phi,\Rmc}^\text{r}:=(Q\times\Cmf_{\phi,\Rmc},\Tmf_{\phi,\Rmc},\Delta',Q_0\times\{\emptyset\},F\times\Cmf_{\phi,\Rmc})$
+    with
+    \[\Delta':=\bigl\{((q_1,q_2),T,(q_1',q_2'))\mid%
+        (q_1,\psf(T),q_1')\in\Delta\ \text{and}\ q_2'=q_2\cup\{T\}\in\Cmf_{\phi,\Rmc}\bigr\}\]
+    is a Büchi-automaton for~$\phi$ w.r.t.~\Rmc.
+\end{theorem}
+
+\begin{proof}
+    We have to show that $L_\omega(\Nmc_{\phi,\Rmc}^\text{r})=L_\omega(\phi,\Rmc)$.
+
+    For the direction~\enquote{$\subseteq$}, assume that
+    $T=T_0T_1T_2\dotso\in L_\omega(\Nmc_{\phi,\Rmc}^\text{r})$, and let
+    \[(q_1^{(0)},q_2^{(0)})(q_1^{(1)},q_2^{(1)})(q_1^{(2)},q_2^{(2)})\dots\]
+    be an accepting run of~$\Nmc_{\phi,\Rmc}^\text{r}$ on~$T$.
+    %
+    It is easy to see that the projection $q_1^{(0)}q_1^{(1)}q_1^{(2)}\dots$ of
+    this run to the first component is an accepting run of~$\Nmc_{\phi,\Rmc}$
+    on~$T$.
+    %
+    As argued in the proof of Theorem~\ref{thm:ba-shoq-ltl-no-rigid}, we have
+    that $\psf(T_0)\psf(T_1)\psf(T_2)\dotso\in L_\omega(\Nmc_{\phi^\psf})$, and
+    that $\Wmf=(\psf(T_i))_{i\ge 0}$ is a model of~$\phi^\psf$.  We define
+    $\Tmf:=\{T_i\mid i\ge 0\}$.  Since for every $i\ge 0$, we have
+    $T_i\in\Tmf_{\phi,\Rmc}$, it follows that
+    $\Tmf=\{T_1',\dots,T_k'\}\subseteq\Tmf_{\phi,\Rmc}$.  It remains to show
+    that \Tmf is r-consistent.  In fact, once this is shown,
+    Lemma~\ref{lem:r-cons-r-sat} yields that
+    $\Wmf:=\{\psf(T_1'),\dots,\psf(T_k')\}=\{\psf(T_i)\mid i\ge 0\}$ is
+    r-satisfiable w.r.t.~\Rmc.  Then, Lemma~\ref{lem:ltl-structure-r-sat} yields
+    that there is a model \Imf of~$\phi$ w.r.t.~\Rmc with $\Imf^\psf=\Wmf$.
+    Consequently, $\tau_\phi(\Imf)=T_0T_1T_2\dotso\in L_\omega(\phi,\Rmc)$.
+    %
+    To see that \Tmf is r-consistent, we note that the second components
+    $q_2^{(j)}$, $j\ge 0$, of the states in the run are r-consistent sets of
+    axiom types for~$\phi$ w.r.t.~\Rmc satisfying
+    $q_2^{(j)}=\{T_0,\dots,T_{j-1}\}$.  Since there are only finitely many axiom
+    types for~$\phi$ w.r.t.~\Rmc, there is an index $\ell\ge 1$ such that
+    $q_2^{(k)}=\{T_i\mid i\ge 0\}$, and thus this set is r-consistent.
+
+    For the direction~\enquote{$\supseteq$}, assume that
+    $T_0T_1T_2\dotso\in L_\omega(\phi,\Rmc)$.  Then there is a model
+    $\Imf=(\Imc_i)_{i\ge 0}$ of~$\phi$ w.r.t.~\Rmc with $\tau_\phi(\Imf)=T$.
+    Using the arguments in the proof of Lemma~\ref{thm:ba-shoq-ltl-no-rigid}
+    (direction~\enquote{$\supseteq$}), we obtain that
+    $T_0T_1T_2\dotso\in L_\omega(\Nmc_{\phi,\Rmc})$.  Let
+    $q_1^{(0)}q_1^{(1)}q_1^{(2)}\dots$ be an accepting run of~$\Nmc_{\phi,\Rmc}$
+    on~$T$.
+    %
+    Moreover, by Lemma~\ref{lem:ltl-structure-r-sat}, we obtain that
+    $\Imf^\psf=(\psf(T_i))_{i\ge 0}$ is a model of~$\phi^\psf$ and
+    $\Wmc=\{X_1,\dots,X_k\}:=\{\psf(T_i)\mid i\ge 0\}$ is r-satisfiable
+    w.r.t.~\Rmc.  By Lemma~\ref{lem:r-cons-r-sat}, we obtain that the set
+    $\{\psf^{-1}(X_1),\dots,\psf^{-1}(X_k)\}=\{T_i\mid i\ge 0\}$ is
+    r-consistent.  If we define $q_2^{(j)}:=\{T_0,\dots,T_{j-1}\}$ for every
+    $j\ge 0$, then these sets are r-consistent since they are subsets of the
+    r-consistent set $\{T_i\mid i\ge 0\}$.  Consequently,
+    \[(q_1^{(0)},q_2^{(0)})(q_1^{(1)},q_2^{(1)})(q_1^{(2)},q_2^{(2)})\dots\]
+    is an accepting run of~$\Nmc_{\phi,\Rmc}^\text{r}$ on~$T$.
+\end{proof}
+
+\noindent
+As an immediate consequence of this theorem, we obtain that the satisfiability
+problem in \SHOQ-LTL (even for the case where $\NRC\ne\emptyset$ and
+$\NRR\ne\emptyset$) can be reduced to the emptiness problem for Büchi-automata.
+
+\begin{corollary}
+    The \SHOQ-LTL-formula~$\phi$ is satisfiable w.r.t.\ the RBox~\Rmc iff
+    $L_\omega(\Nmc_{\phi,\Rmc}^\text{r})\ne\emptyset$.
+\end{corollary}
+
+\noindent
+The complexity of the decision procedure for the satisfiability problem obtained
+by this reduction is, however, higher than the complexity of the decision
+procedure for the case without rigid names.
+
+The size of the Büchi-automaton~$\Nmc_{\phi,\Rmc}^\text{r}$ is doubly
+exponential in the size of~$\phi$ and~\Rmc.  This is due to the fact that the
+set~$\Cmf_{\phi,\Rmc}$ of all r-consistent sets of axiom types for~$\phi$
+w.r.t.~\Rmc may contain doubly exponentially many elements since these sets are
+subsets of the exponentially large set~$\Tmf_{\phi,\Rmc}$ of all axiom types
+for~$\phi$ w.r.t.~\Rmc.  Each element of~$\Cmf_{\phi,\Rmc}$ may be of
+exponential size.
+
+Next, we show that the Büchi-automaton~$\Nmc_{\phi,\Rmc}^\text{r}$ can be
+constructed in doubly exponential time.  In addition to constructing the
+Büchi-automaton~$\Nmc_{\phi,\Rmc}$, i.e.~the Büchi-automaton constituting the
+first component of~$\Nmc_{\phi,\Rmc}^\text{r}$, we must also compute the
+set~$\Cmf_{\phi,\Rmc}$.  For this, we consider all sets of axiom types
+for~$\phi$ w.r.t.~\Rmc.  There are doubly exponentially many such sets, each of
+size at most exponential in the size of~$\phi$ and~\Rmc.  By
+Lemma~\ref{lem:r-cons-r-sat}, checking such a set $\Tmf=\{T_1,\dots,T_k\}$ for
+r-consistency amounts to check the set
+$\Wmc:=\bigl\{\psf(T_1),\dots,\psf(T_k)\bigr\}$ for r-satisfiability
+w.r.t.~\Rmc.  By Lemma~\ref{lem:bmc-wmc}, this amounts to checking the Boolean
+knowledge base~$\Bmc_\Wmc$ (as defined in Section~\ref{sec:sat-rigid}) for
+consistency.  Since the size of~$\Bmc_\Wmc$ is exponential in the size of~$\phi$
+and~\Rmc, we obtain by Corollary~\ref{cor:cons-boolean-shoq-kb} that this can be
+done in time doubly exponential in the size of~$\phi$ and~\Rmc.  Overall, the
+computation of~$\Cmf_{\phi,\Rmc}$ requires doubly exponentially many such tests,
+each requiring doubly exponential time.  This shows that~$\Cmf_{\phi,\Rmc}$, and
+thus also the Büchi-automaton~$\Nmc_{\phi,\Rmc}^\text{r}$ can be constructed in
+doubly exponential time.
+
+Since the emptiness problem for Büchi-automata can be solved in time polynomial
+in the size of the Büchi-automaton~\cite{VaWo-IC94}, this yields an alternative
+proof of the fact that the satisfiability problem in \SHOQ-LTL is in \TwoExpTime
+(see Theorem~\ref{thm:upper-bound-shoq-ltl-rigid-roles}).
+
+
+\section{Monitoring \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL}-Formulas}\label{sec:monitor}
+
+In this section, we extend existing definitions and results for runtime
+verification from propositional LTL to \SHOQ-LTL\@.  We restrict the attention
+to the case with rigid names since the complexity of the monitor construction
+for this more general case is actually the same (doubly exponential) as for the
+case without rigid names.  Thus, it does not make sense to treat the restricted
+case separately.  In addition to considering a more expressive logic, our notion
+of monitoring extends the one for propositional logic in two directions.
+
+On the one hand, we do not assume that the monitor has complete knowledge about
+the states of the system.  In the propositional case, as introduced in
+Section~\ref{sec:monitor-ltl}, at each point in time the monitor \enquote{knows}
+which of the propositional variables are true at this point and which are not.
+In our setting, \SHOQ-axioms take the place of propositional variables, but we
+do not assume that we have complete knowledge about their truth value.  For some
+of the relevant axioms, we may know that they are true, for others that they are
+false, but it also may be the case that we have no information regarding the
+truth status of a certain axiom.
+
+On the other hand, we take background knowledge about the working of the system
+into account.  This background knowledge could, for example, be a global TBox,
+i.e.~a finite set of GCIs that are known to hold for every state of the system.
+In this case, the formula describing the background knowledge is of the form
+$\psi=\Box\bigwedge\Tmc$, where \Tmc is a TBox.  The presence of background
+knowledge enables the monitor to give more often definite answers (i.e.~$\top$
+or~$\bot$) rather than the answer~${?}$.
+
+
+\subsection{Basic Definitions}
+
+In the following, we extend the notion of a monitoring function and a monitor,
+as introduced in Section~\ref{sec:monitor-ltl} for propositional LTL-formulas,
+to the case of \SHOQ-LTL-formulas~$\phi$ w.r.t.\ an RBox~\Rmc.  We assume that
+the background knowledge is described by an additional \SHOQ-LTL-formula~$\psi$
+w.r.t.~\Rmc, and that the monitor receives the information about the current
+state of the system in the form of a Boolean knowledge base~\Omc (observations)
+that provides (partial) information about the truth values of certain axioms
+from a fixed finite set of axioms.  Without loss of generality, we can also
+assume that the axioms occurring in~$\psi$ and~\Omc also occur in~$\phi$.  This
+assumption is indeed without loss of generality since for every such
+axiom~$\alpha$, which does not occur in~$\phi$, we can define
+$\phi':=\phi\land(\alpha\lor\lnot\alpha)$.  Obviously, every model of~$\phi$ is
+also a model of~$\phi'$, and vice versa.  We make this assumption throughout
+this section without explicitly mentioning it.
+
+To simplify the subsequent definitions, we introduce the following notation.  A
+\emph{literal of~$\phi$} is either an axiom $\alpha\in\Ax(\phi)$
+(\emph{positive} literal) or the negation $\lnot\alpha$ of an axiom
+$\alpha\in \Ax(\phi)$ (\emph{negative} literal).
+
+\begin{definition}[Partial axiom type]
+    A finite conjunction $\Omc=L_1\land\dots\land L_m$ of literals of~$\phi$ is
+    a \emph{partial axiom type for~$\phi$ w.r.t.~\Rmc} if the Boolean knowledge
+    base $(\Omc,\Rmc)$ is consistent.
+\end{definition}
+
+\noindent
+We denote the set of all partial axiom types for~$\phi$ w.r.t.~\Rmc
+by~$\Pmf_{\phi,\Rmc}$.
+%
+Note that, up to equivalence, there are at most exponentially many (in the size
+of~$\phi$ and~\Rmc) partial axiom types for~$\phi$ w.r.t.~\Rmc.
+
+Given an axiom type~$T$ for~$\phi$ w.r.t.~\Rmc, the first component of the
+corresponding Boolean knowledge base~$\Bmc_T=(\Omc_T,\Rmc)$, i.e.\
+\[\Omc_T:=\bigwedge_{\alpha\in T}\alpha\land\bigwedge_{\alpha\in\Ax(\phi)\setminus T}\lnot\alpha,\]
+is a partial axiom type for~$\phi$ w.r.t.~\Rmc.  In this case, every axiom
+of~$\phi$ occurs either positively or negatively in~$\Omc_T$.  For an arbitrary
+partial axiom type~\Omc for~$\phi$ w.r.t.~\Rmc, this need not be the case.  Some
+axioms of~$\phi$ may not occur at all in~\Omc.
+
+\begin{definition}[Extensions]\label{def:extensions}
+    Let \Rmc be an RBox, $\phi$ and $\psi$ be \SHOQ-LTL-formulas w.r.t.~\Rmc,
+    and $\Omf=\Omc_0\Omc_1\dots\Omc_t$ be a \emph{finite} sequence of partial
+    axioms types for~$\phi$ and~\Rmc.
+    \begin{enumerate}
+        \item We say that the DL-LTL-structure $\Imf=(\Imc_i)_{i\ge 0}$
+            \emph{extends \Omf w.r.t.~$\psi$ and~\Rmc} if \Imf is a model
+            of~$\psi$ w.r.t.~\Rmc, and $\Imc_i\models\Omc_i$ for every~$i$,
+            $0\le i\le t$.
+        \item\label{def:modelsex}
+            We write $\Omf,\psi,\Rmc\modelsex\phi$ if there is a
+            DL-LTL-structure~\Imf that extends~\Omf w.r.t.~$\psi$ and~\Rmc, and
+            is a model of~$\phi$ w.r.t.~\Rmc.  If this is not the case, we write
+            $\Omf,\psi,\Rmc\notmodelsex\phi$.
+        \item\label{def:modelsal}
+            We write $\Omf,\psi,\Rmc\modelsal\phi$ if every
+            DL-LTL-structure~\Imf extending~\Omf w.r.t.~$\psi$ and~\Rmc is a
+            model of~$\phi$ w.r.t.~\Rmc.  If this is not the case, we write
+            $\Omf,\psi,\Rmc\notmodelsal\phi$.
+    \end{enumerate}
+\end{definition}
+
+\noindent
+The notions introduced in Part~\ref{def:modelsex} and Part~\ref{def:modelsal} of
+this definition are dual to each other in the following sense:
+\[\Omf,\psi,\Rmc\modelsex\phi\ \text{iff}\ \Omf,\psi,\Rmc\notmodelsal\lnot\phi%
+    \qquad\text{and}\qquad%
+    \Omf,\psi,\Rmc\modelsal\phi\ \text{iff}\ \Omf,\psi,\Rmc\notmodelsex\lnot\phi.\]
+
+We assume that our system actually respects rigid names and satisfies the
+background knowledge~$\psi$ and the RBox~\Rmc in the sense that any run of the
+system corresponds to a DL-LTL-structure that is a model of~$\psi$ w.r.t.~\Rmc.
+Thus, if the monitor receives information about the partial axiom types of a
+finite prefix of such a run, this finite sequence of partial axiom types can
+actually be extended to a DL-LTL-structure satisfying~$\psi$ w.r.t.~\Rmc.  In
+this case, the following lemma holds.
+
+\begin{lemma}\label{lem:modelsal}
+    Let \Rmc be an RBox, $\phi$ and $\psi$ be \SHOQ-LTL-formulas w.r.t.~\Rmc,
+    and \Omf be a finite sequence of partial axiom types for~$\phi$ w.r.t.~\Rmc
+    such that there is a DL-LTL-structure extending \Omf w.r.t.~$\psi$ and~\Rmc.
+    Then $\Omf,\psi,\Rmc\modelsal\phi$ and $\Omf,\psi,\Rmc\modelsal\lnot\phi$
+    cannot both be true.
+\end{lemma}
+
+\begin{proof}
+    Let \Imf be a DL-LTL-structure extending \Omf w.r.t.~$\psi$ and~\Rmc.  Then
+    we have $\Imf,0\models\phi$ or $\Imf,0\models\lnot\phi$.  In the first case,
+    we have $\Omf,\psi,\Rmc\notmodelsal\lnot\phi$, and in the second one, we
+    have $\Omf,\psi,\Rmc\notmodelsal\phi$.
+\end{proof}
+
+\noindent
+The monitoring function receives as input a finite sequence of partial axiom
+types for~$\phi$ w.r.t.~\Rmc, i.e.~a finite word over the
+alphabet~$\Pmf_{\phi,\Rmc}$.
+
+\begin{definition}[Monitoring function]\label{def:monitoring-function}
+    Let \Rmc be an RBox, and let $\phi$ and $\psi$ be \SHOQ-LTL-formulas
+    w.r.t.~\Rmc.  The \emph{monitoring function for~$\phi$ w.r.t.~$\psi$
+    and~\Rmc} is defined to be the function
+    $\msf_{\phi,\psi,\Rmc}\colon\Pmf_{\phi,\Rmc}^*\to\{\top,\bot,{?},\lightning\}$
+    with
+    \[\msf_{\phi,\psi,\Rmc}(\Omf):=\begin{cases}
+        \top       &\text{if}\ \Omf,\psi,\Rmc\modelsal\phi\ \text{and}\ \Omf,\psi,\Rmc\notmodelsal\lnot\phi;\\
+        \bot       &\text{if}\ \Omf,\psi,\Rmc\notmodelsal\phi\ \text{and}\ \Omf,\psi,\Rmc\modelsal\lnot\phi;\\
+        {?}        &\text{if}\ \Omf,\psi,\Rmc\notmodelsal\phi\ \text{and}\ \Omf,\psi,\Rmc\notmodelsal\lnot\phi;\ \text{and}\\
+        \lightning &\text{if}\ \Omf,\psi,\Rmc\modelsal\phi\ \text{and}\ \Omf,\psi,\Rmc\modelsal\lnot\phi.
+    \end{cases}\]
+\end{definition}
+
+\noindent
+Compared to the definition of the monitoring function in the propositional
+setting, we have added the fourth possible output~$\lightning$ in order to have
+a well-defined value also for sequences $\Omf\in\Pmf_{\phi,\Rmc}^*$ that have no
+extension w.r.t.~$\psi$ and~\Rmc.  In fact, if there is no DL-LTL-structure
+extending~\Omf w.r.t.~$\psi$ and~\Rmc, the monitoring function yields the
+value~$\lightning$.  In practice, this value should not be encountered since we
+assume that the observed system actually respects rigid names and satisfies the
+background knowledge~$\psi$ and~\Rmc.  Thus, no finite sequence of partial axiom
+types obtained by observing the system can yields this case.\footnote{%
+    If it does, then the modelling of the properties of the system
+    using~$\psi$, \Rmc, and the rigididy of symbols was incorrect, or the
+    sensors that generated the sequence~\Omf were faulty.}
+%
+The monitoring function returns the value~$\top$ if there is at least one
+extension of~\Omf w.r.t.~$\psi$ and~\Rmc (expressed by
+$\Omf,\psi,\Rmc\notmodelsal\lnot\phi$), and all such extensions satisfy~$\phi$
+(expressed by $\Omf,\psi,\Rmc\modelsal\phi$).  Similarly, it returns the
+value~$\bot$ if there is at least one extension of~\Omf w.r.t.~$\psi$ and~\Rmc,
+and all such extensions satisfy~$\lnot\phi$.  Finally, it returns he value~${?}$
+if there is an extension of~\Omf w.r.t.~$\psi$ and~\Rmc that satisfies~$\phi$,
+and there is another extension of~\Omf w.r.t.~$\psi$ and~\Rmc that
+satisfies~$\lnot\phi$.
+
+We are interested in constructing a monitor that realises the monitoring
+function defined above.  As in the propositional case, this monitor is a
+deterministic Moore-automaton whose output function is equal to the monitoring
+function.
+
+\begin{definition}[Monitor for \SHOQ-LTL-formula]\label{def:monitor-shoq-ltl}
+    Let \Rmc be an RBox, and $\phi,\psi$ be \SHOQ-LTL-formulas w.r.t.~\Rmc.  The
+    deterministic Moore-automaton
+    $\Mmc=(S,\Pmf_{\phi,\Rmc},\delta,s_0,\{\top,\bot,{?},\lightning\},\lambda)$
+    is a \emph{monitor for~$\phi$ w.r.t.~$\psi$ and~\Rmc} if
+    $\lambda^*(\Omf)=\msf_{\phi,\psi,\Rmc}(\Omf)$ holds for every
+    $\Omf\in\Pmf_{\phi,\Rmc}^*$.
+\end{definition}
+
+\noindent
+Before we construct the monitor, we need an auxiliary automaton that we define
+next.
+
+
+\subsection{An Auxiliary Deterministic Finite Automaton}\label{sec:aux-dfa}
+
+In this section, we define a \emph{deterministic} finite automaton that accepts
+exactly those sequences of partial axiom types $\Omf\in\Pmf_{\phi,\Rmc}^*$ such
+that $\Omf,\psi,\Rmc\modelsal\phi$.  We know that requiring
+$\Omf,\psi,\Rmc\modelsal\phi$ is the same as requiring
+$\Omf,\psi,\Rmc\notmodelsex\lnot\phi$.  Thus, the automaton needs to accept all
+words $\Omf\in\Pmf_{\phi,\Rmc}^*$ that have no extension w.r.t.~$\psi$ and~\Rmc
+that satisfies~$\lnot\phi$.
+%
+To construct this automaton, we take the Büchi-automaton
+$\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$ for $\lnot\phi\land\psi$ w.r.t.~\Rmc
+as defined in Theorem~\ref{thm:ba-for-shoq-ltl-rigid}, and make it deterministic
+by applying an appropriate modification of the power-set construction to the
+first components of the states of $\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$.
+The second component of a state of $\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$
+collects the axiom types encountered on the path leading to this state, which
+enables the automaton to check whether this collection of axiom types is
+r-consistent.  Instead, our deterministic automaton collects the partial axiom
+types encountered on a path, and checks whether this set is related in an
+appropriate way to an r-consistent set of axiom types.
+
+Before we can define this relation, we need to introduce some notation.  Given a
+partial axiom type $\Omc=L_1\land\dots\land L_m$, we define
+$\Pos(\Omc):=\{L_i\mid 1\le i\le m,\ L_i\ \text{is positive}\}$
+and
+$\Neg(\Omc):=\{\alpha_i\mid 1\le i\le m,\ L_i=\lnot\alpha_i\ \text{is negative}\}$.
+%
+Given an axiom type~$T$ for~$\phi$ w.r.t.~\Rmc and a partial axiom type~\Omc
+for~$\phi$ w.r.t.~\Rmc, we define
+\[\Omc<^{\phi,\Rmc}T\quad\text{iff}\quad%
+    \Pos(\Omc)\subseteq T\ \text{and}\ \Neg(\Omc)\cap T=\emptyset.\]
+
+\noindent
+If $T=\tau_\phi(\Imc)$ for a model~\Imc of~\Rmc, then we obviously have
+$\Imc\models(\Omc,\Rmc)$ iff $\Omc<^{\phi,\Rmc}T$.  We now lift the
+relation~$<^{\phi,\Rmc}$ from (partial) axiom types to sets of (partial) axiom
+types.
+
+\begin{definition}[Realisation]
+    Let \Tmf be a set of axiom types for~$\phi$ w.r.t.~\Rmc, and let \Pmf be a
+    set of partial axiom types for~$\phi$ w.r.t.~\Rmc.
+    %
+    We say that \emph{\Tmf realises~\Pmf} and write $\Pmf\prec^{\phi,\Rmc}\Tmf$
+    if the following property is satisfied: for every $\Omc\in\Pmf$, there is a
+    $T\in\Tmf$ such that $\Omc<^{\phi,\Rmc}T$.
+\end{definition}
+
+\noindent
+This relation can be used to characterise r-consistency of a set of partial
+axiom types for~$\phi$ w.r.t.~\Rmc.
+
+\begin{definition}[R-consistency of partial axiom types]
+    Let $\Pmf=\{\Omc_1,\dots,\Omc_k\}$ be a set of partial axiom types
+    for~$\phi$ w.r.t.~\Rmc.  We call \Pmf \emph{r-consistent} if there exist
+    interpretations $\Imc_1=(\Delta,\cdot^{\Imc_1})$,~\dots,
+    $\Imc_k=(\Delta,\cdot^{\Imc_k})$ such that
+    \begin{itemize}
+        \item $a^{\Imc_i}=a^{\Imc_j}$ holds for every $a\in\NI$ and all $i,j$,
+            $1\le i<j\le k$;
+        \item $A^{\Imc_i}=A^{\Imc_j}$ holds for every $A\in\NRC$ and all $i,j$,
+            $1\le i<j\le k$;
+        \item $r^{\Imc_i}=r^{\Imc_j}$ holds for every $r\in\NRR$ and all $i,j$,
+            $1\le i<j\le k$; and
+        \item $\Imc_i\models(\Omc_i,\Rmc)$ holds for every~$i$, $1\le i\le k$.
+    \end{itemize}
+\end{definition}
+
+\noindent
+We denote the set of all r-consistent sets of partial axiom types for~$\phi$
+w.r.t.~\Rmc with~$\Cmf_{\phi,\Rmc}^\text{p}$.
+
+\begin{lemma}\label{lem:r-cons-partial}
+    The set \Pmf of partial axiom types for~$\phi$ w.r.t.~\Rmc is r-consistent
+    iff there is an r-consistent set~\Tmf of axiom types for~$\phi$ w.r.t.~\Rmc
+    such that $\Pmf\prec^{\phi,\Rmc}\Tmf$.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{only if} direction, assume that
+    $\Pmf=\{\Omc_1,\dots,\Omc_k\}$ is r-consistent.
+    %
+    Then there are interpretations $\Imc_1,\dots,\Imc_k$ that share the same
+    domain, coincide on the individual names and the rigid concept and role
+    names, and satisfy $\Imc_i\models(\Omc_i,\Rmc)$ for every~$i$,
+    $1\le i\le k$.  If we define
+    $\Tmf:=\bigl\{\tau_\phi(\Imc_1),\dots,\tau_\phi(\Imc_k)\bigr\}$, then this
+    set of axiom types is obviously r-consistent, and we have
+    $\Omc_i<^{\phi,\Rmc}\tau_\phi(\Imc_i)$ for every~$i$, $1\le i\le k$.  This
+    shows $\Pmf\prec^{\phi,\Rmc}\Tmf$.
+
+    Conversely, for the \enquote{if} direction, let
+    $\Pmf=\{\Omc_1,\dots,\Omc_k\}$ and assume that $\Tmf=\{T_1,\dots,T_m\}$ is
+    an r-consistent set of axiom types for~$\phi$ w.r.t.~\Rmc such that
+    $\Pmf\prec^{\phi,\Rmc}\Tmf$.
+    %
+    Then there are interpretations $\Imc_1,\dots,\Imc_m$ that share the same
+    domain, coincide on the individual names and the rigid concept and role
+    names, and satisfy $\Imc_i\models\Rmc$ and $T_i=\tau_\phi(\Imc_i)$ for
+    every~$i$, $1\le i\le m$.  In addition, for every $j$, $1\le j\le k$, there
+    is an index $\nu_j$, $1\le\nu_j\le m$, such that
+    $\Omc_j<^{\phi,\Rmc}T_{\nu_j}$.  The interpretations
+    $\Imc_{\nu_1},\dots,\Imc_{\nu_k}$ share the same domain, coincide on the
+    individual names and the rigid concept and role names, and satisfy
+    $\Imc_{\nu_j}\models(\Omc_j,\Rmc)$ for every~$j$, $1\le j\le k$.  This shows
+    that \Pmf is r-consistent.
+\end{proof}
+
+\noindent
+We are now ready to define a deterministic finite automaton that accepts exactly
+those sequences of partial axiom types $\Omf\in\Pmf_{\phi,\Rmc}^*$ such that
+$\Omf,\psi,\Rmc\modelsal\phi$.  But first, for the sake of completeness, let us
+recall the definition of a deterministic finite automaton.
+
+\begin{definition}[Deterministic finite automaton]
+    A \emph{deterministic finite automaton} is a tuple
+    $\Dmc=(S,\Sigma,\delta,s_0,E)$ consisting of a finite set of states~$S$, a
+    finite input alphabet~$\Sigma$, a transition function
+    $\delta\colon S\times\Sigma\to S$, an initial state $s_0\in S$, and a set of
+    final states $E\subseteq S$.
+
+	The transition function can be extended to a function
+	$\delta^*\colon S\times\Sigma^*\to S$ as follows:
+	\begin{itemize}
+        \item $\delta^*(s,\varepsilon):=s$ where $\varepsilon$ denotes the empty
+            word; and
+        \item $\delta^*(s,u\sigma):=\delta(\delta^*(s,u),\sigma)$ where
+            $u\in\Sigma^*$ and $\sigma\in\Sigma$.
+	\end{itemize}
+    %
+    The \emph{language $L(\Dmc)$ accepted by~\Dmc} is defined as as
+    \[L(\Dmc):=\{u\in\Sigma^*\mid\delta^*(s_0,u)\in E\}.\]
+\end{definition}
+
+\noindent
+As mentioned above, the deterministic finite automaton to be defined is based on
+the Büchi-automaton $\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$ for the
+\SHOQ-LTL-formula $\lnot\phi\land\psi$ w.r.t.~\Rmc as introduced in
+Theorem~\ref{thm:ba-for-shoq-ltl-rigid}.  Recall that, according to our
+assumption, all the axioms occurring in~$\psi$ already occur in~$\phi$.  Thus,
+the alphabet of this Büchi-automaton is actually $\Tmf_{\phi,\Rmc}$ and the
+second components of the states are r-consistent sets of axiom types for~$\phi$
+w.r.t.~\Rmc, i.e.~we have
+\[\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}=%
+    (Q\times\Cmf_{\phi,\Rmc},\Tmf_{\phi,\Rmc},\Delta,Q_0\times\{\emptyset\},F\times\Cmf_{\phi,\Rmc}).\]
+
+\noindent
+Given a state $(q,\Tmf)$ of $\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$, we denote
+the Büchi-automaton obtained from this automaton by replacing the set of initial
+states with $\{(q,\Tmf)\}$ by $\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}(q,\Tmf)$.
+%
+The deterministic finite automaton
+$\Dmc_{\phi,\psi,\Rmc}=(S,\Pmf_{\phi,\Rmc},\delta,s_0,E)$ is defined as follows:
+\begin{itemize}
+    \item $S:=2^Q\times\Cmf_{\phi,\Rmc}^\text{p}$;
+    \item $s_0:=(Q_0,\emptyset)$;
+    \item $\delta\colon S\times\Pmf_{\phi,\Rmc}\to S$ is defined as follows:
+        \begin{itemize}
+            \item if $\Pmf\cup\{\Omc\}\notin\Cmf_{\phi,\Rmc}^\text{p}$, then
+                $\delta((P,\Pmf),\Omc):=(\emptyset,\emptyset)$;
+            \item if $\Pmf\cup\{\Omc\}\in\Cmf_{\phi,\Rmc}^\text{p}$, then
+                $\delta((P,\Pmf),\Omc):=(P',\Pmf\cup\{\Omc\})$ where
+                \begin{align*}
+                    P':=\bigcup_{q\in P}\bigl\{q'\in Q\mid{}%
+                    &\text{there is}\ ((q,\Tmf),T,(q',\Tmf\cup\{T\}))\in\Delta\ \text{such that}\\[-2ex]
+                    &\Omc<^{\phi,\Rmc}T,\ \Pmf\prec^{\phi,\Rmc}\Tmf,\ \text{and}\
+                        L_\omega(\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}(q',\Tmf\cup\{T\}))\ne\emptyset\bigr\};
+                \end{align*}
+        \end{itemize}
+    \item $E:=\{\emptyset\}\times\Cmf_{\phi,\Rmc}^\text{p}$.
+\end{itemize}
+
+\noindent
+Final states are those whose first component is the empty set.  Note that these
+states reproduce themselves: states whose first component is the empty set have
+only successor states for which this is again the case.  There are two possible
+reasons for reaching such a state with letter~\Omc from a state~$(P,\Pmf)$ whose
+first component~$P$ is non-empty.  Either the set $\Pmf\cup\{\Omc\}$ is not
+r-consistent, or there are no states $q'\in Q$ satisfying the conditions in the
+definition of~$P'$.
+
+The following lemma states that this deterministic finite automaton behaves as
+intended.
+
+\begin{lemma}\label{lem:aux-dfa}
+    For every finite sequence of partial axiom types
+    $\Omf\in\Pmf_{\phi,\Rmc}^*$, we have $\Omf,\psi,\Rmc\modelsal\phi$ iff
+    $\Omf\in L(\Dmc_{\phi,\psi,\Rmc})$.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{if} direction, assume to the contrary that
+    $\Omf=\Omc_0\Omc_1\dots\Omc_t\in L(\Dmc_{\phi,\psi,\Rmc})$ and
+    $\Omf,\psi,\Rmc\notmodelsal\phi$.  Then we have
+    $\Omf,\psi,\Rmc\modelsex\lnot\phi$, i.e.~there is a DL-LTL-structure
+    $\Imf=(\Imc_i)_{i\ge 0}$ that extends~\Omf w.r.t.~$\psi$ and~\Rmc, and is a
+    model of~$\lnot\phi$ w.r.t.~\Rmc.  This means that \Imf is a model
+    of~$\lnot\phi\land\psi$ w.r.t.~\Rmc, and $\Imc_i\models\Omc_i$ for
+    every~$i$, $0\le i\le t$.
+    %
+    Thus, $\tau_\phi(\Imf)\in L_\omega(\lnot\phi\land\psi,\Rmc)$, and since
+    $\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$ is a Büchi-automaton for
+    $\lnot\phi\land\psi$ w.r.t.~\Rmc, we have
+    $\tau_\phi(\Imf)\in L_\omega(\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r})$.
+    %
+    This means that there is an accepting run $(q_0,\Tmf_0)(q_1,\Tmf_1)\dots$
+    of~$\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$ on~$\tau_\phi(\Imf)$.  In
+    particular, this yields
+    $L_\omega(\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}(q_i,\Tmf_i))\ne\emptyset$
+    for every~$i\ge 0$.
+
+    Moreover, we have by the construction
+    of~$\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$ that
+    $\Tmf_i=\{\tau_\phi(\Imc_j)\mid 0\le j<i\}$ for every $i\ge 0$.  We define
+    $\Pmf_i:=\{\Omc_j\mid 0\le j<i\}$ for every~$i$, $0\le i\le t+1$.  Note that
+    we have $\Omc_i<^{\phi,\Rmc}\tau_\phi(\Imc_i)$ for every~$i$,
+    $0\le i\le t+1$.  Hence, $\Pmf_i\prec^{\phi,\Rmc}\Tmf_i$ holds for
+    every~$i$, $0\le i\le t+1$.  By the definition
+    of~$\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$, the sets~$\Tmf_i$ are
+    r-consistent, and thus Lemma~\ref{lem:r-cons-partial} yields that $\Pmf_i$
+    is r-consistent for every~$i$, $0\le i\le t+1$.  Thus, we have
+    $\delta^*(s_0,\Omc_0\dots\Omc_i)=(P_{i+1},\Pmf_{i+1})$ with $q_{i+1}\in
+    P_{i+1}$ for every~$i$, $0\le i\le t$.  In particular,
+    $\delta^*(s_0,\Omf)=(P_{t+1},\Pmf_{t+1})$ with $q_{t+1}\in P_{t+1}$, which
+    shows that $P_{t+1}\ne\emptyset$.  Consequently,
+    $(P_{t+1},\Pmf_{t+1})\notin E$, which is a contradiction to the assumption
+    that $\Omf\in L(\Dmc_{\phi,\psi,\Rmc})$.
+
+    For the \enquote{only if} direction, assume to the contrary that
+    $\Omf=\Omc_0\Omc_1\dots\Omc_t\notin L(\Dmc_{\phi,\psi,\Rmc})$ and
+    $\Omf,\psi,\Rmc\modelsal\phi$, i.e.~every DL-LTL-structure
+    $\Imf=(\Imc_i)_{i\ge 0}$ that extends~\Omf w.r.t.~$\psi$ and~\Rmc is a model
+    of~$\phi$ w.r.t.~\Rmc.
+
+    The first assumption implies that
+    $\delta^*(s_0,\Omf)\notin E$,
+    i.e.~$\delta^*(s_0,\Omf)=(P_{t+1},\Pmf_{t+1})\in 2^Q\times\Cmf_{\phi,\Rmc}^\text{p}$
+    with $P_{t+1}\ne\emptyset$.
+    %
+    This yields intermediate states
+    $(P_i,\Pmf_i)\in 2^Q\times\Cmf_{\phi,\Rmc}^\text{p}$, $0\le i\le t$, such
+    that $P_0=Q_0$, $\Pmf_0=\emptyset$, and
+    $\delta^*(s_0,\Omc_0\dots\Omc_i)=(P_{i+1},\Pmf_{i+1})\in 2^Q\times\Cmf_{\phi,\Rmc}^\text{p}$
+    with $\Pmf_{i+1}=\Pmf_i\cup\{\Omc_i\}$ and $P_{i+1}\ne\emptyset$ for
+    every~$i$, $0\le i\le t$.
+    %
+    Moreover, we have that there are for every~$i$, $0\le i\le t$, a state
+    $q_i\in P_i$, an axiom type $T_i\in\Tmf_{\phi,\Rmc}$, and an r-consistent set
+    of axiom types $\Tmf_i\in\Cmf_{\phi,\Rmc}$ such that
+    $((q_i,\Tmf_i),T_i,(q_{i+1},\Tmf_{i+1}))\in\Delta$,
+    $\Tmf_{i+1}=\Tmf_i\cup\{T_i\}$, $\Omc_i<^{\phi,\Rmc}T_i$,
+    $\Pmf_i\prec^{\phi,\Rmc}\Tmf_i$, and
+    $L_\omega(\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}(q_{i+1},\Tmf_{i+1}))\ne\emptyset$.
+    Note that $q_0\in Q_0$ since $q_0\in P_0$ and $P_0=Q_0$.
+
+    We define $\Tmf_i':=\{T_j\mid 0\le j<i\}$ for every~$i$, $0\le i\le t+1$.
+    Obviously, we then have $\Tmf_i'\subseteq\Tmf_i$ for every~$i$,
+    $0\le i\le t+1$.  Since every subset of an r-consistent set of axiom types
+    is again r-consistent, this shows $\Tmf_i'\in\Cmf_{\phi,\Rmc}$ for
+    every~$i$, $0\le i\le t+1$.  Moreover, since
+    $\Pmf_i=\{\Omc_j\mid 0\le j<i\}$ for every~$i$, $0\le i\le t+1$, the fact
+    that $\Omc_i<^\phi T_i$ for every~$i$, $0\le i\le t+1$, implies
+    $\Pmf_i\prec^{\phi,\Rmc}\Tmf_i'$ for every~$i$, $0\le i\le t+1$.  In
+    addition, we have
+    $((q_i,\Tmf_i'),T_i,(q_{i+1},\Tmf_{i+1}'))\in\Delta$ for every~$i$,
+    $0\le i\le t$.
+
+    Since
+    $L_\omega(\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}(q_{t+1},\Tmf_{t+1}))\ne\emptyset$,
+    there is a $\omega$-word $T\in\Tmf_{\phi,\Rmc}^\omega$ such that there is an
+    accepting run
+    of~$\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}(q_{t+1},\Tmf_{t+1})$ on~$T$.
+    %
+    Using similar arguments as above, we can transform this run into an
+    accepting run
+    of~$\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}(q_{t+1},\Tmf_{t+1}')$ on~$T$.
+    Hence, we have that
+    $T\in L_\omega(\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}(q_{t+1},\Tmf_{t+1}'))$.
+    Overall, we obtain that the $\omega$-word $T_0T_1\dots T_t\cdot T$ is in
+    $L_\omega(\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r})$.  Since
+    $\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$ is a Büchi-automaton
+    for~$\lnot\phi\land\psi$ w.r.t.~\Rmc, this shows that there exists a
+    DL-LTL-structure $\Imf=(\Imc_i)_{i\ge 0}$ such that
+    $\tau_\phi(\Imf)=T_0T_1\dots T_t\cdot T$ and \Imf is a model of
+    $\lnot\phi\land\psi$ w.r.t.~\Rmc.
+
+    For every~$i$, $0\le i\le t$, we have
+    $\Omc_i<^{\phi,\Rmc}\tau_\phi(\Imc_i)$ since $\tau_\phi(\Imc_i)=T_i$.  This
+    yields $\Imc_i\models\Omc_i$ for every~$i$, $0\le i\le t$.  Since \Imf is a
+    model of~$\psi$ w.r.t.~\Rmc, we obtain that \Imf extends~\Omf w.r.t.~$\psi$
+    and~\Rmc.  Hence, there is a DL-LTL-structure, namely~\Imf, extending~\Omf
+    w.r.t.~$\psi$ and~\Rmc that is a model of~$\lnot\phi$ w.r.t.~\Rmc, which
+    contradicts our assumption that $\Omf,\psi,\Rmc\modelsal\phi$.
+\end{proof}
+
+\noindent
+It remains to analyse the complexity of the construction
+of the deterministic finite automaton~$\Dmc_{\phi,\psi,\Rmc}$.  The size
+of~$\Dmc_{\phi,\psi,\Rmc}$ is doubly exponential in the size of~$\phi$, $\psi$,
+and~\Rmc.  This is due to the fact that the size of~$Q$ may be exponential and
+the fact that the set $\Cmf_{\phi,\Rmc}^\text{p}$ of all r-consistent partial
+axiom types for~$\phi$ w.r.t.~\Rmc may contain doubly exponentially many
+elements since these sets are subsets of the exponentially large
+set~$\Pmf_{\phi,\Rmc}$ of all partial axiom types for~$\phi$ w.r.t.~\Rmc.  Each
+element of~$\Cmf_{\phi,\Rmc}^\text{p}$ may be of exponential size.
+
+Next, we show that $\Dmc_{\phi,\psi,\Rmc}$ can be constructed in doubly
+exponential time.  In addition to constructing the
+Büchi-automaton~$\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$, we must also compute
+the set~$\Cmf_{\phi,\Rmc}^\text{p}$.  As shown in Section~\ref{sec:ba-rigid},
+the Büchi-automaton~$\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$, and thus also the
+set~$\Cmf_{\phi,\Rmc}$, can be constructed in time doubly exponential in the
+size of~$\phi$, $\psi$, and~\Rmc.  To compute $\Cmf_{\phi,\Rmc}^\text{p}$, we
+use Lemma~\ref{lem:r-cons-partial}, which yields
+\[\Cmf_{\phi,\Rmc}^\text{p}=\bigl\{\Pmf\subseteq\Pmf_{\phi,\Rmc}\mid\Pmf\prec^{\phi,\Rmc}\Tmf\
+    \text{for some}\ \Tmf\in\Cmf_{\phi,\Rmc}\bigr\}.\]
+%
+We consider all sets of partial axiom types for~$\phi$ w.r.t.~\Rmc.  There are
+doubly exponentially many such sets, each of size at most exponential in the
+size of~$\phi$ and~\Rmc.  For each such set $\Pmf=\{\Omc_1,\dots,\Omc_k\}$, we
+need to check whether there is a set $\Tmf=\{T_1,\dots,T_m\}\in\Cmf_{\phi,\Rmc}$
+such that $\Pmf\prec^{\phi,\Rmc}\Tmf$.  Since $\Cmf_{\phi,\Rmc}$ is of doubly
+exponential size, there are at most doubly exponentially many such tests for
+each~\Pmf.  The test $\Pmf\prec^{\phi,\Rmc}\Tmf$ itself amounts to checking for
+each~$\Omc_i$, $1\le i\le k$, whether there is a~$T_j$, $1\le j\le m$, such that
+$\Pos(\Omc_i)\subseteq T_j$ and $\Neg(\Omc_i)\cap T_j=\emptyset$, which can be
+done in exponential time since both $k$ and~$m$ are at most exponential in the
+size of~$\phi$ and~\Rmc.  Overall, we can thus compute
+$\Cmf_{\phi,\Rmc}^\text{p}$ is doubly exponential time.
+%
+Using these arguments, the fact that $\Nmc_{\lnot\phi\land\psi,\Rmc}^\text{r}$
+can be constructed in doubly exponential time, and the fact that the emptiness
+problem for Büchi-automata can be solved in time polynomial in the size of the
+Büchi-automaton~\cite{VaWo-IC94}, it is easy to see that the transition
+function~$\delta$ and the set of final states~$E$ can be computed in doubly
+exponential time.
+%
+Overall, we have shown that $\Dmc_{\phi,\psi,\Rmc}$ can be constructed in time
+doubly exponential in the size of~$\phi$, $\psi$, and~\Rmc.
+
+
+\subsection{The Monitor Construction}
+
+Given the construction of the deterministic finite automaton of the previous
+section, it is now a simple exercise to construct the monitor for~$\phi$
+w.r.t.~$\psi$ and~\Rmc.  Such a monitor is obtained by first constructing the
+auxiliary deterministic finite automata~$\Dmc_{\phi,\psi,\Rmc}$
+and~$\Dmc_{\lnot\phi,\psi,\Rmc}$, and then building the product of these two
+automata.  The output of the monitor is determined by the final states of the
+auxiliary automata.
+
+\begin{theorem}\label{thm:monitor-shoq-ltl}
+    Let \Rmc be an RBox, and let $\phi$ and~$\psi$ be \SHOQ-LTL-formulas
+    w.r.t.~\Rmc.  If $\Dmc_{\phi,\psi,\Rmc}=(S,\Pmf_{\phi,\Rmc},\delta,s_0,E)$
+    and~$\Dmc_{\lnot\phi,\psi,\Rmc}=(S',\Pmf_{\phi,\Rmc},\delta',s_0',E')$ are
+    the deterministic finite automata introduced in Section~\ref{sec:aux-dfa},
+    then
+    $\Mmc_{\phi,\psi,\Rmc}:=(S\times S',\Pmf_{\phi,\Rmc},\deltah,(s_0,s_0'),\{\top,\bot,{?},\lightning\},\lambda)$
+    with $\deltah((s,s'),\Omc):=(\delta(s,\Omc),\delta'(s',\Omc))$ and
+    \[\lambda((s,s')):=\begin{cases}
+            \top       &\text{if}\ s\in E\ \text{and}\ s'\notin E';\\
+            \bot       &\text{if}\ s\notin E\ \text{and}\ s'\in E';\\
+            {?}        &\text{if}\ s\notin E\ \text{and}\ s'\notin E';\ \text{and}\\
+            \lightning &\text{if}\ s\in E\ \text{and}\ s'\in E'.
+        \end{cases}\]
+    is a monitor for~$\phi$ w.r.t.~$\psi$ and~\Rmc.
+\end{theorem}
+
+\begin{proof}
+    We have to prove that for every $\Omf\in\Pmf_{\phi,\Rmc}^*$, we have
+    $\lambda^*(\Omf)=\msf_{\phi,\psi,\Rmc}(\Omf)$.  This is an immediate
+    consequence of the definition of the monitoring function
+    (Definition~\ref{def:monitoring-function}) and the following facts:
+    \begin{itemize}
+        \item
+            $\deltah^*((s_0,s_0'),\Omf)=(\delta^*(s_0,\Omf),(\delta')^*(s_0',\Omf))$
+            for every $\Omf\in\Pmf_{\phi,\Rmc}^*$;
+        \item $\delta^*(s_0,\Omf)\in E$ iff $\Omf,\psi,\Rmc\modelsal\phi$ for
+            every $\Omf\in\Pmf_{\phi,\Rmc}^*$ (by Lemma~\ref{lem:aux-dfa}); and
+        \item $(\delta')^*(s_0',\Omf)\in E'$ iff
+            $\Omf,\psi,\Rmc\modelsal\lnot\phi$ for every
+            $\Omf\in\Pmf_{\phi,\Rmc}^*$ (by Lemma~\ref{lem:aux-dfa}).
+    \end{itemize}
+    %
+    To show the theorem formally, take any $\Omf\in\Pmf_{\phi,\Rmc}^*$.  Using
+    the above facts, we have:
+    \begingroup
+    \allowdisplaybreaks
+    \begin{align*}
+         \lambda^*(\Omf)=\top\quad
+        &\text{iff}\quad
+         \lambda(\deltah^*((s_0,s_0'),\Omf))=\top\\
+        &\text{iff}\quad
+         \deltah^*((s_0,s_0'),\Omf)=(s,s')\ \text{with}\ s\in E\ \text{and}\ s'\notin E'\\
+        &\text{iff}\quad
+         \delta^*(s_0,\Omf)\in E\ \text{and}\ (\delta')^*(s_0',\Omf)\notin E'\\
+        &\text{iff}\quad
+         \Omf\in L(\Dmc_{\phi,\psi,\Rmc})\ \text{and}\ \Omf\notin L(\Dmc_{\lnot\phi,\psi,\Rmc})\\
+        &\text{iff}\quad
+         \Omf,\psi,\Rmc\modelsal\phi\ \text{and}\ \Omf,\psi,\Rmc\notmodelsal\lnot\phi\\
+        &\text{iff}\quad
+         \msf_{\phi,\psi,\Rmc}(\Omf)=\top.\\
+      \intertext{Moreover, we have:}
+         \lambda^*(\Omf)=\bot\quad
+        &\text{iff}\quad
+         \lambda(\deltah^*((s_0,s_0'),\Omf))=\bot\\
+        &\text{iff}\quad
+         \deltah^*((s_0,s_0'),\Omf)=(s,s')\ \text{with}\ s\notin E\ \text{and}\ s'\in E'\\
+        &\text{iff}\quad
+         \delta^*(s_0,\Omf)\notin E\ \text{and}\ (\delta')^*(s_0',\Omf)\in E'\\
+        &\text{iff}\quad
+         \Omf\notin L(\Dmc_{\phi,\psi,\Rmc})\ \text{and}\ \Omf\in L(\Dmc_{\lnot\phi,\psi,\Rmc})\\
+        &\text{iff}\quad
+         \Omf,\psi,\Rmc\notmodelsal\phi\ \text{and}\ \Omf,\psi,\Rmc\modelsal\lnot\phi\\
+        &\text{iff}\quad
+         \msf_{\phi,\psi,\Rmc}(\Omf)=\bot,\\
+      \intertext{and also:}
+         \lambda^*(\Omf)={?}\quad
+        &\text{iff}\quad
+         \lambda(\deltah^*((s_0,s_0'),\Omf))={?}\\
+        &\text{iff}\quad
+         \deltah^*((s_0,s_0'),\Omf)=(s,s')\ \text{with}\ s\notin E\ \text{and}\ s'\notin E'\\
+        &\text{iff}\quad
+         \delta^*(s_0,\Omf)\notin E\ \text{and}\ (\delta')^*(s_0',\Omf)\notin E'\\
+        &\text{iff}\quad
+         \Omf\notin L(\Dmc_{\phi,\psi,\Rmc})\ \text{and}\ \Omf\notin L(\Dmc_{\lnot\phi,\psi,\Rmc})\\
+        &\text{iff}\quad
+         \Omf,\psi,\Rmc\notmodelsal\phi\ \text{and}\ \Omf,\psi,\Rmc\notmodelsal\lnot\phi\\
+        &\text{iff}\quad
+         \msf_{\phi,\psi,\Rmc}(\Omf)={?}.
+    \end{align*}
+    \endgroup
+
+    \noindent
+    This shows that $\Mmc_{\phi,\psi,\Rmc}$ is indeed a monitor for~$\phi$
+    w.r.t.~$\psi$ and~\Rmc.
+\end{proof}
+
+\noindent
+It remains to analyse the complexity of the construction.  As shown in
+Section~\ref{sec:aux-dfa}, the size of the auxiliary deterministic finite
+automata $\Dmc_{\phi,\psi,\Rmc}$ and~$\Dmc_{\lnot\phi,\psi,\Rmc}$ is doubly
+exponential in the size of~$\phi$, $\psi$, and~\Rmc.  Furthermore, they can be
+constructed in doubly exponential time.  Hence, the size
+of~$\Mmc_{\phi,\psi,\Rmc}$ is also doubly exponential in the size of~$\phi$,
+$\psi$, and~\Rmc, and it can be constructed in doubly exponential time.
+
+This doubly exponential blow-up in the construction of the monitor cannot be
+avoided, since Theorem~\ref{thm:monitor-size} yields that such a blow-up is
+unavoidable even for propositional LTL\@.
+
+
+\section{The Complexity of Deciding Liveness and Monitorability in \texorpdfstring{\SHOQ-LTL}{SHOQ-LTL}}\label{sec:liveness-monitorability}
+
+In this section, we extend the definitions and results about liveness and
+monitorability from propositional LTL to \SHOQ-LTL\@.
+%
+In Section~\ref{sec:liveness}, we consider the simpler-looking problem of
+liveness and in Section~\ref{sec:monitorability}, we consider monitorability.
+
+
+\subsection{Deciding Liveness}\label{sec:liveness}
+
+First, we extend the notion of liveness from propositional LTL (see
+Definition~\ref{def:liveness-ltl}) to the temporalised description logic
+\SHOQ-LTL and the presence of background knowledge.
+
+\begin{definition}[Liveness]\label{def:liveness-shoq-ltl}
+    Let \Rmc be an RBox, and $\phi$ and $\psi$ be \SHOQ-LTL-formulas
+    w.r.t.~\Rmc.  We say that $\phi$ \emph{expresses a liveness property
+    w.r.t.~$\psi$ and~\Rmc} if for every finite sequence of partial axiom types
+    $\Omf\in\Pmf_{\phi,\Rmc}^*$ that has an extension w.r.t.~$\psi$ and~\Rmc, we
+    have $\Omf,\psi,\Rmc\modelsex\phi$.
+\end{definition}
+
+\noindent
+Note that, in this definition, we restrict ourselves to the finite sequences of
+partial axiom types that have an extension w.r.t.~$\psi$ and~\Rmc.  In fact,
+these are the sequences that we expect to see in practice since we assume that
+the system satisfies~$\psi$, \Rmc, and respects rigid names.
+
+As in the propositional case, liveness of~$\phi$ w.r.t.~$\psi$ and~\Rmc can be
+expressed using the monitoring function.
+
+\begin{lemma}\label{lem:liveness-char}
+    Let \Rmc be an RBox, and $\phi$ and $\psi$ be \SHOQ-LTL-formulas
+    w.r.t.~\Rmc.  Then $\phi$ expresses a liveness property w.r.t.~$\psi$
+    and~\Rmc iff $\msf_{\phi,\psi,\Rmc}(\Omf)\ne\bot$ for every
+    $\Omf\in\Pmf_{\phi,\Rmc}^*$.
+\end{lemma}
+
+\begin{proof}
+    For the \enquote{only if} direction, assume that $\phi$ expresses a liveness
+    property w.r.t.~$\psi$ and~\Rmc, and consider $\Omf\in\Pmf_{\phi,\Rmc}^*$.
+    If \Omf does not have an extension w.r.t.~$\psi$ and~\Rmc, then
+    $\msf_{\phi,\psi,\Rmc}(\Omf)=\lightning\ne\bot$.  Otherwise, the fact that
+    $\phi$ expresses a liveness property w.r.t.~$\psi$ and~\Rmc implies that
+    $\Omf,\psi,\Rmc\modelsex\phi$.  Consequently, we have
+    $\Omf,\psi,\Rmc\notmodelsal\lnot\phi$, which yields
+    $\msf_{\phi,\psi,\Rmc}(\Omf)\ne\bot$.
+
+    For the \enquote{if} direction, assume that
+    $\msf_{\phi,\psi,\Rmc}(\Omf)\ne\bot$ for every $\Omf\in\Pmf_{\phi,\Rmc}^*$.
+    Consider a finite sequence of partial axiom types
+    $\Omf\in\Pmf_{\phi,\Rmc}^*$ that has an extension w.r.t.~$\psi$ and~\Rmc.
+    The existence of this extension implies that
+    $\msf_{\phi,\psi,\Rmc}(\Omf)\ne\lightning$.  Thus, we know that
+    $\msf_{\phi,\psi,\Rmc}(\Omf)\in\{\top,{?}\}$.  In both cases,
+    $\Omf,\psi,\Rmc\notmodelsal\lnot\phi$ holds, which is equivalent to
+    $\Omf,\psi,\Rmc\modelsex\phi$.
+\end{proof}
+
+\noindent
+Consequently, given a monitor for~$\phi$ w.r.t.~$\psi$ and~\Rmc, liveness
+of~$\phi$ w.r.t.~$\psi$ and~\Rmc can be tested by checking reachability in the
+monitor, which yields an upper bound of \TwoExpTime.
+%
+The lower bound can be obtained by a reduction of the \emph{un}satisfiability
+problem in \ALC-LTL~\cite{BaGL-ToCL12}.
+
+\begin{lemma}\label{lem:liveness-lower}
+    The problem of deciding whether a \SHOQ-LTL-formula~$\phi$ expresses a
+    liveness property w.r.t.~a \SHOQ-LTL-formula~$\psi$ and an RBox~\Rmc is as
+    hard as the unsatisfiability problem in \ALC-LTL\@.
+\end{lemma}
+
+\begin{proof}
+    Let $\psi$ be an \ALC-LTL-formula (and thus a \SHOQ-LTL-formula w.r.t.\ the
+    empty RBox $\Rmc:=\emptyset$).  We prove that $\psi$ is unsatisfiable iff
+    the \SHOQ-LTL-formula $\phi:=\false$ expresses a liveness property
+    w.r.t.~$\psi$ and~\Rmc.
+
+    In fact, if $\psi$ is unsatisfiable, then there is \emph{no} sequence
+    $\Omf\in\Pmf_{\phi,\Rmc}^*$ such that \Omf has extension w.r.t.~$\psi$
+    and~\Rmc.  Consequently, the condition in the definition of liveness
+    quantifies over the empty set of sequences, and is thus trivially true.
+
+    Conversely, if $\psi$ is satisfiable, then there is some
+    $\Omf\in\Pmf_{\phi,\Rmc}^*$ (e.g.~the empty sequence) that has an extension
+    w.r.t.~$\psi$ and~\Rmc.  But then $\Omf,\psi,\Rmc\notmodelsex\phi$ since
+    $\phi$ is unsatisfiable.  Hence, $\phi$ does not express a liveness property
+    w.r.t.~$\psi$ and~\Rmc.
+\end{proof}
+
+\noindent
+Due to the complexity results for the satisfiability problem in \ALC-LTL
+(see~\cite{BaGL-ToCL12}), we obtain from these lemmas the following theorem.
+
+\begin{theorem}
+    The problem of deciding whether a \SHOQ-LTL-formula~$\phi$ expresses a
+    liveness property w.r.t.~a \SHOQ-LTL-formula~$\psi$ and an RBox~\Rmc is
+    \begin{itemize}
+        \item \ExpTime-hard and in \TwoExpTime if $\NRC=\NRR=\emptyset$;
+        \item \coNExpTime-hard and in \TwoExpTime if $\NRC\ne\emptyset$ and
+            $\NRR=\emptyset$; and
+        \item \TwoExpTime-complete if $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$.
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    Regarding the upper bounds, Lemma~\ref{lem:liveness-char} implies that
+    $\phi$ expresses a liveness property w.r.t.~$\psi$ and~\Rmc iff in the
+    monitor $\Mmc_{\phi,\psi,\Rmc}$ no state with output~$\bot$ is reachable
+    from the initial state.  Since this monitor is of doubly exponential size
+    and reachability can be decided in linear time in the size of the automaton,
+    this yields the required upper bounds of \TwoExpTime.
+
+    The lower bounds follow immediately from Lemma~\ref{lem:liveness-lower} and
+    the complexity results for the satisfiability problem in
+    \ALC-LTL~\cite{BaGL-ToCL12}.  Indeed, this problem is \ExpTime-complete if
+    $\NRC=\NRR=\emptyset$, \NExpTime-complete if $\NRC\ne\emptyset$ and
+    $\NRR=\emptyset$, and \TwoExpTime-complete if $\NRC\ne\emptyset$ and
+    $\NRR\ne\emptyset$.  Since both \ExpTime and \TwoExpTime are closed under
+    complement, we obtain the complexity lower bounds of our theorem.
+\end{proof}
+
+\noindent
+Note that only in the case $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$, we have a
+tight complexity result.  Recall, however, that the exact complexity for this
+problem is not even known for propositional LTL\@.
+
+Also, our hardness proof (Lemma~\ref{lem:liveness-lower}) strongly depends on
+the presence of background knowledge.  Without background knowledge (i.e.~in the
+case where $\psi=\true$ and $\Rmc=\emptyset$), we can only show an
+\ExpTime-hardness result by a reduction of the satisfiability problem in
+\ALC-LTL (without rigid names).
+
+\begin{theorem}
+    The problem of deciding whether a \SHOQ-LTL-formula~$\phi$ expresses a
+    liveness property w.r.t.~the \SHOQ-LTL-formula~\true and the empty RBox is
+    \ExpTime-hard.
+\end{theorem}
+
+\begin{proof}
+    Consider an \ALC-LTL-formula $\phi$ and assume $\NRC=\NRR=\emptyset$.  We
+    prove that $\phi$ is satisfiable iff $\Diamond\phi$ expresses a liveness
+    property w.r.t.~\true and the empty RBox $\Rmc:=\emptyset$.  Since the
+    satisfiability problem in \ALC-LTL is \ExpTime-complete if
+    $\NRC=\NRR=\emptyset$ (see~\cite{BaGL-ToCL12}), this shows \ExpTime-hardness
+    of liveness w.r.t.~\true and the empty RBox.
+
+    If $\phi$ is unsatisfiable, then obviously $\Diamond\phi$ is unsatisfiable
+    as well, and thus no sequence of partial axiom types can be extended to a
+    model of $\Diamond\phi$.  In addition, there is a sequence of partial axiom
+    types (e.g.~the empty sequence) that can be extended to a model of~\true
+    and~\Rmc.  Consequently, $\Diamond\phi$ does not express a liveness property
+    w.r.t.~\true and~\Rmc.
+
+    Conversely, assume that $\phi$ is satisfiable, and let
+    $\Omf=\Omc_0\Omc_1\dots\Omc_{t-1}\in\Pmf_{\phi,\Rmc}^*$ be a sequence of
+    partial axiom types.  Satisfiability of~$\phi$ yields a model
+    $\Imf=(\Imc_i)_{i\ge 0}$ of~$\phi$.  In addition, since partial axiom types
+    are by definition consistent, there are interpretations $\Imc'_i$,
+    $0\le i\le t-1$, such that $\Imc'_i\models\Omc_i$.  It is easy to see that
+    the DL-LTL-structure
+    \[\Jmf:=(\Jmc_i)_{i\ge 0}\ \text{with}\ \Jmc_i=\Imc'_i,\ 0\le i\le t-1,\
+        \text{and}\ \Jmc_{i+t}=\Imc_i,\ i\ge 0,\]
+    is a model of $\Diamond\phi$ that extends~\Omf w.r.t.~\true and~\Rmc,
+    i.e.~$\Omf,\true,\Rmc\modelsex\phi$.  This shows that $\Diamond\phi$
+    expresses a liveness property w.r.t.~\true and~\Rmc.
+\end{proof}
+
+\noindent
+Unfortunately, the proof of this theorem does not go through in the presence of
+rigid names.  In fact, the DL-LTL-structure~\Jmf constructed there need not
+respect rigid names.
+
+
+\subsection{Deciding Monitorability}\label{sec:monitorability}
+
+We first extend the notion of monitorability from propositional LTL (see
+Definition~\ref{def:monitorability-ltl}) to the temporalised description logic
+\SHOQ-LTL and the presence of background knowledge.
+
+\begin{definition}[Monitorability]
+    Let \Rmc be an RBox, let $\phi$ and $\psi$ be \SHOQ-LTL-formulas
+    w.r.t.~\Rmc, and let $\Omf\in\Pmf_{\phi,\Rmc}^*$.  We say that $\phi$ is
+    \emph{\Omf-monitorable w.r.t.~$\psi$ and~\Rmc} if there is a finite word
+    $\Omf'\in\Pmf_{\phi,\Rmc}^*$ such that
+    $\msf_{\phi,\psi,\Rmc}(\Omf\cdot\Omf')\in\{\top,\bot\}$.  Moreover, we call
+    $\phi$ \emph{monitorable w.r.t.~$\psi$ and~\Rmc} if it is \Omf-monitorable
+    for every finite sequence of partial axiom types $\Omf\in\Pmf_{\phi,\Rmc}^*$
+    that has an extension w.r.t.~$\psi$ and~\Rmc.
+\end{definition}
+
+\noindent
+Monitorability can thus be expressed using the monitoring function as follows:
+$\phi$ is monitorable w.r.t.~$\psi$ and~\Rmc iff for every finite sequence of
+partial axiom types $\Omf\in\Pmf_{\phi,\Rmc}^*$ with
+$\msf_{\phi,\psi,\Rmc}(\Omf)\ne\lightning$, there exists a finite sequence of
+partial axiom types $\Omf'\in\Pmf_{\phi,\Rmc}^*$ satisfying
+$\msf_{\phi,\psi,\Rmc}(\Omf\cdot\Omf')\in\{\top,\bot\}$.
+%
+This can again be checked using reachability tests in the monitor.
+
+\begin{lemma}\label{lem:monitorability-upper}
+    The problem of deciding monitorability of a \SHOQ-LTL-formula~$\phi$ w.r.t.\
+    a \SHOQ-LTL-formula~$\psi$ and an RBox~\Rmc is in \TwoExpTime.
+\end{lemma}
+
+\begin{proof}
+    To decide monitorability of $\phi$ w.r.t.~$\psi$ and~\Rmc, we construct the
+    monitor $\Mmc_{\phi,\psi,\Rmc}$.  In this monitor, we compute all the states
+    with output different from~$\lightning$ that are reachable from the initial
+    state.  For each of these states, we then check whether a state with
+    output~$\top$ or~$\bot$ is reachable.  If this is the case, then $\phi$ is
+    monitorable w.r.t.~$\psi$ and~\Rmc.  Otherwise, i.e.~if there is a state
+    reachable from the initial state such that every state reachable from it has
+    output~${?}$ or~$\lightning$, then $\phi$ is not monitorable w.r.t.~$\psi$
+    and~\Rmc.
+
+    Since the monitor can be constructed in doubly exponential time and each of
+    the doubly exponentially many reachability tests requires at most doubly
+    exponential time, this yields a \TwoExpTime procedure for deciding
+    monitorability.
+\end{proof}
+
+\noindent
+For the lower bound, we again reduce the \emph{un}satisfiability problem in
+\ALC-LTL\@.  For monitorability, such a reduction is possible even for the case
+without background knowledge.
+
+\begin{lemma}\label{lem:monitorability-lower}
+    The problem of deciding monitorability of a \SHOQ-LTL-formula~$\phi$
+    w.r.t.~\true and the empty RBox is as hard as the unsatisfiability problem
+    in \ALC-LTL\@.
+\end{lemma}
+
+\begin{proof}
+    Note that the lower bounds of the satisfiability problem in \ALC-LTL hold
+    also for \ALC-LTL-formulas without past operators~\cite{BaGL-ToCL12}.
+    %
+    Thus, let $\psi$ be an \ALC-LTL-formula without past operators.  We define
+    the \SHOQ-LTL-formula~$\phi$ as $\phi:=\Diamond\psi\land\Box\Diamond A(a)$
+    where the flexible concept name~$A$ and the individual name~$a$ do not occur
+    in~$\psi$.  We prove that $\psi$ is unsatisfiable iff $\phi$ is monitorable
+    w.r.t.~\true and the empty RBox $\Rmc:=\emptyset$.
+
+    If $\psi$ is unsatisfiable, we have that
+    $\phi\equiv\Diamond\false\land\Box\Diamond A(a)\equiv\false\land\Box\Diamond A(a)\equiv\false$,
+    i.e.~$\phi$ is also unsatisfiable.  Take now any $\Omf\in\Pmf_{\phi,\psi}^*$
+    that has an extension w.r.t.~\true and~\Rmc.  Since $\phi$ is unsatisfiable,
+    we have $\Omf,\true,\Rmc\modelsal\lnot\phi$.  Thus, Lemma~\ref{lem:modelsal}
+    yields $\Omf,\true,\Rmc\notmodelsal\phi$, which shows that
+    $\msf_{\phi,\true,\Rmc}(\Omf)=\bot$.  Consequently, $\phi$ is
+    \Omf-monitorable w.r.t.~\true and~\Rmc (take $\Omf'$ to be the empty word).
+    Since \Omf was an arbitrary element of~$\Pmf_{\phi,\Rmc}^*$ that has an
+    extension w.r.t.~\true and~\Rmc, this shows that $\phi$ is monitorable
+    w.r.t.~\true and~\Rmc.
+
+    Conversely, if $\psi$ is satisfiable, then there is a model
+    $\Imf=(\Imc_i)_{i\ge 0}$ of~$\psi$.  We define
+    \[\Omc_i:=\bigwedge_{\alpha\in\tau_\psi(\Imc_i)}\alpha\land\bigwedge_{\alpha\in\Ax(\psi)\setminus\tau_\psi(\Imc_i)}\lnot\alpha\]
+    for every $i\ge 0$.  Obviously, $\Imc_i$ is a model of~$\Omc_i$ and the
+    empty RBox~\Rmc, and thus $\Omc_i$ is a partial axiom type,
+    i.e.~$\Omc_i\in\Pmf_{\phi,\Rmc}$ for every $i\ge 0$.  Since there only
+    finitely many partial axiom types, there are finitely many partial axiom
+    types $\Omc_1',\dots,\Omc_k'$ such that
+    $\{\Omc_1',\dots,\Omc_k'\}=\{\Omc_i\mid i\ge 0\}$.  Then there is a
+    surjective function $\nu\colon\Nbb\to\{1,\dots,k\}$ such that
+    $\Omc_i=\Omc_{\nu(i)}'$.
+
+    To show that $\phi$ is not monitorable w.r.t.~\true and~\Rmc, we consider
+    the finite sequence of partial axiom types $\Omf:=\Omc_1'\dots\Omc_k'$.
+    Since the function~$\nu$ is surjective, any partial axiom type~$\Omc_i'$ in
+    this sequence has at least one of the interpretation~$\Imc_j$ as model, and
+    since $\Imf=(\Imc_i)_{i\ge 0}$ is a DL-LTL-structure, these models of
+    $\Omc_1',\dots,\Omc_k'$ share the same domain and coincide on the individual
+    names and the rigid concept and role names.  Also, these models satisfy the
+    empty RBox~\Rmc. Consequently, the set $\{\Omc_1',\dots,\Omc_k'\}$ is
+    r-consistent.  Obviously, this implies that \Omf has an extension
+    w.r.t.~\true and~\Rmc.
+
+    To disprove monitorability of~$\phi$ w.r.t.~\true and~\Rmc, it is thus
+    sufficient to show that $\phi$ is not \Omf-monitorable w.r.t.~\true
+    and~\Rmc. For this purpose, we take any finite sequence
+    $\Omf'=\Omc_1''\dots\Omc_m''\in\Pmf_{\phi,\Rmc}^*$ and show that
+    $\msf_{\phi,\true,\Rmc}(\Omf\cdot\Omf')\notin\{\top,\bot\}$.
+
+    If $\Omf\cdot\Omf'$ does not have an extension w.r.t.~$\true$ and~\Rmc
+    (which can happen due to the presence of rigid names), then
+    $\Omf\cdot\Omf',\true,\Rmc\modelsal\phi$ and
+    $\Omf\cdot\Omf',\true,\Rmc\modelsal\lnot\phi$, and thus
+    $\msf_{\phi,\true,\Rmc}(\Omf\cdot\Omf')=\lightning\notin\{\top,\bot\}$ as
+    required.
+
+    Otherwise, let $\Jmf=(\Jmc_i)_{i\ge 0}$ be an extension of $\Omf\cdot\Omf'$
+    w.r.t.~\true and~\Rmc.  We define a new DL-LTL-structure
+    $\Jmf':=(\Jmc_i')_{i\ge 0}$ with
+    \[\Jmc_i':=\begin{cases}
+            \Jmc_i            &\text{if}\ 0\le i\le k+m-1;\ \text{and}\\
+            \Jmc_{\nu(i-k-m)} &\text{otherwise.}
+        \end{cases}\]
+    %
+    By definition, $\Jmf'$ consists of interpretations occurring in~\Jmf, and
+    thus is indeed a DL-LTL-structure, i.e.~all interpretations occurring
+    in~$\Jmf'$ share the same domain and coincide on the individual names and
+    the rigid concept and role names.  Additionally, by definition $\Jmf'$
+    coincides with~\Jmf on the first $k+m$ interpretations, which shows that it
+    extends $\Omf\cdot\Omf'$ w.r.t.~\true and~\Rmc.  Moreover, since
+    every~$\Omc_i'$, $1\le i\le k$, contains complete information about the
+    axioms in~$\psi$, we have that
+    \[\tau_\psi(\Imf)=\tau_\psi(\Jmc_{k+m}')\tau_\psi(\Jmc_{k+m+1}')\dots.\]
+    By Lemma~\ref{lem:equal-type}, this shows that $(\Jmc_{k+m+i}')_{i\ge 0}$
+    is a model of~$\psi$.  Since $\psi$ does not contain past operators, this
+    implies that $\Jmf'$ is a model of~$\Diamond\psi$.
+    %
+    Since $\psi$ does not contain the concept name~$A$ and the individual
+    name~$a$, this is independent on how~$A$ and~$a$ are interpreted.  In
+    addition, since $A$ is flexible, changing its interpretation does not change
+    the fact that rigid names are respected.
+
+    Let now $\Jmf_A$ and $\Jmf_{\lnot A}$ be DL-LTL-structures such that:
+    \begin{enumerate}
+        \item $\Jmf_A$ and $\Jmf_{\lnot A}$ coincide for all points in time
+            with~$\Jmf'$ on the interpretation domain as well as on the
+            interpretation of all individual names, role names, and concept
+            names different from~$A$.
+        \item $\Jmf_A$ and $\Jmf_{\lnot A}$ coincide with~$\Jmf'$ for all points
+            in time up to $k+m-1$ also on the interpretation of~$A$.
+        \item In~$\Jmf_A$, the interpretation of~$A$ consists of the individual
+            interpreting~$a$ at all points in time strictly after $k+m-1$.
+        \item In~$\Jmf_{\lnot A}$, the interpretation of~$A$ is empty at all
+            points in time strictly after $k+m-1$.
+    \end{enumerate}
+    %
+    Obviously, both $\Jmf_A$ and $\Jmf_{\lnot A}$ are models of~$\Diamond\psi$
+    and they extend $\Omf\cdot\Omf'$ w.r.t.~\true and~\Rmc.  However, only
+    $\Jmf_A$ is also a model of $\Box\Diamond A(a)$.  Thus, $\Jmf_A$ is an
+    extension of $\Omf\cdot\Omf'$ w.r.t.~\true and~\Rmc that satisfies~$\phi$,
+    and $\Jmf_{\lnot A}$ is an extension of $\Omf\cdot\Omf'$ w.r.t.~\true
+    and~\Rmc that satisfies~$\lnot\phi$.  This shows that we have
+    $\Omf\cdot\Omf',\true,\Rmc\notmodelsal\phi$ and
+    $\Omf\cdot\Omf',\true,\Rmc\notmodelsal\lnot\phi$.  Consequently,
+    $\msf_{\phi,\true,\Rmc}(\Omf\cdot\Omf')\notin\{\top,\bot\}$, which finishes
+    the proof that $\phi$ is not monitorable w.r.t.~\true and~\Rmc.
+\end{proof}
+
+\noindent
+Putting the previous two lemmas together, we obtain the following theorem.
+
+\begin{theorem}
+    The problem of deciding monitorability of a \SHOQ-LTL-formula~$\phi$
+    w.r.t.~a \SHOQ-LTL-formula~$\psi$ and an RBox~\Rmc is
+    \begin{itemize}
+        \item \ExpTime-hard and in \TwoExpTime if $\NRC=\NRR=\emptyset$;
+        \item \coNExpTime-hard and in \TwoExpTime if $\NRC\ne\emptyset$ and
+            $\NRR=\emptyset$; and
+        \item \TwoExpTime-complete if $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$.
+    \end{itemize}
+    %
+    The lower bounds hold already for the special case where $\phi$ is an
+    \ALC-LTL-formula, $\psi=\true$, and $\Rmc=\emptyset$.
+\end{theorem}
+
+\begin{proof}
+    The upper bounds follow immediately from
+    Lemma~\ref{lem:monitorability-upper}.
+    The lower bounds follow immediately from
+    Lemma~\ref{lem:monitorability-lower}, the fact that the
+    \SHOQ-LTL-formula~$\phi$ constructed in the proof of this lemma is actually
+    an \ALC-LTL-formula, and the complexity results for the satisfiability
+    problem in \ALC-LTL~\cite{BaGL-ToCL12}.  Indeed, this problem is
+    \ExpTime-complete if $\NRC=\NRR=\emptyset$, \NExpTime-complete if
+    $\NRC\ne\emptyset$ and $\NRR=\emptyset$, and \TwoExpTime-complete if
+    $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$.  Since both \ExpTime and
+    \TwoExpTime are closed under complement, we obtain the complexity lower
+    bounds of our theorem.
+\end{proof}
+
+\noindent
+Note again that only in the case $\NRC\ne\emptyset$ and $\NRR\ne\emptyset$, we
+have a tight complexity result.  Recall, however, that the exact complexity for
+this problem is not even known for propositional LTL\@.
+
+
+\section{Summary}\label{sec:monitor-summary}
+
+In this chapter, we have investigated runtime verification using the temporalised
+description logic \SHOQ-LTL\@.  More precisely, we have shown how to construct
+monitors for \SHOQ-LTL-formulas w.r.t.\ background knowledge that can deal with
+incomplete knowledge in the form of partial \SHOQ-axiom types.
+%
+The complexity of the monitor construction is quite high.  We have seen that the
+size of a monitor is doubly exponential in the size of the input.  However, this
+cannot be avoided as this doubly exponential blow-up also occurs for
+propositional LTL, which we have shown in Section~\ref{sec:monitor-ltl}.
+%
+It should be noted that the complexity of the monitor construction is a
+worst-case complexity.  Minimisation of the intermediate Büchi-automata and the
+auxiliary deterministic finite automata may lead to much smaller monitors than
+the ones defined above.
+
+Moreover, we have considered the decision problems of liveness and
+monitorability.  For these problems, we have shown that they are as hard as
+\emph{un}satisfiability in \ALC-LTL and in \TwoExpTime.  For liveness, the proof
+of the lower bounds depends on the fact that background knowledge is available.
+If this is not the case, we have shown that we obtain a lower bound of \ExpTime
+for the liveness problem.  For the monitorability problem, we could prove the
+lower bounds without using the background knowledge.  Overall, we have obtained
+both liveness and monitorability are \ExpTime-hard if no rigid names are
+available, \coNExpTime-hard if only rigid concept names are allowed, and
+\TwoExpTime-complete if both concept names and role names may be rigid.
+%
+Unfortunately, this leaves gaps for the cases without rigid role names.
+However, the precise complexity of those problems is unknown even for
+propositional LTL\@.
+
+Future work will include trying to close those gaps.  Note that since the
+satisfiability problem in \ALC-LTL is harder than in propositional LTL, it may
+be easier to come up with new complexity results in the case of \ALC-LTL and
+\SHOQ-LTL\@.
+%
+Furthermore, an implementation of the monitor construction and a thorough
+empirical evaluation of it is an important direction of future research.

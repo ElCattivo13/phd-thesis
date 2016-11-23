@@ -1,0 +1,682 @@
+\chapter{Introduction}\label{ch:introduction}
+
+In this day and age, it is not possible to imagine our world without complex
+hardware and software systems.  Inevitably, it becomes more and more important
+to verify that the systems that surround us have certain properties.  This is
+indeed unavoidable for safety-critical systems such as power plants and
+intensive-care units.
+%
+Throughout this thesis, we refer to the term \enquote{system} in a broad sense:
+it may be a \enquote{man-made system} (e.g.\ a computer system) or a
+\enquote{natural system} (e.g.\ a patient in an intensive-care unit).
+
+Model Checking~\cite{ClGP-99,BaKa-08} is a prominent field of research that
+addresses these issues.  However, there it is assumed that one has complete
+knowledge about the functioning of the system, which is not always a reasonable
+assumption.
+%
+In the present thesis, we consider an \emph{open-world scenario}.  Instead of
+having a complete model of the system, we assume that we can only observe the
+behaviour of the actual running system by \enquote{sensors}.  Such an abstract
+sensor could, for instance, sense the blood pressure of a patient or the air
+traffic observed by radar.  Then the observed data are preprocessed
+appropriately and stored in a \emph{fact base}.  Based on the data available in
+the fact base, situation-awareness tools~\cite{BBB+-TABLEAUX09,End-HF95} are
+supposed to help the user to detect certain situations, e.g.\ situations that
+require intervention by an expert.  Such situations could be, for instance, that
+the heart-rate of a patient is rather high while the blood pressure is low, or
+that a collision of two aeroplanes is about to happen.  Such critical situations
+can be overcome by reacting accordingly, e.g.\ giving an appropriate medication
+to the patient and informing the pilots of the aeroplanes, respectively.
+%
+Moreover, the information in the fact base can be used by \emph{monitors} to
+verify that the system has certain properties.  Such a property could be, for
+instance, that nothing \enquote{bad} will happen, i.e.~a so-called \emph{safety
+property}.
+
+It is not realistic, however, to assume that the sensors always yield a complete
+description of the current state of the observed system.  Thus, it makes sense
+to assume that information that is not present in the fact base is unknown
+rather than to assume that this information does not hold, which we call the
+\emph{open-world assumption}.
+%
+Moreover, very often one has \emph{some} knowledge about the functioning of the
+system.  This \emph{background knowledge} can be used to draw conclusions about
+the possible future behaviour of the system.
+
+Employing description logics~\cite{DLhandbook-07} is one way to deal with these
+requirements.  In this thesis, we tackle the sketched problem in three different
+contexts: (i)~runtime verification using a temporal extension of a description
+logic, (ii)~temporalised query entailment, and (iii)~verification in action
+formalisms based on description logics.
+
+In the remainder of this chapter, we give an abstract overview of the present
+work.  In Section~\ref{sec:intro-dls}, we provide the reader with an intuitive
+understanding of basic notions in description logics.  Then in
+Section~\ref{sec:temporalised-dls}, we go one step further and consider temporal
+extensions of description logics.  After that in
+Section~\ref{sec:intro-monitor}, we give details about Context~(i), i.e.~runtime
+verification using a temporalised description logic.
+Section~\ref{sec:intro-tcqs} deals with Context~(ii), i.e.~temporalised query
+entailment, and Section~\ref{sec:intro-actions} respectively deals with
+Context~(iii), i.e.~verification in the research area of action formalisms that
+are based on description logics.  Finally, Section~\ref{sec:outline} contains an
+outline of the present thesis and summarises the main contributions.
+
+
+\section{Description Logics}\label{sec:intro-dls}
+
+Description logics (DLs)~\cite{DLhandbook-07} are a family of logic-based
+knowledge representation formalisms.  Since they are logic-based, DLs have the
+advantage of being equipped with a formal semantics, which lacks in early
+knowledge representation formalisms such as Quillian's \emph{Semantic
+Networks}~\cite{Qui-BS67} and Minsky's \emph{Frames}~\cite{Min-MD81}.
+%
+More information about the history of DLs can be found in the \emph{Description
+Logic Handbook}~\cite{DLhandbook-07}.
+
+Each DL is defined using a set of \emph{concept names}, a set of  \emph{role
+names}, and a set of \emph{individual names}.  These names are used to express
+knowledge in the respective application domain.  In the following, we consider a
+zoo as application domain in order to be able to give simple examples that are
+easy to comprehend.
+%
+In principle, concept names describe simple properties of elements in the
+domain.  For example, the concept name \Camel can be used to describe all camels
+(domain elements) in a zoo (domain).  Role names, e.g.\ \isFatherOf, describe
+binary relations between domain elements.  Finally, individual names give names
+to specific domain elements, e.g.\ \leah can be used as a name of a specific
+camel in the zoo.
+%
+These sets are used by \emph{concept} and \emph{role constructors} to form
+complex \emph{concepts} and \emph{roles}.  Which concept and role constructors
+are available depends on the specific DL\@.
+
+The smallest propositionally closed description logic is called
+\ALC~\cite{ScSm-AIJ91}.  The name \ALC stands for \enquote{attributive language
+with complements}.  There are, however, DLs that are less expressive than \ALC
+such as \EL~\cite{Baa-IJCAI03,Bra-ECAI04} and extensions of
+\EL~\cite{BaBL-IJCAI05,BaBL-OWLEDDC08} for which standard reasoning problems are
+tractable.  With different reasoning problems in mind, other light-weight DLs
+such as members of the \DLLite family~\cite{CDL+-AAAI05,ACK+-JAIR09,CDL+-RW09}
+have been developed.  On the other hand, there are also DLs whose expressive
+power goes far beyond \ALC such as \SROIQ~\cite{HoKS-KR06}.
+
+As an example of a concept that is expressible in \ALC, consider
+\[\lnot\Dromedary\sqcap\exists\likes.\Foliage,\]
+where \Dromedary and \Foliage are concept names, and \likes is a role name.
+Intuitively, this concept describes all domain elements that are not dromedaries
+and like foliage.
+
+Besides the logic-based semantics, another advantage of DLs is that most of them
+can be seen as \emph{decidable} fragments of first-order predicate logic (FOL),
+which are still more expressive than propositional logic.  Hence, important
+reasoning problems such as concept satisfiability are decidable for DLs.
+Concepts formulated in \ALC, for instance, can be translated into formulas of
+the two-variable fragment of FOL\@.  The concept above can be formulated as
+\[\lnot\dromedary(x)\land\exists y.\bigl(\likes(x,y)\land\foliage(y)\bigr),\]
+where \dromedary and \foliage are unary predicates, and \likes is a binary
+predicate.  In this FOL-formula, the free variable $x$ captures all domain
+elements that are not dromedaries and like foliage.
+
+There is also a close connection between description logics and modal logics.
+In fact, \ALC can be seen as a notational variant of the multi-modal logic~\Kn
+(see e.g.~\cite{GKW+-03,MLhandbook-07}).  For instance, the above concept can
+be expressed in~\Kn as
+\[\lnot\dromedary\land\Diamond_\likes\foliage,\]
+where \dromedary and \foliage are propositional variables, and $\Diamond_\likes$
+is a modal operator.
+
+However, description logics do not only offer a language for describing
+concepts, but allow to state knowledge in so-called \emph{knowledge bases},
+which are split into an assertional part (the \emph{ABox}) and a terminological
+part (the \emph{TBox}).  The ABox consists of a finite sets of
+\emph{ABox-axioms} (or \emph{assertions}) such as concept assertions and role
+assertions.  For instance, consider the ABox
+\[\bigl\{(\lnot\Dromedary\sqcap\exists\likes.\Foliage)(\leah),\
+    \isFatherOf(\hassan,\leah)\bigr\},\]
+which states that Leah is not a dromedary and likes foliage, and that Hassan is
+Leah's father.
+%
+The following TBox captures the terminological knowledge:
+\[\bigl\{\lnot\Dromedary\sqcap\exists\likes.\Foliage\sqsubseteq\NiceCamel\bigr\}.\]
+It states that each domain element which is not a dromedary and likes foliage is
+actually a nice camel.
+
+Interesting reasoning problems for such knowledge bases are, for instance,
+consistency and entailment, i.e.~the question whether such a knowledge base has
+a model and whether it entails certain implicit facts.
+%
+The formal definition of the notions introduced intuitively above that are
+relevant for this thesis can be found in Section~\ref{sec:dls}.
+
+Description logics are successfully employed in many areas such as
+natural-language processing, conceptual modelling, and databases.  The most
+notable success, however, has been achieved lately by adopting the \emph{Web
+Ontology Language (OWL)}, which is based on an expressive DL, as standard
+language for the semantic web~\cite{HoPH-JWS03}.  Recently, the second
+refinement OWL\,2 has been endorsed by the World Wide Web Consortium (W3C) as
+W3C Recommendation.\footnote{%
+    See \url{http://www.w3.org/TR/owl2-overview/}.}
+%
+Additionally, tractable description logics are successfully employed for
+defining medical ontologies, see e.g.~\cite{SBS+-AIME07}.
+
+However, DLs are not expressive enough to describe the temporal behaviour of
+systems.  Therefore, description logics have been \enquote{temporalised},
+i.e.~equipped with temporal operators.  The next section gives a brief overview
+on temporalised DLs.
+
+
+\section{Temporalised Description Logics}\label{sec:temporalised-dls}
+
+In the literature, a plethora of temporalised description logics has been
+introduced (surveyed e.g.\ in~\cite{ArFr-AMAI00,ArFr-05,LuWZ-TIME08}).
+%
+To obtain a temporalised DL, one combines a DL with a \emph{temporal
+logic}.\footnote{%
+    Other approaches to obtain a temporalised DL, which are out of the scope of
+    this thesis, include using fixpoint
+    extensions~\cite{FrTo-DL03,FrTo-IJCAI11}, and encoding time in so-called
+    concrete domains~\cite{Lut-IJCAI01}.}
+%
+For a comprehensive introduction to temporal logics, the reader is referred to
+e.g.~\cite{Eme-90,GaHR-94,BaKa-08}.
+%
+In \emph{linear-time} temporal logics, the flow of time is assumed to be linear,
+i.e.~each point in time has exactly one successor, whereas in
+\emph{branching-time} temporal logics, each point in time may have more than one
+successor, i.e.~the flow of time is assumed to be a tree.  A well-investigated
+temporal logic with linear flow of time is \emph{linear-time temporal logic
+(LTL)}~\cite{Pnu-FOCS77}, and logics with branching flow of time include
+\emph{computation-tree logic (CTL)}~\cite{ClEm-LP81} and its extension
+\emph{CTL$^*$}~\cite{EmHa-JACM86}.
+%
+It is a long-standing debate whether linear-time temporal logics or
+branching-time temporal logics should be adopted, as both have strengths and
+weaknesses in terms of expressiveness and computational complexity of
+reasoning~\cite{Var-TACAS01,NaVa-ATVA07}.
+
+In this thesis, we consider only combinations of LTL with description
+logics.\footnote{%
+    Combinations of a branching-time temporal logic such as CTL or CTL$^*$ with
+    a description logic have been investigated e.g.\
+    in~\cite{HoWZ-LICS02,BHW+-JLC04,GuJL-ECAI12}.}
+%
+The first linear-time temporalised DL, called LTL$_\ALC$, was introduced by
+Schild~\cite{Sch-EPIA93}.  This temporalised DL is a combination of LTL with the
+description logic \ALC.  In LTL$_\ALC$, concepts are built using concept
+constructors \emph{and} temporal operators, i.e.~temporal operators are allowed
+to occur within concepts.  For instance,
+\[\lnot\Dromedary\sqcap\Diamond\exists\likes.\Foliage\]
+is a concept formulated in LTL$_\ALC$.  The semantics of LTL$_\ALC$ is
+two-dimensional, i.e.~one dimension describes the flow of time and a second
+dimension is used for the domains.  Thus, the above concept captures all domain
+elements which are not dromedaries (now), and will like foliage at some point in
+the future.
+
+An important question is what assumptions are made on the domains.  If we make
+the \emph{constant-domain assumption}, the domain elements are global, i.e.~the
+same domain elements are available at all points in time.  If the domains are
+assumed to be \emph{expanding} (\emph{increasing}), the domain of the next point
+in time contains always the current domain.  Similarly, if the domains are
+assumed to be \emph{decreasing}, the domain of the next point in time is always
+contained in the current domain.  If no restriction on the domains is imposed,
+we speak of \emph{varying domains}.
+%
+However, for the satisfiability problem in LTL$_\ALC$ is is enough to consider
+constant domains, since the satisfiability problem with expanding, decreasing
+and varying domains can be polynomially reduced to the satisfiability problem
+with constant domains~\cite{GKW+-03}.  Note that this reduction works also for
+other temporalised DLs that allow temporal operators to occur in front of
+concepts such as the ones in~\cite{WoZa-FroCoS98}.
+
+Moreover, it is often desirable to ensure that the interpretation of certain
+concept and role names does not change over time.  We call such concept and role
+names \emph{rigid}.  For instance, one can argue that the concept name
+\Dromedary should be rigid, i.e.~if a domain element is a dromedary, it will
+always stay a dromedary in the future, and conversely, if a domain element is
+not a dromedary, it will never become a dromedary.
+%
+\emph{Rigid concept names} can be simulated in LTL$_\ALC$ and similar
+temporalised DLs.  To ensure that e.g.\ \Dromedary is rigid, the following two
+TBox-axioms are sufficient:
+\[\Dromedary\sqsubseteq\Box\Dromedary,\quad%
+    \lnot\Dromedary\sqsubseteq\Box\lnot\Dromedary.\]
+%
+However, \emph{rigid role names} cannot be simulated in LTL$_\ALC$.
+Interestingly, already one rigid role name causes the satisfiability problem of
+LTL$_\ALC$-concepts w.r.t.\ global TBoxes to be
+undecidable~\cite{GKW+-03,LuWZ-TIME08}.  Moreover, one can show by a reduction
+of the recurrent tiling problem that the problem is actually \SigmaOneOne-hard,
+i.e.~not even recursively enumerable~\cite{LuWZ-TIME08}.
+%
+The reduction crucially depends on the presence of a global TBox.  One way to
+regain decidability is to restrict the TBox to an \emph{acyclic} one.\footnote{%
+    For a formal definition of the syntax of acyclic TBoxes, see
+    Definition~\ref{def:syntax-tbox}.}
+%
+However, the problem of deciding satisfiability of LTL$_\ALC$-concepts w.r.t.\
+rigid roles and acyclic TBoxes is still hard for non-elementary
+time~\cite{GKW+-03}.
+
+If no rigid role names are allowed, the satisfiability problem of
+LTL$_\ALC$-concepts w.r.t.\ global TBoxes is
+\ExpTime-complete, which was originally stated in~\cite{Sch-EPIA93}.\footnote{%
+    As remarked in~\cite{LuWZ-TIME08}, the original proof is incorrect.  For a
+    correct proof, see~\cite{LuWZ-TIME08}.}
+%
+More generally, for any description logic~\Lmc between \ALC and \SHIQ, the
+complexity of deciding satisfiability in LTL$_\Lmc$ is the same as the
+complexity of deciding satisfiability of \Lmc-concepts~\cite{LuWZ-TIME08}.
+Hence, the satisfiability problem of LTL$_\ALC$-concepts (without a global TBox)
+is \PSpace-complete, since the satisfiability problem of \ALC-concepts is
+\PSpace-complete~\cite{ScSm-AIJ91}.
+
+Moreover, if one additionally allows temporal operators to occur in front of
+axioms, i.e.~deals with temporal knowledge bases, the complexity of deciding
+whether such a temporal knowledge base has a model, turns out to be
+\ExpSpace-complete~\cite{GKW+-03} in LTL$_\ALC$ if no rigid role names are
+considered.
+
+Due to the high complexity of reasoning and the undecidability results for the
+case where rigid role names are allowed, in~\cite{AKL+-TIME07,AKR+-AAAI10},
+light-weight DLs have been extended by allowing temporal operators to
+occur in front of concepts.  There, various complexity results for temporal
+extensions of members of the \DLLite family are shown.  However,
+in~\cite{AKL+-TIME07}, the authors also show that reasoning easily becomes
+undecidable (if rigid role names are allowed) already in a small temporal
+extension of \EL that is subsumed by LTL$_\EL$.
+
+Another temporalised DL, which is a combination of \ALC and LTL, is
+\ALC-LTL~\cite{BaGL-ToCL12}.  In \ALC-LTL, temporal operators are not allowed to
+occur in front of concepts, but rather in front of axioms.  More precisely,
+\ALC-LTL is \enquote{LTL over \ALC-axioms}, i.e.~it is LTL with \ALC-axioms
+instead of propositional variables.  For instance, the following is an
+\ALC-LTL-formula:
+\[\lnot\Dromedary(\leah)\land\Diamond(\exists\likes.\Foliage)(\leah).\]
+It states that Leah is not a dromedary (now), and she will like foliage at some
+point in the future.  The complexity of deciding whether an \ALC-LTL-formula is
+satisfiable is investigated in detail in~\cite{BaGL-ToCL12}.  For \ALC-LTL, one
+needs to distinguish three different settings: (i)~no rigid names are available,
+(ii)~only rigid concept names are available, and (iii)~rigid role names are
+available.  Since temporal operators are not allowed to occur in front of
+concepts, rigid concept names are no longer expressible in the logic.  However,
+it is well-known that rigid role names can simulate rigid concept
+names~\cite{BaGL-ToCL12}, and thus there are only three cases to consider.
+Complexity results for the satisfiability problem in all three settings are
+obtained in~\cite{BaGL-ToCL12} for the case of constant domains.  If no rigid
+names are available, the satisfiability problem is \ExpTime-complete.  If only
+rigid concept names are available, the complexity increases to
+\NExpTime-complete, and if rigid role names are available, we have
+\TwoExpTime-completeness.  Note that it is not clear whether considering
+different kinds of domains like varying, expanding, or decreasing domains has an
+impact on the complexity of the satisfiability problem, since
+the reduction from varying, expanding, and decreasing domains to the
+constant-domain case in~\cite{GKW+-03} does not work if temporal operators are
+not allowed to occur in front of concepts.  In~\cite{BaGL-ToCL12}, it is
+conjectured, however, that in some settings the complexity of the satisfiability
+problem may decrease.
+
+In this thesis, we use temporalised description logics to formulate knowledge
+about the temporal behaviour of systems.  The next section gives an overview of
+their application in runtime verification.
+
+
+\section{Runtime Verification}\label{sec:intro-monitor}
+
+Runtime verification~\cite{CoMa-MBTRS04} allows to verify whether an observed
+system has certain (wanted or unwanted) properties.  These properties are
+usually expressed in a temporal formalism.  This property is then
+\enquote{translated} into a so-called \emph{monitor}.  Intuitively, such a
+monitor solves the following task.  Having consumed a finite prefix of the
+actual behaviour of the system, the monitor indicates whether the property is
+satisfied or not.
+
+In the literature, there is a plethora of approaches to constructing such
+monitors, see
+e.g.~\cite{HaRo-STTT04,RoHa-ASE05,Ros-SACS12,dARo-CAV05,BaLS-JLC10,BaLS-ToSEM11,BGH+-IPDPS04,BaRH-RV07,BaBL-FroCoS09}.
+%
+Here, we extend the work of~\cite{BaLS-ToSEM11} where the property is specified
+in propositional LTL~\cite{Pnu-FOCS77} and a three-valued approach is developed.
+To illustrate the idea, consider the following example.  Suppose that the vital
+parameters of patient Bob are measured in an emergency ward.  If Bob has a high
+heart rate and a low blood pressure, then an alarm should be raised.  This
+property can be expressed using the propositional LTL-formula
+\[\phi_\text{Bob}:=\Box(\lnot(\highHeartRateBob\land\lowBloodPressureBob)),\]
+where \highHeartRateBob and \lowBloodPressureBob are propositional variables
+whose validity at each point in time can be checked by evaluating the results of
+sensing.  Intuitively, $\phi_\text{Bob}$ expresses that it is always the case
+that Bob has not both a high hear rate and a low blood pressure.  If the formula
+is violated, then we raise an alarm.  The information about Bob's health status
+at each point in time now yields a finite prefix~$u$.  We need to check whether
+\emph{all} continuations of this prefix satisfy or violate~$\phi_\text{Bob}$,
+i.e.~no matter how the system's behaviour evolves over time, we certainly know
+whether the formula is satisfied or not.  Thus, there are three possible answers
+that a monitor may give having read such a prefix~$u$:
+\begin{itemize}
+    \item \enquote{true} if \emph{all} continuations of~$u$
+        satisfy~$\phi_\text{Bob}$;
+    \item \enquote{false} if \emph{all} continuations of~$u$
+        do \emph{not} satisfy~$\phi_\text{Bob}$; and
+    \item \enquote{inconclusive} if none of the above holds, i.e.~no definite
+        answer can be given.
+\end{itemize}
+%
+In our example, it should be clear that the monitor can never output
+\enquote{true} since the \enquote{bad} state of the system could still be
+observed in the future.  However, as soon as it outputs \enquote{false}, we can
+raise an alarm and call for intervention by the medical staff.
+
+Note that runtime verification is not about answering such a single question
+given a prefix~$u$ and a propositional LTL-formula~$\phi$.  In fact, since the
+behaviour of the system is observed over time, this prefix~$u$ is continuously
+extended by adding new observations.  The monitor should not answer the
+questions for the prefixes one after another independently of each other.  On
+the contrary, the monitor should successively read the input, and based on this
+information it should compute the answer in constant time (if the size of the
+propositional LTL-formula is assumed to be constant).  Thus, the answer of the
+monitor does \emph{not} depend on the length of the already observed prefix.
+
+This approach presupposes, however, that the relevant propositional variables
+can be evaluated at each point in time.  This is not always realistic due to the
+following reasons.  Firstly, the states of the system may have a complex
+internal structure, and secondly, the assumption that we have complete
+information about the system's status at each point in time may be too strict.
+%
+Temporalised description logics help to overcome these issues.  A first step in
+that direction was done in~\cite{BaBL-FroCoS09} where the temporalised
+description logic \ALC-LTL~\cite{BaGL-ToCL12} was used for constructing
+monitors.  There, \ALC-axioms capture the observations and at each point in
+time, the monitor observes the system's status incompletely by reading an ABox.
+Unfortunately, in the presence of rigid names, the approach developed
+in~\cite{BaBL-FroCoS09} does not work.  In Chapter~\ref{ch:monitor}, we give a
+correct monitor construction for the even more expressive temporalised
+description logic \SHOQ-LTL\@.  Moreover, the approach developed here has a
+better computational complexity, even though it also takes into account
+background knowledge in the form of another \SHOQ-LTL-formula that specifies
+\emph{temporal} information about the future behaviour of the system.
+
+Considering again the example above, patient Bob's medical status can be
+captured in ABoxes, whereas additional information about Bob is available from
+the patient record and added by the medical staff.  Such background information
+is encoded using concepts defined in a medical ontology like SNOMED~CT.%
+\footnote{See~\url{http://www.ihtsdo.org/snomed-ct/}.}
+The observed sequence of ABoxes contain a high-level view of the patient's
+medical status, which the monitor uses to determine whether a critical situation
+specified by a \SHOQ-LTL-formula has arisen.
+
+In the next section, we consider a similar problem, namely temporalised query
+entailment.
+
+
+\section{Temporalised Query Entailment}\label{sec:intro-tcqs}
+
+In a simple setting, one could realise a situation-awareness tool that helps the
+user to detect certain situations by using standard database techniques.  For
+that, the information obtained from the sensors is stored in a relational
+database, and the situations to be recognised are specified by queries in an
+appropriate query language, e.g.~conjunctive queries~\cite{AbHV-95}.
+%
+However, database systems employ the closed-world assumption (CWA),
+i.e.~knowledge that is not present in the database is assumed to be false rather
+than unknown.  As argued above, this assumption is not always appropriate as the
+sensors may provide us with incomplete information about the current state of
+the system.  Also, additional global knowledge, i.e.~knowledge that holds true
+at each point in time, may be available, which allows for a limited projection
+into the future such that maybe more (or less) answers to the query are found.
+
+These requirements are addressed in the research field of ontology-based data
+access (OBDA)~\cite{DEF+-DS99,PCD+-JoDS08}.  There, the fact base is an ABox,
+which is interpreted with the open-world assumption, and an ontology is used to
+encode the background knowledge.
+%
+In OBDA, one usually assumes that the ABox is obtained from external data sources
+(in the case of situation awareness, the raw sensor data) through appropriate
+mappings (which in our case realise the preprocessing and aggregation of the
+sensor data), but here we abstract from the mapping step and assume that the
+result of the preprocessing is explicitly represented in an ABox.
+
+As an example, consider again patient Bob.  Assume that the ABox contains the
+following information:
+\[\begin{array}{lll}
+     \systolicPressure(\bob,\pOne),
+    &\HighPressure(\pOne),
+    &\\
+     \history(\bob,\hOne),
+    &\Hypertension(\hOne),
+    &\Male(\bob).
+\end{array}\]
+
+\noindent
+Intuitively, the first line expresses that Bob has high blood pressure, which is
+information obtained from sensor data.  The second line expresses that Bob has a
+history of hypertension and that he is male, which is information obtained from
+the patient record.
+%
+In addition, we have an ontology that states that patients with high blood
+pressure have hypertension, and that patients that currently have hypertension
+and also have a history of hypertension are at risk of a heart attack:
+\begin{align*}
+     \exists\systolicPressure.\HighPressure\
+    &\sqsubseteq\ \exists\finding.\Hypertension,\\
+     \exists\finding.\Hypertension\sqcap\exists\history.\Hypertension\
+    &\sqsubseteq\ \exists\risk.\MyocardialInfarction.
+\end{align*}
+
+Assume that the situation we want to recognise for a given patient~$x$ is
+whether this patient is a male person who is at risk of a heart attack.  This
+situation can be described by the conjunctive query
+\[\exists y.\Male(x)\land\risk(x,y)\land\MyocardialInfarction(y),\]
+i.e.~\enquote{give me all~$x$ such that $x$ is male and at risk of~$y$, which is
+a heart attack}.
+
+Given the information in the ABox and the axioms in the ontology, we can derive
+that \bob is a \emph{certain answer} to the query in the ABox w.r.t.\ the
+ontology, i.e.~the following conjunctive query (without free variables)
+\[\exists y.\Male(\bob)\land\risk(\bob,y)\land\MyocardialInfarction(y)\]
+is \emph{entailed} by the ABox and the ontology.
+%
+Obviously, this answer cannot be derived without the ontology.
+
+The complexity of \emph{query entailment} w.r.t.\ an ontology, i.e.~the
+complexity of checking whether a given tuple of individual names is a certain
+answer to a query in an ABox w.r.t.\ an ontology, has been investigated in
+detail for cases where the ontology is expressed in an appropriate description
+and the query is a conjunctive query.
+%
+One can either consider the \emph{combined complexity}, which is measured in the
+size of the whole input (consisting of the query, the ontology, and the ABox),
+or the \emph{data complexity}, which is measured in the size of the ABox only
+(i.e.~the query and the ontology are assumed to be of constant size).  The
+underlying assumption is that the query and the ontology are usually relatively
+small, whereas the size of the data may be huge.
+
+In the database setting (where there is no ontology and the CWA is used),
+conjunctive-query entailment is \NP-complete w.r.t.\ combined complexity and in
+\ACzero w.r.t.\ data complexity~\cite{ChMe-STOC77,AbHV-95}.
+For expressive DLs, the complexity of checking certain answers is considerably
+higher: for \ALC, the query entailment problem is \ExpTime-complete w.r.t.\
+combined complexity and \coNP-complete w.r.t.\ data
+complexity~\cite{CaDL-PODS98,Lut-IJCAR08,CDL+-KR06}.  For this reason, the more
+light-weight DLs of the \DLLite-family have been developed, for which the
+entailment problem is still in \ACzero w.r.t.\ data complexity, and for which
+computing certain answers can be reduced to answering conjunctive queries in the
+database setting~\cite{CDL+-RW09}.
+
+Unfortunately, OBDA as described until now is not sufficient to achieve
+high-level situation awareness.  The reason is that the situations we want to
+recognise may depend on states of the system at different time points.
+%
+To illustrate this, consider again the above example.  There, it was explicitly
+stated in the patient records that Bob has a history of hypertension.  It makes
+more sense to derive this piece of information automatically from the data
+obtained about blood pressure etc.
+
+To achieve this, we propose a temporal query language that extends propositional
+LTL by allowing conjunctive queries in place of propositional variables, which
+is very similar to some of the temporalised DLs considered above.
+%
+In our example, we want to query for male patients with a history of
+hypertension, which can be expressed by the temporal query
+\[\Male(x)\land\Previous\Diamondm\bigl(\exists y.\finding(x,y)\land\Hypertension(y)\bigr).\]
+Intuitively, this temporal query asks for all~$x$ such that $x$ is male and at
+some point in the (strict) past, $x$ had a finding~$y$ of hypertension.
+
+As for temporalised description logics, it makes perfect sense to consider rigid
+concept and role names.  For example, we may want to assume that the concept
+\Male is rigid, and thus a patient that is male now also has been male in the
+past and will stay male in the future.
+
+Thus, our overall setting for recognising situations will be the following.  In
+addition to a global ontology (which describes properties of the system
+that hold at every point in time), we have a sequence of ABoxes
+$\Amc_0,\Amc_1,\dots,\Amc_n$, which (incompletely) describe the
+states of the system at the previous time points $0,1,\dots,n-1$ and the
+current time point~$n$.  The situation to be recognised is expressed
+by a temporal conjunctive query, as introduced above, which is evaluated w.r.t.\
+the current time point~$n$.
+%
+In Chapter~\ref{ch:tcqs}, we consider the complexity of this approach, i.e.~the
+complexity of temporalised query entailment.  There, we adopt \SHQ as
+description logic, which is an extension of the description logic \ALC.
+
+
+\section{Verification in DL-Based Action Formalisms}\label{sec:intro-actions}
+
+In this section, we consider a different scenario.  We assume that we have a
+system that executes predefined \emph{actions}.  Moreover, we assume that we
+have some knowledge about which actions the system executes.  This is captured
+in a so-called \emph{action program}.  We consider non-terminating action
+programs, and are interested in the \emph{verification problem}, i.e.~the
+problem of deciding whether a certain (temporal) property holds after executing
+an action program.
+
+High-level action programming languages such as \textsc{Golog}~\cite{LRL+-JLP97}
+and \textsc{Flux}~\cite{Thi-TPLP05} are based on the situation
+calculus~\cite{Rei-01} and the fluent calculus~\cite{Thi-05}, respectively.
+These calculi encompass full first-order logic, which implies that interesting
+reasoning problems in them are undecidable.  To regain decidability, we restrict
+our action formalism in two directions: (i)~our action formalism is based on a
+decidable description logic, and (ii)~the action program is \enquote{generated}
+by an $\omega$-automaton (i.e.~an automaton working on infinite words).
+
+In~\cite{BaLM-ECAI10}, it is shown that the verification problem is decidable
+for the DL-based action formalism introduced in~\cite{BLM+-AAAI05}.  The
+properties are formulated in a restricted version of the temporalised
+description logic \ALCO-LTL\@.  The authors of~\cite{BLM+-AAAI05,BaLM-ECAI10}
+consider, however, only the case where domain constraints are encoded with
+\emph{acyclic} TBoxes.  If one allows general TBoxes, one has to deal with the
+\emph{ramification problem}, i.e.~the question which additional effects the
+executing of an action has in order to satisfy the domain constraints.
+%
+In Chapter~\ref{ch:ramifications}, we introduce a DL-based action formalism that
+is extended with so-called \emph{causal relationships} that take care of this
+issue.  We prove that important inference problems in the extended action
+formalism stay decidable and derive complexity results from the obtained
+decision procedures.  Moreover, we continue the work of~\cite{BaLM-ECAI10} by
+considering the verification problem in the extended action formalism.
+
+
+\section{Outline and Contributions of the Thesis}\label{sec:outline}
+
+In the following, we give a broad outline of the present thesis and summarise
+the main scientific contributions.
+
+In \emph{Chapter~\ref{ch:preliminaries}}, we formally introduce the basic
+notions that are needed for the thesis.  These are foundations of description
+logics and of propositional LTL\@.  Moreover, we revisit the relationship
+between propositional LTL and $\omega$-automata.
+
+In \emph{Chapter~\ref{ch:shoq-ltl}}, we introduce the temporalised description
+logic \SHOQ-LTL, and prove complexity results for the satisfiability problem in
+this logic.  We consider three different settings: (i)~neither concept names nor
+role names are allowed to be rigid, (ii)~only concept names are allowed to be
+rigid, and (iii)~both concept and role names are allowed to be rigid.  We can
+show that the complexity is the same as in the less expressive temporalised
+description logic \ALC-LTL~\cite{BaGL-ToCL12}, namely \ExpTime-complete in
+Setting~(i), \NExpTime-complete in Setting~(ii), and \TwoExpTime-complete in
+Setting~(iii).  In order to prove these results, we need to consider also the
+consistency problem of Boolean \SHOQ-knowledge bases (w.r.t.\ some side
+condition).  We can prove that this problem, which is interesting on its own,
+can be decided in exponential time.
+%
+Some of the (ideas of the proofs of the) results of this chapter are already
+published:
+\begin{itemize}
+    %\item \fullcite{tcq-journal}
+    \item \fullcite{BaBL-CADE13}
+    \item \fullcite{BaBL-LTCS-13-01}
+\end{itemize}
+
+In \emph{Chapter~\ref{ch:monitor}}, we consider runtime verification using the
+temporalised description logic \SHOQ-LTL\@.  Before we can construct monitors
+for \SHOQ-LTL-formulas, we need to construct $\omega$-automata for
+\SHOQ-LTL-formulas.  For this construction, we reuse certain results from
+Chapter~\ref{ch:shoq-ltl}.  We are able to show that even in the most complex
+case where both rigid concept names and rigid role names are allowed, monitors
+of doubly exponential size can be constructed using doubly exponential time.
+Moreover, we show that this doubly exponential blow-up in the construction of
+the monitor cannot be avoided.  Indeed, as we show, such a blow-up in
+unavoidable even for propositional LTL\@.  Finally, we consider the complexity
+of the deciding \emph{liveness} and \emph{monitorability}, which are two
+important related decision problems, for the three settings above.  Our results
+are only tight for the case where both rigid concept and role names are allowed.
+There, both problems are \TwoExpTime-complete.  For the other cases, a gap
+remains: both problems are \ExpTime-hard and in \TwoExpTime if no rigid names
+are allowed, and \coNExpTime-hard and in \TwoExpTime if only rigid concept names
+are allowed.  However, the exact complexity of these problems are not even known
+for propositional LTL\@.
+%
+Some of the results of this chapter are already published.  However, we
+considered only the less expressive temporalised description logic \ALC-LTL in
+the following publications:
+\begin{itemize}
+    \item \fullcite{BaBL-FroCoS09}
+    \item \fullcite{BaLi-LTCS-14-01}
+\end{itemize}
+
+In \emph{Chapter~\ref{ch:tcqs}}, we consider temporalised query entailment in
+any description logic between \ALC and~\SHQ.  After formally introducing the
+temporal query language that we consider, we provide complexity results of the
+corresponding entailment problem.  For the three settings above, we have shown
+results both for data complexity and combined complexity.  If neither concept
+nor role names are allowed to be rigid, temporalised query entailment is
+\coNP-complete w.r.t.\ data complexity and \ExpTime-complete w.r.t.\ combined
+complexity.  If only concept names may be rigid, the problem is \coNP-complete
+w.r.t.\ data complexity and \coNExpTime-complete w.r.t.\ combined complexity.
+Finally, if both concept and role names are allowed to be rigid, the problem is
+\coNP-hard and in \ExpTime w.r.t.\ data complexity and \TwoExpTime-complete
+w.r.t.\ combined complexity.  For showing these results, some results of
+Chapter~\ref{ch:shoq-ltl} are used.
+%
+Most of the results of this chapter are already published:
+\begin{itemize}
+    %\item \fullcite{tcq-journal}
+    \item \fullcite{BaBL-CADE13}
+    \item \fullcite{BaBL-LTCS-13-01}
+\end{itemize}
+
+Finally, in \emph{Chapter~\ref{ch:ramifications}}, we consider the verification
+problem in action formalisms based on description logics between \ALC and
+\ALCQIO.  To solve the ramification problem, i.e.~the question how to deal with
+indirect effects caused by domain constraints (which arises if we allow general
+TBoxes), we extend the DL-based action formalism introduced
+in~\cite{BLM+-AAAI05} (which could deal only with acyclic TBoxes) with causal
+relationships.  We show that important inference problems such as the
+consistency problem and the projection problem are decidable in our new
+formalism, and continue the work of~\cite{BaLM-ECAI10} by generalising the
+verification problem.  We derive a number of complexity results from the
+obtained decision procedures.  Depending on the base DL, the complexity results
+range from \PSpace-complete to \coNExpTime-hard and in \PTimeToNExpTime for the
+consistency problem, and from \PSpace-complete to \coNExpTime-complete for the
+projection problem.  For the verification problem, the complexity ranges from in
+\ExpSpace to in \coTwoNExpTime, and it is unknown whether these bounds are
+tight.
+%
+Some of the results of this chapter are already published:
+\begin{itemize}
+    \item \fullcite{BaLL-LPAR10}
+    \item \fullcite{YLL+-DL12}
+    \item \fullcite{BaLL-LTCS-10-01}
+\end{itemize}
