@@ -28,7 +28,6 @@
 \DeclareStringOption[alphabetic]{bibstyle}
 \DeclareStringOption{bibresource}
 \DeclareStringOption[thesis]{pagestyle}
-\DeclareStringOption[11]{DIV}
 \DeclareStringOption{specialfonts}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,20 +50,19 @@
 \RequirePackage[final,babel]{microtype}
 %\RequirePackage{fixltx2e} fixltx2e is not required with releases after 2015
 
-\RequirePackage[
-    automark, % Kapitelangaben in Kopfzeile automatisch erstellen
-    headsepline, % Trennlinie unter Kopfzeile
-    plainheadsepline,
-    ilines % Trennlinie linksbuendig ausrichten
-  ]{scrpage2}
-%\usepackage[automark,headsepline]{scrpage2}
+% \RequirePackage[
+%     automark, % Kapitelangaben in Kopfzeile automatisch erstellen
+%     headsepline, % Trennlinie unter Kopfzeile
+%     %ilines % Trennlinie linksbuendig ausrichten
+%   ]{scrpage2} % obsolete
+\RequirePackage[automark,draft=false]{scrlayer-scrpage}
 \RequirePackage{scrhack}
 
 \RequirePackage{etoolbox}
 \RequirePackage{xparse}
 
 % Anpassung an Landessprache
-\RequirePackage[main=british,ngerman]{babel}
+\RequirePackage[main=british,ngerman,swedish]{babel}
 \RequirePackage[style=british]{csquotes}
 
 \RequirePackage{amsmath}
@@ -104,6 +102,9 @@
 \RequirePackage{multirow}
 \RequirePackage{titling} % for \thetitle, \thedate, ... used in footer
 \RequirePackage{layout} % for the amazing \layout-macro
+\RequirePackage{ifdraft}
+\RequirePackage[ddmmyyyy]{datetime}
+  \renewcommand{\dateseparator}{.}
 
 \RequirePackage[
   backend=biber,
@@ -261,43 +262,37 @@
 %% page style                                                                           %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\KOMAoptions{parskip=half-,
-             fontsize=10pt,
-             BCOR=0mm,
-             DIV=\pre@DIV}
+\KOMAoptions{
+  paper=a4,
+  pagesize=auto,
+  fontsize=11pt,
+  twoside=true,
+  BCOR=20mm,
+  DIV=13,
+  open=right, % new chapter always on right page
+  cleardoublepage=current, 
+  headsepline=true,
+  titlepage=true,
+  toc=bibliography,
+  parskip=false,
+  chapterprefix=true,
+  captions=tableheading
+}
 \recalctypearea
 
-% \title{**NO TITLE SET**}
-% \date{**NO DATE SET**}
-\ifdefstring{\pre@pagestyle}{iota}{
-  \pagestyle{scrheadings}
-  \lohead[\iotasun]{\iotasun}
-  \cohead{}
-  \rohead{}
-  \lofoot{\thetitle, \thedate}
-  \cofoot[]{}
-  \rofoot[\pagemark]{\pagemark}
-}{}
-\ifdefstring{\pre@pagestyle}{empty}{
-  \pagestyle{empty}
-}{}
-\ifdefstring{\pre@pagestyle}{iota-min}{
-  \pagestyle{scrheadings}
-  \lohead[\iotasun]{\iotasun}
-  \cohead{}
-  \rohead{}
-  \lofoot{}
-  \cofoot{}
-  \rofoot{}
-}{}
-\ifdefstring{\pre@pagestyle}{thesis}{
-  \clearscrheadfoot
-  \ihead{\headmark}
-  \ohead{\pagemark}
-  \cfoot[\pagemark]{}
-  \renewcommand{\chaptermark}[1]{\markboth{Chapter \thechapter. #1}{}}
-  \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
-}{}
+
+\clearpairofpagestyles
+\ihead{\headmark}
+\chead*{\ifdraft{\iotasun}{}}
+\ohead{\pagemark}
+\ifoot{}
+\cfoot[\pagemark]{}
+\ofoot{}
+\lefoot*{\ifdraft{Draft: \today}{}}
+\lofoot*{\ifdraft{Draft: \today}{}}
+\renewcommand{\chaptermark}[1]{\markboth{Chapter \thechapter. #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+
 
 
 %% Spacing within itemize (using enumitem)
@@ -308,12 +303,12 @@
 }
 \setlength{\topsep}{1ex plus0.5ex minus0.5ex}
 
-\AtBeginDocument{%
-  \abovedisplayskip=0.5\baselineskip
-  \abovedisplayshortskip=1pt plus 1pt
-  \belowdisplayskip=0.5\baselineskip
-  \belowdisplayshortskip=3pt plus 1pt minus 1pt
-}
+% \AtBeginDocument{%
+%   \abovedisplayskip=0.5\baselineskip
+%   \abovedisplayshortskip=1pt plus 1pt
+%   \belowdisplayskip=0.5\baselineskip
+%   \belowdisplayshortskip=3pt plus 1pt minus 1pt
+% }
 
 
 %% PENALTIES
@@ -935,14 +930,16 @@
 % \newcommand{\coNPToNExpTime}{\mbox{\ensuremath{\textsc{co\nobreakdash-NP}^\textsc{NExpTime}}}\xspace}
 
 
-% \let\origblindtext\blindtext
-% \RenewDocumentCommand{\blindtext}{o}{
-% \textcolor{gray}{\IfNoValueTF{#1}{\origblindtext}{\origblindtext[#1]}}
-% }
-%   \let\origblindlist\blindlist
-%   \RenewDocumentCommand{\blindlist}{mo}{
-%   \textcolor{gray}{\IfNoValueTF{#2}{\origblindlist{#1}}{\origblindlist{#1}[#2]}}
-% }
+\let\origblindtext\blindtext
+\RenewDocumentCommand{\blindtext}{o}{
+  \begin{otherlanguage}{ngerman}
+    \textcolor{gray}{\IfNoValueTF{#1}{\origblindtext}{\origblindtext[#1]}}
+  \end{otherlanguage}
+}
+\let\origblindlist\blindlist
+  \RenewDocumentCommand{\blindlist}{mo}{
+  \textcolor{gray}{\IfNoValueTF{#2}{\origblindlist{#1}}{\origblindlist{#1}[#2]}}
+}
 
 
 %%% miscellaneous math macros %%%
@@ -1070,7 +1067,7 @@
 }
 \newcommand{\iotasun}{%
 \tikz[overlay,scale=0.6, every node/.style={transform shape}]{%
-  \coordinate (c) at ($(current page.north east)-(1,1)$);%
+  \coordinate (c) at ($(current page.north east)-(1.5,1.5)$);%
   \foreach \w in {0, 30, ..., 330} \draw ($(c)+(\w:4mm)$) -- ($(c)+(\w:7mm)$);%
   \node[circle,draw,inner sep=2] at (c){\large$\ddot\iota$};}%
 }
