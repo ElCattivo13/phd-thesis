@@ -163,7 +163,7 @@
 \RequirePackage[
   final,
   pdftex,
-  pdfa,
+  %pdfa,
   unicode=true,
   pdftoolbar=true,
   bookmarks=true,
@@ -189,9 +189,14 @@
 }
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% font settings                                                                        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \ifdefstring{\pre@specialfonts}{marcels}{
-  \usepackage[scale=.9]{tgheros}
-  \usepackage[bitstream-charter]{mathdesign}
+  \RequirePackage[scale=.9]{tgheros}
+  \RequirePackage[bitstream-charter]{mathdesign}
   \DeclareFontFamily{OMS}{lmsy}{} %\skewchar\font48}
   \DeclareFontShape{OMS}{lmsy}{m}{n}{%
       <-5.5>    s*[.925] lmsy5
@@ -212,6 +217,19 @@
   %\SetSymbolFont{largesymbols}{normal}{OMX}{lmex}{m}{n}
   %\SetSymbolFont{largesymbols}{bold}{OMX}{lmex}{m}{n}
 }{}
+
+
+%% surpress warning for missing bold wasy symbols
+%% https://groups.google.com/forum/#!topic/de.comp.text.tex/3zf_GJmPkkc
+\wasyfamily
+\DeclareFontShape{U}{wasy}{b}{n}{%
+    <-10> ssub * wasy/m/n 
+    <10-> wasyb10
+  }{}
+
+%% similar for stmaryrd
+%% http://tex.stackexchange.com/questions/106714/stmaryrd-and-boldsymbol-avoid-warnings
+\SetSymbolFont{stmry}{bold}{U}{stmry}{m}{n}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% bib settings                                                                         %%
@@ -684,16 +702,40 @@
 
 
 
+%%% To avoid ``invalid PDF token''
+\newcommand{\texpdf}[1]{\texorpdfstring{\csname #1\endcsname}{#1}}
+%% \texpdf{ALC} yields 'ALC' as PDF token and '\ALC' in the document
+
 %%% DL Names %%%
-\newcommand{\EL}{\@math{\mathcal{E{\kern-.12em}L}}}
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1\endcsname{\@math{\mathcal{#1}}}}
+\docsvlist{ALCN,ALCNI,ALCHO,ALCHOIQ}
+
+\newcommand{\@DLhelper}[2]{\texorpdfstring{\@math{\mathcal{#1}}}{#2}}
+
+\newcommand{\ALC}{\@DLhelper{ALC}{ALC}}
+\newcommand{\ALCI}{\@DLhelper{ALCI}{ALCI}}
+\newcommand{\ALCO}{\@DLhelper{ALC{\kern-.07em}O}{ALCO}}
+\newcommand{\ALCQ}{\@DLhelper{ALC{\kern-.12em}Q}{ALCQ}}
+\newcommand{\ALCOI}{\@DLhelper{ALC{\kern-.07em}O{\kern-.02em}I}{ALCOI}}
+\newcommand{\ALCIQ}{\@DLhelper{ALCI{\kern-.12em}Q}{ALCIQ}}
+\newcommand{\ALCOQ}{\@DLhelper{ALC{\kern-.07em}O{\kern-.12em}Q}{ALCOQ}}
+\newcommand{\ALCOIQ}{\@DLhelper{ALC{\kern-.07em}O{\kern-.02em}I{\kern-.12em}Q}{ALCOIQ}}
+\newcommand{\SH}{\@DLhelper{S{\kern-.05em}H}{SH}}
+\newcommand{\SHO}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O}{SHO}}
+\newcommand{\SHI}{\@DLhelper{S{\kern-.05em}HI}{SHI}}
+\newcommand{\SHQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}Q}{SHQ}}
+\newcommand{\SHOQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.12em}Q}{SHOQ}}
+\newcommand{\SHIQ}{\@DLhelper{S{\kern-.05em}HI{\kern-.12em}Q}{SHIQ}}
+\newcommand{\SHOI}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.05em}I}{SHOI}}
+\newcommand{\SHOIQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.05em}I{\kern-.12em}Q}{SHOIQ}}
+\newcommand{\SROIQ}{\@DLhelper{S{\kern-.05em}R{\kern-.05em}O{\kern-.05em}I{\kern-.12em}Q}{SROIQ}}
+
+\newcommand{\EL}{\@DLhelper{E{\kern-.12em}L}{EL}}
 \newcommand{\ELbot}{\@math{\smash{\mathcal{E{\kern-.12em}L}^\bot}}}
 \newcommand{\ELObot}{\@math{\smash{\mathcal{E{\kern-.12em}LO}^\bot}}}
 \newcommand{\FLzero}{\@math{\mathcal{F{\kern-.18em}L}_0}}
 
-
-\renewcommand*{\do}[1]{%
-  \expandafter\newcommand\csname #1\endcsname{\@math{\mathcal{#1}}}}
-\docsvlist{ALC,ALCO,ALCI,ALCOI,ALCQ,ALCN,ALCNI,ALCHO,ALCIQ,ALCOIQ,ALCHOIQ,SHQ,SHOQ,SHIQ,SHOIQ,SROIQ}
 
 \newcommand{\ALCD}[1]{\@math{\mathcal{ALC(#1)}}}
 \newcommand{\ALCOD}[1]{\@math{\mathcal{ALCO(#1)}}}
@@ -702,24 +744,8 @@
 \newcommand{\ALCND}[1]{\@math{\mathcal{ALCN(#1)}}}
 \newcommand{\DLlite}{{\fontfamily{cmr}\fontseries{m}\fontshape{it}\selectfont DL{-}Lite}\xspace}
 
-
 % \newcommand{\ALCH}{\ensureboldmath{\mathcal{ALC{\kern-.05em}H}}\xspace}
 % \newcommand{\ALCHQ}{\ensureboldmath{\mathcal{ALC{\kern-.05em}H{\kern-.12em}Q}}\xspace}
-% \newcommand{\ALCI}{\ensureboldmath{\mathcal{ALCI}}\xspace}
-% \newcommand{\ALCIO}{\ensureboldmath{\mathcal{ALCI{\kern-.05em}O}}\xspace}
-% \newcommand{\ALCQ}{\ensureboldmath{\mathcal{ALC{\kern-.12em}Q}}\xspace}
-% \newcommand{\ALCQI}{\ensureboldmath{\mathcal{ALC{\kern-.12em}QI}}\xspace}
-% \newcommand{\ALCQIO}{\ensureboldmath{\mathcal{ALC{\kern-.12em}QI{\kern-.05em}O}}\xspace}
-% \newcommand{\ALCQO}{\ensureboldmath{\mathcal{ALC{\kern-.12em}Q{\kern-.05em}O}}\xspace}
-% \newcommand{\ALCO}{\ensureboldmath{\mathcal{ALC{\kern-.05em}O}}\xspace}
-% \newcommand{\SH}{\ensureboldmath{\mathcal{S{\kern-.05em}H}}\xspace}
-% \newcommand{\SHIO}{\ensureboldmath{\mathcal{S{\kern-.05em}HI{\kern-.12em}O}}\xspace}
-% \newcommand{\SHIQ}{\ensureboldmath{\mathcal{S{\kern-.05em}HI{\kern-.12em}Q}}\xspace}
-% \newcommand{\SHQ}{\ensureboldmath{\mathcal{S{\kern-.05em}H{\kern-.12em}Q}}\xspace}
-% \newcommand{\SHOQ}{\ensureboldmath{\mathcal{S{\kern-.05em}H{\kern-.12em}O{\kern-.12em}Q}}\xspace}
-% \newcommand{\SHOIQ}{\ensureboldmath{\mathcal{S{\kern-.05em}H{\kern-.12em}O{\kern-.05em}I{\kern-.12em}Q}}\xspace}
-% \newcommand{\SROIQ}{\ensureboldmath{\mathcal{S{\kern-.05em}R{\kern-.05em}O{\kern-.05em}I{\kern-.12em}Q}}\xspace}
-% \newcommand{\SQ}{\ensureboldmath{\mathcal{S{\kern-.12em}Q}}\xspace}
 
 
 
@@ -736,14 +762,19 @@
 
 
 %%% Context DL names %%%
+\newcommand{\@cDLhelper}[2]{%
+  \texorpdfstring{\ensureboldmath{\csname #1\endcsname\llbracket\csname #2\endcsname\rrbracket}\xspace}{#1[#2] }}
+\newcommand{\ALCALC}{\@cDLhelper{ALC}{ALC}}
+\newcommand{\ALCOALC}{\@cDLhelper{ALCO}{ALC}}
+\newcommand{\SHOQSHOQ}{\@cDLhelper{SHOQ}{SHOQ}}
+\newcommand{\SHOIQSHOIQ}{\@cDLhelper{SHOIQ}{SHOIQ}}
+\newcommand{\SHIQSHIQ}{\@cDLhelper{SHIQ}{SHIQ}}
+\newcommand{\ELALC}{\@cDLhelper{EL}{ALC}}
+\newcommand{\ALCEL}{\@cDLhelper{ALC}{EL}}
+
+
+
 \newcommand{\con}[2]{\ensureboldmath{#1}\textnormal{\ensuremath{\llbracket}}\ensureboldmath{#2}\ensuremath{\rrbracket}\xspace}
-\newcommand{\ALCALC}{\con{\ALC}{\ALC}}
-\newcommand{\ALCOALC}{\con{\ALCO}{\ALC}}
-\newcommand{\SHOQSHOQ}{\con{\SHOQ}{\SHOQ}}
-\newcommand{\SHOIQSHOIQ}{\con{\SHOIQ}{\SHOIQ}}
-\newcommand{\SHIQSHIQ}{\con{\SHIQ}{\SHIQ}}
-\newcommand{\ELALC}{\con{\EL}{\ALC}}
-\newcommand{\ALCEL}{\con{\ALC}{\EL}}
 \newcommand{\DLouter}{\@math{\mathcal{L}_{M}}}
 \newcommand{\DLinner}{\@math{\mathcal{L}_{O}}}
 \newcommand{\LM}{\@math{\mathcal{L}_{M}}}
@@ -1042,10 +1073,6 @@
 \newcommand{\stb}[1]{\todo[inline,color=yellow]{(sb) #1}}
 \newcommand{\tk}[1]{\todo[inline,color=green]{(tk) #1}}
 
-
-%%% To avoid ``invalid PDF token''
-\newcommand{\texpdf}[1]{\texorpdfstring{\csname #1\endcsname}{#1}}
-%% \texpdf{ALC} yields 'ALC' as PDF token and '\ALC' in the document
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% tabular related macros and fixes                                                   %%%
