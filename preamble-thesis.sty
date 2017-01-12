@@ -81,9 +81,10 @@
 \RequirePackage{marvosym}
 \RequirePackage{dsfont}
 
+%\RequirePackage[amsmath,amsthm,thmmarks]{ntheorem}
 \RequirePackage{amsthm} 
 \RequirePackage{thmtools}
-\RequirePackage{mathtools} 
+%\RequirePackage{mathtools} 
 \RequirePackage{verbatim}
 \RequirePackage{setspace}
 \RequirePackage{url}
@@ -108,6 +109,8 @@
 \RequirePackage{ifdraft}
 \RequirePackage[ddmmyyyy]{datetime}
   \renewcommand{\dateseparator}{.}
+\RequirePackage{soul}
+  \setuldepth{a}  
 
 \RequirePackage[
   backend=biber,
@@ -375,131 +378,130 @@
 %% new environments                                                                     %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\ifpre@ownenv
-  %self-defined environments
-
-  % definition of several lengths
-  \newlength{\@defindent}
-  \newlength{\@defstyleabovespace}
-  \newlength{\@defstylebelowspace}
-  \newlength{\@whitespacelength}
-
-  \setlength{\@defindent}{\pre@defindent}
-  \setlength{\@defstyleabovespace}{6pt}
-  \setlength{\@defstylebelowspace}{0pt}
-
-  \setlength{\@whitespacelength}{\widthof{ }}
-
-  \declaretheoremstyle[
-    spaceabove = \@defstyleabovespace,
-    spacebelow = \@defstylebelowspace,%
-    headfont   = \normalfont\bfseries,%
-    bodyfont   = \normalfont\itshape]{thmstyle}
-  \declaretheoremstyle[
-    spaceabove = \@defstyleabovespace,
-    spacebelow = \@defstylebelowspace,
-    headfont   = \normalfont\bfseries,
-    headindent = -\@defindent,
-    headpunct  = {},
-    postheadspace = \newline,
-    notefont   = \normalfont\itshape,
-    notebraces = {\textnormal{[}}{\textnormal{]}},
-    bodyfont   = \addtolength{\@totalleftmargin}{\@defindent}
-                 \addtolength{\linewidth}{-\@defindent}
-                 \parshape 1 \@defindent \linewidth,
-    ]{defstyle}
-  \declaretheoremstyle[
-    spaceabove = \@defstyleabovespace,
-    spacebelow = \@defstylebelowspace,
-    headfont   = \normalfont\bfseries,
-    headindent = -\@defindent,
-    notefont   = \normalfont\itshape,
-    notebraces = {\textnormal{[}}{\textnormal{]}},
-    bodyfont   = \addtolength{\@totalleftmargin}{\@defindent}
-                 \addtolength{\linewidth}{-\@defindent}
-                 \parshape 1 \@defindent \linewidth,
-    ]{exstyle}
-  \declaretheoremstyle[
-    spaceabove = \@defstyleabovespace,
-    spacebelow = \@defstylebelowspace,
-    headfont   = \normalfont\bfseries,
-    bodyfont   = \normalfont,
-    headpunct  = {},
-    postheadspace = \newline,
-    notefont   = \normalfont\itshape,
-    notebraces = {}{},
-    headformat = \NAME\ \NUMBER :\NOTE
-    ]{algstyle}
-  \declaretheoremstyle[
-    spaceabove = \@defstyleabovespace,
-    spacebelow = \@defstylebelowspace,
-    headfont   = \normalfont\bfseries,
-    headindent = -\@defindent,
-    headpunct  = {:},
-    notefont   = \normalfont\itshape,
-    notebraces = {\textnormal{(}}{\textnormal{)}},
-    bodyfont   = \addtolength{\@totalleftmargin}{\@defindent}
-                 \addtolength{\linewidth}{-\@defindent}
-                 \parshape 1 \@defindent \linewidth,
-    ]{bemstyle}
-  \declaretheoremstyle[
-    spaceabove = \@defstyleabovespace,
-    spacebelow = 0pt,%\defstylebelowspace,
-    headindent = -\@defindent,
-    headpunct  = {:},
-    notefont   = \normalfont\bfseries,
-    notebraces = {}{},
-    bodyfont   = \addtolength{\@totalleftmargin}{\@defindent}
-                 \addtolength{\linewidth}{-\@defindent}
-                 \parshape 1 \@defindent \linewidth,
-    headformat = \hspace{-\@whitespacelength}\NOTE
-    ]{blockstyle}
-
-  % Konfiguration von amsmath mit thmtools
-  \ifdefstring{\XKV@documentclass}{scrreprt.cls}{ %% documentclass ist scrreprt
-    \declaretheorem[style=thmstyle, title=Theorem, numberwithin=chapter]{thm}
-  }{ %% documentclass ist nicht scrreprt
-    \declaretheorem[style=thmstyle, title=Theorem]{thm}
-  }
-  \declaretheorem[style=thmstyle, title=Proposition, sibling=thm]{prop}
-  \declaretheorem[style=thmstyle, title=Lemma      , sibling=thm]{lem}
-  \declaretheorem[style=thmstyle, title=Corollary  , sibling=thm]{cor}
-  \declaretheorem[style=thmstyle, title=Conjecture , sibling=thm]{conj}
-  \declaretheorem[style=defstyle, title=Definition , sibling=thm, qed=$\diamond$]{defi}
-  \declaretheorem[style=defstyle, title=Definition , numbered=no, qed=$\diamond$]{defi*}
-  \declaretheorem[style=bemstyle, title=Remark     , numbered=no]{rem}
-  \declaretheorem[style=algstyle, title=Algorithm  , sibling=thm, qed=$\diagup$]{alg}
-  \declaretheorem[style=algstyle, title=Algorithm  , numbered=no, qed=$\diagup$]{alg*}
-  \declaretheorem[style=bemstyle, title=Note       , numbered=no]{note}
-  \ifdefstring{\XKV@documentclass}{beamer.cls}{
-    % example and block are already defined 
-  }{
-    \declaretheorem[style=exstyle   , title=Example, sibling=thm, qed=$\vartriangle$]{example}
-    \declaretheorem[style=exstyle   , title=Example, numbered=no, qed=$\vartriangle$]{example*}
-    \declaretheorem[style=blockstyle, title={t}    , numbered=no]{block}
-  }
-
-  \newcommand{\noproof}{\qed}
-  \newenvironment{claim}[1]{\par\noindent\underline{\textit{Claim}:}\space#1}{}
-  \newenvironment{claimproof}[1]{\par\noindent\underline{\textit{Proof}:}\space#1}{\leavevmode\unskip\penalty9999
-    \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
+%   \declaretheoremstyle[
+%     spaceabove = \@defstyleabovespace,
+%     spacebelow = \@defstylebelowspace,
+%     headfont   = \normalfont\bfseries,
+%     bodyfont   = \normalfont,
+%     headpunct  = {},
+%     postheadspace = \newline,
+%     notefont   = \normalfont\itshape,
+%     notebraces = {}{},
+%     headformat = \NAME\ \NUMBER :\NOTE
+%     ]{algstyle}
 
 
-\else
-  %predefined environments
-  \theoremstyle{plain}
-  \newtheorem{thm}{Theorem}
-  \newtheorem{lem}[thm]{Lemma}
-  \newtheorem{cor}[thm]{Corollary}
-  \newtheorem{conj}[thm]{Conjecture}
-  \newtheorem*{claim}{Claim}
-  \theoremstyle{definition}
-  \newtheorem{defi}[thm]{Definition}
-  \newtheorem{ex}[thm]{Example}
-  % \newenvironment{claim}[1]{\par\noindent\underline{\textit{Claim}:}\space#1}{}
-  \newenvironment{claimproof}[1]{\par\noindent \textit{Proof}:\space#1}{\leavevmode\unskip\penalty9999
-    \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
-\fi
+\declaretheoremstyle[
+  spaceabove=\topsep,
+  spacebelow=\topsep,
+  headfont=\normalfont\bfseries,
+  notefont=\normalfont\bfseries,
+  postheadspace=1em,
+  bodyfont=\normalfont\itshape
+]{thmstyle}
+
+\declaretheorem[style=thmstyle,
+  qed=\ensuremath{\diamondsuit},
+  parent=chapter,
+  name=Definition]
+  {definition}
+
+\declaretheorem[
+  style=thmstyle,
+  qed=\ensuremath{\diamondsuit},
+  sibling=definition,
+  name=Example]
+  {example}
+
+\declaretheorem[
+  style=thmstyle,
+  qed=\ensuremath{\diamondsuit},
+  sibling=definition,
+  name=Theorem]
+  {theorem*}
+
+\declaretheorem[
+  style=thmstyle,
+  qed=\ensuremath{\diamondsuit},
+  sibling=definition,
+  name=Proposition]
+  {proposition*}
+
+\declaretheorem[
+  style=thmstyle,
+  sibling=definition,
+  name=Theorem]
+  {theorem}
+
+\declaretheorem[
+  style=thmstyle,
+  sibling=definition,
+  name=Proposition]
+  {proposition}
+
+\declaretheorem[
+  style=thmstyle,
+  sibling=definition,
+  name=Lemma]
+  {lemma}
+
+\declaretheorem[
+  style=thmstyle,
+  sibling=definition,
+  name=Corollary]
+  {corollary}
+
+\declaretheorem[
+  style=thmstyle,
+  sibling=definition,
+  name=Conjecture]
+  {conjecture}
+
+\declaretheoremstyle[
+  spaceabove=\topsep,
+  spacebelow=\topsep,
+  headfont=\normalfont\itshape,
+  notefont=\normalfont\itshape,
+  headpunct=.,
+  %postheadspace=1em,
+  bodyfont=\normalfont
+]{proofstyle}
+
+\let\proof\relax
+\declaretheorem[
+  style=proofstyle,
+  name=Proof,
+  qed=\qedsymbol,
+  numbered=no]
+  {proof}
+
+\declaretheoremstyle[
+  spaceabove=\topsep,
+  spacebelow=\topsep,
+  headfont=\normalfont\itshape,
+  notefont=\normalfont\itshape,
+  headpunct=,
+  bodyfont=\normalfont\itshape,
+  headformat=\underline{\smash{\NAME:}}]
+  {claimstyle}
+
+\declaretheorem[
+  style=claimstyle,
+  name=Claim,
+  numbered=no]
+  {claim}
+
+\declaretheorem[
+  style=claimstyle,
+  name=Proof,
+  numbered=no,
+  qed=\ensuremath{\diagup}]
+  {claimproof}
+
+%\newenvironment{claim}[1]{\par\noindent\ul{\textit{Claim}:}\space#1}{}
+% \newenvironment{claimproof}[1]{\par\noindent\ul{\textit{Proof}:}\space#1}{\leavevmode\unskip\penalty9999
+%     \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
+
 
 
 \colorlet{alertcolor}{red}
