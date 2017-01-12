@@ -708,7 +708,7 @@
   \expandafter\newcommand\csname #1\endcsname{\@math{\mathcal{#1}}}}
 \docsvlist{ALCN,ALCNI,ALCHO,ALCHOIQ}
 
-\newcommand{\@DLhelper}[2]{\texorpdfstring{\@math{\mathcal{#1}}}{#2}}
+\newcommand{\@DLhelper}[2]{\texorpdfstring{\@math{\mathcal{#1}}}{#2}\xspace}
 
 \newcommand{\ALC}{\@DLhelper{ALC}{ALC}}
 \newcommand{\ALCI}{\@DLhelper{ALCI}{ALCI}}
@@ -760,7 +760,9 @@
 
 %%% Context DL names %%%
 \newcommand{\@cDLhelper}[2]{%
-  \texorpdfstring{\ensureboldmath{\csname #1\endcsname\llbracket\csname #2\endcsname\rrbracket}\xspace}{#1[#2] }}
+  \texorpdfstring{\ensureboldmath{\csname #1\endcsname\llbracket{\kern-0.13em}%
+      \csname #2\endcsname{\kern-0.10em}\rrbracket}\xspace}
+    {#1[#2]}\xspace}
 \newcommand{\ALCALC}{\@cDLhelper{ALC}{ALC}}
 \newcommand{\ALCOALC}{\@cDLhelper{ALCO}{ALC}}
 \newcommand{\SHOQSHOQ}{\@cDLhelper{SHOQ}{SHOQ}}
