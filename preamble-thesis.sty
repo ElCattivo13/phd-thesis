@@ -28,7 +28,6 @@
 \DeclareStringOption[alphabetic]{bibstyle}
 \DeclareStringOption{bibresource}
 \DeclareStringOption[thesis]{pagestyle}
-\DeclareStringOption{specialfonts}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Processing options                                                                   %%
@@ -66,22 +65,26 @@
 \RequirePackage[style=british]{csquotes}
 
 \RequirePackage{amsmath}
-\RequirePackage{amsfonts}
-\RequirePackage{amssymb}
+\RequirePackage{wasysym}
+\RequirePackage{stmaryrd} % needed for \llbracket
+\RequirePackage{bbm}
+\RequirePackage{pifont}   % for \cmark and \xmark
+%\RequirePackage{amsfonts} %using mathdesign instead
+%\RequirePackage{amssymb}
+%\RequirePackage{textcomp} % Euro-Zeichen etc.
+%\RequirePackage{mathdots} % fuer \iddots
+%\RequirePackage{mathrsfs} % for \mathscr{A}
+\RequirePackage[scale=.9]{tgheros}
+\RequirePackage[bitstream-charter]{mathdesign}
+
+\RequirePackage{upgreek}
+\RequirePackage{marvosym}
+\RequirePackage{dsfont}
+
 \RequirePackage{amsthm} 
 \RequirePackage{thmtools}
 \RequirePackage{mathtools} 
 \RequirePackage{verbatim}
-\RequirePackage{textcomp} % Euro-Zeichen etc.
-\RequirePackage{wasysym}
-\RequirePackage{upgreek}
-\RequirePackage{marvosym}
-\RequirePackage{mathdots} % fuer \iddots
-\RequirePackage{stmaryrd} % needed for \llbracket
-\RequirePackage{pifont}   % for \cmark and \xmark
-\RequirePackage{mathrsfs} % for \mathscr{A}
-\RequirePackage{dsfont}
-\RequirePackage{bbm}
 \RequirePackage{setspace}
 \RequirePackage{url}
 \RequirePackage{filecontents}
@@ -193,37 +196,29 @@
 %% font settings                                                                        %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\ifdefstring{\pre@specialfonts}{marcels}{
-  \RequirePackage[scale=.9]{tgheros}
-  \RequirePackage[bitstream-charter]{mathdesign}
-  \DeclareFontFamily{OMS}{lmsy}{} %\skewchar\font48}
-  \DeclareFontShape{OMS}{lmsy}{m}{n}{%
-      <-5.5>    s*[.925] lmsy5
-      <5.5-6.5> s*[.925] lmsy6
-      <6.5-7.5> s*[.925] lmsy7
-      <7.5-8.5> s*[.925] lmsy8
-      <8.5-9.5> s*[.925] lmsy9
-      <9.5->    s*[.925] lmsy10
-      }{}
-  \DeclareFontShape{OMS}{lmsy}{b}{n}{%
-      <-6>  s*[.925] lmbsy5
-      <6-8> s*[.925] lmbsy7
-      <8->  s*[.925] lmbsy10
-      }{}
-  \SetMathAlphabet{\mathcal}{normal}{OMS}{lmsy}{m}{n}
-  \SetMathAlphabet{\mathcal}{bold}{OMS}{lmsy}{b}{n}
-  %\DeclareMathAlphabet{\mathbfcal}{OMS}{lmsy}{b}{n}
-  %\SetSymbolFont{largesymbols}{normal}{OMX}{lmex}{m}{n}
-  %\SetSymbolFont{largesymbols}{bold}{OMX}{lmex}{m}{n}
-}{}
+\DeclareFontFamily{OMS}{lmsy}{} %\skewchar\font48}
+\DeclareFontShape{OMS}{lmsy}{m}{n}{%
+    <-5.5>    s*[.925] lmsy5
+    <5.5-6.5> s*[.925] lmsy6
+    <6.5-7.5> s*[.925] lmsy7
+    <7.5-8.5> s*[.925] lmsy8
+    <8.5-9.5> s*[.925] lmsy9
+    <9.5->    s*[.925] lmsy10
+    }{}
+\DeclareFontShape{OMS}{lmsy}{b}{n}{%
+    <-6>  s*[.925] lmbsy5
+    <6-8> s*[.925] lmbsy7
+    <8->  s*[.925] lmbsy10
+    }{}
+\SetMathAlphabet{\mathcal}{normal}{OMS}{lmsy}{m}{n}
+\SetMathAlphabet{\mathcal}{bold}{OMS}{lmsy}{b}{n}
 
 
 %% surpress warning for missing bold wasy symbols
 %% https://groups.google.com/forum/#!topic/de.comp.text.tex/3zf_GJmPkkc
 \wasyfamily
 \DeclareFontShape{U}{wasy}{b}{n}{%
-    <-10> ssub * wasy/m/n 
+    <-10> ssub* wasy/m/n 
     <10-> wasyb10
   }{}
 
@@ -491,19 +486,19 @@
 
 
 \else
-  % %predefined environments
-  % \theoremstyle{plain}
-  % \newtheorem{thm}{Theorem}
-  % \newtheorem{lem}[thm]{Lemma}
-  % \newtheorem{cor}[thm]{Corollary}
-  % \newtheorem{conj}[thm]{Conjecture}
-  % \newtheorem*{claim}{Claim}
-  % \theoremstyle{definition}
-  % \newtheorem{defi}[thm]{Definition}
-  % \newtheorem{ex}[thm]{Example}
-  % % \newenvironment{claim}[1]{\par\noindent\underline{\textit{Claim}:}\space#1}{}
-  % \newenvironment{claimproof}[1]{\par\noindent \textit{Proof}:\space#1}{\leavevmode\unskip\penalty9999
-  %   \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
+  %predefined environments
+  \theoremstyle{plain}
+  \newtheorem{thm}{Theorem}
+  \newtheorem{lem}[thm]{Lemma}
+  \newtheorem{cor}[thm]{Corollary}
+  \newtheorem{conj}[thm]{Conjecture}
+  \newtheorem*{claim}{Claim}
+  \theoremstyle{definition}
+  \newtheorem{defi}[thm]{Definition}
+  \newtheorem{ex}[thm]{Example}
+  % \newenvironment{claim}[1]{\par\noindent\underline{\textit{Claim}:}\space#1}{}
+  \newenvironment{claimproof}[1]{\par\noindent \textit{Proof}:\space#1}{\leavevmode\unskip\penalty9999
+    \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
 \fi
 
 
