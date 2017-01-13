@@ -84,7 +84,7 @@
 %\RequirePackage[amsmath,amsthm,thmmarks]{ntheorem}
 \RequirePackage{amsthm} 
 \RequirePackage{thmtools}
-%\RequirePackage{mathtools} 
+\RequirePackage{mathtools} 
 \RequirePackage{verbatim}
 \RequirePackage{setspace}
 \RequirePackage{url}
@@ -109,8 +109,9 @@
 \RequirePackage{ifdraft}
 \RequirePackage[ddmmyyyy]{datetime}
   \renewcommand{\dateseparator}{.}
-\RequirePackage{soul}
-  \setuldepth{a}  
+% \RequirePackage{soul}
+%   \setuldepth{a}
+\RequirePackage{printlen}
 
 \RequirePackage[
   backend=biber,
@@ -312,12 +313,15 @@
 
 
 %% Spacing within itemize (using enumitem)
-\setlist[itemize,1]{
-  topsep=-0.5\baselineskip+6pt,
-  itemsep=.1\baselineskip,
-  parsep=.1\baselineskip
-}
-\setlength{\topsep}{1ex plus0.5ex minus0.5ex}
+% \setlist[itemize,1]{
+%   topsep=-0.5\baselineskip+6pt,
+%   itemsep=.1\baselineskip,
+%   parsep=.1\baselineskip
+% }
+% \setlength{\topsep}{1ex plus0.5ex minus0.5ex}
+\setlist[itemize]{itemsep=.1\baselineskip}
+\setlist[itemize]{parsep=.1\baselineskip}
+
 
 % \AtBeginDocument{%
 %   \abovedisplayskip=0.5\baselineskip
@@ -1131,5 +1135,20 @@
 %% to remove vertical space before an itemize inside tabularx
 \newcommand*{\compress}{\@minipagetrue}
 
+\@ifpackageloaded{printlen}{
+\newcommand{\printseps}{\noindent\parbox[t]{10cm}{%
+    topsep: \printlength{\topsep}\\
+    parskip: \printlength{\parskip}\\
+    partopsep: \printlength{\partopsep}\\
+    parsep: \printlength{\parsep}\\
+    itemsep: \printlength{\itemsep}\\
+    baselineskip: \printlength{\baselineskip}
+}}
+}{}
 
 \endinput
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "thesis"
+%%% End:
