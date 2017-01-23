@@ -230,6 +230,10 @@
 %% http://tex.stackexchange.com/questions/106714/stmaryrd-and-boldsymbol-avoid-warnings
 \SetSymbolFont{stmry}{bold}{U}{stmry}{m}{n}
 
+%% avoid font warning for italic textbullet (itemize inside definition)
+%% http://tex.stackexchange.com/questions/155604/itemize-under-sf-produce-a-font-warning
+\renewcommand{\textbullet}{\ensuremath{\bullet}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% bib settings                                                                         %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
