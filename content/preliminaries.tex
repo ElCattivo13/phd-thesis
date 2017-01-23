@@ -4,16 +4,102 @@
 
 In this chapter, we introduce 
 
+\todo[inline]{Missing text}
+
 
 \section{Description Logics}
 \label{sec:description-logics}
+
+\todo[inline]{missing text}
 
 \subsection{Description Logic Concepts}
 \label{sec:dl-concepts}
 
 
+The basic building blocks in description logics are so-called \emph{concepts}. As described
+
+used as description, classify a set of objects
 
 
+\begin{definition}[Syntax of \Nsig-concepts]
+  \label{def:syntax-concepts}
+  Let \NC, \NR, \NI be non-empty, pairwise disjoint sets of \emph{concept names}, \emph{role names},
+  and \emph{individual names}. Furthermore let $\Nsig\coloneqq(\NC,\NR,\NI)$. A \emph{\Nsig-role} $r$ is
+  either a role name, i.e.~$r\in\NR$, or it is of the form $s^{-}$ with $s\in\NR$ (\emph{inverse role}).
+
+  The set of \emph{\Nsig-concepts} is the smallest set, such that
+  \begin{itemize}
+  \item for all $A\in\NC$, $A$ is a \Nsig-concept (\emph{atomic concept}), and
+  \item if $C$ and $D$ are \Nsig-concepts, $r$ is a \Nsig-role, $a\in\NI$, then $\lnot C$ (\emph{negation}),
+    $C\sqcap D$ (\emph{conjunction}), $\exists r.C$ (\emph{existential restriction}), $\{a\}$
+    (\emph{nominal}) and $\atleast{n}{r}{C}$ (\emph{at-least restriction}) are \Nsig-concepts. \qedhere
+  \end{itemize}
+\end{definition}
+
+As usual in description logics, we use the following abbreviations:
+\begin{itemize}
+\item $C\sqcup D$ (\emph{disjunction}) for $\lnot(\lnot C \sqcap \lnot D)$,
+\item $\top$ (\emph{top}) for $A \sqcup \lnot A$ where $A\in\NC$ is arbitrary but fixed,
+\item $\bot$ (\emph{bottom}) for $\lnot\top$,
+\item $\forall r.C$ (\emph{value restriction}) for $\lnot(\exists r.\lnot C)$, and
+\item $\atmost{n}{r}{C}$ (\emph{at-most restriction}) for $\lnot(\atleast{n+1}{r}{C})$.
+\end{itemize}
+
+
+The semantics of description logic concepts are defined in a model-theoretic way using the notion of
+interpretations.
+
+\begin{definition}[\Nsig-interpretation, Semantics of \Nsig-concepts]
+  \label{def:n-interpretation}
+  Let $\Nsig\coloneqq(\NC,\NR,\NI)$. Then, an \emph{\Nsig-interpretation \I} is a pair
+  $(\Delta^{\I}, \cdot^{\I})$ where the \emph{domain} $\Delta^{\I}$ is a non-empty set and
+  the \emph{interpretation function} $\cdot^{\I}$ maps \todo{evtl noch was zur UNA}
+  \begin{itemize}
+  \item every concept name $A\in\NC$ to the set $A^{\I}\subseteq\Delta^{\I}$,
+  \item every role name $r\in\NR$ to the binary relation
+    $r^{\I}\subseteq\Delta^{\I}\times\Delta^{\I}$, and
+  \item every individual name $a\in\NI$ to the element $a^{\I}\in\Delta^{\I}$. \qedhere
+  \end{itemize}
+
+  Now, that function is extended for inverse roles and concepts as follows:
+  \begin{itemize}
+  \item $(s^{-})^{\I} \coloneqq \left\{(d,c)\in\Delta^{\I}\times\Delta^{\I}\mmid (c,d)\in
+      s^{-}\right\}$,
+  \item $(\lnot C)^{\I} \coloneqq \Delta^{\I} \setminus C^{\I}$,
+  \end{itemize}
+\end{definition}
+
+
+some text
+
+\begin{example}
+  
+\end{example}
+
+
+
+
+\subsection{Description Logic Axioms}
+\label{sec:dl-axioms}
+
+
+
+\clearpage
+
+\section{Roles}
+\label{sec:rosiroles}
+
+In this section 
+
+Bachman
+
+japanisches Paper
+
+rigid
+
+foundedness
+
+identity
 
 
 
