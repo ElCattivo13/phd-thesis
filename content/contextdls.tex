@@ -14,7 +14,80 @@
 Note that we often refer to \OCR and \ORR simply as \emph{rigid concept names} and \emph{rigid role
   names} as there is no such notion on the meta level.
 
+\begin{definition}[\mbox{\Nsig-interpretation (weakly) respects $(\Umc,\Ymc)$}]
+  \label{def:int-respects-D} 
+  Let $\Umc\subseteq\NC$ and let $\Ymc\subseteq\powerset{\Umc}$.  The \Nsig-interpretation \II
+  \emph{respects} $(\Umc,\Ymc)$ if $\Zmc = \Ymc$ where
+  \begin{align*}
+    \Zmc & \coloneqq\{Y\subseteq\Umc\mid\text{there is some $d\in\Delta^\I$ with $d\in(C_{\Umc,Y})^\I$}\}
+    \intertext{and}
+    C_{\Umc,Y}& \coloneqq\bigsqcap_{A \in Y} A\sqcap \bigsqcap_{A\in\Umc\setminus Y} \lnot A.
+  \end{align*}
 
+    It \emph{weakly respects} $(\Umc,\Ymc)$ if $\Zmc \subseteq \Ymc$.
+\end{definition}
+
+\begin{definition}[Outer abstraction]
+    Let \BB be an \con{\DLouter}{\DLinner}-BKB.  Let \bsf be the bijection
+    mapping every m-concept of the form \oalpha occurring in~\B to the concept
+    name $A_{\oalpha}\in\MC$, where we assume w.l.o.g.\ that $A_{\oalpha}$ does
+    not occur in~\B.
+    \begin{enumerate}
+        \item The Boolean \DLouter-axiom formula~\Bb over \Msig is obtained
+            from~\B by replacing every occurrence of an m-concept of the form
+            \oalpha by $\bsf(\oalpha)$.  We call the \DLouter-BKB
+            $\Bmfb=(\Bb,\RM)$ the \emph{outer abstraction of~\Bmf}.
+        \item Given \JJ, its \emph{outer abstraction} is the
+            \Msig-interpretation $\Jb=(\Cbb,\cdot^{\Jb})$ where
+            \begin{itemize}
+                \item for every $x\in\MR\cup\MI\cup(\MC\setminus\ran(\bsf))$, we
+                    have $x^{\Jb}=x^\J$, and
+                \item for every $A\in\ran(\bsf)$, we have
+                    $A^{\Jb}=(\bsf^{-1}(A))^\J$,
+            \end{itemize}
+            where $\ran(\bsf)$ denotes the image of~\bsf. \qedhere
+    \end{enumerate}
+\end{definition}
+
+
+\blindtext
+
+\begin{definition}[Admissibility]\label{def:admissibility}
+  Let $\X=\{X_1,~\dots,\ X_k\}\subseteq\powerset{\ran(\bsf)}$.  We call \X \emph{admissible} if
+  there exist \Osig-interpretations $\I_1=(\Delta,\cdot^{\I_1})$,~\dots,
+  $\I_k=(\Delta,\cdot^{\I_k})$ such that
+  \begin{itemize}
+  \item $x^{\I_i}=x^{\I_j}$ for all $x\in\OI\cup\OCR\cup\ORR$ and all $i,j\in\{1,\dots,k\}$, and
+  \item every $\I_i$, $1\le i\le k$, is a model of the \DLinner-BKB $\Bmf_{X_{i}}= (\B_{X_i},\RO)$
+    over~\Osig where
+    \begin{align*}
+      \B_{X_i}:=\bigwedge_{\bsf(\oalpha)\in X_i}\alpha\ \land
+      \bigwedge_{\bsf(\oalpha)\in\ran(\bsf)\setminus X_i}\lnot\alpha.
+    \end{align*}
+  \end{itemize}
+  \vspace{-\baselineskip}
+\end{definition}
+
+
+\blindtext
+
+\begin{definition}[Outer consistency]\label{def:outer-sat}
+  Let $\X\subseteq\powerset{\ran(\bsf)}$.  We call the \DLouter-BKB~\Bmfb over \Msig
+  \emph{outer consistent w.r.t.~\X{}} if there exists a model of~\Bmfb that weakly
+  respects~$(\ran(\bsf),\X)$.
+\end{definition}
+
+\blindtext
+
+\begin{lemma}\label{lem:admissible-and-outerConsistent}
+    The \con{\DLouter}{\DLinner}-BKB~\Bmf is consistent iff there is a set
+    $\X=\{X_1,\dots,X_k\}\subseteq\powerset{\ran(\bsf)}$ such that
+    \begin{enumerate}
+        \item \X is admissible, and
+        \item \Bmfb is outer consistent w.r.t.~\X.
+    \end{enumerate}
+\end{lemma}
+\missingproof
 
 %%% Local Variables:
 %%% mode: latex
