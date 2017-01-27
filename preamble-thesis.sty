@@ -3,7 +3,7 @@
 % author: Stephan Böhme
 % used parts of preamble of PhD thesis of Marcel Lippmann
 %
-% collection of all packages, macros, etc to compile example.tex in the context-example git repository
+% collection of all packages, macros, etc to compile thesis.tex
 %
 % use: \usepackage[option1,option2=value2,...]{preamble-thesis}
 
@@ -45,87 +45,40 @@
 \RequirePackage[utf8]{inputenc}
 \RequirePackage[T1]{fontenc}
 
-\RequirePackage{lmodern}
-\RequirePackage[final,babel]{microtype}
+\RequirePackage{lmodern} % use latin modern as default font
+\RequirePackage[final,babel]{microtype} % character protrusion, font expansion, kerning
 %\RequirePackage{fixltx2e} fixltx2e is not required with releases after 2015
 
-% \RequirePackage[
-%     automark, % Kapitelangaben in Kopfzeile automatisch erstellen
-%     headsepline, % Trennlinie unter Kopfzeile
-%     %ilines % Trennlinie linksbuendig ausrichten
-%   ]{scrpage2} % obsolete
+%\RequirePackage[automark,headsepline]{scrpage2} % obsolete
 \RequirePackage[automark,draft=false]{scrlayer-scrpage}
 \RequirePackage{scrhack}
 
-\RequirePackage{etoolbox}
 \RequirePackage{xparse}
+
+\RequirePackage{amsmath}
+%\RequirePackage{amsfonts} %using mathdesign instead
+%\RequirePackage{amssymb}
+\RequirePackage{wasysym}
+\RequirePackage{stmaryrd} % needed for \llbracket
+\RequirePackage{bbm}
+\RequirePackage{pifont}   % for \cmark and \xmark
+
+\RequirePackage{url}
+\RequirePackage{xspace}
+\RequirePackage{verbatim}
+\RequirePackage{graphicx}
+  \graphicspath{{./images/}}
+
+\RequirePackage{setspace}
+\RequirePackage{etoolbox}
+
+
+\RequirePackage{enumitem}
 
 % Anpassung an Landessprache
 \RequirePackage[main=british,ngerman,swedish]{babel}
 \RequirePackage[style=british]{csquotes}
 
-\RequirePackage{amsmath}
-\RequirePackage{wasysym}
-\RequirePackage{stmaryrd} % needed for \llbracket
-\RequirePackage{bbm}
-\RequirePackage{pifont}   % for \cmark and \xmark
-%\RequirePackage{amsfonts} %using mathdesign instead
-%\RequirePackage{amssymb}
-%\RequirePackage{textcomp} % Euro-Zeichen etc.
-%\RequirePackage{mathdots} % fuer \iddots
-%\RequirePackage{mathrsfs} % for \mathscr{A}
-\RequirePackage[scale=.9]{tgheros}
-\RequirePackage[bitstream-charter]{mathdesign}
-
-\RequirePackage{upgreek}
-\RequirePackage{marvosym}
-\RequirePackage{dsfont}
-
-%\RequirePackage[amsmath,amsthm,thmmarks]{ntheorem}
-\RequirePackage{amsthm} 
-\RequirePackage{thmtools}
-\RequirePackage{mathtools} 
-\RequirePackage{verbatim}
-\RequirePackage{setspace}
-\RequirePackage{url}
-\RequirePackage{filecontents}
-\RequirePackage{xspace}
-\RequirePackage{calc}
-\RequirePackage[math]{blindtext}
-\RequirePackage{marginnote}
-\RequirePackage{tabularx}
-\RequirePackage{enumitem}
-\RequirePackage{authblk}
-\RequirePackage{graphicx}
-  \graphicspath{{./images/}}
-% \RequirePackage{caption}[2008/08/24]
-\RequirePackage{caption}
-\RequirePackage{diagbox}
-\RequirePackage{subcaption}
-\RequirePackage{booktabs}
-\RequirePackage{multirow}
-\RequirePackage{titling} % for \thetitle, \thedate, ... used in footer
-\RequirePackage{layout} % for the amazing \layout-macro
-\RequirePackage{ifdraft}
-\RequirePackage[ddmmyyyy]{datetime}
-  \renewcommand{\dateseparator}{.}
-% \RequirePackage{soul}
-%   \setuldepth{a}
-\RequirePackage{printlen}
-
-\RequirePackage[
-  backend=biber,
-  style=\pre@bibstyle,
-  sorting=nyt,
-  autocite=inline,
-  backref=true,
-  abbreviate=false,
-  minalphanames=3,
-  maxnames=99,
-  maxitems=99
-]{biblatex}
-  
-  
 \RequirePackage{tikz}
   \usetikzlibrary{matrix}
   \usetikzlibrary{automata}
@@ -148,6 +101,35 @@
   \usetikzlibrary{backgrounds}
 
 
+\RequirePackage{booktabs}
+\RequirePackage{multirow}
+% \RequirePackage{caption}[2008/08/24]
+\RequirePackage{caption}
+
+%\RequirePackage{upgreek}
+%\RequirePackage{marvosym}
+%\RequirePackage{dsfont}
+
+%\RequirePackage[amsmath,amsthm,thmmarks]{ntheorem}
+\RequirePackage{amsthm} 
+\RequirePackage{thmtools}
+\RequirePackage{mathtools} 
+\RequirePackage{filecontents}
+\RequirePackage{calc}
+\RequirePackage[math]{blindtext}
+\RequirePackage{marginnote}
+\RequirePackage{tabularx}
+\RequirePackage{authblk}
+\RequirePackage{diagbox}
+\RequirePackage{subcaption}
+\RequirePackage{titling} % for \thetitle, \thedate, ... used in footer
+\RequirePackage{layout} % for the amazing \layout-macro
+\RequirePackage{ifdraft}
+\RequirePackage[ddmmyyyy]{datetime}
+  \renewcommand{\dateseparator}{.}
+\RequirePackage{printlen}
+
+
 \ifpre@ltablex
   % http://tex.stackexchange.com/questions/115177/nested-tabularx-doesnt-work-with-ltablex
   %
@@ -159,13 +141,17 @@
   \keepXColumns
 \fi
 
-
 \RequirePackage[
   english,
   colorinlistoftodos,
   textsize=scriptsize,
 ]{todonotes} % provides the commands \todo[inline]{}, \missingfigure \listoftodos,
 
+%\RequirePackage{textcomp} % Euro-Zeichen etc.
+%\RequirePackage{mathdots} % fuer \iddots
+%\RequirePackage{mathrsfs} % for \mathscr{A}
+\RequirePackage[scale=.9]{tgheros}
+\RequirePackage[bitstream-charter]{mathdesign}
 
 \RequirePackage[
   final,
@@ -194,6 +180,34 @@
     pdfkeywords=\thetitle
   }
 }
+
+\RequirePackage[
+  backend=biber,
+  style=\pre@bibstyle,
+  sorting=nyt,
+  autocite=inline,
+  backref=true,
+  abbreviate=false,
+  minalphanames=3,
+  maxnames=99,
+  maxitems=99
+]{biblatex}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,7 +315,7 @@
 }
 \recalctypearea
 
-
+\@ifpackageloaded{scrlayer-scrpage}{
 \clearpairofpagestyles
 \ihead{\headmark}
 \chead*{\ifdraft{\iotasun}{}}
@@ -313,7 +327,7 @@
 \lofoot*{\ifdraft{Draft: \today}{}}
 \renewcommand{\chaptermark}[1]{\markboth{Chapter \thechapter. #1}{}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
-
+}
 
 
 %% Spacing within itemize (using enumitem)
@@ -336,11 +350,11 @@
 
 
 %% PENALTIES
-\clubpenalty=\maxdimen
-\widowpenalty=\maxdimen
-\displaywidowpenalty=\maxdimen
-\relpenalty=\maxdimen
-\binoppenalty=\maxdimen
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\relpenalty=10000
+\binoppenalty=10000
 
 
 %% change page margins locally, see
@@ -1086,16 +1100,18 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                                                                                          %
 %%% columntypes based on tabularx %%%                                                    %
-\newcolumntype{L}{>{\raggedright\arraybackslash}X}                                       %
-\newcolumntype{R}{>{\raggedleft\arraybackslash}X}                                        %
-\newcolumntype{C}{>{\centering\arraybackslash}X}                                         %
+\@ifpackageloaded{tabularx}{                                                             %
+  \newcolumntype{L}{>{\raggedright\arraybackslash}X}                                     %
+  \newcolumntype{R}{>{\raggedleft\arraybackslash}X}                                      %
+  \newcolumntype{C}{>{\centering\arraybackslash}X}                                       %
                                                                                          %
-%%% for tabularx def inside a tabularx X column                                          %
-\newcommand{\cellwidth}{\TX@col@width}                                                   %
+  %%% for tabularx def inside a tabularx X column                                        %
+  \newcommand{\cellwidth}{\TX@col@width}                                                 %
                                                                                          %
-%%% When using Y columns, make sure the sum of the arguments is equal to the number of 
-%%% columns. See tabularx documentation, section 4.3
-\newcolumntype{Y}[1]{>{\hsize=#1\hsize}X}
+  %%% When using Y columns, make sure the sum of the arguments is equal to the number of %
+  %%% columns. See tabularx documentation, section 4.3                                   %
+  \newcolumntype{Y}[1]{>{\hsize=#1\hsize}X}                                              %
+}
 
 %%% tried to have optional arguments in newcolumntype, but didn't work
 %%% http://tex.stackexchange.com/questions/8000/is-it-possible-to-create-a-newcolumntype-like-macro-accepting-more-than-one-arg
