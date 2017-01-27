@@ -106,9 +106,8 @@
 % \RequirePackage{caption}[2008/08/24]
 \RequirePackage{caption}
 
-%\RequirePackage{upgreek}
+%\RequirePackage{upgreek} brings up LaTeX Error: Too many math alphabets used in version normal.
 %\RequirePackage{marvosym}
-%\RequirePackage{dsfont}
 
 %\RequirePackage[amsmath,amsthm,thmmarks]{ntheorem}
 \RequirePackage{amsthm} 
@@ -149,7 +148,8 @@
 
 %\RequirePackage{textcomp} % Euro-Zeichen etc.
 %\RequirePackage{mathdots} % fuer \iddots
-%\RequirePackage{mathrsfs} % for \mathscr{A}
+\RequirePackage{mathrsfs} % for \mathscr{A} (math script font)
+%\RequirePackage{dsfont} % for \mathds{A} (math double stroke font) % produces Too many math alphabets used in version normal.
 \RequirePackage[scale=.9]{tgheros}
 \RequirePackage[bitstream-charter]{mathdesign}
 
@@ -644,43 +644,46 @@
 \newcommand{\@math}[1]{\ensureboldmath{#1}\xspace}
 
 
-%%% Use varmathbb from txfonts without using the package %%%
-% http://tex.stackexchange.com/questions/70368/body-text-affected-in-using-txfonts-package
-\DeclareSymbolFont{lettersA}{U}{txmia}{m}{it}
-\SetSymbolFont{lettersA}{bold}{U}{txmia}{bx}{it}
-\DeclareFontSubstitution{U}{txmia}{m}{it}
-\DeclareMathSymbol{\m@thbbch@rA}{\mathord}{lettersA}{129}
-\DeclareMathSymbol{\m@thbbch@rB}{\mathord}{lettersA}{130}
-\DeclareMathSymbol{\m@thbbch@rC}{\mathord}{lettersA}{131}
-\DeclareMathSymbol{\m@thbbch@rD}{\mathord}{lettersA}{132}
-\DeclareMathSymbol{\m@thbbch@rE}{\mathord}{lettersA}{133}
-\DeclareMathSymbol{\m@thbbch@rF}{\mathord}{lettersA}{134}
-\DeclareMathSymbol{\m@thbbch@rG}{\mathord}{lettersA}{135}
-\DeclareMathSymbol{\m@thbbch@rH}{\mathord}{lettersA}{136}
-\DeclareMathSymbol{\m@thbbch@rI}{\mathord}{lettersA}{137}
-\DeclareMathSymbol{\m@thbbch@rJ}{\mathord}{lettersA}{138}
-\DeclareMathSymbol{\m@thbbch@rK}{\mathord}{lettersA}{139}
-\DeclareMathSymbol{\m@thbbch@rL}{\mathord}{lettersA}{140}
-\DeclareMathSymbol{\m@thbbch@rM}{\mathord}{lettersA}{141}
-\DeclareMathSymbol{\m@thbbch@rN}{\mathord}{lettersA}{142}
-\DeclareMathSymbol{\m@thbbch@rO}{\mathord}{lettersA}{143}
-\DeclareMathSymbol{\m@thbbch@rP}{\mathord}{lettersA}{144}
-\DeclareMathSymbol{\m@thbbch@rQ}{\mathord}{lettersA}{145}
-\DeclareMathSymbol{\m@thbbch@rR}{\mathord}{lettersA}{146}
-\DeclareMathSymbol{\m@thbbch@rS}{\mathord}{lettersA}{147}
-\DeclareMathSymbol{\m@thbbch@rT}{\mathord}{lettersA}{148}
-\DeclareMathSymbol{\m@thbbch@rU}{\mathord}{lettersA}{149}
-\DeclareMathSymbol{\m@thbbch@rV}{\mathord}{lettersA}{150}
-\DeclareMathSymbol{\m@thbbch@rW}{\mathord}{lettersA}{151}
-\DeclareMathSymbol{\m@thbbch@rX}{\mathord}{lettersA}{152}
-\DeclareMathSymbol{\m@thbbch@rY}{\mathord}{lettersA}{153}
-\DeclareMathSymbol{\m@thbbch@rZ}{\mathord}{lettersA}{154}
-\ExplSyntaxOn
-\NewDocumentCommand{\varmathbb}{m}
-{
-  \tl_map_inline:nn { #1 } { \use:c { m@thbbch@r##1 } }
-}
-\ExplSyntaxOff
+%% Produces LaTeX Error: Too many math alphabets used in version normal.
+% good explanation:
+% http://tex.stackexchange.com/questions/40757/diagnosing-the-too-many-math-alphabets-error?newreg=70575bace1b14c7e85dabf89bdcdc78c
+% %%% Use varmathbb from txfonts without using the package %%%
+% % http://tex.stackexchange.com/questions/70368/body-text-affected-in-using-txfonts-package
+% \DeclareSymbolFont{lettersA}{U}{txmia}{m}{it}
+% \SetSymbolFont{lettersA}{bold}{U}{txmia}{bx}{it}
+% \DeclareFontSubstitution{U}{txmia}{m}{it}
+% \DeclareMathSymbol{\m@thbbch@rA}{\mathord}{lettersA}{129}
+% \DeclareMathSymbol{\m@thbbch@rB}{\mathord}{lettersA}{130}
+% \DeclareMathSymbol{\m@thbbch@rC}{\mathord}{lettersA}{131}
+% \DeclareMathSymbol{\m@thbbch@rD}{\mathord}{lettersA}{132}
+% \DeclareMathSymbol{\m@thbbch@rE}{\mathord}{lettersA}{133}
+% \DeclareMathSymbol{\m@thbbch@rF}{\mathord}{lettersA}{134}
+% \DeclareMathSymbol{\m@thbbch@rG}{\mathord}{lettersA}{135}
+% \DeclareMathSymbol{\m@thbbch@rH}{\mathord}{lettersA}{136}
+% \DeclareMathSymbol{\m@thbbch@rI}{\mathord}{lettersA}{137}
+% \DeclareMathSymbol{\m@thbbch@rJ}{\mathord}{lettersA}{138}
+% \DeclareMathSymbol{\m@thbbch@rK}{\mathord}{lettersA}{139}
+% \DeclareMathSymbol{\m@thbbch@rL}{\mathord}{lettersA}{140}
+% \DeclareMathSymbol{\m@thbbch@rM}{\mathord}{lettersA}{141}
+% \DeclareMathSymbol{\m@thbbch@rN}{\mathord}{lettersA}{142}
+% \DeclareMathSymbol{\m@thbbch@rO}{\mathord}{lettersA}{143}
+% \DeclareMathSymbol{\m@thbbch@rP}{\mathord}{lettersA}{144}
+% \DeclareMathSymbol{\m@thbbch@rQ}{\mathord}{lettersA}{145}
+% \DeclareMathSymbol{\m@thbbch@rR}{\mathord}{lettersA}{146}
+% \DeclareMathSymbol{\m@thbbch@rS}{\mathord}{lettersA}{147}
+% \DeclareMathSymbol{\m@thbbch@rT}{\mathord}{lettersA}{148}
+% \DeclareMathSymbol{\m@thbbch@rU}{\mathord}{lettersA}{149}
+% \DeclareMathSymbol{\m@thbbch@rV}{\mathord}{lettersA}{150}
+% \DeclareMathSymbol{\m@thbbch@rW}{\mathord}{lettersA}{151}
+% \DeclareMathSymbol{\m@thbbch@rX}{\mathord}{lettersA}{152}
+% \DeclareMathSymbol{\m@thbbch@rY}{\mathord}{lettersA}{153}
+% \DeclareMathSymbol{\m@thbbch@rZ}{\mathord}{lettersA}{154}
+% \ExplSyntaxOn
+% \NewDocumentCommand{\varmathbb}{m}
+% {
+%   \tl_map_inline:nn { #1 } { \use:c { m@thbbch@r##1 } }
+% }
+% \ExplSyntaxOff
 
 
 %%% Letters in mathcal,mathfrak,mathscr,mathds %%%
@@ -694,30 +697,34 @@
            a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}
 
 \@ifpackageloaded{mathrsfs}{
-\renewcommand*{\do}[1]{%
-  \expandafter\newcommand\csname #1ms\endcsname{\@math{\mathscr{#1}}}} 
-\docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+  \renewcommand*{\do}[1]{%
+    \expandafter\newcommand\csname #1ms\endcsname{\@math{\mathscr{#1}}}} 
+  \docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
 }{}
 
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname #1sf\endcsname{\@math{\mathsf{#1}}}} 
 \docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
 
-\renewcommand*{\do}[1]{%
-  \expandafter\newcommand\csname #1ds\endcsname{\@math{\mathds{#1}}}} 
-\docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+
+\@ifpackageloaded{dsfont}{
+  \renewcommand*{\do}[1]{%
+    \expandafter\newcommand\csname #1ds\endcsname{\@math{\mathds{#1}}}} 
+  \docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+}
 
 \renewcommand*{\do}[1]{%
-  \expandafter\newcommand\csname #1bb\endcsname{\@math{\varmathbb{#1}}}} 
+  \expandafter\newcommand\csname #1bb\endcsname{\@math{\mathbb{#1}}}} 
 \docsvlist{A,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
-\renewcommand{\Bbb}{\@math{\varmathbb{B}}}
+\renewcommand{\Bbb}{\@math{\mathbb{B}}}
+
 
 %%% Numbers %%%
-\newcommand{\nat}{\@math{\varmathbb{N}}}
-\newcommand{\natwz}{\@math{\varmathbb{N}_0}}
-\newcommand{\integ}{\@math{\varmathbb{Z}}}
-\newcommand{\rat}{\@math{\varmathbb{Q}}}
-\newcommand{\real}{\@math{\varmathbb{R}}}
+\newcommand{\nat}{\@math{\mathbb{N}}}
+\newcommand{\natwz}{\@math{\mathbb{N}_0}}
+\newcommand{\integ}{\@math{\mathbb{Z}}}
+\newcommand{\rat}{\@math{\mathbb{Q}}}
+\newcommand{\real}{\@math{\mathbb{R}}}
 
 
 
@@ -841,8 +848,8 @@
 %\newcommand{\G}{\Gmc}
 \newcommand{\II}{\@math{\I=(\Delta^{\I},\cdot^{\I})}}
 \newcommand{\HH}{\@math{\Hmc=(\Gamma,\cdot^{\Hmc})}}
-%\newcommand{\C}{\@math{\mathbbm{C}}}
-\newcommand{\JJ}{\@math{\J=(\C,\cdot^{\J},\Delta^{\J},(\cdot^{\I_c})_{c\in\C})}}
+\newcommand{\Cbbm}{\@math{\mathbbm{C}}}
+\newcommand{\JJ}{\@math{\J=(\Cbb,\cdot^{\J},\Delta^{\J}{\kern-0.2em},(\cdot^{\I_c})_{c\in\Cbb})}}
 
 \newcommand{\KK}{\@math{\Kmc=(\T,\A,\RM,\RO)}}
 
@@ -1090,10 +1097,14 @@
 % \newcommand{\SCCROM}{\@math{\Sigma}-CCROM}
 
 %%% ToDo macros %%%
-\newcommand{\ayt}[1]{\todo[color=red,inline]{(ayt) #1}}
-\newcommand{\stb}[1]{\todo[inline,color=yellow]{(sb) #1}}
-\newcommand{\tk}[1]{\todo[inline,color=green]{(tk) #1}}
-
+\@ifpackageloaded{todonotes}{
+  \newcommand{\missingproof}{%
+    \begin{proof}
+      \mbox{}
+      \todo[inline]{\vspace{1cm} The proof here is still missing!}
+    \end{proof}
+  }
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% tabular related macros and fixes                                                   %%%
