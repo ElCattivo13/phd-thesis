@@ -4,13 +4,13 @@
 
 In this chapter, we introduce 
 
-\todo[inline]{Missing text}
+\todo[inline]{some introduction}
 
 
 \section{Description Logics}
 \label{sec:description-logics}
 
-\todo[inline]{missing text}
+\todo[inline]{a few words to begin with}
 
 \subsection{Description Logic Concepts}
 \label{sec:dl-concepts}
@@ -19,13 +19,20 @@ In this chapter, we introduce
 The basic building blocks in description logics are so-called \emph{concepts}. As described
 
 used as description, classify a set of objects
+\todo[inline]{what are concepts and for what are they good}
 
+Note that in the following definitions we refer to the triple \Nsig explicitly although it is
+usually left implicit in standard definitions.  This turns out to be useful in chapter
+\ref{cha:context-dls} as we need to distinguish between the symbols used in the meta level and the
+object level.  Sometimes we omit \Nsig, however, if it is clear from the context.
+%
 
-\begin{definition}[Syntax of \Nsig-concepts]
+\begin{definition}[Syntax of \Nsig-roles and \Nsig-concepts]
   \label{def:syntax-concepts}
   Let \NC, \NR, \NI be non-empty, pairwise disjoint sets of \emph{concept names}, \emph{role names},
-  and \emph{individual names}. Furthermore let $\Nsig\coloneqq(\NC,\NR,\NI)$. A \emph{\Nsig-role} $r$ is
-  either a role name, i.e.~$r\in\NR$, or it is of the form $s^{-}$ with $s\in\NR$ (\emph{inverse role}).
+  and \emph{individual names}. Then, the triple $\Nsig\coloneqq(\NC,\NR,\NI)$ is the
+  \emph{signature}. An \emph{\Nsig-role} $r$ is either a role name, i.e.~$r\in\NR$, or it is of the
+  form $s^{-}$ with $s\in\NR$ (\emph{inverse role}).
 
   The set of \emph{\Nsig-concepts} is the smallest set, such that
   \begin{itemize}
@@ -51,25 +58,33 @@ interpretations.
 
 \begin{definition}[\Nsig-interpretation, Semantics of \Nsig-concepts]
   \label{def:n-interpretation}
-  Let $\Nsig\coloneqq(\NC,\NR,\NI)$. Then, an \emph{\Nsig-interpretation \I} is a pair
+  Let $\Nsig\coloneqq(\NC,\NR,\NI)$ be the signature. Then, an \emph{\Nsig-interpretation \I} is a pair
   $(\Delta^{\I}, \cdot^{\I})$ where the \emph{domain} $\Delta^{\I}$ is a non-empty set and
-  the \emph{interpretation function} $\cdot^{\I}$ maps \todo{evtl noch was zur UNA}
+  the \emph{interpretation function} $\cdot^{\I}$ maps \todo{sth. about UNA?}
   \begin{itemize}
   \item every concept name $A\in\NC$ to the set $A^{\I}\subseteq\Delta^{\I}$,
   \item every role name $r\in\NR$ to the binary relation
     $r^{\I}\subseteq\Delta^{\I}\times\Delta^{\I}$, and
-  \item every individual name $a\in\NI$ to the element $a^{\I}\in\Delta^{\I}$. \qedhere
+  \item every individual name $a\in\NI$ to the element $a^{\I}\in\Delta^{\I}$.
   \end{itemize}
 
-  Now, that function is extended for inverse roles and concepts as follows:
+  Now, that function is extended for inverse roles and complex concepts as follows:
   \begin{itemize}
   \item $(s^{-})^{\I} \coloneqq \left\{(d,c)\in\Delta^{\I}\times\Delta^{\I}\mmid (c,d)\in
       s^{-}\right\}$,
   \item $(\lnot C)^{\I} \coloneqq \Delta^{\I} \setminus C^{\I}$,
+  \item $(C \sqcap D)^{\I} \coloneqq C^{\I} \cap D^{\I}$,
+  \item $(\exists r.C)^{\I} \coloneqq \{d \in \Delta^\I \mid \text{there is an}\ e \in C^\I \
+    \text{with}\ (d,e)\in r^\I\}$,
+  \item $\{a\}^{\I} \coloneqq \{a^{\I}\}$, and
+  \item $(\atleast{n}{r}{C})^{\I} \coloneqq \{d \in \Delta^{\I} \mid \sharp\{e\in C^{\I}\mid (d,e)\in r^{\I}\}\ge n\}$.
   \end{itemize}
+  where $\sharp S$ denotes the cardinality of the set $S$.
 \end{definition}
 
+With these notions at hand, we can already define some first 
 
+\todo[inline]{some text and example of a complex concept with an interpretation.}
 some text
 
 \begin{example}
@@ -79,10 +94,89 @@ some text
 
 
 
-\subsection{Description Logic Axioms}
+\subsection{Boolean Knowledge Bases}
 \label{sec:dl-axioms}
 
+\todo[inline]{introducing words, why BKB, what are they made of, what are axioms}
 
+\begin{definition}[Syntax of axioms over \Nsig, BKBs over \Nsig]
+  Let $\Nsig\coloneqq(\NC,\NR,\NI)$ be the signature. Then, if $C$ and $D$ are \Nsig-concepts, $r$
+  and $s$ are a \Nsig-roles, and $\{a,b\}\subseteq\NI$, then $C \sqsubseteq D$ (\emph{general concept inclusion,
+    GCI}), $C(a)$ (\emph{concept assertion}), $r(a,b)$ (\emph{role assertion}), $r \sqsubseteq s$
+  (\emph{role inclusion}), and $\mathsf{trans}(r)$ (\emph{transitivity axiom}) are
+  \emph{axioms over \Nsig}.
+
+  Moreover, an \emph{RBox \Rmc over \Nsig} is a finite set of role inclusions over \Nsig and
+  transitivity axioms over \Nsig. A \emph{Boolean axiom formula over \Nsig} is defined inductively
+  as follows:
+  \begin{itemize}
+  \item every GCI over \Nsig is a Boolean axiom formula over \Nsig,
+  \item every concept and role assertion over \Nsig is a Boolean axiom formula over \Nsig,
+  \item if $\Bmc_{1}$, $\Bmc_{2}$ are Boolean axiom formulas over \Nsig, then so are $\lnot\Bmc_{1}$
+    (axiom negation) and $\Bmc_{1}\land\Bmc_{2}$ (axiom conjunction), and
+  \item nothing else is a Boolean axiom formula over \Nsig.
+  \end{itemize}
+
+  Finally, a \emph{Boolean knowledge base (BKB) over \Nsig} is a pair $\Bmf = (\Bmc, \Rmc)$, where
+  \Bmc is a Boolean axiom formula over \Nsig and \Rmc is an RBox over \Nsig. An \emph{ontology over
+    \Nsig} is a BKB over \Nsig, where only axiom conjunction and no axiom negation is allowed in the
+  Boolean axiom formula.
+\end{definition}
+
+Often an ontology $\Omc = (\Bmc, \Rmc)$ is written as a triple $\Omc = (\Tmc, \Amc, \Rmc)$ where
+\Tmc (\emph{TBox}) is the set of all GCIs occurring in \Bmc and \Amc (\emph{ABox}) is the set of all
+assertion axioms occurring in \Bmc.  Again as usual in logics, we use $\Bmc_1\lor\Bmc_2$ (axiom
+disjunction) as abbreviation for $\lnot(\lnot\Bmc_1\land\lnot\Bmc_2)$.
+
+\begin{definition}[Semantics of axioms over \Nsig, BKBs over \Nsig]
+  An \Nsig-interpretation \I is a model of
+  \begin{itemize}
+  \item the GCI $C \sqsubseteq D$ over \Nsig if $C^{\I} \subseteq D^{\I}$,
+  \item the concept assertion $C(a)$ over \Nsig if $a^{\I} \in C^{\I}$,
+  \item the role assertion $r(a,b)$ over \Nsig if $(a^\I,b^\I)\in r^\I$,
+  \item the role inclusion $r \sqsubseteq s$ over \Nsig if $r^\I \subseteq s^\I$, and
+  \item the transitivity axiom $\mathsf{trans}(r)$ over \Nsig if $r^\I=(r^\I)^+$, where $\cdot^{+}$
+    denotes the transitive closure of a binary relation.
+  \end{itemize}
+
+  This is extended to Boolean axiom formulas over~\Nsig inductively as follows:
+  \begin{itemize}
+  \item \I is a model of $\lnot\B_1$ if it is not a model of~$\B_1$, and
+  \item \I is a model of $\B_1\land\B_2$ if it is a model of both $\B_1$ and~$\B_2$.
+  \end{itemize}
+
+  We write $\I\models\alpha$ and $\I\models\Bmc$ if \I is a model of the axiom~$\alpha$ over~\Nsig
+  or \I is a model of the Boolean axiom formula~\B, respectively. Furthermore, \I is a model of an
+  RBox~\Rmc over~\Nsig (written $\I\models\Rmc$) if it is a model of each axiom in \Rmc.
+
+  Finally, \I is a model of the BKB $\Bmf=(\B,\Rmc)$ over~\Nsig (written $\I\models\Bmf$) if it is a
+  model of both~\B and~\Rmc.  We call~\Bmf \emph{consistent} if it has a model.
+\end{definition}
+
+\todo[inline]{paragraph about names of DLs, what is \EL, \ALC, \SHOIQ, ...}
+
+\todo[inline]{paragraph about simple roles, restrictions for \SHQ ...}
+
+In the rest of this thesis, we make this restriction to the syntax of \SHQ and all its
+extensions.
+
+This restriction is also the reason why there are no Boolean combinations of
+role inclusions and transitivity axioms allowed in the RBox~\Rmc over~\Nsig in
+the above definition.  Otherwise the notion of a simple role w.r.t.~\Rmc
+involves reasoning.  Consider, for instance, the Boolean combination of axioms
+$(\mathsf{trans}(r)\lor\mathsf{trans}(s))\land r\sqsubseteq s$.  It should be
+clear that $s$ is not simple, but this is no longer a pure syntactic check.
+
+\todo[inline]{few words about next example}
+
+\begin{example}
+  
+\end{example}
+
+\subsection{Complexity results for specific description logics}
+\label{sec:compl-results-spec}
+
+\todo[inline]{paragraph about expTime of \ALC, BKBs for SHOQ (Marcels thesis), ...}
 
 \clearpage
 
