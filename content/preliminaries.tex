@@ -150,8 +150,24 @@ disjunction) as abbreviation for $\lnot(\lnot\Bmc_1\land\lnot\Bmc_2)$.
   RBox~\Rmc over~\Nsig (written $\I\models\Rmc$) if it is a model of each axiom in \Rmc.
 
   Finally, \I is a model of the BKB $\Bmf=(\B,\Rmc)$ over~\Nsig (written $\I\models\Bmf$) if it is a
-  model of both~\B and~\Rmc.  We call~\Bmf \emph{consistent} if it has a model.
+  model of both~\B and~\Rmc.  We call~\Bmf \emph{consistent} if it has a model.  The
+  \emph{consistency problem} is the problem of deciding whether a given BKB is consistent.
 \end{definition}
+
+\todo[inline]{some paragraph for reasoning tasks and why only consider consistency problem}
+
+Note that besides the consistency problem there are several other reasoning tasks for description
+logics.  The entailment problem, for instance, is the problem of deciding, given a BKB~\Bmf and an
+axiom~$\beta$, whether \Bmf \emph{entails} $\beta$, i.e.~whether all models of~\Bmf are also models
+of~$\beta$.
+%
+The consistency problem, however, is fundamental in the sense that most other standard decision
+problems (reasoning tasks) can be polynomially reduced to it (in the presence of axiom negation).
+For the entailment problem, note that it can be reduced to the \emph{in}consistency problem: $\Bmf=(\B,\Rmc)$
+entails $\beta$ iff $(\B\land\lnot\beta,\Rmc)$ is inconsistent.  Hence, we focus in this thesis only
+on the consistency problem.
+
+
 
 \todo[inline]{paragraph about names of DLs, what is \EL, \ALC, \SHOIQ, ...}
 
