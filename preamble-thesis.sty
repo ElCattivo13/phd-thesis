@@ -129,6 +129,13 @@
 \RequirePackage{printlen}
 
 
+%% the silence package to suppress unwanted warnings
+% Remember: silence does not fix anything!
+\RequirePackage{silence}
+% http://tex.stackexchange.com/questions/23977/what-does-the-warning-about-moved-marginpar-mean
+\WarningFilter{latex}{Marginpar on page}
+
+
 \ifpre@ltablex
   % http://tex.stackexchange.com/questions/115177/nested-tabularx-doesnt-work-with-ltablex
   %
