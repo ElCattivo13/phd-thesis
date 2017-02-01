@@ -1,18 +1,142 @@
-\chapter{The Contextualized Description Logic SHOIQSHOIQ}
-
-
-
+\chapter{The Contextualized Description Logic LMLO}
 \label{cha:context-dls}
 
-\begin{definition}[Syntax and Semantics of \SHOIQSHOIQ]
-  Let \MC, \MR, \MI, \OC, \OR and \OI be non-empty, pairwise disjoint sets of \emph{meta concept}, \emph{role} and
-  \emph{individual names} and\emph{ object concept}, \emph{role} and \emph{individual
-    names}. Furthermore, let $\Msig \coloneqq (\MC,\MR,\MI)$,  $\Osig \coloneqq (\OC,\OR,\OI)$, and
-  let $\OCR\subseteq\OC$ be the set of \emph{rigid object concept names} and $\ORR\subseteq\OR$ be the set of \emph{rigid object role names}.
+\todo[inline]{somewhere a few paragraphs about existing cdls and why they are not feasible in my
+  setting.}
+
+
+Some introduction
+
+As mentioned in the introduction classical description logics lack the expressive power to capture
+knowledge about \ldots
+
+mention somewhere what \LM and \LO are.
+
+\todo[inline]{introductory paragraphs to this chapter}
+
+
+\section{Syntax and Semantics of Contextualized Description Logics}
+\label{sec:syn-seman-cdl}
+
+conceptually we start with an description logic \LM on the meta level. Here we can state our
+knowledge about contexts. We enrich this with \ldots 
+
+\todo[inline]{basic ideas how the syntax works}
+
+
+Throughout this chapter, let $\Msig = (\MC, \MR, \MI)$ and $\Osig = (\OC, \OR, \OI)$ denote the
+signatures for \LM and \LO. Thus, we call \MC, \MR, \MI, \OC, \OR and \OI, respectively, the set of
+\emph{meta concept}, \emph{role} and \emph{individual names} and \emph{object concept}, \emph{role}
+and \emph{individual names}.
+
+\begin{definition}[Syntax of \LMLO]\label{def:syntax-cdls}
+  A \emph{concept of the object logic~\DLinner (o-concept)} is an \DLinner-concept over~\Osig.  An
+  \emph{o-axiom} is an \DLinner-GCI over~\Osig, an \DLinner-concept assertion over~\Osig, or an
+  \DLinner-role assertion over~\Osig.
+
+  The set of \emph{concepts of the meta logic~\DLouter (m-concepts)} is the smallest set such that
+  \begin{itemize}
+  \item for all $A\in\MC$, $A$ is a meta concept (\emph{\todo{here I'm struggling with names. I need
+        some distinction between ``pure meta concept'' and ``referring meta concepts'' as I need the
+        second name very often}???}),
+  \item for all o-axioms $\alpha$, \oalpha is a meta concept (\emph{???}), and
+  \item all complex concepts that can be built with the concept constructors allowed in \LM are meta
+    concepts.
+  \end{itemize}
+  
+  An \emph{m-axiom} is \todo{what exactly is an m-axiom?}
+
+  Analogously a \emph{Boolean m-axiom formula} is defined inductively as follows:
+  \begin{itemize}
+  \item every m-axiom is a Boolean m-axiom formula,
+  \item if $\B_1,\B_2$ are Boolean m-axiom formulas, then so are $\lnot\B_1$ and $\B_1\land\B_2$,
+    and
+  \item nothing else is a Boolean m-axiom formula.
+  \end{itemize}
+    %
+  Finally, a \emph{Boolean \LMLO-knowledge base (\LMLO-BKB)} is a triple $\Bmf=(\B,\RO,\RM)$ where
+  \RO is an \LO-RBox over~\Osig, \RM an \LM-RBox over~\Msig, and \B is a Boolean m-axiom formula. An
+  \emph{\LMLO-ontology} is an \LMLO-BKB, where only axiom conjunction and no axiom negation is
+  allowed in the Boolean m-axiom formula.
 \end{definition}
 
-Note that we often refer to \OCR and \ORR simply as \emph{rigid concept names} and \emph{rigid role
-  names} as there is no such notion on the meta level.
+For the same reasons as mentioned in section \ref{sec:description-logics}, role inclusions
+over~\Osig and transitivity axioms over~\Osig are not allowed to constitute m-concepts.  However, we
+fix an RBox~\RO over~\Osig that contains such o-axioms and holds in \emph{all} contexts.  The same
+applies to role inclusions over~\Msig and transitivity axioms over~\Msig, which are only allowed to
+occur in a RBox~\RM over~\Msig.
+
+Again, we use the usual abbreviations (for disjunctions etc.) for m-concepts and
+Boolean m-axiom formulas.
+
+The semantics of \LMLO is defined by the notion of \emph{nested interpretations}.  These consist of
+\Osig-interpretations for the specific contexts and an \Msig-interpretation for the relational
+structure between them.  We assume that all contexts speak about the same non-empty domain
+(\emph{constant domain assumption}). \todo{here something about constant domain assumption,
+  references.}
+
+As argued earlier, sometimes it is desired that concepts or roles in the object logic are
+interpreted the same in all contexts. Therefore we introduce \emph{rigid names}. Let
+$\OCR\subseteq\OC$ be the set of \emph{rigid object concept names} and $\ORR\subseteq\OR$ be the set
+of \emph{rigid object role names}.
+%
+Often, we refer to \OCR and \ORR simply as \emph{rigid concepts} and \emph{rigid roles} as there is
+no such notion on the meta level.
+%
+We call concept names and role names in $\OC\setminus\OCR$ and $\OR\setminus\ORR$ \emph{flexible}.
+%
+Moreover, we assume that individuals of the object logic are always interpreted the same in all
+contexts (\emph{rigid individual assumption}). \todo{reference to RIA}
+
+\begin{definition}[Nested interpretation]\label{def:nested-interpretation}
+  A \emph{nested interpretation} is a tuple \todo{not nice!}\\ \JJ, where \Cbb is a non-empty set (called
+  \emph{contexts}) and $(\Cbb,\cdot^\J)$ is an \Msig-interpretation.
+  %
+  Moreover, for every $c\in\Cbb$, $\I_c\coloneqq(\Delta^{\J},\cdot^{\I_c})$ is an \Osig-interpretation
+  such that we have for all $c,c'\in\Cbb$ that $x^{\I_{c}}=x^{\I_{c'}}$ for every
+  $x\in\OI\cup\OCR\cup\ORR$.
+\end{definition}
+
+We are now ready to define the semantics of \LMLO.
+
+\begin{definition}[Semantics of \LMLO]
+  Let \JJ be a nested interpretation.  The mapping $\cdot^\J$ is extended to o-axioms
+  \todo{referenced meta concept} as follows: $\oalpha^\J:=\{c\in\Cbb\mid\I_c\models\alpha\}$.
+
+    Moreover, \J is a model of the m-axiom $\beta$ if $(\Cbb,\cdot^\J)$ is a model
+    of $\beta$.  This is extended to Boolean m-axiom formulas inductively as
+    follows:
+    \begin{itemize}
+        \item \J is a model of $\lnot\B_1$ if it is not a model of $\B_1$, and
+        \item \J is a model of $\B_1\land\B_2$ if it is a model of both $\B_1$
+            and $\B_2$.
+    \end{itemize}
+    We write $\J\models\B$ if \J is a model of the Boolean m-axiom formula~\B.
+    Furthermore, \J is a model of~\RM (written $\J\models\RM$) if
+    $(\Cbb,\cdot^\J)$ is a model of~\RM, and \J is a model of~\RO (written
+    $\J\models\RO$) if $\I_{c}$ is a model of~\RO for all $c\in\Cbb$.
+    
+    Finally, \J is a model of the \con{\DLouter}{\DLinner}-BKB \BB (written
+    $\J\models\Bmf$) if \J is a model of~\B, \RO, and~\RM.  We call~\Bmf
+    \emph{consistent} if it has a model.
+
+    The \emph{consistency problem in \LMLO} is the problem of deciding whether a given
+    \LMLO-BKB is consistent.
+\end{definition}
+
+
+
+\todo[inline]{some words about the next example.}
+
+\begin{example}
+  
+\end{example}
+
+\section{Complexity of the Consistency Problem}
+\label{sec:complexity-consis-problem}
+
+
+
 
 \begin{definition}[\mbox{\Nsig-interpretation (weakly) respects $(\Umc,\Ymc)$}]
   \label{def:int-respects-D} 
