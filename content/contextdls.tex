@@ -135,8 +135,179 @@ We are now ready to define the semantics of \LMLO.
 \section{Complexity of the Consistency Problem}
 \label{sec:complexity-consis-problem}
 
+\todo[inline]{somewhere a few words about top down view, can't go up, because of that its possible
+  to divide reasoning problem into two subtasks, later on }
+
+\todo[inline]{results later}
+
+\subsection{Upper bounds}
+\label{sec:upper-bounds}
+
+For the upper bounds, let in the following \BB be an \LMLO-BKB.  We proceed
+similar to what was done for \ALC-LTL in~\cite{BaGL-KR08,BaGL-ToCL12} (and
+\SHOQ-LTL in~\cite{Lip-PhD14}) and reduce the consistency problem to two separate
+decision problems.
+
+For the first problem, we consider the so-called \emph{outer abstraction}, which is the \LM-BKB
+over~\Msig obtained by replacing each \todo{referring m-concept?} m-concept of the form \oalpha
+occurring in~\B by a fresh concept name such that there is a 1--1 relationship between them.
+
+\begin{definition}[Outer abstraction]
+  Let \BB be an \LMLO-BKB.  Let \bsf be the bijection mapping every m-concept of the form \oalpha
+  occurring in~\B to the concept name $A_{\oalpha}\in\MC$, where we assume w.l.o.g.\ that
+  $A_{\oalpha}$ does not occur in~\B.
+  \begin{enumerate}
+  \item The \LM-concept $C^{\bsf}$ over \Msig is obtained from the m-concept~$C$ by replacing every occurrence of
+    \oalpha by $\bsf(\oalpha)$.
+  \item The Boolean \LM-axiom formula~\Bb over \Msig is obtained from~\B by replacing every
+    m-concept $C$ occurring in~\B with~$C^{\bsf}$.  We call the \DLouter-BKB $\Bmfb=(\Bb,\RM)$ the
+    \emph{outer abstraction of~\Bmf}.
+        \item Given \JJ, its \emph{outer abstraction} is the
+            \Msig-interpretation $\Jb=(\Cbb,\cdot^{\Jb})$ where
+            \begin{itemize}
+                \item for every $x\in\MR\cup\MI\cup(\MC\setminus\ran(\bsf))$, we
+                    have $x^{\Jb}=x^\J$, and
+                \item for every $A\in\ran(\bsf)$, we have
+                    $A^{\Jb}=(\bsf^{-1}(A))^\J$,
+            \end{itemize}
+            where $\ran(\bsf)$ denotes the image of~\bsf. \qedhere
+    \end{enumerate}
+\end{definition}
+
+For simplicity, for $\Bmf'=(\B',\RO,\RM)$ where $\B'$ is a subformula of~\B, we
+denote by $(\Bmf')^\bsf$ the outer abstraction of~$\Bmf'$ that is obtained by
+restricting \bsf to the m-concepts occurring in~$\B'$.
+%
+Now let us consider the following small example.
 
 
+\begin{example}\label{ex:outer-abstraction}
+  Let $\Bmf_{\text{ex}} = (\B_{\text{ex}},\emptyset,\emptyset)$ with $\B_{\text{ex}}\coloneqq
+  C\sqsubseteq(\oax{A\sqsubseteq\bot})\ \land\ (C\sqcap\oax{A(a)})(c)$ be an \ALCALC-BKB.  Then,
+  \bsf maps $\oax{A\sqsubseteq\bot}$ to $A_{\oax{A\sqsubseteq\bot}}$ and $\oax{A(a)}$ to
+  $A_{\oax{A(a)}}$.  Thus, we have that
+  \begin{align*}
+    \Bmf_{\text{ex}}^\bsf\coloneqq \Big(C\sqsubseteq(A_{\oax{A\sqsubseteq\bot}})\ \land\ (C\sqcap
+    A_{\oax{A(a)}})(c),\ \emptyset\Big)
+  \end{align*}
+  is the outer abstraction of $\Bmf_\text{ex}$.
+\end{example}
+
+The following lemma makes the relationship between \Bmf and its outer abstraction
+\Bmfb explicit.  It is proved by induction on the structure of~\B.
+
+\begin{lemma}\label{lem:interpretation-outer-abstraction}
+  Let \J be a nested interpretation such that \J is a model of \RO.  Then, \J is a model of \Bmf iff
+  $\Jb$ is a model of~\Bmfb.
+\end{lemma}
+
+\begin{proof}
+  Since $r^{\J}=r^{\Jb}$ for all \LM-role $r$ over \Msig, we have that \J is a model of \RM iff \Jb is a model of
+  \RM. Thus, it is only left to show that for any m-axiom $\gamma$ occurring in \B, it holds that
+  $\J \models \gamma$ iff $\Jb \models \gamma^{\bsf}$.
+
+  \begin{claim}
+    For any $x \in \Cbb$ it holds that $x \in C^{\J}$ iff
+    $x \in (C^{\bsf})^{\Jb}$.
+  \end{claim}
+
+  \begin{claimproof}
+    We prove the claim by induction on the structure of $C$: \todo{müssen hier noch inverse rollen
+      betrachtet werden? eigentlich nicht.}
+
+    \begin{tabularx}{\linewidth}{@{}l@{ }X@{}}
+      $C = A \in \MC\!\setminus\!\ran(\bsf)$: 
+      & $x \in A^{\J}$ 
+        iff $x \in (A^{\bsf})^{\Jb}$ by definition of $\Jb$ and since $A = A^{\bsf}$ 
+      \\[1ex]
+      $C = \oalpha$:
+      & $x \in \oalpha^{\J}$
+        iff $x \in (A_{\oalpha})^{\Jb}$
+        iff $x \in (\oalpha^{\bsf})^{\Jb}$
+      \\[1ex] 
+      $C = \lnot D$:
+      & $x \in (\lnot D)^{\J}$ 
+        iff $x \notin D^{\J}$ 
+        iff, by induction hypothesis, $x \notin (D^{\bsf})^{\Jb}$ 
+        iff $x \in (\lnot D^{\bsf})^{\Jb}$ 
+        iff $x \in ((\lnot D)^{\bsf})^{\Jb}$ 
+      \\[1ex]
+      $C = D \sqcap E$: 
+      & $x \in (D \sqcap E)^{\J}$
+        iff $x \in D^{\J}$ and $x \in E^{\J}$ 
+        iff, by induction hypothesis, $x \in (D^{\bsf})^{\Jb}$ and $x \in
+        (E^{\bsf})^{\Jb}$
+        iff $x \in (D^{\bsf} \sqcap E^{\bsf})^{\Jb}$
+        iff $x \in ((D \sqcap E)^{\bsf})^{\Jb}$ 
+      \\[1ex]
+      $C = \exists r.D$: 
+      & $x \in (\exists r.D)^{\J}$
+        iff there exists $y \in \Cbb$ \suth $(x,y) \in r^{\J}$ and $y \in D^{\J}$
+        iff there exists $y \in \Cbb$ \suth $(x,y) \in r^{\Jb}$ and $y \in (D^{\bsf})^{\Jb}$
+        iff $x \in (\exists r.D^{\bsf})^{\Jb}$ 
+        iff $x \in ((\exists r.D)^{\bsf})^{\Jb}$ 
+      \\[1ex]
+      $C = \{a\}$:
+      & $x\in\{a\}^{\J}$ 
+        iff $x\in(\{a\}^{\bsf})^{\Jb}$ by definition of $\Jb$ and since $\{a\} = \{a\}^{\bsf}$ 
+      \\[1ex]
+      $C =\ \atleast{n}{r}{D}$:
+      & $x \in (\atleast{n}{r}{D})^{\J}$
+        iff there are at least $n$ elements $y \in \Cbb$ s.t.\ $(x,y) \in r^{\J}$ and $y \in D^{\J}$
+        iff there are at least $n$ elements $y \in \Cbb$ s.t.\ $(x,y) \in r^{\Jb}$ and $y \in (D^{\bsf})^{\Jb}$
+        iff $x \in (\atleast{n}{r}{D^{\bsf}})^{\Jb}$
+        iff $x \in ((\atleast{n}{r}{D})^{\bsf})^{\Jb}$ 
+    \end{tabularx}
+
+    \vspace{-2.0\baselineskip}
+  \end{claimproof}
+
+  If $\gamma$ is of the form $C \sqsubseteq D$, we have that $\J \models C
+  \sqsubseteq D$ iff $x \in C^{\J}$ implies $x \in D^{\J}$
+  iff (by claim) $x
+  \in (C^{\bsf})^{\Jb}$ implies $x \in (D^{\bsf})^{\Jb}$ iff
+  $\Jb \models C^{\bsf} \sqsubseteq D^{\bsf}$.
+
+  If $\gamma$ is of the form $C(a)$, we have that $\J \models C(a)$ iff
+  $a^{\J} \in C^{\J}$ iff (by claim) $a^{\Jb} \in
+  (C^{\bsf})^{\Jb}$ iff $\Jb \models C^{\bsf}(a)$.
+
+  If $\gamma$ is of the form $r(a,b)$, we have that $\J \models r(a,b)$ iff
+  $(a^{\J}, b^{\J}) \in r^{\J}$ iff $(a^{\Jb},
+  b^{\Jb}) \in r^{\Jb}$ iff $\Jb \models
+  r(a,b)$.
+
+  If \B is of the form $\lnot\B_{1}$, we have that $\J\models\B$ iff not
+  $\J\models\B_{1}$ iff not $\Jb\models\Bb_1$ iff $\Jb\models\Bb$.
+
+  If \B is of the form $\B_{1}\land\B_{2}$, we have that $\J\models\B$ iff $\J\models\B_{1}$ and
+  $\B_{2}$ iff $\Jb\models\Bb_{1}$ and $\Jb\models\Bb_{2}$ iff $\Jb\models\Bb$.
+
+  Since $\J\models\RO$, $\J\models\RM$ iff $\Jb\models\RM$ and $\J\models\B$ iff $\Jb\models\Bb$, we
+  have $\J\models\Bmf$ iff $\Jb\models\Bmfb$.
+\end{proof}
+
+Note that this lemma yields that consistency of~\Bmf implies consistency of~\Bmfb.  Thus, the
+consistency of~\Bmfb is a necessary condition for the consistency of~\Bmf.  However, it is not
+sufficient since the converse does not hold as the following example shows.
+
+\begin{example}\label{ex:outer-abstraction-continued}
+  Consider again $\Bmf_\text{ex}$ of Example~\ref{ex:outer-abstraction}.
+  %
+  Take any \Msig-interpretation $\Hmc=(\Delta^{\Hmc},\cdot^\Hmc)$ with $\Delta^{\Hmc}=\{e\}$,
+  $d^\Hmc=e$, and $C^\Hmc = A_{\oax{A\sqsubseteq\bot}}^\Hmc = A_{\oax{A(a)}}^\Hmc = \{e\}$.
+
+  Clearly, \Hmc is a model of~$\Bmf_\text{ex}^{\bsf}$.  But there is no nested interpretation~\JJ
+  with $\J\models\Bmf_\text{ex}$ since this would imply $\Cbb=\Delta^{\Hmc}$, and that $\I_e$ is a model of
+  both $A\sqsubseteq\bot$ and $A(a)$, which is not possible.
+\end{example}
+
+The above example illustrates that there exist implicit restrictions on the interpretation of the
+meta level as certain combinations of concept names in $\ran(\bsf)$ are not allowed.  Therefore, we
+need to ensure that these are not treated independently.  For expressing such a restriction on the
+model~\Hmc of~\Bmfb, we adapt a notion of~\cite{BaGL-KR08,BaGL-ToCL12}. It is also worth noting that
+this problem occurs also in much less expressive DLs such as \ELbot (i.e.~\EL extended with the
+bottom concept).
 
 \begin{definition}[\mbox{\Nsig-interpretation (weakly) respects $(\Umc,\Ymc)$}]
   \label{def:int-respects-D} 
@@ -151,69 +322,174 @@ We are now ready to define the semantics of \LMLO.
     It \emph{weakly respects} $(\Umc,\Ymc)$ if $\Zmc \subseteq \Ymc$.
 \end{definition}
 
-\begin{definition}[Outer abstraction]
-    Let \BB be an \con{\DLouter}{\DLinner}-BKB.  Let \bsf be the bijection
-    mapping every m-concept of the form \oalpha occurring in~\B to the concept
-    name $A_{\oalpha}\in\MC$, where we assume w.l.o.g.\ that $A_{\oalpha}$ does
-    not occur in~\B.
-    \begin{enumerate}
-        \item The Boolean \DLouter-axiom formula~\Bb over \Msig is obtained
-            from~\B by replacing every occurrence of an m-concept of the form
-            \oalpha by $\bsf(\oalpha)$.  We call the \DLouter-BKB
-            $\Bmfb=(\Bb,\RM)$ the \emph{outer abstraction of~\Bmf}.
-        \item Given \JJ, its \emph{outer abstraction} is the
-            \Msig-interpretation $\Jb=(\Cbb,\cdot^{\Jb})$ where
-            \begin{itemize}
-                \item for every $x\in\MR\cup\MI\cup(\MC\setminus\ran(\bsf))$, we
-                    have $x^{\Jb}=x^\J$, and
-                \item for every $A\in\ran(\bsf)$, we have
-                    $A^{\Jb}=(\bsf^{-1}(A))^\J$,
-            \end{itemize}
-            where $\ran(\bsf)$ denotes the image of~\bsf. \qedhere
-    \end{enumerate}
-\end{definition}
+\todo[inline]{a few words about the meaning of the definition, explanation}
 
 
-\blindtext
+The second decision problem that we use for deciding consistency is needed to make sure that such a
+set of concept names is admissible in the following sense.
 
 \begin{definition}[Admissibility]\label{def:admissibility}
-  Let $\X=\{X_1,~\dots,\ X_k\}\subseteq\powerset{\ran(\bsf)}$.  We call \X \emph{admissible} if
+  Let $\Xmc=\{X_1,~\dots,\ X_k\}\subseteq\powerset{\ran(\bsf)}$.  We call \Xmc \emph{admissible} if
   there exist \Osig-interpretations $\I_1=(\Delta,\cdot^{\I_1})$,~\dots,
   $\I_k=(\Delta,\cdot^{\I_k})$ such that
   \begin{itemize}
   \item $x^{\I_i}=x^{\I_j}$ for all $x\in\OI\cup\OCR\cup\ORR$ and all $i,j\in\{1,\dots,k\}$, and
-  \item every $\I_i$, $1\le i\le k$, is a model of the \DLinner-BKB $\Bmf_{X_{i}}= (\B_{X_i},\RO)$
+  \item every $\I_i$, $1\le i\le k$, is a model of the \LO-BKB $\Bmf_{X_{i}}= (\B_{X_i},\RO)$
     over~\Osig where
     \begin{align*}
       \B_{X_i}:=\bigwedge_{\bsf(\oalpha)\in X_i}\alpha\ \land
       \bigwedge_{\bsf(\oalpha)\in\ran(\bsf)\setminus X_i}\lnot\alpha.
     \end{align*}
   \end{itemize}
-  \vspace{-\baselineskip}
+  \vspace{-1.7\baselineskip}
 \end{definition}
 
+Note that any subset $\Xmc'\subseteq\Xmc$ is admissible if \Xmc is admissible.
+%
+Intuitively, the sets $X_i$ in an admissible set \Xmc consist of concept names \todo{referring concept
+  names} such that the corresponding o-axioms \enquote{fit together}.  Consider again
+Example~\ref{ex:outer-abstraction-continued}.  Clearly, the set
+$\{A_{\oax{A\sqsubseteq\bot}},A_{\oax{A(a)}}\}\in\powerset{\ran(\bsf)}$ \emph{cannot} be contained
+in any admissible set~\Xmc.  
 
-\blindtext
+The next definition captures the above mentioned restriction on the model~\Hmc
+of~\Bmfb.
 
-\begin{definition}[Outer consistency]\label{def:outer-sat}
-  Let $\X\subseteq\powerset{\ran(\bsf)}$.  We call the \DLouter-BKB~\Bmfb over \Msig
-  \emph{outer consistent w.r.t.~\X{}} if there exists a model of~\Bmfb that weakly
-  respects~$(\ran(\bsf),\X)$.
+\todo[inline]{explanation of outer consistency}
+
+\begin{definition}[Outer consistency]\label{def:outer-consistency}
+  Let $\Xmc \subseteq \powerset{\ran(\bsf)}$.  We call the \DLouter-BKB~\Bmfb over \Msig \emph{outer
+    consistent w.r.t.~\Xmc} if there exists a model of~\Bmfb that weakly respects~$(\ran(\bsf),\Xmc)$.
 \end{definition}
 
-\blindtext
+The next two lemmas show that the consistency problem in \LMLO can be decided by checking whether
+there is an admissible set~\Xmc and the outer abstraction of the given \LMLO-BKB is outer consistent
+w.r.t.~\Xmc.
+
+\begin{lemma}\label{lem:model-equivalent-to-admissible}
+  For every \Msig-interpretation \HH, the following two statements are equivalent:
+  \begin{enumerate}
+  \item There exists a model~\J of~\Bmf with $\Jb=\Hmc$.
+  \item \Hmc is a model of~\Bmfb and the set $\{X_d\mid d\in\Gamma\}$ is admissible, where $X_d$ is
+    defined as $X_{d}:=\{A\in\ran(\bsf)\mid d\in A^\Hmc\}$.
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  (1 $\Rightarrow$ 2): Let \JJ be a model of~\Bmf with $\Jb=\Hmc$.  Since $\Jb=\Hmc$, we have that
+  $\Cbb=\Delta^{\Hmc}$.  By Lemma~\ref{lem:interpretation-outer-abstraction}, we have that \Hmc is a
+  model of~\Bmfb.
+    %
+  Moreover, since \bsf is a bijection between m-concepts of the form \oalpha occurring in~\Bmf and
+  concept names of~\MC, we have that $\ran(\bsf)$ is finite, and thus also the set
+  $\Xmc \coloneqq \{X_d\mid d \in \Delta^{\Hmc} \} \subseteq \powerset{\ran(\bsf)}$ is finite.  Let
+  $\Xmc = \{Y_1, \dots, Y_k\}$.  Since $\Cbb = \Delta^{\Hmc}$, there exists an index function
+  $\nu\colon\Cbb\to\{1,\dots,k\}$ such that $X_c = Y_{\nu(c)}$ for every $c\in\Cbb$, i.e.
+  \begin{align*}
+    Y_{\nu(c)} & = \bigl\{\bsf(\oalpha)\mid\text{\oalpha occurs in~\Bmf and}\
+                 c\in\oalpha^\Hmc\bigr\} \\
+               & =  \bigl\{\bsf(\oalpha)\mid\text{\oalpha occurs in~\Bmf and}\ \I_c\models\alpha\bigr\}.
+  \end{align*}
+  Conversely, for every $\mu\in\{1,\dots,k\}$, there is an element $c\in\Cbb$ such that
+  $\nu(c)=\mu$.
+    % 
+  The \Osig-interpretations for showing admissibility of~\Xmc are obtained as follows.  Take
+  $c_1,\dots,c_k \in \Cbb$ such that $\nu(c_1) = 1$,~\dots, $\nu(c_k) = k$.  Now, for every~$i$,
+  $1 \leq i \leq k$, we define the \Osig-interpretation $\Gmc_i:=(\Delta,\cdot^{\I_{c_i}})$.
+  Clearly, we have that $Gmc_i\models\B_{Y_i}$ and since $\J\models\RO$, we have that
+  $Gmc_i\models\Bmf_{Y_i}$.  Moreover, the definition of a nested interpretation yields that
+  $x^{\Gmc_i}=x^{\Gmc_j}$ for all $x\in\OI\cup\OCR\cup\ORR$ and all $i,j \in \{1,\dots,k\}$.  Hence,
+  the \Osig-interpretations $\Gmc_1, \dots, \Gmc_k$ attest admissibility of~\Xmc.
+
+  (2 $\Rightarrow$ 1): Assume that \HH is a model of~\Bmfb and that the set
+  $\Xmc \coloneqq \{X_d\mid d\in\Gamma\}$ is admissible.  Again, since $\ran(\bsf)$ is finite, we
+  have that $\Xmc \subseteq \powerset{\ran(\bsf)}$ is finite.  Let $\Xmc = \{Y_1,\dots,Y_k\}$.
+  Since \Xmc is admissible, there are \Osig-interpretations $\Gmc_1=(\Delta,\cdot^{\Gmc_1})$,~\dots,
+  $\Gmc_k=(\Delta,\cdot^{\Gmc_k})$ such that $\Gmc_i\models\Bmf_{Y_i}$ and $x^{\Gmc_i}=x^{\Gmc_j}$
+  for all $x\in\OI\cup\OCR\cup\ORR$ and all $i,j\in\{1,\dots,k\}$.
+    %
+  Furthermore, there exists an index function $\nu\colon\Gamma\to\{1,\dots,k\}$ such that
+  $Y_{\nu(d)}=X_d$ for every $d\in\Gamma$.
+    %
+  We define a nested interpretation \JJ as follows:
+  \begin{itemize}
+  \item $\Cbb \coloneqq \Delta^{\Hmc}$;
+  \item $x^\J \coloneqq x^\Hmc$ for every $x\in\MC\cup\MR\cup\MI$; and
+  \item $x^{\I_c}:=x^{\Gmc_{\nu(c)}}$ for every $x \in \OC \cup \OR \cup \OI$ and every $c \in \Cbb$.
+  \end{itemize}
+    %
+  By construction of \J, we have that $x^{\Jb} = x^\Hmc$ for every
+  $x \in \MR \cup \MI \cup (\MC \setminus \ran(\bsf))$.
+    %
+  Let $A \in \ran(\bsf)$, and let $\bsf^{-1}(A) = \oalpha$.  We have for every $d \in \Gamma = \Cbb$
+  that $d\in A^{\Jb}$ iff $d\in(\bsf^{-1}(A))^\J$ iff $d \in \oalpha^\J$ iff $\I_d \models \alpha$
+  iff $\Gmc_{\nu(d)}\models\alpha$ iff $\bsf(\oalpha)=A\in Y_{\nu(d)}$ (since
+  $\Gmc_{\nu(d)}\models\B_{Y_{\nu(d)}}$) iff $A\in X_d$ iff $d\in A^\Hmc$.
+    %
+  Hence, we have $\Jb=\Hmc$.
+    %
+  Since \Hmc is a model of~\Bmfb and, by construction of \J, \J is a model of \RO, we have by
+  Lemma~\ref{lem:interpretation-outer-abstraction} that \J is a model of~\Bmf.
+
+  \todo[inline]{noch nicht drüber gelesen, hier müssen sicher noch einige Formelzeichen angepasst
+    werden. Und ist er verständlich???}
+\end{proof}
+
+The following lemma is a consequence of the previous one.
+
+\todo[inline]{a few more words? :/}
 
 \begin{lemma}\label{lem:admissible-and-outerConsistent}
-    The \con{\DLouter}{\DLinner}-BKB~\Bmf is consistent iff there is a set
-    $\X=\{X_1,\dots,X_k\}\subseteq\powerset{\ran(\bsf)}$ such that
+    The \LMLO-BKB~\Bmf is consistent iff there is a set
+    $\Xmc=\{X_1,\dots,X_k\}\subseteq\powerset{\ran(\bsf)}$ such that
     \begin{enumerate}
-        \item \X is admissible, and
-        \item \Bmfb is outer consistent w.r.t.~\X.
+        \item \Xmc is admissible, and
+        \item \Bmfb is outer consistent w.r.t.~\Xmc.
     \end{enumerate}
 \end{lemma}
+
+\begin{proof}
+  \onlyifdirection Let \J be a model of \Bmf, and let $\Jb=(\Cbb,\cdot^{\Jb})$.  By
+  Lemma~\ref{lem:model-equivalent-to-admissible}, we have that $\Jb$ is a model of~\Bmfb, and the
+  set $\Xmc \coloneqq \{X_c \mid c \in \Cbb\}$ is admissible.  By construction, $\Jb$ weakly
+  respects $(\ran(\bsf),\Xmc)$, and hence \Bmfb is outer consistent w.r.t.~\Xmc.
+    
+  \ifdirection Let $\Xmc = \{X_1,\dots,X_k\}\subseteq\powerset{\ran(b)}$ such that \Xmc is
+  admissible and \Bmfb is outer consistent w.r.t.~\Xmc.  Hence there is a model
+  $\Gmc=(\Cbb,\cdot^\Gmc)$ of~\Bmfb that weakly respects $(\ran(\bsf),\Xmc)$.
+    %
+  We define $\Xmc' \coloneqq \{Y_c \mid c\in\Cbb\}$, where
+  $Y_c \coloneqq \{A \in \ran(b) \mid c \in A^\Gmc\}$.  Since \Gmc weakly respects
+  $(\ran(\bsf),\Xmc)$ and $c \in (C_{\ran(b),Y_c})^\Gmc$ for every $c \in \Cbb$, we have that
+  $\Xmc' \subseteq \Xmc$.  Since \Xmc is admissible, this yields admissibility of~$\Xmc'$.
+  Lemma~\ref{lem:model-equivalent-to-admissible} yields now consistency of~\Bmf.
+  %
+  \todo[inline]{noch nicht drübergelesen!}
+\end{proof}
+
+\subsection{Consistency without rigid names}
+\label{sec:cons-without-rigid}
+
+\subsection{Consistency with rigid concept and role names}
+\label{sec:cons-with-rigid}
+
+
+
+
+\subsection{Consistency with only rigid concept names}
+\label{sec:cons-with-only}
+
+
+
+\section{The Case of \EL}
+\label{sec:case-el}
+
+
 \missingproof
+
 
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../thesis"
+%%% reftex-default-bibliography: ("../references.bib")
 %%% End:
