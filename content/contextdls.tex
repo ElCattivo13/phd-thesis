@@ -140,8 +140,7 @@ We are now ready to define the semantics of \LMLO.
 
 \todo[inline]{results later}
 
-\subsection{Upper bounds}
-\label{sec:upper-bounds}
+\todo[inline]{paragraph that we will handle lower bounds in 3.3 where we talk about EL}
 
 For the upper bounds, let in the following \BB be an \LMLO-BKB.  We proceed
 similar to what was done for \ALC-LTL in~\cite{BaGL-KR08,BaGL-ToCL12} (and
@@ -467,6 +466,34 @@ The following lemma is a consequence of the previous one.
   \todo[inline]{noch nicht drübergelesen!}
 \end{proof}
 
+
+\todo[inline]{some text}
+
+\begin{lemma}\label{lem:shoq-outer-consisteny-exptime}
+  Deciding whether a \cSHOQ-BKB \Bmfb is outer consistent w.r.t.~\X can be done in time exponential
+  in the size of~\Bmfb and linear in size of~\X.
+\end{lemma}
+
+\begin{proof}
+  It is enough to show that deciding whether~\Bmfb has a model that weakly respects
+  $(\ran(\bsf),\Xmc)$ can be done in time exponential in the size of~\Bmfb and linear in the size
+  of~\X.  It is not hard to see that we can adapt the notion of a quasimodel respecting a pair
+  $(\Umc,\Ymc)$ of~\cite{Lip-PhD14} to a quasimodel \emph{weakly} respecting $(\Umc,\Ymc)$.  Indeed,
+  one just has to drop Condition~(i) in Definition~3.25 of~\cite{Lip-PhD14}.  Then, the proof of
+  Lemma~3.26 there can be adapted such that our claim follows.  This is done by dropping one check
+  in Step~4 of the algorithm of~\cite{Lip-PhD14}.
+
+    \todo[inline]{complete rewrite necessary}
+\end{proof}
+
+\begin{lemma}\label{lem:shoiq-outer-consisteny-exptime}
+  Deciding whether a \cSHOIQ-BKB \Bmfb is outer consistent w.r.t.~\X can be non-deterministically
+  done in time exponential in the size of~\Bmfb and linear in size of~\X.
+\end{lemma}
+
+\missingproof
+
+
 \subsection{Consistency without rigid names}
 \label{sec:cons-without-rigid}
 
@@ -483,6 +510,9 @@ The following lemma is a consequence of the previous one.
 
 \section{The Case of \EL}
 \label{sec:case-el}
+
+For the sake of completeness 
+
 
 
 \missingproof
