@@ -310,18 +310,19 @@ bottom concept).
 
 \begin{definition}[\mbox{\Nsig-interpretation (weakly) respects $(\Umc,\Ymc)$}]
   \label{def:int-respects-D} 
-  Let $\Umc\subseteq\NC$ and let $\Ymc\subseteq\powerset{\Umc}$.  The \Nsig-interpretation \II
+  Let $\Umc\subseteq\NC$, let $\Ymc\subseteq\powerset{\Umc}$ and let \II be an \Nsig-interpretation.
+  The \emph{type of $d\in\Delta^{\I}$ w.r.t.~\Umc} is defined as
+  $\mathsf{type}_{\Umc}(d) \coloneqq \{A \in \Umc \mid d \in A^{\I}\}$.  The interpretation \I
   \emph{respects} $(\Umc,\Ymc)$ if $\Zmc = \Ymc$ where
   \begin{align*}
-    \Zmc & \coloneqq\{Y\subseteq\Umc\mid\text{there is some $d\in\Delta^\I$ with $d\in(C_{\Umc,Y})^\I$}\}
-    \intertext{and}
-    C_{\Umc,Y}& \coloneqq\bigsqcap_{A \in Y} A\sqcap \bigsqcap_{A\in\Umc\setminus Y} \lnot A.
+    \Zmc & \coloneqq\{Y\subseteq\Umc\mid\text{there is some $d\in\Delta^\I$ with
+           $\mathsf{type}_{\Umc}(d) = Y$}\}
   \end{align*}
 
     It \emph{weakly respects} $(\Umc,\Ymc)$ if $\Zmc \subseteq \Ymc$.
 \end{definition}
 
-\todo[inline]{a few words about the meaning of the definition, explanation}
+\todo[inline]{a few words about the meaning of the definition, explanation. Types usual definition}
 
 
 The second decision problem that we use for deciding consistency is needed to make sure that such a
