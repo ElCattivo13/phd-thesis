@@ -2,20 +2,105 @@
 \chapter{JConHT -- A SHOIQSHOIQ Reasoner}
 \label{cha:jconht}
 
+In the last chapter we showed an automatic mapping from role-based models into contextualized
+description logic ontologies.
 
+A reasoner capable of contextualized DL ontologies
 
-
-\blindtext
 
 In this chapter we only consider \LMLO ontologies instead of \LMLO-BKBs.
 
 
+
+
+\section{Syntax}
+\label{sec:syntax}
+
+\todo[inline]{http://disi.unitn.it/~bouquet/papers/ISWC2003-COWL.pdf}
+
+as widely used for DL reasoner we also use the web ontology language (OWL) for our reasoner. 
+
+use special OWL annotations.
+
+Use outer abstraction and separately define what abstracted meta concepts mean.
+
+
+We decided to use \verb+rdfs:isDefinedBy+
+
+Let us, once again, consider example~\ref{ex:outer-abstraction}:
+\begin{example}\label{ex:outer-abstraction-as-OWL}
+  Let
+  $\Omc \coloneqq (C\sqsubseteq(\oax{A\sqsubseteq\bot}) \land (C\sqcap\oax{A(a)})(c), \emptyset,
+  \emptyset)$ be an \ALCALC ontology. Then \Omc looks in OWL syntax as follows:
+
+\begin{verbatim}
+SubclassOf(cls:C cls:A_ASubBot)
+ClassAssertion(ObjectIntersectionOf(cls:C cls:A_Aa) ind:c)
+SubclassOf(Annotation(rdfs:isDefinedBy cls:A_ASubBot) cls:A owl:Bottom)
+ClassAssertion(Annotation(rdfs:isDefinedBy cls:A_Aa) cls:A ind:a)
+\end{verbatim}
+
+\vspace{-2.0\baselineskip}  
+\end{example}
+
+Furthermore, in practical applications we often encounter object axioms that must hold independently
+of any context. These so-called \emph{global object axioms} are of the form
+$\top \sqsubseteq \oalpha$. Using the above approach would introduce a new abstracted \todo{is that
+  defined somewhere?} meta concept for each such axiom and, thus, unnecessarily bloat the OWL
+ontology. Instead we decided to handle another OWL annotation with a special meaning:
+\verb+rdfs:label "global"+. Consider a light variation of example~\ref{ex:outer-abstraction-as-OWL}:
+
+\begin{example}\label{ex:outer-abstraction-as-OWL-w-global}
+  Let $\Omc \coloneqq (\top\sqsubseteq(\oax{A\sqsubseteq\bot}) \land \oax{A(a)}(c), \emptyset, \emptyset)$ be
+  an \ALCALC ontology. Then \Omc looks in OWL syntax as follows:
+
+\begin{verbatim}
+ClassAssertion(cls:A_Aa ind:c)
+ClassAssertion(Annotation(rdfs:isDefinedBy cls:A_Aa) cls:A ind:a)
+SubclassOf(Annotation(rdfs:label "global") cls:A owl:Bottom)
+\end{verbatim}
+
+\vspace{-2.0\baselineskip}  
+\end{example}
+
+\section{Section 5.2}
+\label{sec:section-5.2}
+
+
 We want to check consistency of \O.
 
+In proof of lemma compl-no-rigid we construct the largest possible set \Xmc that is admissible and
+argue that any \Bb that is outer consistent w.r.t. some admissible $\Xmc'$ is also outer consistent
+w.r.t~\Xmc. But \Xmc can be exponentially large and, thus, we do not want to construct it if not
+necessary.
+
 From Lemma \ref{lem:admissible-and-outerConsistent} we know that it is necessary that \Ob is
-consistent. Assuming \Ob is consistent, we still have to find an
-$\Xmc\subseteq\powerset{\ran{\bsf}}$ such that \Xmc is admissible and \Ob is outer consistent
-w.r.t.~\Xmc. 
+consistent. Assuming \Ob is consistent, we still have to find a set of types
+$\Xmc\subseteq\powerset{\ran(\bsf)}$ such that \Xmc is admissible and \Ob is outer consistent
+w.r.t.~\Xmc.
+
+\noindent
+\begin{tikzpicture}
+  %\grid{(-7,0)}{(7,4)}
+  \node[draw] (a) at (0,4) {\Bb consistent?};
+  \node[draw,below left = -8mm and -30mm of a] (b) at (-5,2) {construct \Xmc \ldots set of types};
+  \draw[->] (a) to[swap] node[inner sep=0]{yes, with $\I\models\Bb$} (b);
+  \node[draw,below right = of a] (c) {\textbf{FALSE}};
+  \draw[->] (a) to node[inner sep=0]{no} (c);
+  \node[below of = b] (d) {Is \Xmc admissible?};
+  \draw[->] (b) to (d);
+  \node[below left = of d] (e){\textbf{TRUE}};
+  \draw[->] (d) to[swap] node[inner sep=0]{yes} (e);
+  \node[below right = of d] (f) {backtracking};
+  \draw[->] (d) to node[inner sep=0]{no} (f);
+  \node[below of = f] (g) {find any admissible \Xmc?};
+  \draw[->] (f) to (g);
+  \node[below left = of g] (h){\textbf{TRUE}};
+  \draw[->] (g) to[swap] node[inner sep=0]{yes} (h);
+  \node[below right = of g] (i){\textbf{FALSE}};
+  \draw[->] (g) to node[inner sep=0]{no} (i);
+\end{tikzpicture}
+
 
 No rigid names, so we can look into each world separately.
 
@@ -36,4 +121,5 @@ No rigid names, so we can look into each world separately.
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../thesis"
+%%% reftex-default-bibliography: ("../references.bib")
 %%% End:
