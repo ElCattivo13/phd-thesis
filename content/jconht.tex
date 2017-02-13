@@ -10,7 +10,61 @@ A reasoner capable of contextualized DL ontologies
 
 In this chapter we only consider \LMLO ontologies instead of \LMLO-BKBs.
 
+We want to check consistency of \O.
 
+\section{A Blackbox Approach}
+\label{sec:blackbox-approach}
+
+In section \ref{sec:complexity-consis-problem} we showed that we can reduce the consistency problem
+of \LMLO to two separate decision problems. 
+
+
+
+
+In the proof of Lemma~\ref{lem:shoqshoq-without-rigid-exptime} we construct the largest possible set
+\Xmc that is admissible and argue that any \Bmfb that is outer consistent w.r.t. some admissible
+$\Xmc'$ is also outer consistent w.r.t~\Xmc. But \Xmc can be exponentially large and, thus, we do
+not want to construct it if not necessary. Alternatively, we can also use the following lemma which
+is a direct consequence of Lemma~\ref{lem:admissible-and-outerConsistent}.
+
+\begin{lemma}
+  \label{lem:consistant-and-admissible-types}
+  The \LMLO-BKB \Bmf is consistent iff there is an \Msig-interpretation \HH such that $\Hmc \models
+  \Bmfb$ and $\Zmc = \{ \mathsf{type}_{\ran(b)}(d) \mid d \in \Delta^{\Hmc}\}$ is admissible.
+\end{lemma}
+
+\begin{proof}
+  Let us assume that \Bmf is consistent.
+  By Lemma~\ref{lem:admissible-and-outerConsistent} we know, if \Bmf is consistent than there exists
+  an admissible set \Xmc such that \Bmfb is outer consistent w.r.t~\Xmc. By the definition of outer
+  consistency there exists an \Msig-interpretation \Hmc that models of \Bmfb and weakly respects
+  $(\ran(\bsf), \Xmc)$.  Hence, we have that $\Zmc \subseteq \Xmc$. Since every subset of an
+  admissible set is also admissible, \Zmc is also admissible.
+
+  For the if-direction we assume that $\Hmc \models \Bmfb$ and that \Zmc is admissible.
+  If $\Hmc \models \Bmfb$, then \Bmfb is outer consistent w.r.t~\Zmc. Since \Zmc is admissible, we
+  know, due to Lemma~\ref{lem:admissible-and-outerConsistent}, that \Bmf is consistent.
+\end{proof}
+
+
+use classical DL reasoner to test for consistency of \Bmfb.
+
+If consistent, list all models up to different set of occurring types. Even if there are infinite
+many models, there are only finitely many different set of types.
+
+For each model use DL reasoner that checks admissibility of \Zmc.
+
+\section{Using Hypertableau}
+\label{sec:using-hypertableau}
+
+
+
+
+\section{Implementing JConHT}
+\label{sec:implementing-jconht}
+
+JConHT is an OWL compliant reasoner for contextualized description logics that is written in Java
+and uses HermiT as internal reasoner.
 
 
 \section{Syntax}
@@ -67,12 +121,9 @@ SubclassOf(Annotation(rdfs:label "global") cls:A owl:Bottom)
 \label{sec:section-5.2}
 
 
-We want to check consistency of \O.
 
-In proof of lemma compl-no-rigid we construct the largest possible set \Xmc that is admissible and
-argue that any \Bb that is outer consistent w.r.t. some admissible $\Xmc'$ is also outer consistent
-w.r.t~\Xmc. But \Xmc can be exponentially large and, thus, we do not want to construct it if not
-necessary.
+
+
 
 From Lemma \ref{lem:admissible-and-outerConsistent} we know that it is necessary that \Ob is
 consistent. Assuming \Ob is consistent, we still have to find a set of types

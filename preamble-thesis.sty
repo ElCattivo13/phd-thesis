@@ -322,9 +322,18 @@
 }
 \recalctypearea
 
+\newsavebox{\iotasunbox}
+\savebox{\iotasunbox}{%
+\tikz[overlay,scale=0.6, every node/.style={transform shape}]{%
+  \coordinate (c) at ($(current page.north east)-(1.5,1.5)$);%
+  \foreach \w in {0, 30, ..., 330} \draw ($(c)+(\w:4mm)$) -- ($(c)+(\w:7mm)$);%
+  \node[circle,draw,inner sep=2] at (c){\large$\ddot\iota$};}%
+}
+
 \@ifpackageloaded{scrlayer-scrpage}{
 \clearpairofpagestyles
 \ihead{\headmark}
+% \chead*{\ifdraft{\usebox{\iotasunbox}}{}}
 \chead*{\ifdraft{\iotasun}{}}
 \ohead{\pagemark}
 \ifoot{}
