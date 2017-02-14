@@ -166,7 +166,38 @@ No rigid names, so we can look into each world separately.
   over \Nsig. 
 \end{lemma}
 
+\todo[inline]{the next paragraph comes after a general introduction about the block box approach.}
 
+In definition \ref{def:admissibility} where we define $\Bmc_{X_{i}}$ we require negated
+o-axioms. Usual negated axioms, especially negated GCIs, are not supported by classical DL
+reasoners. Therefore, we introduce the notion of \emph{weakly negated axioms}.
+
+\begin{definition}[weakly negated axioms]
+  Let $\alpha$ be an axiom, then $\alpha^{*}$ is defined as follows:
+  \begin{itemize}
+  \item if $\alpha = C \sqsubseteq D$, then $\alpha^{*} \coloneqq (C \sqcup \lnot D)(x)$ where $x$
+    is a fresh variable,
+  \item if $\alpha = C(a)$, then $\alpha^{*} \coloneqq (\lnot C)(a)$,
+  \item if $\alpha = r(a,b)$, then $\alpha^{*} \coloneqq \lnot r(a,b)$,
+  \item for all other $\alpha$, $\alpha^{*} \coloneqq \lnot \alpha$. \qedhere
+  \end{itemize}
+\end{definition}
+
+ Note that this definition reflects the aspect of soundness, i.e.~$\alpha\land\alpha^{*}$ is inconsistent, but not completeness,
+i.e.~$\I\models\alpha\lor\alpha^{*}$ does not hold for all interpretations \I.
+
+\begin{lemma}
+  Let $\alpha$ be an axiom. Then, $\alpha\land\alpha^{*}$ is inconsistent.
+\end{lemma}
+\begin{proof}
+  Let $\alpha = C \sqsubseteq D$. Assume that $\I \models \alpha$ and $\I \models
+  C(x)$. Then we know that $x^{\I} \in C^{\I} \subseteq D^{\I}$. Thus we have $x^{\I} \in D^{\I}$
+  and clearly $x^{\I} \notin (C \sqcap \lnot D)^{\I}$. Hence, $C \sqsubseteq D \land (C \sqcap \lnot
+  D)(x)$ is inconsistent.
+
+  For the other axioms, the weakly negated axiom is defined as the normally negated axiom and the
+  claim follows from the definition of $\models$ (see Def. \ref{def:semantics-of-axioms}). 
+\end{proof}
 
 
 %%% Local Variables:
