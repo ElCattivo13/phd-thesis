@@ -30,11 +30,11 @@ signatures for \LM and \LO. Thus, we call \MC, \MR, \MI, \OC, \OR and \OI, respe
 and \emph{individual names}.
 
 \begin{definition}[Syntax of \LMLO]\label{def:syntax-cdls}
-  A \emph{concept of the object logic~\DLinner (o-concept)} is an \DLinner-concept over~\Osig.  An
-  \emph{o-axiom} is an \DLinner-GCI over~\Osig, an \DLinner-concept assertion over~\Osig, or an
-  \DLinner-role assertion over~\Osig.
+  A \emph{concept of the object logic~\LO (o-concept)} is an \LO-concept over~\Osig.  An
+  \emph{o-axiom} is an \LO-GCI over~\Osig, an \LO-concept assertion over~\Osig, or an
+  \LO-role assertion over~\Osig.
 
-  The set of \emph{concepts of the meta logic~\DLouter (m-concepts)} is the smallest set such that
+  The set of \emph{concepts of the meta logic~\LM (m-concepts)} is the smallest set such that
   \begin{itemize}
   \item for all $A\in\MC$, $A$ is a meta concept (\emph{\todo{here I'm struggling with names. I need
         some distinction between ``pure meta concept'' and ``referring meta concepts'' as I need the
@@ -116,7 +116,7 @@ We are now ready to define the semantics of \LMLO.
     $(\Cbb,\cdot^\J)$ is a model of~\RM, and \J is a model of~\RO (written
     $\J\models\RO$) if $\I_{c}$ is a model of~\RO for all $c\in\Cbb$.
     
-    Finally, \J is a model of the \con{\DLouter}{\DLinner}-BKB \BB (written
+    Finally, \J is a model of the \LMLO-BKB \BB (written
     $\J\models\Bmf$) if \J is a model of~\B, \RO, and~\RM.  We call~\Bmf
     \emph{consistent} if it has a model.
 
@@ -159,7 +159,7 @@ occurring in~\B by a fresh concept name such that there is a 1--1 relationship b
   \item The \LM-concept $C^{\bsf}$ over \Msig is obtained from the m-concept~$C$ by replacing every occurrence of
     \oalpha by $\bsf(\oalpha)$.
   \item The Boolean \LM-axiom formula~\Bb over \Msig is obtained from~\B by replacing every
-    m-concept $C$ occurring in~\B with~$C^{\bsf}$.  We call the \DLouter-BKB $\Bmfb=(\Bb,\RM)$ the
+    m-concept $C$ occurring in~\B with~$C^{\bsf}$.  We call the \LM-BKB $\Bmfb=(\Bb,\RM)$ the
     \emph{outer abstraction of~\Bmf}.
         \item Given \JJ, its \emph{outer abstraction} is the
             \Msig-interpretation $\Jb=(\Cbb,\cdot^{\Jb})$ where
@@ -358,7 +358,7 @@ of~\Bmfb.
 \todo[inline]{explanation of outer consistency}
 
 \begin{definition}[Outer consistency]\label{def:outer-consistency}
-  Let $\Xmc \subseteq \powerset{\ran(\bsf)}$.  We call the \DLouter-BKB~\Bmfb over \Msig \emph{outer
+  Let $\Xmc \subseteq \powerset{\ran(\bsf)}$.  We call the \LM-BKB~\Bmfb over \Msig \emph{outer
     consistent w.r.t.~\Xmc} if there exists a model of~\Bmfb that weakly respects~$(\ran(\bsf),\Xmc)$.
 \end{definition}
 

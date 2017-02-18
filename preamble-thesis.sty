@@ -815,18 +815,18 @@
 \newcommand{\SHIQSHIQ}{\@cDLhelper{SHIQ}{SHIQ}}
 \newcommand{\ELALC}{\@cDLhelper{EL}{ALC}}
 \newcommand{\ALCEL}{\@cDLhelper{ALC}{EL}}
+\newcommand{\LM}{\@math{\mathcal{L_M}}}
+\newcommand{\LO}{\@math{\mathcal{L_O}}}
 
-
-
-\newcommand{\con}[2]{\ensureboldmath{#1}\textnormal{\ensuremath{\llbracket}}\ensureboldmath{#2}\ensuremath{\rrbracket}\xspace}
-\newcommand{\DLouter}{\@math{\mathcal{L}_{M}}}
-\newcommand{\DLinner}{\@math{\mathcal{L}_{O}}}
-\newcommand{\LM}{\@math{\mathcal{L}_{M}}}
-\newcommand{\LO}{\@math{\mathcal{L}_{O}}}
-\newcommand{\LMLO}{\con{\DLouter}{\DLinner}}
+\newcommand{\condl}[2]{\ensureboldmath{#1}\textnormal{\ensuremath{\llbracket}}\ensureboldmath{#2}\ensuremath{\rrbracket}\xspace}
+%\newcommand{\DLouter}{\@math{\mathcal{L}_{M}}}
+%\newcommand{\DLinner}{\@math{\mathcal{L}_{O}}}
+%\newcommand{\LM}{\@math{\mathcal{L}_{M}}}
+%\newcommand{\LO}{\@math{\mathcal{L}_{O}}}
+\newcommand{\LMLO}{\condl{\LM}{\LO}}
 \newcommand{\klarALC}{\@math{\ALC_{\!\ALC}}}
 \renewcommand*{\do}[1]{%
-  \expandafter\newcommand\csname c#1\endcsname{\con{\csname #1\endcsname}{\csname #1\endcsname}}}
+  \expandafter\newcommand\csname c#1\endcsname{\condl{\csname #1\endcsname}{\csname #1\endcsname}}}
 \docsvlist{ALC,ALCO,ALCI,ALCOI,ALCQ,ALCN,ALCNI,ALCHO,ALCIQ,ALCOIQ,ALCHOIQ,SHQ,SHOQ,SHIQ,SHOIQ,SROIQ}
 
 
@@ -851,6 +851,7 @@
 \newcommand{\OCF}{\ensuremath{\mathsf{O_{Cflex}}}}
 \newcommand{\ORR}{\ensuremath{\mathsf{O_{Rrig}}}\xspace}
 \newcommand{\ORF}{\ensuremath{\mathsf{O_{Rflex}}}\xspace}
+\newcommand{\OIR}{\ensuremath{\mathsf{O_{Irig}}}\xspace}
 
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname M#1\endcsname{\@math{\mathsf{M_{#1}}}}}
