@@ -314,15 +314,16 @@ model~\Hmc of~\Bmfb, we adapt a notion of~\cite{BaGL-KR08,BaGL-ToCL12}. It is al
 this problem occurs also in much less expressive DLs such as \ELbot (i.e.~\EL extended with the
 bottom concept).
 
-\begin{definition}[\mbox{\Nsig-interpretation (weakly) respects $(\Umc,\Ymc)$}]
-  \label{def:int-respects-D} 
-  Let $\Umc\subseteq\NC$, let $\Ymc\subseteq\powerset{\Umc}$ and let \II be an \Nsig-interpretation.
-  The \emph{type of $d\in\Delta^{\I}$ w.r.t.~\Umc} is defined as
-  $\mathsf{type}_{\Umc}(d) \coloneqq \{A \in \Umc \mid d \in A^{\I}\}$.  The interpretation \I
+\begin{definition}[\Umc-type, \mbox{\Nsig-interpretation (weakly) respects $(\Umc,\Ymc)$}]
+  \label{def:int-respects-D}
+  Let \II be an \Nsig-interpretation, let $\Umc\subseteq\NC$ and let $\Ymc\subseteq\powerset{\Umc}$.
+  %
+  The \emph{\Umc-type of $d\in\Delta^{\I}$ in \I} is defined as
+  $\mathsf{type}_{\Umc}^{\I}(d) \coloneqq \{A \in \Umc \mid d \in A^{\I}\}$.  The interpretation \I
   \emph{respects} $(\Umc,\Ymc)$ if $\Zmc = \Ymc$ where
   \begin{align*}
     \Zmc & \coloneqq\{Y\subseteq\Umc\mid\text{there is some $d\in\Delta^\I$ with
-           $\mathsf{type}_{\Umc}(d) = Y$}\}
+           $\mathsf{type}_{\Umc}^{\I}(d) = Y$}\}
   \end{align*}
 
     It \emph{weakly respects} $(\Umc,\Ymc)$ if $\Zmc \subseteq \Ymc$.
