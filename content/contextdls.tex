@@ -439,13 +439,13 @@ The following lemma is a consequence of the previous one.
 
 \todo[inline]{a few more words? :/}
 
-\begin{lemma}\label{lem:admissible-and-outerConsistent}
-    The \LMLO-BKB~\Bmf is consistent iff there is a set
-    $\Xmc=\{X_1,\dots,X_k\}\subseteq\powerset{\ran(\bsf)}$ such that
-    \begin{enumerate}
-        \item \Xmc is admissible, and
-        \item \Bmfb is outer consistent w.r.t.~\Xmc.
-    \end{enumerate}
+\begin{lemma}\label{lem:admissible-and-outerConsistent}%
+  The \LMLO-BKB~\Bmf is consistent iff there is a set
+  $\Xmc\subseteq\powerset{\ran(\bsf)}$ such that
+  \begin{enumerate}
+  \item \Xmc is admissible, and
+  \item \Bmfb is outer consistent w.r.t.~\Xmc.
+  \end{enumerate}
 \end{lemma}
 
 \begin{proof}
@@ -497,10 +497,55 @@ The following lemma is a consequence of the previous one.
 
 \subsection{Consistency without rigid names}
 \label{sec:cons-without-rigid}
+In this section, we consider the case where no rigid concept names or role names
+are allowed. So we fix $\OCR=\ORR=\emptyset$.
 
 \begin{lemma}\label{lem:shoqshoq-without-rigid-exptime}
-  \SHOQSHOQ, no rigid names $\Leftarrow$ \ExpTime
+  The consistency problem in \SHOQSHOQ is in \ExpTime if $\OCR=\ORR=\emptyset$.
 \end{lemma}
+
+\begin{proof}
+  Let \Bmf be a \SHOQSHOQ-BKB and \Bmfb its outer abstraction.  We can decide consistency of~\Bmf
+  using Lemma~\ref{lem:admissible-and-outerConsistent}.  We define
+  $\Xmc \coloneqq \{ X \subseteq \ran(\bsf) \mid \Bmf_{X}\ \text{is consistent}\}$ where $\Bmf_{X}$
+  is defined as in Definition~\ref{def:admissibility}.
+  %
+  We first show that $\Xmc = \{X_1, \dots, X_k\}$ is admissible.  Let $\I_i$ be a model
+  of~$\Bmf_{X_i}$, which exists since $\Bmf_{X_i}$ is consistent.  Due to the Löwenheim-Skolem
+  theorem, we can assume that all models $\I_i$, $1 \leq i \leq k$, have a countably infinite
+  domain. Thus, w.l.o.g.\ we can assume that all models have the same domain~$\Delta$.  Furthermore,
+  we can assume that individual names are interpreted the same.  Since $\OCR=\ORR=\emptyset$, the
+  set~\Xmc fulfills all conditions of Definition~\ref{def:admissibility} for admissibility.
+
+  Thus, if \Bmfb is outer consistent w.r.t.~\Xmc, then we have by
+  Lemma~\ref{lem:admissible-and-outerConsistent} that \Bmf is consistent.
+  %
+  Conversely, assume that \Bmf is consistent.  Then, by
+  Lemma~\ref{lem:admissible-and-outerConsistent}, there is an admissible set
+  $\Xmc' \subseteq \powerset{\ran(\bsf)}$ and \Bmfb is outer consistent w.r.t.~$\Xmc'$.  Since \Xmc
+  is the maximal admissible subset of $\powerset{\ran(\bsf)}$, we have $\Xmc' \subseteq \Xmc$.  If
+  \Bmfb is outer consistent w.r.t.~$\Xmc'$, it is also outer consistent w.r.t.~\Xmc.  Hence, \Bmf is
+  consistent iff \Bmfb is outer consistent w.r.t.~\Xmc, which yields a decision procedure for the
+  consistency problem in \SHOQSHOQ.
+
+  It remains to analyze the complexity.  There are exponentially many
+  $Xmc \in \powerset{\ran(\bsf)}$, but each \SHOQ-BKB~$\Bmf_{X}$ can be constructed in time
+  polynomial in the size of~\Bmf.  We can decide consistency of~$\Bmf_{X}$ in time
+  exponential~\cite{Lip-PhD14}.  Thus, the set~\Xmc can be constructed in time exponential in the size
+  of~\Bmf and it is of exponential size.  Due to Lemma \ref{lem:shoq-outer-consisteny-exptime},
+  deciding whether \Bmfb is outer consistent w.r.t.~\Xmc can be done in time exponential in the size
+  of~\Bmfb and linear in the size of~\Xmc.  Thus, overall we can decide the consistency problem in
+  exponential time.
+\end{proof}
+
+Together with the lower bounds shown in Section~\ref{sec:case-el}, we obtain \ExpTime-completeness
+for the consistency problem in \LMLO for \LM and \LO being DLs between \ALC and \SHOQ if
+$\OCR=\ORR=\emptyset$.
+
+\begin{lemma}\label{lem:shoiqshoiq-without-rigid-exptime}
+  The consistency problem in \SHOIQSHOIQ is in \NExpTime if $\OCR=\ORR=\emptyset$.
+\end{lemma}
+\missingproof
 
 \subsection{Consistency with rigid concept and role names}
 \label{sec:cons-with-rigid}
@@ -518,9 +563,50 @@ The following lemma is a consequence of the previous one.
 
 For the sake of completeness 
 
+\subsection{The Contextualized Description Logics LMEL}
+\label{sec:con-dl-lm-el}
 
-
+\begin{theorem}
+  The consistency problem in \condl{\ALC}{\EL} is \ExpTime-hard if $\OCR = \ORR = \emptyset$.
+\end{theorem}
 \missingproof
+
+\begin{theorem}
+  The consistency problem in \condl{\ALC}{\EL} is \NExpTime-hard if $\OCR \neq \emptyset$ and
+  $\ORR = \emptyset$.
+\end{theorem}
+\missingproof
+
+\begin{theorem}
+  The consistency problem in \condl{\SHOQ}{\EL} is in \NExpTime if $\OCR \neq \emptyset$ and
+  $\ORR = \emptyset$.
+\end{theorem}
+\missingproof
+
+\subsection{The Contextualized Description Logic ELLO}
+\label{sec:con-dl-el-lo}
+
+\begin{theorem}
+  The consistency problem in \condl{\EL}{\ALC} is \ExpTime-hard if $\OCR = \ORR = \emptyset$.
+\end{theorem}
+\missingproof
+
+\begin{theorem}
+  The consistency problem in \condl{\EL}{\ALC} is \TwoExpTime-hard if $\OCR \neq \emptyset$ and
+  $\ORR \neq \emptyset$.
+\end{theorem}
+\missingproof
+
+\begin{theorem}
+  The consistency problem in \condl{\EL}{\ALC} is \NExpTime-hard if $\OCR \neq \emptyset$ and
+  $\ORR = \emptyset$.
+\end{theorem}
+\missingproof
+
+
+\section{Consistency of Boolean SHOIQ knowledge bases}
+\label{sec:consistency-shoiq-bkb}
+
 
 
 %%% Local Variables:
@@ -528,3 +614,5 @@ For the sake of completeness
 %%% TeX-master: "../thesis"
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
+
+%  LocalWords:  Löwenheim Skolem
