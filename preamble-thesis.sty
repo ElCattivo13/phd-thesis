@@ -127,6 +127,8 @@
 \RequirePackage[ddmmyyyy]{datetime}
   \renewcommand{\dateseparator}{.}
 \RequirePackage{printlen}
+\RequirePackage{algorithm2e}
+\RequirePackage{soul}
 
 
 %% the silence package to suppress unwanted warnings
@@ -1176,6 +1178,10 @@
 \newcommand{\onlyifdirection}{($\Longrightarrow$):\ }
 \newcommand{\ifdirection}{($\Longleftarrow$):\ }
 
+\newcommand{\Xpos}{\@math{X_{\mathsf{pos}}}}
+\newcommand{\Xneg}{\@math{X_{\mathsf{neg}}}}
+\newcommand{\Xposi}{\@math{X_{\mathsf{pos},i}}}
+\newcommand{\Xnegi}{\@math{X_{\mathsf{neg},i}}}
 
 %% to remove vertical space before an itemize inside tabularx
 \newcommand*{\compress}{\@minipagetrue}
