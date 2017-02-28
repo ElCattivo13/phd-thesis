@@ -922,27 +922,216 @@ Summming up the results of this section, we obtain the following corollary.
 \subsection{The Contextualized Description Logics \texorpdfstring{\ELLO}{EL[LO]}}
 \label{sec:dlouter-el}
 
-\begin{theorem}
-  The consistency problem in \condl{\EL}{\ALC} is \ExpTime-hard if $\OCR = \ORR = \emptyset$.
-\end{theorem}
-\missingproof
+In this section, we consider \ELLO where \LO is either \EL or between \ALC and \SHOQ.
+%
+Instead of considering \ELLO-BKBs, we allow only \emph{conjunctions} of m-axioms.  \todo{short
+  explanation} Then the consistency problem becomes trivial in the case of \ELEL since all
+\ELEL-BKBs are consistent, as \EL lacks to express contradictions.
+%
+This restriction, however, does not yield a better complexity in the cases of \ELLO, where \LO is
+between \ALC and \SHOQ.
 
-\begin{theorem}
-  The consistency problem in \condl{\EL}{\ALC} is \TwoExpTime-hard if $\OCR \neq \emptyset$ and
+First, we show the lower bounds for the consistency problem in \ELALC.  We again distinguish the
+three cases of which names are allowed to be rigid.
+
+\begin{theorem}\label{thm:el-lower-exp}
+  The consistency problem in \ELALC is \ExpTime-hard if $\OCR = \ORR = \emptyset$.
+\end{theorem}
+
+\begin{proof}
+  Deciding whether a given conjunction $\B = \alpha_{1} \land \dots \land \alpha_{n}$ of \ALC-axioms
+  is consistent is \ExpTime-hard\cite{Sch-IJCAI91}.  Obviously, \B is consistent iff the \ELALC-BKB
+  $(\oax{\alpha_{1}} \sqcap \dots \sqcap \oax{\alpha_{n}})(c)$ is consistent, where $c\in\MI$.
+\end{proof}
+
+For the case of rigid role names, we have lower bounds of \TwoExpTime.
+
+\begin{theorem}\label{thm:el-lower-2exp}
+  The consistency problem in \ELALC is \TwoExpTime-hard if $\OCR \neq \emptyset$ and
   $\ORR \neq \emptyset$.
 \end{theorem}
-\missingproof
 
-\begin{theorem}
-  The consistency problem in \condl{\EL}{\ALC} is \NExpTime-hard if $\OCR \neq \emptyset$ and
+\begin{proof}
+  \todo{beweis noch einmal nachvollziehen} To show the lower bound, we adapt the proof ideas
+  of~\cite{BaGL-KR08,BaGL-ToCL12}, and reduce the word problem for exponentially space-bounded
+  alternating Turing machines (i.e.~is a given word~$w$ accepted by the machine~$M$) to the
+  consistency problem in \ELALC with rigid roles, i.e.~$\ORR\ne\emptyset$.
+  %
+  In~\cite{BaGL-KR08,BaGL-ToCL12}, a reduction was provided to show \TwoExpTime-hardness for the
+  temporalized DL \ALC-LTL in the presence of rigid roles.
+  %
+  Here, we mimic the properties of the time dimension that are important for the reduction using a
+  role name $t\in\MR$.
+
+  Our \ELALC-BKB is the conjunction of the \ELALC-BKBs introduced below.
+  %
+  First, we ensure that we never have a \emph{last} time point:
+  \begin{gather*}
+    \top\sqsubseteq\exists t.\top
+  \end{gather*}
+  Note that in the corresponding model, we do not enforce a $t$-chain since cycles are not
+  prohibited.  This, however, is not important in the reduction.
+
+  The \ALC-LTL-formula obtained in the reduction of~\cite{BaGL-KR08,BaGL-ToCL12} is a conjunction of
+  \ALC-LTL-formulas of the form $\Box\phi$, where $\phi$ is an \ALC-LTL-formula.  This makes sure
+  that $\phi$ holds in all (temporal) worlds.  For the cases where $\phi$ is an \ALC-axiom, we can
+  simply express this by:
+  \begin{gather*}
+    \top\sqsubseteq\oax{\phi}
+  \end{gather*}
+
+  This captures all except for two conjuncts of the \ALC-LTL-formula of the reduction
+  of~\cite{BaGL-KR08,BaGL-ToCL12}.  There, a $k$-bit binary counter using concept names
+  $A_0',\dots,A_{k-1}'$ was attached to the individual name $a$, which is incremented along the
+  temporal dimension.  We can express something similar in \ELALC, but instead of incrementing the
+  counter values along a sequence of $t$-successors, we have to go backwards since \EL does allow
+  for branching but does not allow for values restrictions, i.e.~we cannot make sure that all
+  $t$-successors behave the same.  More precisely, if the counter value~$n$ is attached to~$a$ in
+  context~$c$, the value $n+1$ (modulo $2^k-1$) must be attached to~$a$ in \emph{all} of $c$'s
+  $t$-predecessors.
+
+  First, we ensure which bits must be flipped:
+  \begin{align*}
+    \bigwedge_{i<k} \Bigl( \exists t.\bigl(\oax{A_{0}'(a)} \sqcap \dots \sqcap \oax{A_{i-1}'(a)} \sqcap \oax{A_{i}'(a)}\bigr)
+    & \ \sqsubseteq\ \oax{(\lnot A_{i}')(a)}\Bigr)\\ 
+    \bigwedge_{i<k}\Bigl( \exists t.\bigl(\oax{A_{0}'(a)}\sqcap\ldots\sqcap \oax{A_{i-1}'(a)} \sqcap \oax{(\lnot A_{i}')(a)}\bigr)
+    & \ \sqsubseteq\ \oax{A_{i}'(a)}\Bigr)
+    \end{align*}
+
+    Next, we ensure that all other bits stay the same:
+    \begin{align*}
+      \bigwedge_{0<i<k}\ \bigwedge_{j<i}\Bigl(\exists t.\bigl(\oax{(\lnot A_{j}')(a)}\sqcap\oax{A_{i}'(a)}\bigr)
+      & \ \sqsubseteq\ \oax{A_{i}'(a)}\Bigr)\\
+      \bigwedge_{0<i<k}\ \bigwedge_{j<i}\Bigl(\exists t.\bigl(\oax{(\lnot A_{j}')(a)}\sqcap\oax{(\lnot A_{i}')(a)}\bigr)
+      & \ \sqsubseteq\ \oax{(\lnot A_{i}')(a)}\Bigr)
+    \end{align*}
+
+    Note that due to the first m-axiom above, we enforce that every context has a $t$-successor.  By
+    the other m-axioms, we make sure that we enforce a $t$-chain of length $2^k$.
+    %
+    As in~\cite{BaGL-KR08,BaGL-ToCL12}, it is not necessary to initialize the counter.  Since we
+    decrement the counter along the $t$-chain (modulo $2^k-1$), every value between $0$ and $2^k-1$
+    is reached.
+
+    The conjunction of all the \ELALC-BKBs above yields an \ELALC-BKB~\B that is consistent iff $w$
+    is accepted by~$M$.
+  \end{proof}
+
+Finally, we obtain a lower bound of \NExpTime in the case of rigid concept names
+only.
+
+\begin{theorem}\label{thm:el-lower-nexp}
+  The consistency problem in \ELALC is \NExpTime-hard if $\OCR \neq \emptyset$ and
   $\ORR = \emptyset$.
 \end{theorem}
-\missingproof
+
+\begin{proof}
+  To show the lower bound, we again adapt the proof ideas of~\cite{BaGL-KR08,BaGL-ToCL12}, and
+  reduce an exponentially bounded version of the domino problem to the consistency problem in \ELALC
+  with rigid concepts, i.e.~$\OCR\ne\emptyset$ and $\ORR=\emptyset$.
+  %
+  In~\cite{BaGL-KR08,BaGL-ToCL12}, a reduction was provided to show \NExpTime-hardness for the
+  temporalized DL \ALC-LTL in the presence of rigid concepts.
+  %
+  As in the proof of Theorem~\ref{thm:el-lower-2exp}, we mimic the properties of the time dimension
+  that are important for the reduction using a role name $t\in\MR$.
+    
+  Our \ELALC-BKB is the conjunction of the \ELALC-BKBs introduced below.  We proceed in a similar
+  way as in the proof of Theorem~\ref{thm:el-lower-2exp}.
+  %
+  First, we ensure that we never have a \emph{last} time point:
+  \begin{gather*}
+    \top\sqsubseteq\exists t.\top
+  \end{gather*}
+  Note that in the corresponding model, we do not enforce a $t$-chain since cycles are not
+  prohibited.  As in the reduction in the proof of Theorem~\ref{thm:el-lower-2exp}, this is not
+  important in the reduction here.
+
+  Next, note that since the $\Box$-operator distributes over conjunction, most of the conjuncts of
+  the \ALC-LTL-formula of the reduction of~\cite{BaGL-KR08,BaGL-ToCL12} can be rewritten as
+  conjunctions of \ALC-LTL-formulas of the form $\Box\alpha$, where $\alpha$ is an \ALC-axiom.  As
+  already argued in the proof of Theorem~\ref{thm:el-lower-2exp}, this can equivalently be expressed
+  by $\top\sqsubseteq\oalpha$.
+
+  In~\cite{BaGL-KR08,BaGL-ToCL12}, a $(2n+2)$-bit binary counter is employed using concept names
+  $Z_0,\dots,Z_{2n+1}$.  This counter is attached to an individual name~$a$, which is incremented
+  along the temporal dimension.  This can be expressed in \ELALC as shown in the proof of
+  Theorem~\ref{thm:el-lower-2exp}:
+
+  \begin{align*}
+    \bigwedge_{i<2n+2} \Bigl( \exists t.\bigl(\oax{Z_{0}(a)} \sqcap\ldots\sqcap \oax{Z_{i-1}(a)} \sqcap \oax{Z_{i}(a)}\bigr)
+    & \ \sqsubseteq\ \oax{(\lnot Z_{i})(a)}\Bigr)\\ 
+    \bigwedge_{i<2n+2}\Bigl( \exists t.\bigl(\oax{Z_{0}(a)}\sqcap\ldots\sqcap \oax{Z_{i-1}(a)} \sqcap \oax{(\lnot Z_{i})(a)}\bigr)
+    & \ \sqsubseteq\ \oax{Z_{i}(a)}\Bigr)\\
+    \bigwedge_{0<i<2n+2}\ \bigwedge_{j<i}\Bigl(\exists t.\bigl(\oax{(\lnot Z_{j})(a)}\sqcap\oax{Z_{i}(a)}\bigr)
+    & \ \sqsubseteq\ \oax{Z_{i}(a)}\Bigr)\\
+    \bigwedge_{0<i<2n+2}\ \bigwedge_{j<i}\Bigl(\exists t.\bigl(\oax{(\lnot Z_{j})(a)}\sqcap\oax{(\lnot Z_{i})(a)}\bigr)
+    & \ \sqsubseteq\ \oax{(\lnot Z_{i})(a)}\Bigr)
+  \end{align*}
+
+  Note that due to the first m-axiom above, we enforce that every context has a $t$-successor.  By
+  the other m-axioms, we make sure that we enforce a $t$-chain of length $2^{2n+2}$.
+  %
+  As in~\cite{BaGL-KR08,BaGL-ToCL12}, it is not necessary to initialize the counter.  Since we
+  decrement the counter along the $t$-chain (modulo $2^{2n+1}$), every value between $0$ and
+  $2^{2n+1}$ is reached.
+
+  In~\cite{BaGL-KR08,BaGL-ToCL12}, an \ALC-LTL-formula is used to express that the value of the
+  counter in shared by all domain elements belonging to the current (temporal) world.  This is
+  expressed using a disjunction, which we can simulate as follows:
+  \begin{gather*}
+    \bigwedge_{0\le i\le 2n+1} \Bigl(\oax{Z_i(a)}\sqsubseteq\oax{\top\sqsubseteq Z_i}\ \land\
+    \oax{(\lnot Z_i)(a)}\sqsubseteq\oax{Z_i\sqsubseteq\bot}\Bigr)
+  \end{gather*}
+
+  Next, there is a concept name~$N$, which is required be non-empty in every (temporal) world.  We
+  express this using a role name $r\in\OR$:
+  \begin{gather*}
+    \top\sqsubseteq\oax{(\exists r.N)(a)}
+  \end{gather*}
+
+  It is only left to express the following \ALC-LTL-formula of~\cite{BaGL-KR08,BaGL-ToCL12}:
+  \begin{gather*}
+    \Box\Bigl(\bigvee_{d\in D} (\top\sqsubseteq d')\Bigr)
+  \end{gather*}
+  For readability, let $D=\{d_1,\dots,d_k\}$.  We use non-convexity of \ALC as follows to express
+  this:
+  \begin{gather*}
+    \top\sqsubseteq\oax{(d_1'\sqcup\dots\sqcup d_k')(a)}\ \land\ \bigwedge_{1\le i\le k}
+    \Bigl(\oax{d_i'(a)}\sqsubseteq\oax{\top\sqsubseteq d_i'}\Bigr)
+  \end{gather*}
+
+  The conjunction of all the \ELALC-BKBs above yields an \ELALC-BKB~\B that is consistent iff the
+  exponentially bounded version of the domino problem has a solution.
+\end{proof}
+
+Summing up the results of this section together with the upper bounds of
+Section~\ref{sec:complexity-consis-problem}, we obtain the following corollary.
+
+\begin{corollary}
+  For all \LO between \ALC and \SHOQ, the consistency problem in \ELLO is
+  \begin{itemize}
+  \item \ExpTime-complete if $\OCR=\emptyset$ and $\ORR=\emptyset$,
+  \item \NExpTime-complete if $\OCR\ne\emptyset$ and $\ORR=\emptyset$, and
+  \item \TwoExpTime-complete if $\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
+  \end{itemize}
+\end{corollary}
+
+\begin{proof}
+  The lower bounds follow from Theorems~\ref{thm:el-lower-exp}, \ref{thm:el-lower-2exp},
+  and~\ref{thm:el-lower-nexp}.  The corresponding upper bounds follow from
+  Theorems~\ref{thm:shoqshoq-without-rigid-exptime}, \ref{thm:shoqshoq-with-rigid-names-twoexptime},
+  and~\ref{thm:shoqshoq-with-rigid-concepts-nexptime}.
+\end{proof}
 
 \section{Adding context-constructor}
 \label{sec:adding-cont-constr}
 
+\ALCALC without rigid names sublogic of \klarALC
 
+introduce new o-concept constructor
+
+undecidability result
 
 \section{Consistency of Boolean \texorpdfstring{\SHOIQ}{SHOIQ} knowledge bases}
 \label{sec:consistency-shoiq-bkb}
@@ -955,4 +1144,4 @@ Summming up the results of this section, we obtain the following corollary.
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
 
-%  LocalWords:  Löwenheim Skolem Logics logics iff
+%  LocalWords:  Löwenheim Skolem Logics logics iff temporalized
