@@ -1,5 +1,5 @@
 
-\chapter{JConHT -- A \SHOIQSHOIQ Reasoner}
+\chapter{JConHT -- A \texorpdfstring{\SHOIQSHOIQ}{SHOIQ[SHOIQ]} Reasoner}
 \label{cha:jconht}
 
 In the last chapter we presented a mapping for role-based models into contextualized description
@@ -309,17 +309,93 @@ knowledge about the restricted types occurring in the model.
 
 
 
-\section{Using Hypertableau}
+\section{Using HermiT and Hypertableau}
 \label{sec:using-hypertableau}
 
 
 
+As mentioned earlier ...
+
+requirements
+
+By means of maintenance , use the same reasoner for meta and object level.
+
+expressivity OWL 2 DL profile
+
+OWL API implemented in Java -> JConHT also in Java -> 
+
+survey paper manchester + ORE reports
+
+Main reasoning task: consistency
+
+hermit, konclude (C++), fact++ (C++), JFact, pellet, chainsaw (internally uses another reasoner )
+
+C++ more performant, but Java ???. Hermit is a very good trade-off. implemented in Java, but still
+very performant based on underlying algorithm and due to advanced blocking strategies.
+
+-> Conclusion: We use HermiT.
+
+Hermit uses Hypertableau
+
+\todo[inline]{hermit}
+
+hypertableau avoid unnecessary nondeterminism (or-branching)
+
+Hermit computes premodels which can be extended to model of ontology. blocked individuals, same
+concept labels -> premodel has the same restricted type
+
+different blocking strategies dependant on used dl. anywhere blocking, ancestor blocking, atomic
+single blocking, full single blocking, 
+
+full subset blocking could be problematic, but is not used in HermiT.
+
+\todo[inline]{full stop}
+
+For brevity, we will present here only a few relevant parts of the Hypertableau Algorithm and refer
+the interested reader to \todo{citation, journal paper, cade paper}. Like other tableau-based
+methods the hypertableau calculus tries to construct an abstraction of a model for a given ontology
+to check whether that ontology is consistent. But in contrast to the tableau calculi it operates
+on a set of \emph{DL-clauses} and an ABox, instead of a TBox and an ABox.
+
+what is a dl clause
+
+preprocessing - equisatisfiable ,still the same types?
+
+
+\begin{lemma}[citation]
+  Hypertableau is sound, terminating and complete.
+\end{lemma}
+
+If a leaf in a derivation is labelled with a clash-free ABox \A, it represents premodel. With
+well-known technique of unraveling \todo{citation} a model of $(\Cmc, \A)$ can be
+constructed. essential equal. 
+
+ 
+
+
+
+\vspace{1cm}
+
+In the hypertableau algorithm, other blocking strategies besides \textsf{Anywhere Blocking} can also
+be applied dependant on the expressivity of the description logic, namely \textsf{Atomic Single
+  Blocking} and \textsf{Full Single Blocking.}
+
+\vspace{1cm}
+
+So with a preprocessing step, we assure that if a node $n$ is not labelled with $\lnot
+A_{\oax{\alpha}}$, then either labelling it with $A_{\oax{\alpha}}$ does not harm or adding
+$A_{\oax{\alpha}}$ would make the object ontology inconsistent
 
 \section{Implementing JConHT}
 \label{sec:implementing-jconht}
 
+The reasoner is called \emph{JConHT} which stands for \emph{J}ava-implemented \emph{Con}text
+description logic reasoner based on \emph{H}ermi\emph{T}.
+
 JConHT is an OWL compliant reasoner for contextualized description logics that is written in Java
 and uses HermiT as internal reasoner.
+
+Similar to
 
 % to avoid tikz - verbatim error
 \clearpage
