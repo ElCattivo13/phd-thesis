@@ -1,4 +1,4 @@
-\chapter{The Contextualized Description Logic LMLO}
+\chapter{The Contextualized Description Logic \texorpdfstring{\LMLO}{LM[LO]}}
 \label{cha:context-dls}
 
 \todo[inline]{somewhere a few paragraphs about existing cdls and why they are not feasible in my
@@ -507,9 +507,9 @@ The following lemma is a consequence of the previous one.
 In this section, we consider the case where no rigid concept names or role names
 are allowed. So we fix $\OCR=\ORR=\emptyset$.
 
-\begin{lemma}\label{lem:shoqshoq-without-rigid-exptime}
+\begin{theorem}\label{thm:shoqshoq-without-rigid-exptime}
   The consistency problem in \SHOQSHOQ is in \ExpTime if $\OCR=\ORR=\emptyset$.
-\end{lemma}
+\end{theorem}
 
 \begin{proof}
   Let \Bmf be a \SHOQSHOQ-BKB and \Bmfb its outer abstraction.  We can decide consistency of~\Bmf
@@ -518,7 +518,8 @@ are allowed. So we fix $\OCR=\ORR=\emptyset$.
   is defined as in Definition~\ref{def:admissibility}.
   %
   We first show that $\Xmc = \{X_1, \dots, X_k\}$ is admissible.  Let $\I_i$ be a model
-  of~$\Bmf_{X_i}$, which exists since $\Bmf_{X_i}$ is consistent.  Due to the Löwenheim-Skolem
+  of~$\Bmf_{X_i}$, which exists since $\Bmf_{X_i}$ is consistent.  Since \NI is countably infinite,
+  interpretations must respect the UNA and due to the Löwenheim-Skolem
   theorem, we can assume that all models $\I_i$, $1 \leq i \leq k$, have a countably infinite
   domain. Thus, w.l.o.g.\ we can assume that all models have the same domain~$\Delta$.  Furthermore,
   we can assume that individual names are interpreted the same.  Since $\OCR=\ORR=\emptyset$, the
@@ -549,49 +550,377 @@ Together with the lower bounds shown in Section~\ref{sec:case-el}, we obtain \Ex
 for the consistency problem in \LMLO for \LM and \LO being DLs between \ALC and \SHOQ if
 $\OCR=\ORR=\emptyset$.
 
-\begin{lemma}\label{lem:shoiqshoiq-without-rigid-exptime}
-  The consistency problem in \SHOIQSHOIQ is in \NExpTime if $\OCR=\ORR=\emptyset$.
-\end{lemma}
+\begin{theorem}\label{thm:shoiqshoiq-without-rigid-exptime}
+  If $\OCR=\ORR=\emptyset$, the consistency problem in \SHOIQSHOIQ is in \NExpTime.
+\end{theorem}
 \missingproof
 
 \subsection{Consistency with rigid concept and role names}
 \label{sec:cons-with-rigid}
 
+In this section, we consider the case where rigid concept and role names are present.  So we fix
+$\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
 
+\begin{theorem}\label{thm:shoqshoq-with-rigid-names-twoexptime}
+  The consistency problem in \SHOQSHOQ is in \TwoExpTime if $\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
+\end{theorem}
 
+\begin{proof}
+  Let \BB be a \SHOQSHOQ-BKB and \BBb its outer abstraction.  We can decide consistency of~\Bmf using
+  Lemma~\ref{lem:admissible-and-outerConsistent}.  For that, we enumerate all sets $\Xmc \subseteq \powerset{\ran(\bsf)}$,
+  which can be done in time doubly exponential in~\Bmf.  For each of these sets
+  $\Xmc = \{X_1,\dots,X_k\}$, we check whether \Bmfb is outer consistent w.r.t.~\Xmc, which can be done in
+  time exponential in the size of~\Bmfb and linear in the size of~\Xmc.
+  %
+  Then, we check \Xmc for admissibility using the renaming technique \todo{define separately?}
+  of~\cite{BaGL-KR08,BaGL-ToCL12}.  For every~$i$, $1\le i\le k$, every flexible concept name~$A$
+  occurring in~\Bb, and every flexible role name~$r$ occurring in~\Bb or~\RO, we introduce
+  copies~$A^{(i)}$ and~$r^{(i)}$.  The \SHOQ-BKB~$\Bmf_{X_i}^{(i)} = (\B_{X_i}^{(i)},\RO^{(i)})$
+  over~\Osig is obtained from~$\Bmf_{X_i}$ (see Definition~\ref{def:admissibility}) by replacing
+  every occurrence of a flexible name~$x$ by $x^{(i)}$.  We define
+  \begin{align*}
+    \Bmf_\Xmc \coloneqq \left(\bigwedge\nolimits_{1\le i\le k}\B_{X_i}^{(i)}, \bigcup\nolimits_{1\le i\le k} \RO^{(i)}\right).
+  \end{align*}
+  It is not hard to verify \todo{just do it} (using arguments of~\cite{Lip-PhD14}) that \Xmc is
+  admissible iff $\Bmf_\Xmc$ is consistent.  Note that $\Bmf_\Xmc$ is of size at most exponential in~\Bmf and
+  can be constructed in exponential time.  Moreover, consistency of~$\Bmf_\Xmc$ can be decided in time
+  exponential in the size of~$\Bmf_\Xmc$~\cite{Lip-PhD14}, and thus in time doubly
+  exponential in the size of~\Bmf.
+\end{proof}
+
+Together with the lower bounds shown in Section~\ref{sec:case-el}, we obtain
+\TwoExpTime-completeness for the consistency problem in \LMLO
+for \LM and \LO being DLs between \ALC and \SHOQ if $\OCR\neq\emptyset$
+and $\ORR\neq\emptyset$.
 
 \subsection{Consistency with only rigid concept names}
 \label{sec:cons-with-only}
 
+In this section, we consider the case where rigid concept are present, but rigid role names are not
+allowed.  So we fix $\OCR \neq \emptyset$ but $\ORR=\emptyset$.
 
-
-\section{The Case of \EL}
-\label{sec:case-el}
-
-For the sake of completeness 
-
-\subsection{The Contextualized Description Logics LMEL}
-\label{sec:con-dl-lm-el}
-
-\begin{theorem}
-  The consistency problem in \condl{\ALC}{\EL} is \ExpTime-hard if $\OCR = \ORR = \emptyset$.
+\begin{theorem}\label{thm:shoqshoq-with-rigid-concepts-nexptime}
+  The consistency problem in \SHOQSHOQ is in \NExpTime if $\OCR \neq \emptyset$ and $\ORR=\emptyset$.
 \end{theorem}
+
+\begin{proof}
+  Let \BB be a \SHOQSHOQ-BKB and \BBb its outer abstraction.  We can decide consistency of~\Bmf
+  using Lemma~\ref{lem:admissible-and-outerConsistent}. We first non-deterministically guess the set
+  $\Xmc = \{X_{1},\ldots,X_{k}\} \subseteq \powerset{\ran(\bsf)}$, which is of size at most
+  exponential in \Bmf. Due to Lemma~\ref{lem:shoq-outer-consisteny-exptime} we can check whether
+  \Bmfb is outer consistent w.r.t.~\Xmc in time exponential in the size of~\Bmfb and linear in the
+  size of~\Xmc.
+  
+  It remains to check \Xmc for admissibility. For that let $\OCR(\B) \subseteq \OCR$ and
+  $\OI(\B) \subseteq \OI$ be the sets of all rigid concept names and individual names occurring in
+  \B, respectively. As done in~\cite{BaGL-KR08,BaGL-ToCL12} we non-deterministically guess a set
+  $\Ymc \subseteq \powerset{\OCR(\B)}$ and a mapping $\kappa\colon\OI(\B)\to\Ymc$ which also can be
+  done in time exponential in the size of \Bmf. Using the same arguments as
+  in~\cite{BaGL-KR08,BaGL-ToCL12} we can show that \Xmc is admissible iff
+  \begin{align*}
+    \widehat{\Bmf}_{X_{i}}\coloneqq\left(\B_{X_{i}} \land \bigwedge_{a\in\OI(\B)} \left(\bigsqcap_{A\in\kappa(a)} A \sqcap
+    \bigsqcap_{A\in\OCR(\B)\setminus\kappa(a)} \lnot A\right)(a),\ \RO\right)
+  \end{align*}
+  has a model that respects $(\OCR(\B),\Ymc)$, for all $1 \leq i \leq k$. The \SHOQ-BKB
+  $\widehat{\Bmf}_{X_{i}}$ is of size polynomial in the size of \B and can be constructed in time
+  exponential in the size of \B. We can check if $\widehat{\Bmf}_{X_{i}}$ has a model that respects
+  $(\OCR(\B),\Ymc)$ in time exponential in the size of $\widehat{\Bmf}_{X_{i}}$
+  \cite{BaGL-KR08,BaGL-ToCL12}, and thus exponential in the size of \Bmf.
+\end{proof}
+
+Together with the lower bounds shown in Section~\ref{sec:case-el}, we obtain \NExpTime-completeness
+for the consistency problem in \LMLO for \LM and \LO being DLs between \ALC and \SHOQ if
+$\OCR \neq \emptyset$ and $\ORR = \emptyset$.
+
+\begin{theorem}\label{thm:shoiqshoiq-with-rigid-concepts-nexptime}
+  The consistency problem in \SHOIQSHOIQ is in \NExpTime if $\OCR \neq \emptyset$ and $\ORR=\emptyset$.
+\end{theorem}
+
 \missingproof
 
-\begin{theorem}
+
+Summing up the results, we obtain the following corollary.
+
+\begin{corollary}
+  For all \LM, \LO between \ALC and \SHOQ, the consistency problem in \LMLO is
+  \begin{itemize}
+  \item \ExpTime-complete if $\OCR=\emptyset$ and $\ORR=\emptyset$,
+  \item \NExpTime-complete if $\OCR\ne\emptyset$ and $\ORR=\emptyset$, and
+  \item \TwoExpTime-complete if $\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
+    % otherwise.
+  \end{itemize}
+\end{corollary}
+
+\section{The Case of \texorpdfstring{\EL}{EL}}
+\label{sec:case-el} 
+
+In this section, we give some complexity results for context DLs
+\LMLO where \LM or \LO are \EL.
+%
+In Section~\ref{sec:dlinner-el}, we consider \LMEL where \LM
+is between \ALC and \SHOQ.  Then, in Section~\ref{sec:dlouter-el}, we consider
+the remaining context DLs \ELLO where \LO is either \EL \todo{\ELEL?}or
+between \ALC and \SHOQ.
+
+\subsection{The Contextualized Description Logics \texorpdfstring{\LMEL}{LM[EL]}}
+\label{sec:dlinner-el}
+
+In this section, we consider \LMEL where \LM is between \ALC
+and \SHOQ.
+%
+The lower bounds already hold for \ALCEL.
+
+\begin{theorem}\label{thm:alcel-lower-no-rigid}
+  The consistency problem in \ALCEL is \ExpTime-hard if $\OCR = \ORR = \emptyset$.
+\end{theorem}
+
+\begin{proof}
+    Deciding whether a given conjunction of \ALC-axioms~\B is consistent is
+    \ExpTime-hard~\cite{Sch-IJCAI91}.  Obviously, \B is also an \ALCEL-BKB.
+\end{proof}
+
+For the cases of rigid names, the lower bounds of \NExpTime are obtained by a
+careful reduction of the satisfiability problem in the temporalized DL
+\EL-LTL~\cite{BoTh-IJCAI15,BoTh-LTCS-15-07}, which is a fragment of \ALC-LTL introduced
+in~\cite{BaGL-KR08,BaGL-ToCL12}.
+%
+For the sake of completeness, we recall the basic definitions of \Lmc-LTL here,
+where \Lmc is a DL.
+
+\begin{definition}[Syntax of \Lmc-LTL]
+  \emph{\Lmc-LTL-formulas over \Osig} are defined by induction:
+  \begin{itemize}
+  \item if $\alpha$ is an \Lmc-axiom over \Osig, then $\alpha$ is an \Lmc-LTL-formula, and
+  \item if $\phi,\psi$ are \Lmc-LTL-formulas over \Osig, then so are $\lnot\phi$ (negation),
+    $\phi\land\psi$ (conjunction), $\phi\until\psi$ (until), $\Next\phi$ (next), and
+  \item nothing else is an \Lmc-LTL-formula. \qedhere
+  \end{itemize}
+\end{definition}
+
+As usual in temporal logics, we use the following abbreviations: 
+\begin{itemize}
+\item $\phi\lor\psi$ (disjunction) for $\lnot(\lnot\phi\land\lnot\psi)$,
+\item $\mathsf{true}$ (tautology) for $A(a)\lor\lnot A(a)$ where $A\in\OC$ is arbitrary but fixed,
+\item $\Diamond\phi$ (eventually) for $\mathsf{true}\until\phi$, and
+\item $\Box\phi$ (always) for $\lnot\Diamond\lnot\phi$.
+\end{itemize}
+
+The semantics of \Lmc-LTL is based on DL-LTL-structures.  These are sequences of
+\Osig-inter\-pre\-tations over the same non-empty domain that additionally respect
+rigid names and the rigid individual assumption.
+
+\begin{definition}[DL-LTL-structure]
+    A \emph{DL-LTL-structure over \Osig} is a sequence $\Imf=(\I_i)_{i \geq 0}$ of
+    \Osig-interpretations $(\Delta,\cdot^{\I_i})$ such that
+    $x^{\I_{i}} = x^{\I_{j}}$ holds for all $x\in\OCR\cup\ORR\cup\OI$, $i,j>0$.
+\end{definition}
+
+We are now ready to define the semantics of \Lmc-LTL.
+
+\begin{definition}[Semantics of \Lmc-LTL]
+  The validity of an \Lmc-LTL-formula~$\phi$ in a DL-LTL-structure $\Imf=(\I_i)_{i\ge 0}$ at
+  time~$i\ge 0$, denoted by $\Imf,i\models\varphi$, is defined inductively:
+
+  \vspace{\topsep}
+  \begin{tabular}{l@{\quad}l@{\quad}l}
+    $\Imf,i\models\alpha$        & iff & $\I_{i}\models\alpha$ where $\alpha$ is an \ALC-axiom over \Osig,\\
+    $\Imf,i\models\phi\land\psi$      & iff & $\Imf,i\models\phi$ and $\Imf,i\models\psi$, \\
+    $\Imf,i\models\lnot\phi$       & iff & not $\Imf,i\models\phi$, \\
+    $\Imf,i\models\Next\phi$   & iff & $\Imf,i+1\models\phi$, \\
+    $\Imf,i\models\phi\until\psi$ & iff & there is $k\geq i$ such that $\Imf,k\models\psi$ and \\
+                      &     & $\Imf,j\models\phi$ for all $j$ with $i\leq j < k$.
+  \end{tabular}
+
+  \vspace{\topsep} We call an \Lmc-LTL-structure \Imf a \emph{model of~$\phi$} if
+  $\Imf,0\models\phi$.  The \emph{satisfiability problem in \Lmc-LTL} is the question whether a
+  given \Lmc-LTL-formula~$\phi$ has a model.
+\end{definition}
+
+In~\cite{BoTh-IJCAI15,BoTh-LTCS-15-07}, it is shown that the satisfiability problem in \EL-LTL is
+\NExpTime-hard as soon as rigid concept names are available.  We reduce the satisfiability problem
+in \EL-LTL to the consistency problem in \ALCEL to obtain the lower bounds of \NExpTime, where we
+use the fact that the lower bounds of~\cite{BoTh-IJCAI15,BoTh-LTCS-15-07} hold already for a
+syntactically restricted fragment of \EL-LTL.
+
+\begin{theorem}\label{thm:alcel-lower-rigid}
   The consistency problem in \condl{\ALC}{\EL} is \NExpTime-hard if $\OCR \neq \emptyset$ and
   $\ORR = \emptyset$.
 \end{theorem}
-\missingproof
 
-\begin{theorem}
+\begin{proof}
+  In fact, the lower bounds hold for \EL-LTL-formulas of the form $\Box\phi$ where $\phi$ is an
+  \EL-LTL-formula that contains only \Next as temporal operator~\cite{BoTh-LTCS-15-07}.
+
+  Let $\Box\phi$ be such an \EL-LTL-formula over~\Osig.  Now, we obtain the m-concept $C_\phi$
+  from~$\phi$ by replacing \EL-axioms~$\alpha$ by \oalpha, $\land$ by $\sqcap$, and subformulas of
+  the form $\Next\psi$ by $\forall t.\psi\sqcap\exists t.\psi$, where $t\in\MR$ is arbitrary but
+  fixed.
+
+  \begin{claim}
+    $\Box\phi$ is satisfiable iff $\B=\top\sqsubseteq C_\phi\sqcap\exists t.\top$ is consistent.
+  \end{claim}
+
+  \begin{claimproof}
+    First, assume that $\Box\phi$ is satisfiable.
+    Take any DL-LTL-structure $\Imf=(\Delta,\cdot^{\I_i})_{i\ge 0}$ with $\Imf,0\models\Box\phi$.
+    We define the nested interpretation \JJ as follows:
+    \begin{align*}
+      \Cbb & \coloneqq \{c_i \mid i \geq 0\},\\
+      \Delta^{\J} & \coloneqq \Delta,\\
+      \cdot^{\I_{c_{i}}} & \coloneqq \cdot^{\I_{i}},\\
+      t^\J & \coloneqq \{(c_{i},c_{i+1}) \mid i \geq 0\}.
+    \end{align*}
+    
+    We now show that for every $i\ge 0$, we have $\Imf,i\models\phi$ iff $c_i\in C_\phi^\J$ by
+    induction on the structure of~$\phi$:
+    
+    \begin{tabularx}{\linewidth}{@{}l@{ }X@{}}
+      $\phi = \alpha:$ & $\Imf,i\models\phi$ 
+               iff $\I_{i} \models \alpha$ 
+               iff $\I_{c_{i}} \models \alpha$
+               iff $c_{i} \in \oax{\alpha}^{\J} = C_{\phi}^{\J}$, \\[1ex]
+      $\phi = \lnot \psi$: &  $\Imf,i\models\phi$ 
+               iff $\Imf,i\not\models\psi$ 
+               iff $c_i\notin C_\psi^\J$ 
+               iff $c_i\in(\lnot C_\psi)^\J=C_\phi^\J$, \\[1ex]
+      $\phi = \psi_1\land\psi_2:$ & $\Imf,i\models\phi$ 
+               iff $\Imf,i\models\psi_{1}$ and $\Imf,i\models\psi_{2}$ 
+               iff $c_{i} \in C_{\psi_{1}}^{\J}$ and $c_{i} \in C_{\psi_{2}}^{\J}$ \\
+             & \hphantom{$\Imf,i\models\phi$} iff $c_{i} \in (C_{\psi_{1}} \sqcap C_{\psi_{2}})^{\J}
+               = C_{\phi}^{\J}$, and\\[1ex]
+      $\phi = \Next\psi$: & $\Imf,i\models\phi$
+               iff $\Imf,i+1\models\psi$
+               iff $c_{i+1} \in C_{\psi}^{\J}$
+               iff $c_{i} \in (\forall t.C_{\psi} \sqcap \exists t.C_{\psi})^{\J} = C_{\phi}^{\J}$,
+    \end{tabularx}
+    \noindent
+    where $\alpha$ is an \EL-axiom over~\Osig.
+    %
+    It follows that $\Imf,0\models\Box\phi$ iff $\J\models\top\sqsubseteq C_\phi$.  Furthermore,
+    since $(c_{i},c_{i+1})\in t^\J$, we have $c_{i}\in(\exists t.\top)^\J$.  Thus,
+    $\J\models\top\sqsubseteq\exists t.\top$.
+
+    For the if-direction, take any nested interpretation \JJ that is a model of
+    $\top\sqsubseteq C_\phi\sqcap\exists t.\top$.  Let $\Psf$ be an infinite path
+    $\Psf=c_0 c_1 \dots$ with $c_i\in\Cbb$ and $(c_{i},c_{i+1}) \in t^\J$ for every $i \geq 0$.
+    Such a path exists, because $\J\models\top\sqsubseteq\exists t.\top$.  We define the nested
+    interpretation
+    $\J_{\Psf}\coloneqq(\{c_i\mid i\ge 0\},\cdot^{\J_{\Psf}},\Delta^{\J},(\cdot^{\I_{c_{i}}})_{i
+      \geq 0})$ where $\cdot^{\J_{\Psf}}$ is the restriction of $\cdot^{\J}$ to the domain
+    $\{c_i\mid i\ge 0\}$.
+        
+    By construction we have that $\J_{\Psf}\models\top\sqsubseteq\exists t.\top$.  We show by a
+    simple case distinction that $\J_{\Psf}\models\top\sqsubseteq C_\phi$.
+    %
+    If $C_\phi$ does not contain any role name $r\in\MR$, the restriction on the set of worlds
+    preserves the entailment relation.
+    %
+    Otherwise, $C_\phi$ is of the form $\forall t.C_\psi\sqcap\exists t.C_\psi$.  Since
+    $\J_{\Psf}\models\top\sqsubseteq\exists t.\top$, $\J_{\Psf}\models\top\sqsubseteq C_\psi$, and
+    there is only one $t$-successor, we have $\J_{\Psf}\models\top\sqsubseteq C_\phi$.  Hence,
+    $\J_{\Psf}\models\top\sqsubseteq C_{\phi}\sqcap\exists t.\top$.
+
+    We define the DL-LTL-structure \Imf over~\Osig as
+    $\Imf\coloneqq(\Delta^{\J},\cdot^{\I_i})_{i\ge 0}$ where
+    $\cdot^{\I_{i}}\coloneqq\cdot^{\I_{c_{i}}}$.
+    %
+    Again, we show that for every $i \geq 0$, that we have $c_i \in C_{\phi}^{\J_{\Psf}}$ iff
+    $\Imf,i\models\phi$ by induction on the structure of~$\phi$:
+
+    \begin{tabularx}{\linewidth}{@{}l@{ }X@{}}
+      $\phi = \alpha:$ & $c_{i} \in C_{\phi}^{\J_{\Psf}} = \oax{\alpha}^{\J_{\Psf}}$
+               iff $\I_{c_{i}} \models \alpha$
+               iff $\I_{i} \models \alpha$ 
+               iff $\Imf,i \models \phi$,\\[1ex]
+      $\phi = \lnot \psi$: &  $c_{i} \in C_{\phi}^{\J_{\Psf}} = (\lnot C_{\psi})^{\J_{\Psf}}$
+               iff $c_{i} \notin C_{\psi}^{\J_{P}}$
+               iff $\Imf,i\not\models\psi$
+               iff $\Imf,i\models\phi$,\\[1ex]
+      $\phi = \psi_1\land\psi_2:$ & $c_{i} \in C_{\phi}^{\J_{\Psf}} = (C_{\psi_{1}} \sqcap C_{\psi_{2}})^{\J_{\Psf}}$
+               iff $c_{i} \in C_{\psi_{1}}^{\J_{\Psf}}$ and $c_{i} \in C_{\psi_{1}}^{\J_{\Psf}}$ 
+               iff $\Imf,i\models\psi_{1}$ and $\Imf,i\models\psi_{2}$ \\
+             & \hphantom{$c_{i} \in C_{\phi}^{\J_{\Psf}}$} iff $\Imf,i\models\phi$, and\\[1ex]
+      $\phi = \Next\psi$: & $c_{i} \in C_{\phi}^{\J_{\Psf}} = (\forall t.C_{\psi} \sqcap \exists t.C_{\psi})^{\J_{\Psf}} $
+               iff $c_{i+1} \in C_{\psi}^{\J_{\Psf}}$
+               iff $\Imf,i+1\models\psi$
+               iff $\Imf,i\models\phi$,
+    \end{tabularx}
+    %
+    where $\alpha$ is an \EL-axiom over~\Osig.  It follows that
+    $\J_{P}\models\top\sqsubseteq C_\phi$ iff $\Imf,0\models\Box\phi$.
+    \end{claimproof}
+
+    This claim yields the lower bound of \NExpTime for the consistency problem
+    in \ALCEL if $\OCR\ne\emptyset$.
+\end{proof}
+
+Next, we prove the upper bound of \NExpTime for the consistency problem in the
+case of rigid names.
+
+\begin{theorem}\label{thm:shoqel-upper-bound}
   The consistency problem in \condl{\SHOQ}{\EL} is in \NExpTime if $\OCR \neq \emptyset$ and
-  $\ORR = \emptyset$.
+  $\ORR \neq \emptyset$.
 \end{theorem}
-\missingproof
 
-\subsection{The Contextualized Description Logic ELLO}
-\label{sec:con-dl-el-lo}
+\begin{proof}
+  We again use Lemma~\ref{lem:admissible-and-outerConsistent}.  First, we non-deterministically
+  guess a set $\Xmc \subseteq \powerset{\ran(\bsf)}$ and construct the \EL-BKB $\B_\Xmc$ over~\Osig
+  as in the proof of Theorem~\ref{thm:shoqshoq-with-rigid-names-twoexptime}, which is actually a
+  conjunction of \EL-literals over~\Osig, i.e.~of (negated) \EL-axioms over~\Osig.  The following
+  claim shows that consistency of~$\B_\Xmc$ can be reduced to consistency of a conjunction of
+  \ELObot-axioms over~\Osig, where \ELObot is the extension of \EL with nominals and the bottom
+  concept.
+
+  \begin{claim}
+    For every conjunction of \EL-literals \B over~\Osig, there exists an equisatisfiable conjunction
+    $\B'$ of \ELObot-axioms over~\Osig.
+  \end{claim}
+
+  \begin{claimproof}
+    Let $\B$ be a conjunction of \EL-literals over~\Osig, i.e.
+    \begin{align*}
+      \B & = \alpha_{1} \land \dots \land \alpha_{n} \land \lnot\beta_{1} \land \dots \land \lnot\beta_{m} \\
+    \intertext{where $\alpha_{i}$, $1\leq i \leq n$, $\beta_{j}$, $1\leq j \leq m$ are \EL-axioms over~\Osig. We define $\B'$ as follows:}
+      \B' & = \alpha_{1} \land \dots \land \alpha_{n} \land \gamma_{1} \land \dots \land \gamma_{m}, \\
+    \intertext{where} 
+      \gamma_{i} & \coloneqq
+        \begin{cases}
+          C(a_{i}) \land D'(a_{i}) \land D \sqcap D' \sqsubseteq \bot & \text{if $\beta_{i} = C \sqsubseteq D$,}\\
+          A'(a) \land A \sqcap A' \sqsubseteq \bot & \text{if $\beta_{i} = A(a)$, and}\\
+          \{a\} \sqcap \exists r.\{b\} \sqsubseteq \bot & \text{if $\beta_{i} = r(a,b)$}
+        \end{cases}
+    \end{align*}
+    with $A',D'$ being fresh concept names and $a_{i}$ being fresh individual names.  It is easy to
+    see that if an \Osig-interpretation \I is a model of
+    $\lnot\beta_{1}\land\dots\land\lnot\beta_{m}$, there exists an extension of \I that is a model
+    of $\gamma_{1}\land\dots\land\gamma_{m}$.  Conversely, if an \Osig-interpretation $\I'$ is a
+    model of $\gamma_{1}\land\dots\land\gamma_{m}$, it is also a model of
+    $\lnot\beta_{1}\land\dots\land\lnot\beta_{m}$.  Hence \B and $\B'$ are equisatisfiable.
+    \end{claimproof}
+
+    By this claim and the fact that consistency of conjunctions of \ELObot-axioms can be decided in
+    polynomial time~\cite{BaBL-IJCAI05}, we obtain our claimed upper bound.
+\end{proof}
+
+Summming up the results of this section, we obtain the following corollary.
+
+\begin{corollary}
+  For all \LM between \ALC and \SHOQ, the consistency problem in \LMEL is
+    \begin{itemize}
+        \item \ExpTime-complete if $\OCR=\emptyset$ and $\ORR=\emptyset$, and
+        \item \NExpTime-complete otherwise.
+    \end{itemize}
+\end{corollary}
+
+\begin{proof}
+  The lower bounds follow from Theorems~\ref{thm:alcel-lower-no-rigid}
+  and~\ref{thm:alcel-lower-rigid}.  The upper bound of \ExpTime in the case $\OCR=\ORR=\emptyset$
+  follows immediately from Theorem~\ref{thm:shoqshoq-without-rigid-exptime}, whereas the upper bound
+  of \NExpTime follows from Theorem~\ref{thm:shoqel-upper-bound}.
+\end{proof}
+
+\subsection{The Contextualized Description Logics \texorpdfstring{\ELLO}{EL[LO]}}
+\label{sec:dlouter-el}
 
 \begin{theorem}
   The consistency problem in \condl{\EL}{\ALC} is \ExpTime-hard if $\OCR = \ORR = \emptyset$.
@@ -610,8 +939,12 @@ For the sake of completeness
 \end{theorem}
 \missingproof
 
+\section{Adding context-constructor}
+\label{sec:adding-cont-constr}
 
-\section{Consistency of Boolean SHOIQ knowledge bases}
+
+
+\section{Consistency of Boolean \texorpdfstring{\SHOIQ}{SHOIQ} knowledge bases}
 \label{sec:consistency-shoiq-bkb}
 
 
@@ -622,4 +955,4 @@ For the sake of completeness
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
 
-%  LocalWords:  Löwenheim Skolem
+%  LocalWords:  Löwenheim Skolem Logics logics iff
