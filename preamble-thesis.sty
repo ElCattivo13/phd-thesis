@@ -648,10 +648,10 @@
 \newcommand{\ensureboldmath}[1]{%
   {%
     %\@printfont % for debugging
-    \ifdefstring{\protect\f@series}{bx}{%
+    \ifdefstring{\protect\f@series}{b}{%
       \ensuremath{\boldsymbol{#1}}%
     }{%
-      \ifdefstring{\f@series}{bx}{%
+      \ifdefstring{\f@series}{b}{%
         \ensuremath{\boldsymbol{#1}}%
       }{%
         \ensuremath{#1}%
@@ -755,27 +755,27 @@
   \expandafter\newcommand\csname #1\endcsname{\@math{\mathcal{#1}}}}
 \docsvlist{ALCN,ALCNI,ALCHO,ALCHOIQ}
 
-\newcommand{\@DLhelper}[2]{\texorpdfstring{\@math{\mathcal{#1}}}{#2}\xspace}
+\newcommand{\@DLhelper}[1]{\@math{\mathcal{#1}}}
 
-\newcommand{\ALC}{\@DLhelper{ALC}{ALC}}
-\newcommand{\ALCI}{\@DLhelper{ALCI}{ALCI}}
-\newcommand{\ALCO}{\@DLhelper{ALC{\kern-.07em}O}{ALCO}}
-\newcommand{\ALCQ}{\@DLhelper{ALC{\kern-.12em}Q}{ALCQ}}
-\newcommand{\ALCOI}{\@DLhelper{ALC{\kern-.07em}O{\kern-.02em}I}{ALCOI}}
-\newcommand{\ALCIQ}{\@DLhelper{ALCI{\kern-.12em}Q}{ALCIQ}}
-\newcommand{\ALCOQ}{\@DLhelper{ALC{\kern-.07em}O{\kern-.12em}Q}{ALCOQ}}
-\newcommand{\ALCOIQ}{\@DLhelper{ALC{\kern-.07em}O{\kern-.02em}I{\kern-.12em}Q}{ALCOIQ}}
-\newcommand{\SH}{\@DLhelper{S{\kern-.05em}H}{SH}}
-\newcommand{\SHO}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O}{SHO}}
-\newcommand{\SHI}{\@DLhelper{S{\kern-.05em}HI}{SHI}}
-\newcommand{\SHQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}Q}{SHQ}}
-\newcommand{\SHOQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.12em}Q}{SHOQ}}
-\newcommand{\SHIQ}{\@DLhelper{S{\kern-.05em}HI{\kern-.12em}Q}{SHIQ}}
-\newcommand{\SHOI}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.05em}I}{SHOI}}
-\newcommand{\SHOIQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.05em}I{\kern-.12em}Q}{SHOIQ}}
-\newcommand{\SROIQ}{\@DLhelper{S{\kern-.05em}R{\kern-.05em}O{\kern-.05em}I{\kern-.12em}Q}{SROIQ}}
+\newcommand{\ALC}{\@DLhelper{ALC}}
+\newcommand{\ALCI}{\@DLhelper{ALCI}}
+\newcommand{\ALCO}{\@DLhelper{ALC{\kern-.07em}O}}
+\newcommand{\ALCQ}{\@DLhelper{ALC{\kern-.12em}Q}}
+\newcommand{\ALCOI}{\@DLhelper{ALC{\kern-.07em}O{\kern-.02em}I}}
+\newcommand{\ALCIQ}{\@DLhelper{ALCI{\kern-.12em}Q}}
+\newcommand{\ALCOQ}{\@DLhelper{ALC{\kern-.07em}O{\kern-.12em}Q}}
+\newcommand{\ALCOIQ}{\@DLhelper{ALC{\kern-.07em}O{\kern-.02em}I{\kern-.12em}Q}}
+\newcommand{\SH}{\@DLhelper{S{\kern-.05em}H}}
+\newcommand{\SHO}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O}}
+\newcommand{\SHI}{\@DLhelper{S{\kern-.05em}HI}}
+\newcommand{\SHQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}Q}}
+\newcommand{\SHOQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.12em}Q}}
+\newcommand{\SHIQ}{\@DLhelper{S{\kern-.05em}HI{\kern-.12em}Q}}
+\newcommand{\SHOI}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.05em}I}}
+\newcommand{\SHOIQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.05em}I{\kern-.12em}Q}}
+\newcommand{\SROIQ}{\@DLhelper{S{\kern-.05em}R{\kern-.05em}O{\kern-.05em}I{\kern-.12em}Q}}
 
-\newcommand{\EL}{\@DLhelper{E{\kern-.12em}L}{EL}}
+\newcommand{\EL}{\@DLhelper{E{\kern-.12em}L}}
 \newcommand{\ELbot}{\@math{\smash{\mathcal{E{\kern-.12em}L}^\bot}}}
 \newcommand{\ELObot}{\@math{\smash{\mathcal{E{\kern-.12em}LO}^\bot}}}
 \newcommand{\FLzero}{\@math{\mathcal{F{\kern-.18em}L}_0}}
@@ -806,26 +806,29 @@
 
 
 %%% Context DL names %%%
-\newcommand{\@cDLhelper}[2]{%
-  \texorpdfstring{\ensureboldmath{\csname #1\endcsname\llbracket{\kern-0.13em}%
-      \csname #2\endcsname{\kern-0.10em}\rrbracket}\xspace}
-    {#1[#2]}\xspace}
-\newcommand{\ALCALC}{\@cDLhelper{ALC}{ALC}}
-\newcommand{\ALCOALC}{\@cDLhelper{ALCO}{ALC}}
-\newcommand{\SHOQSHOQ}{\@cDLhelper{SHOQ}{SHOQ}}
-\newcommand{\SHOIQSHOIQ}{\@cDLhelper{SHOIQ}{SHOIQ}}
-\newcommand{\SHIQSHIQ}{\@cDLhelper{SHIQ}{SHIQ}}
-\newcommand{\ELALC}{\@cDLhelper{EL}{ALC}}
-\newcommand{\ALCEL}{\@cDLhelper{ALC}{EL}}
-\newcommand{\LM}{\@math{\mathcal{L_M}}}
-\newcommand{\LO}{\@math{\mathcal{L_O}}}
+\newcommand{\LM}{\@math{\mathcal{L}_\mathsf{M}}}
+\newcommand{\LO}{\@math{\mathcal{L}_\mathsf{O}}}
 
-\newcommand{\condl}[2]{\ensureboldmath{#1}\textnormal{\ensuremath{\llbracket}}\ensureboldmath{#2}\ensuremath{\rrbracket}\xspace}
-%\newcommand{\DLouter}{\@math{\mathcal{L}_{M}}}
-%\newcommand{\DLinner}{\@math{\mathcal{L}_{O}}}
-%\newcommand{\LM}{\@math{\mathcal{L}_{M}}}
-%\newcommand{\LO}{\@math{\mathcal{L}_{O}}}
+\newcommand{\condl}[2]{%
+  \ensureboldmath{#1}%
+  \textnormal{\ensuremath{\llbracket}}%
+  \ensureboldmath{#2}%
+  \ensuremath{\rrbracket}%
+  \xspace%
+}
+
 \newcommand{\LMLO}{\condl{\LM}{\LO}}
+\newcommand{\ALCALC}{\condl{\ALC}{\ALC}}
+\newcommand{\ALCOALC}{\condl{\ALCO}{\ALC}}
+\newcommand{\SHOQSHOQ}{\condl{\SHOQ}{\SHOQ}}
+\newcommand{\SHOIQSHOIQ}{\condl{\SHOIQ}{\SHOIQ}}
+\newcommand{\SHIQSHIQ}{\condl{\SHIQ}{\SHIQ}}
+\newcommand{\ELALC}{\condl{\EL}{\ALC}}
+\newcommand{\ALCEL}{\condl{\ALC}{\EL}}
+\newcommand{\ELEL}{\condl{\EL}{\EL}}
+\newcommand{\LMEL}{\condl{\LM}{\EL}}
+\newcommand{\ELLO}{\condl{\EL}{\LO}}
+
 \newcommand{\klarALC}{\@math{\ALC_{\!\ALC}}}
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname c#1\endcsname{\condl{\csname #1\endcsname}{\csname #1\endcsname}}}
@@ -1005,13 +1008,13 @@
 \newcommand{\PTime}{\@compclasshelp{P}}
 \newcommand{\NP}{\@compclasshelp{NP}}
 \newcommand{\coNP}{\@compclasshelp{co\nobreakdash-NP}}
-\newcommand{\ExpTime}{\@compclasshelp{Exp}}
+\newcommand{\ExpTime}{\@compclasshelp{ExpTime}}
 \newcommand{\ExpTIME}{\@compclasshelp{ExpTime}}
 \newcommand{\EXPTime}{\@compclasshelp{ExpTime}}
-\newcommand{\TwoExpTime}{\@compclasshelp{2Exp}}
+\newcommand{\TwoExpTime}{\@compclasshelp{2ExpTime}}
 \newcommand{\TwoEXPTime}{\@compclasshelp{2ExpTime}}
-\newcommand{\NExpTime}{\@compclasshelp{NExp}}
-\newcommand{\TwoNExpTime}{\@compclasshelp{2NExp}}
+\newcommand{\NExpTime}{\@compclasshelp{NExpTime}}
+\newcommand{\TwoNExpTime}{\@compclasshelp{2NExpTime}}
 \newcommand{\TwoNEXPTime}{\@compclasshelp{2NExpTime}}
 \newcommand{\PSpace}{\@compclasshelp{PSpace}}
 \newcommand{\NPSpace}{\@compclasshelp{NPSpace}}
@@ -1114,7 +1117,7 @@
   \newcommand{\missingproof}{%
     \begin{proof}
       \mbox{}
-      \todo[inline]{\vspace{1cm} The proof here is still missing!}
+      \todo[inline]{\vspace{2cm} The proof here is still missing!}
     \end{proof}
   }
 }
