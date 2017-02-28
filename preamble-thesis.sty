@@ -1160,6 +1160,15 @@
 
 %%% unsorted macros come here %%%
 
+
+
+%% suppress minor underfull vbox warnings in draft mode (default badness = 1000)
+% http://tex.stackexchange.com/questions/249789/is-the-default-value-vbadness-1000-a-good-one-and-when-should-it-be-adapted
+\ifdraft{
+  \vbadness = 1500
+}{}
+
+
 % \newcommand*{\follows}{{\tikz[baseline=-0.6ex]{ \draw[-latex'] (0,1ex) |- (2ex,0);}}}
 \ifdefstring{\XKV@documentclass}{beamer.cls}{
   \newcommand*{\follows}[1][thick]{{\tikz[baseline=-0.6ex]{ \draw[#1,->] (0,1ex) |- (2ex,0);}}\xspace}
