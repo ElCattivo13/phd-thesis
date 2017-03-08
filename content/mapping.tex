@@ -2,6 +2,11 @@
 \chapter{A Mapping from Role-Based Models to Context Description Logics}
 \label{cha:mapping}
 
+In the last chapter we introduced a family of description logics which are capable of expressing
+contextual knowledge. 
+
+ 
+
 How to use cDLs in practice?
 
 Semantics, even when durchdacht und präzise, hard to comprehend.
@@ -12,12 +17,54 @@ automatic mapping from such a system desirable.
 
 Formal representation of role-based system necessary.
 
-Chosen the famliy of CROMs introduced by Kühn.
+Chosen the family of CROMs introduced by Kühn.
 
 Also say what limitations occur, what cannot be represented in cDL
 
-\section{\texorpdfstring{$\Sigma$}{Σ}-CROM}
+\todo[inline]{paragraph about related work -> formalizing UML diagrams}
+
+\section{Introducing \texorpdfstring{$\Sigma$}{Σ}-CROM}
 \label{sec:sigma-crom}
+
+
+In this section we will present a syntactical variant of the \emph{Compartment Role Object Model}
+introduced in \textbf{[Ku-SLE15]}\todo{citation}.
+
+\begin{definition}[$\Sigma$-Compartment Role Object Model]
+  Let \NTsf, \RTsf, \CTsf and \RSTsf be finite and mutually disjoint sets of Natural Types, Role
+  Types, Compartment Types, and Relationship Types, respectively.  Let $\Sigma$ be the tuple
+  $(\NTsf, \RTsf, \CTsf,\RSTsf)$.  A \emph{$\Sigma$-Compartment Role Object Model ($\Sigma$-CROM)}
+  \Mmc is a tuple \MM where
+  \begin{enumerate}
+  \item $\Pmc$ is an arbitrary but fixed partition of \RTsf with $|\Pmc|=|\CTsf|$,
+  % \item $\Pmc=(P_{1},\dots,P_{n}), n=|\CTsf|$ is an arbitrary but fixed partition of \RTsf,
+  \item $\Smc\subseteq\bigcup_{P\in\Pmc}P\times P$ is a irreflexive binary relation with
+    $|\Smc|=|\RSTsf|$,
+  % \item \Smc is a irreflexive binary relation
+  %   $\Smc=\{S_{1},\dots,S_{k}\}\subseteq\bigcup_{1\leq i\leq n}P_{i}\times P_{i}$, $k=|\RSTsf|$,
+  \item $\fills\subseteq(\NTsf\cup\CTsf)\times\RTsf$ is a right-total binary relation,
+  \item $\parts:\CTsf\to\Pmc$ is a bijection, and
+  \item $\rel:\RSTsf\to\Smc$ is a bijection. \qedhere
+  \end{enumerate}
+\end{definition}
+
+Furthermore, we say that \emph{$t$ fills \rt} if $(t,\rt)\in\fills$, \emph{\rt participates in \ct}
+if $\rt\in\parts(\ct)$, \emph{$\rt_{1}$ and $\rt_{2}$ are related via \rst} if
+$(\rt_{1},\rt_{2})=\rel(\rst)$, and \emph{$\rt_{1}$ is the domain of \rst ($\dom(\rst)$) and
+  $\rt_{2}$ is the range of \rst ($\ran(\rst)$)} if $(\rt_{1},\rt_{2})\in\rel(\rst)$.
+
+Note here, that reasoning about role-based models does not include checking \emph{well-formed\-ness}
+as defined in Definition 1 of \textbf{[??]}, since that is a pure syntactical check. Therefore the
+above definition already ensures that the CROM is well-formed.  Since \fills is a right-total
+relation, for each role type there exists a natural type or compartment type that fills it.  As each
+element of \Pmc is a non-empty subset of \RTsf, the image of \parts does not contain the empty set.
+Since \Pmc is a partition each role type participates in only one compartment type.  Due to the
+irreflexivity of the image of \rel there exists no $\rst \in \RSTsf$ and $\rt \in \RTsf$ such that
+$\rel(\rst) = (\rt,\rt)$. Furthermore, since \Smc is a subset of $\bigcup_{P\in\Pmc}P\times P$, the
+pair of role types in the image of \rel always participate in the same compartment type.
+
+
+
 
 
 \subsection{Type Level}
@@ -43,8 +90,9 @@ Also say what limitations occur, what cannot be represented in cDL
 
 
 
-
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../thesis"
 %%% End:
+
+%  LocalWords:  logics Kühn
