@@ -23,28 +23,34 @@ Also say what limitations occur, what cannot be represented in cDL
 
 \todo[inline]{paragraph about related work -> formalizing UML diagrams}
 
-\section{Introducing \texorpdfstring{$\Sigma$}{Σ}-CROM}
+\section{A Formal Role-Based Modeling Language}
 \label{sec:sigma-crom}
 
 
 In this section we will present a syntactical variant of the \emph{Compartment Role Object Model}
-introduced in \textbf{[Ku-SLE15]}\todo{citation}.
+defined in \textbf{[Ku-SLE15]}\todo{citation}. This variant is simply introduced for easier
+explanation of the mapping to description logics.
+
+\subsection{Type and Instance Level}
+\label{sec:type-instance-level}
+
+We omit the graphical notation and 
+
+\todo[inline]{some more information}
+
+
 
 \begin{definition}[$\Sigma$-Compartment Role Object Model]
   Let \NTsf, \RTsf, \CTsf and \RSTsf be finite and mutually disjoint sets of Natural Types, Role
-  Types, Compartment Types, and Relationship Types, respectively.  Let $\Sigma$ be the tuple
-  $(\NTsf, \RTsf, \CTsf,\RSTsf)$.  A \emph{$\Sigma$-Compartment Role Object Model ($\Sigma$-CROM)}
-  \Mmc is a tuple \MM where
+  Types, Compartment Types, and Relationship Types, respectively.  The tuple
+  $\Sigma = (\NTsf, \RTsf, \CTsf,\RSTsf)$ is a \todo{or better alphabet?}\emph{vocabulary}.
+  A \emph{$\Sigma$-Compartment Role Object Model ($\Sigma$-CROM)} \Mmc is a tuple \MM where
   \begin{enumerate}
-  \item $\Pmc$ is an arbitrary but fixed partition of \RTsf with $|\Pmc|=|\CTsf|$,
-  % \item $\Pmc=(P_{1},\dots,P_{n}), n=|\CTsf|$ is an arbitrary but fixed partition of \RTsf,
-  \item $\Smc\subseteq\bigcup_{P\in\Pmc}P\times P$ is a irreflexive binary relation with
-    $|\Smc|=|\RSTsf|$,
-  % \item \Smc is a irreflexive binary relation
-  %   $\Smc=\{S_{1},\dots,S_{k}\}\subseteq\bigcup_{1\leq i\leq n}P_{i}\times P_{i}$, $k=|\RSTsf|$,
   \item $\fills\subseteq(\NTsf\cup\CTsf)\times\RTsf$ is a right-total binary relation,
-  \item $\parts:\CTsf\to\Pmc$ is a bijection, and
-  \item $\rel:\RSTsf\to\Smc$ is a bijection. \qedhere
+  \item $\parts:\CTsf\to\Pmc$ is a bijection where \Pmc is an arbitrary but fixed partition of
+    \RTsf, and
+  \item $\rel:\RSTsf\to\Smc$ is a bijection where $\Smc\subseteq\bigcup_{P\in\Pmc}P\times P$ is an
+    irreflexive binary relation. \qedhere
   \end{enumerate}
 \end{definition}
 
@@ -59,29 +65,86 @@ above definition already ensures that the CROM is well-formed.  Since \fills is 
 relation, for each role type there exists a natural type or compartment type that fills it.  As each
 element of \Pmc is a non-empty subset of \RTsf, the image of \parts does not contain the empty set.
 Since \Pmc is a partition each role type participates in only one compartment type.  Due to the
-irreflexivity of the image of \rel there exists no $\rst \in \RSTsf$ and $\rt \in \RTsf$ such that
+irreflexivity of \Smc there exists no $\rst \in \RSTsf$ and $\rt \in \RTsf$ such that
 $\rel(\rst) = (\rt,\rt)$. Furthermore, since \Smc is a subset of $\bigcup_{P\in\Pmc}P\times P$, the
 pair of role types in the image of \rel always participate in the same compartment type.
 
+\todo[inline]{introduction to instance level}
 
 
+\begin{definition}[$\Sigma$-Compartment Role Object Instance, Compliance]
+  Let $\Sigma = (\NTsf, \RTsf,$ \todo{kann man so was machen???}$\CTsf,\RSTsf)$ be a vocabulary and
+  let \MM be a $\Sigma$-CROM.  Then a \emph{$\Sigma$-Compartment Role Object Instance
+    ($\Sigma$-CROI)} \I for \Mmc is a tuple $\I=(\Gamma,\type,\plays,\links)$, where
+  \begin{itemize}
+  \item $\Gamma$ is a non-empty domain,
+  \item $\type:\Gamma\to\NTsf\cup\RTsf\cup\CTsf$ is a total function,
+  \item $\plays\subseteq(\Nsf\cup\Csf)\times\Csf\times\Rsf$ is a ternary relation, and
+  \item $\links\subseteq\RSTsf\times\Csf\times\Rsf\times\Rsf$ is a quaternary relation.
+  \end{itemize}
+  with 
+  \begin{align*}
+  \Nsf & \coloneqq \{d \in \Gamma \mid \type(d) \in \NTsf\}, \\
+  \Rsf & \coloneqq \{d \in \Gamma \mid \type(d) \in \RTsf\}, \text{ and} \\
+  \Csf & \coloneqq \{d \in \Gamma \mid \type(d) \in \CTsf\} 
+  \end{align*}
+  being the sets of \emph{naturals}, \emph{roles} and \emph{compartments}. For
+  $T \in \NTsf\cup\RTsf\cup\CTsf$, $T^{\I}$ is the set of all elements of that type, i.e.\
+  $T^{\I} \coloneqq \{d \in \Gamma \mid \type(d) = T\}$.
 
+  A $\Sigma$-CROI \I is \emph{compliant} with \Mmc, denoted by $\I\models\Mmc$ if it has the following
+  properties:
+  \begin{enumerate}
+  \item The \plays-relation respects \fills, i.e.~for each tuple $(o,c,r)\in\plays$ the type of $o$
+    fills the type of $r$:
+    \begin{align*}
+      \{(o,r)\mid(o,\cdot,r)\in\plays\}\subseteq\{(o,r)\mid\text{there exists
+        $(T_{1},T_{2})\in\fills$ s.t. $o\in T_{1}^{\I}$, $r\in T_{2}^{\I}$}\}.
+    \end{align*}
+  \item The \plays-relation respects \parts, i.e.~for each tuple $(o,c,r)\in\plays$ the type of $r$
+    participates in the type of $c$:
+    \begin{align*}
+      & \{(c,r)\mid(\cdot,c,r)\in\plays\}\\
+      & \qquad \subseteq\{(c,r)\mid \text{there exists $T_{1}\in\CTsf$, $T_{2}\in\RTsf$ s.t. $c\in
+        T_{1}^{\I}$, $r\in T_{2}^{\I}$, $T_{2}\in\parts(T_{1})$}\}.
+    \end{align*}
+  \item Each object can play in each compartment only one role of each role type:
+    \begin{align*}
+      \{(o,c,r),(o,c,r')\}\subseteq\plays \text{ implies } \type(r)\neq\type(r').
+    \end{align*}
+  \item Each role is played by exactly one object in exactly one compartment:
+    \begin{align*}
+      |\{(o,c)\mid(o,c,r)\in\plays\}| = 1 \text{ for all $r \in \Rsf$}.
+    \end{align*}
+  \item Roles occurring in an element of \links are played in the compartment occurring in that
+    element, i.e.\ for each tuple $(\rst,c,r_{1},r_{2})\in\links$ there exists objects that play
+    $r_{1}$ and $r_{2}$ in $c$:
+    \begin{align*}
+      \{r\mid(\cdot,c,r,\cdot)\in\links\text{ or }(\cdot,c,\cdot,r)\in\links\}\subseteq\{r\mid(\cdot,c,r)\in\plays\}.
+    \end{align*}
+  \item The \links-relation respects \rel, i.e.\ for each tuple $(rst,c,r_{1},r_{2})\in\links$ the
+    types of $r_{1}$ and $r_{2}$ are related via $rst$:
+    \begin{align*}
+      (rst,c,r_{1},r_{2})\in\links &  \text{ implies } \rel(rst)=(\type(r_{1}),\type(r_{2})). \qedhere
+    \end{align*}
+  \end{enumerate}
+\end{definition}
 
-\subsection{Type Level}
-\label{sec:type-level}
-
-
-
-
-\subsection{Instance Level}
-\label{sec:instance-level}
-
-
+Before we discuss how the information about a \SCROM can be encoded in a description logic ontology,
+we discuss the main reasoning tasks for this
 
 
 \subsection{Constraint Level}
 \label{sec:constraint-level}
 
+
+\section{Adding Inheritance}
+\label{sec:adding-inheritance}
+
+
+
+\section{Going beyond CROM}
+\label{sec:going-beyond-crom}
 
 
 
@@ -95,4 +158,4 @@ pair of role types in the image of \rel always participate in the same compartme
 %%% TeX-master: "../thesis"
 %%% End:
 
-%  LocalWords:  logics Kühn
+%  LocalWords:  logics Kühn irreflexivity
