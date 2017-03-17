@@ -40,102 +40,363 @@ We omit the graphical notation and
 
 
 
-\begin{definition}[$\Sigma$-Compartment Role Object Model]
-  Let \NTsf, \RTsf, \CTsf and \RSTsf be finite and mutually disjoint sets of Natural Types, Role
+\begin{definition}[$\Sigma$-Compartment Role Object Model]\label{def:scrom}
+  Let \NT, \RT, \CT and \RST be finite and mutually disjoint sets of Natural Types, Role
   Types, Compartment Types, and Relationship Types, respectively.  The tuple
-  $\Sigma = (\NTsf, \RTsf, \CTsf,\RSTsf)$ is a \todo{or better alphabet?}\emph{vocabulary}.
+  $\Sigma = (\NT, \RT, \CT,\RST)$ is a \todo{or better alphabet?}\emph{vocabulary}.
   A \emph{$\Sigma$-Compartment Role Object Model ($\Sigma$-CROM)} \Mmc is a tuple \MM where
   \begin{enumerate}
-  \item $\fills\subseteq(\NTsf\cup\CTsf)\times\RTsf$ is a right-total binary relation,
-  \item $\parts:\CTsf\to\Pmc$ is a bijection where \Pmc is an arbitrary but fixed partition of
-    \RTsf, and
-  \item $\rel:\RSTsf\to\Smc$ is a bijection where $\Smc\subseteq\bigcup_{P\in\Pmc}P\times P$ is an
+  \item $\fills\subseteq(\NT\cup\CT)\times\RT$ is a right-total binary relation,
+  \item $\parts:\CT\to\Pmf$ is a bijection where \Pmf is an arbitrary but fixed partition of
+    \RT, and
+  \item $\rel:\RST\to\Smc$ is a bijection where $\Smc\subseteq\bigcup_{P\in\Pmf}P\times P$ is an
     irreflexive binary relation. \qedhere
   \end{enumerate}
 \end{definition}
 
-Furthermore, we say that \emph{$t$ fills \rt} if $(t,\rt)\in\fills$, \emph{\rt participates in \ct}
-if $\rt\in\parts(\ct)$, \emph{$\rt_{1}$ and $\rt_{2}$ are related via \rst} if
-$(\rt_{1},\rt_{2})=\rel(\rst)$, and \emph{$\rt_{1}$ is the domain of \rst ($\dom(\rst)$) and
-  $\rt_{2}$ is the range of \rst ($\ran(\rst)$)} if $(\rt_{1},\rt_{2})\in\rel(\rst)$.
+In the rest of this thesis, we use the following phrases:
+\begin{itemize}
+\item \emph{$T$ fills \rt} if $(T,\rt)\in\fills$,
+\item \emph{\rt participates in \ct} if $\rt\in\parts(\ct)$,
+\item \emph{\rst participates in \ct} if $\rel(\rst)\subseteq\parts(\ct)$,
+\item \emph{\rt[1] and \rt[2] are related via \rst} if $(\rt[1],\rt[2]) = \rel(\rst)$, and
+\item \emph{\rt[1] is the domain of \rst ($\dom(\rst)$) and \rt[2] is the range of \rst
+    ($\ran(\rst)$)} if $(\rt[1],\rt[2])\in\rel(\rst)$.
+\end{itemize}
+
+
+
+Since \fills is a right-total relation, for each role type there exists a natural type or
+compartment type that fills it.  As each element of \Pmf is a non-empty subset of \RT, the image
+of \parts does not contain the empty set.  Since \Pmf is a partition each role type participates in
+only one compartment type.  Due to the irreflexivity of \Smc there exists no $\rst \in \RST$ and
+$\rt \in \RT$ such that $\rel(\rst) = (\rt,\rt)$. Furthermore, since \Smc is a subset of
+$\bigcup_{P\in\Pmf}P\times P$, the pair of role types in the image of \rel always participate in the
+same compartment type. Hence, equations (1) to (5) of \textbf{[Ku-SLE15]} are satisfied.
 
 Note here, that reasoning about role-based models does not include checking \emph{well-formed\-ness}
-as defined in Definition 1 of \textbf{[??]}, since that is a pure syntactical check. Therefore the
-above definition already ensures that the CROM is well-formed.  Since \fills is a right-total
-relation, for each role type there exists a natural type or compartment type that fills it.  As each
-element of \Pmc is a non-empty subset of \RTsf, the image of \parts does not contain the empty set.
-Since \Pmc is a partition each role type participates in only one compartment type.  Due to the
-irreflexivity of \Smc there exists no $\rst \in \RSTsf$ and $\rt \in \RTsf$ such that
-$\rel(\rst) = (\rt,\rt)$. Furthermore, since \Smc is a subset of $\bigcup_{P\in\Pmc}P\times P$, the
-pair of role types in the image of \rel always participate in the same compartment type.
+as defined in Definition 1 of \textbf{[Ku-SLE15]}, since that is a pure syntactical check. Therefore the
+above definition already ensures that a \SCROM is well-formed. 
 
-\todo[inline]{introduction to instance level}
+Next, we introduce instances based on role-based models.
 
 
-\begin{definition}[$\Sigma$-Compartment Role Object Instance, Compliance]
-  Let $\Sigma = (\NTsf, \RTsf,$ \todo{kann man so was machen???}$\CTsf,\RSTsf)$ be a vocabulary and
-  let \MM be a $\Sigma$-CROM.  Then a \emph{$\Sigma$-Compartment Role Object Instance
-    ($\Sigma$-CROI)} \I for \Mmc is a tuple $\I=(\Gamma,\type,\plays,\links)$, where
+\begin{definition}[$\Sigma$-Compartment Role Object Instance, Compliance]\label{def:scroi}
+  Let $\Sigma = (\NT, \RT,$ \todo{kann man so was machen???}$\CT,\RST)$ be a vocabulary.  Then, a
+  \emph{$\Sigma$-Compartment Role Object Instance ($\Sigma$-CROI) \I} is a tuple
+  $\I=(\Gamma^{\I},\type,\plays,\links)$, where
   \begin{itemize}
-  \item $\Gamma$ is a non-empty domain,
-  \item $\type:\Gamma\to\NTsf\cup\RTsf\cup\CTsf$ is a total function,
-  \item $\plays\subseteq(\Nsf\cup\Csf)\times\Csf\times\Rsf$ is a ternary relation, and
-  \item $\links\subseteq\RSTsf\times\Csf\times\Rsf\times\Rsf$ is a quaternary relation.
+  \item $\Gamma^{\I}$ is a non-empty domain,
+  \item $\type:\Gamma^{\I}\to\NT\cup\RT\cup\CT$ is a total function,
+  \item $\plays \subseteq \Osf\times\Csf\times\Rsf$ is a ternary relation, and
+  \item $\links: (\RST\times\Csf) \to \powerset{\Rsf\times\Rsf}$ is a total function.
   \end{itemize}
   with 
   \begin{align*}
-  \Nsf & \coloneqq \{d \in \Gamma \mid \type(d) \in \NTsf\}, \\
-  \Rsf & \coloneqq \{d \in \Gamma \mid \type(d) \in \RTsf\}, \text{ and} \\
-  \Csf & \coloneqq \{d \in \Gamma \mid \type(d) \in \CTsf\} 
+    \Nsf & \coloneqq \{d \in \Gamma \mid \type(d) \in \NT\}, \\
+    \Rsf & \coloneqq \{d \in \Gamma \mid \type(d) \in \RT\}, \\
+    \Csf & \coloneqq \{d \in \Gamma \mid \type(d) \in \CT\}\text{ and} \\
+    \Osf & \coloneqq \Nsf \cup \Csf
   \end{align*}
-  being the sets of \emph{naturals}, \emph{roles} and \emph{compartments}. For
-  $T \in \NTsf\cup\RTsf\cup\CTsf$, $T^{\I}$ is the set of all elements of that type, i.e.\
+  being the sets of \emph{naturals}, \emph{roles}, \emph{compartments} and
+  \emph{objects}, respectively. Furthermore, the set of all objects playing a role in $c$ is denoted by
+  $\Osf[\I,c]$, i.e.\ $\Osf[\I,c] \coloneqq \{o \in \Osf \mid (o,c,\cdot) \in \plays\}$. For
+  $T \in \NT\cup\RT\cup\CT$, $T^{\I}$ is the set of all elements of that type, i.e.\
   $T^{\I} \coloneqq \{d \in \Gamma \mid \type(d) = T\}$.
 
-  A $\Sigma$-CROI \I is \emph{compliant} with \Mmc, denoted by $\I\models\Mmc$ if it has the following
+  A $\Sigma$-CROI \I is \emph{compliant} with a \SCROM{} \Mmc, denoted by $\I\models\Mmc$, if it has the following
   properties:
   \begin{enumerate}
   \item The \plays-relation respects \fills, i.e.~for each tuple $(o,c,r)\in\plays$ the type of $o$
     fills the type of $r$:
     \begin{align*}
-      \{(o,r)\mid(o,\cdot,r)\in\plays\}\subseteq\{(o,r)\mid\text{there exists
-        $(T_{1},T_{2})\in\fills$ s.t. $o\in T_{1}^{\I}$, $r\in T_{2}^{\I}$}\}.
+      \{(o,r)\mid(o,\cdot,r)\in\plays\}\ \subseteq\ \{(o,r)\mid\text{there exists
+        $(T,\rt)\in\fills$ s.t. $o\in T^{\I}$, $r\in \rt^{\I}$}\}.
     \end{align*}
   \item The \plays-relation respects \parts, i.e.~for each tuple $(o,c,r)\in\plays$ the type of $r$
     participates in the type of $c$:
     \begin{align*}
       & \{(c,r)\mid(\cdot,c,r)\in\plays\}\\
-      & \qquad \subseteq\{(c,r)\mid \text{there exists $T_{1}\in\CTsf$, $T_{2}\in\RTsf$ s.t. $c\in
-        T_{1}^{\I}$, $r\in T_{2}^{\I}$, $T_{2}\in\parts(T_{1})$}\}.
+      & \qquad \subseteq\ \{(c,r)\mid \text{there exists $\ct \in \CT$, $\rt \in \RT$ s.t. $c \in
+        \ct^{\I}$, $r \in \rt^{\I}$, $\rt \in \parts(\ct)$}\}.
     \end{align*}
-  \item Each object can play in each compartment only one role of each role type:
+  \item Each object can only play one role of each role type in each compartment:
     \begin{align*}
-      \{(o,c,r),(o,c,r')\}\subseteq\plays \text{ implies } \type(r)\neq\type(r').
+      \{(o,c,r),(o,c,r')\}\subseteq\plays \textImplies \type(r)\neq\type(r').
     \end{align*}
   \item Each role is played by exactly one object in exactly one compartment:
     \begin{align*}
-      |\{(o,c)\mid(o,c,r)\in\plays\}| = 1 \text{ for all $r \in \Rsf$}.
+      |\{(o,c)\mid(o,c,r)\in\plays\}| = 1 \quad\text{for all $r \in \Rsf$}.
     \end{align*}
-  \item Roles occurring in an element of \links are played in the compartment occurring in that
-    element, i.e.\ for each tuple $(\rst,c,r_{1},r_{2})\in\links$ there exists objects that play
-    $r_{1}$ and $r_{2}$ in $c$:
+  \item Roles occurring in the image of \links are played in the associated compartment, i.e.\ for
+    each $(r_{1},r_{2})\in\links(\rst,c)$ there exists objects that play $r_{1}$ and $r_{2}$ in $c$:
     \begin{align*}
-      \{r\mid(\cdot,c,r,\cdot)\in\links\text{ or }(\cdot,c,\cdot,r)\in\links\}\subseteq\{r\mid(\cdot,c,r)\in\plays\}.
+      \{r_{1} \mid (r_{1},\cdot) \in \links(\cdot,c)\} \cup \{r_{2} \mid (\cdot,r_{2}) \in \links(\cdot,c)\} \ \subseteq\ \{r\mid(\cdot,c,r)\in\plays\}.
     \end{align*}
-  \item The \links-relation respects \rel, i.e.\ for each tuple $(rst,c,r_{1},r_{2})\in\links$ the
-    types of $r_{1}$ and $r_{2}$ are related via $rst$:
+  \item The \links-function respects \rel, i.e.\ for each $(r_{1}, r_{2}) \in \links(\rst, \cdot)$ the
+    types of $r_{1}$ and $r_{2}$ are related via \rst:
     \begin{align*}
-      (rst,c,r_{1},r_{2})\in\links &  \text{ implies } \rel(rst)=(\type(r_{1}),\type(r_{2})). \qedhere
+      (r_{1},r_{2}) \in \links(\rst, \cdot) \textImplies \rel(\rst)=(\type(r_{1}),\type(r_{2})).
     \end{align*}
   \end{enumerate}
+
+  A \SCROM{} \Mmc is \emph{compliable} if there exists any \SCROI{} \I such that $\I\models\Mmc$. 
 \end{definition}
 
-Before we discuss how the information about a \SCROM can be encoded in a description logic ontology,
-we discuss the main reasoning tasks for this
+We say that $r$ is an $\rt$-role or $c$ is a $\ct$-compartment if, respectively,
+$\type(r) = \rt \in \RT$ or $\type(c) = \ct \in \CT$.  Furthermore, \emph{$o$ plays $r$ in $c$} and
+$o$ is the \emph{player} of $r$ if $(o,c,r) \in \plays$, and \emph{$r_{1}$ is linked to $r_{2}$ via
+  $\rst$ in $c$} if $(r_{1}, r_{2}) \in \links(\rst, c)$.
+
+Since the \plays-relation respects the \fills- and the \plays-relation, if $o$ plays an \rt-role in
+a \ct-compartment, then the type of $o$ must fill \rt and \rt must participate in \ct. If $o$ plays
+$r_{1}$ and $r_{2}$ in $c$ then $r_{1}$ and $r_{2}$ must have different types, because each object
+can only play one role of each type in the same compartment.
+%  
+\todo[inline]{}\noindent
+%
+Thus, equations (6) to (11) of \textbf{[Ku-SLE15]} are satisfied.
+
+
+Before we investigate how the information about a \SCROM can be encoded in a description logic
+ontology, we have to discuss the main reasoning tasks for role-based models. The arguably most
+apparent question is, given a \SCROM{} \Mmc and a \SCROI{} \I, whether \I is compliant with
+\Mmc. But as this task rather belongs to the area of model checking, we will not focus in this
+thesis on that problem.
+%
+Instead, given a \SCROM{} \Mmc, it is much more interesting whether there exists any \SCROI that is
+compliant with \Mmc.  Additionally we often want to know for a specific \SCROM{} \Mmc whether there
+exists a compliant \SCROI that fulfills certain assertions, e.g.\ that a role of a certain type is
+played.  To express these assertional knowledge, we introduce a so-called \SCROA, a set of
+assertions which should be fulfilled by an \SCROI.
+
+\begin{definition}[$\Sigma$-Compartment Role Object Assertions] \label{def:scroa} Let
+  $\Sigma = (\NT, \RT, \CT, \RST)$ be a vocabulary and let \IND be a non-empty set of individual
+  names disjoint from $\Sigma$.  A $\Sigma$-Compartment Role Object assertion is of the form
+  \begin{itemize}
+  \item $T(a)$ with $T \in \NT \cup \CT \cup \RT$,
+  \item $\playass(a_{1}, a_{2}, a_{3})$ with $a_{1}, a_{2}, a_{3} \in \IND$, or
+  \item $\linkass(\rst, a_{1}, a_{2}, a_{3})$ with $\rst \in \RST$ and  $a_{1}, a_{2}, a_{3} \in \IND$ .
+  \end{itemize}
+
+  A \emph{set of $\Sigma$-Compartment Role Object assertions (\SCROA)} \A is a set of such
+  assertions.
+  %
+  We extend the \SCROI{} \I to additionally map individual names to domain elements, e.g.\ $a$ is
+  mapped to a domain element $a^{\I} \in \Gamma$. A \SCROI{} \I is \emph{compliant with an assertion
+    $\alpha$}, denoted by $\I\models\alpha$ if
+  \begin{itemize}
+  \item for $\alpha$ of the form $T(a)$: $a^{\I} \in T^{\I}$,
+  \item for $\alpha$ of the form $\playass(a_{1}, a_{2}, a_{3})$:
+    $(a_{1}^{\I}, a_{2}^{\I}, a_{3}^{\I}) \in \plays$, and
+  \item for $\alpha$ of the form $\linkass(\rst, a_{1}, a_{2}, a_{3})$:
+    $(\rst, a_{1}^{\I}, a_{2}^{\I}, a_{3}^{\I}) \in \links$.
+  \end{itemize}
+
+  A \SCROI{} \I is \emph{compliant with \A}, denoted by $\I\models\A$ if it is compliant with all
+  assertions in \A.
+\end{definition}
+
+Note here, that without any assertions or further restrictions as introduced in
+Section~\ref{sec:constraint-level} there always exists a trivial CROI with the singleton set $\Gamma =
+\{o\}$, the type of $o$ being some natural type, and \plays and \links being empty sets that is
+compliant with \Mmc.
 
 
 \subsection{Constraint Level}
 \label{sec:constraint-level}
+
+When modelling a domain of interest, not only the type of an object defines whether that object is
+allowed to play a certain role. These additional constraints can be divided into four groups.
+
+The first category of constraints are \emph{role constraints}, e.g. roles that mutually exclude each
+other or playing one role implies playing another role. More general these constraints are
+formalized with  so-called \emph{role groups}. These consist of a set of role
+types (or again role groups) and a lower and an upper bound. An object fulfills a role group if it
+plays at least the lower and at most the upper bound of roles from the set of role types.
+
+
+ 
+
+\begin{definition}[Syntax of Role Groups]\label{def:syntax-role-groups}
+  Let \RT be a set of role types. The set of \emph{role groups over \RT} is the smallest such that
+  \begin{itemize}
+  \item if $\rt \in \RT$, then \rt is an (\emph{atomic}) role group, and
+  \item if $A_{1}$, \dots, $A_{n}$ are role groups, $k,l \in \nat$, then $(\{A_{1}, \dots, A_{n}\},
+    k,l)$ is a (\emph{complex}) role group.
+  \end{itemize}
+  \emph{Atoms} of a role group $A$ are defined as:
+  \begin{align*}
+    \atom(A) & \coloneqq
+               \begin{cases}
+                 \{\rt\} & \text{if $A = \rt \in \RT$}\\
+                 \bigcup_{i=1}^{n} \atom(A_{i}) & \text{if $A = (\{A_{1}, \dots, A_{n}\},k,l)$}.
+               \end{cases}
+  \end{align*}
+
+  \vspace{-1.81\baselineskip}
+\end{definition}
+
+The semantics of a role group are based on a \SCROI and are locally evaluated for each domain
+element and each compartment.  The interpretation function $\cdot^{\I,c,o}$ calculates recursively
+whether an object fulfills the role group.
+
+\begin{definition}[Semantics of Role Groups]\label{def:semantics-role-groups}
+  Given a \SCROI{} \I, the semantics of a role group $A$ is defined for an object $o \in \Osf$ in
+  $c \in \Csf$ as follows:
+  \begin{align*}
+    A^{\I,c,o} & \coloneqq 
+                 \begin{cases}
+                   1 & \text{if $A = \rt$ and $o$ plays an \rt-role in $c$,} \\
+                   1 & \text{if $A = (\{B_{1},\dots,B_{n}\},k,l)$ and $k \leq \sum_{i=1}^{k}
+                     B_{i}^{\I,c,o} \leq l$, and}\\
+                   0 & \text{otherwise.}
+                 \end{cases}
+  \end{align*}
+
+  If $A^{\I,c,o} = 1$, we say that $o$ fulfills $A$ in $c$.
+\end{definition}
+
+\todo[inline]{role groups: role implication, equivalence, and so on can be expressed via role
+  groups. very expressive role constraints can be expressed}
+
+
+occurrence constraints
+
+cardinality constraints over relationship types
+
+intra-relationship type constraints.
+
+\todo[inline]{}
+
+We first introduce the syntax of role groups.
+
+
+\todo[inline]{auxiliary functions: succ, pred, links-hat}
+
+\begin{definition}[Constraint Set, Validity]
+  Let $\Sigma = (\NT, \RT, \CT, \RST)$ be a vocabulary, let \RG be the set of role groups over \RT
+  and let $\Card \coloneqq \nat \times \natinf$ be the set of cardinalities.  Then, a
+  \emph{$\Sigma$-Compartment Role Object Constraint Set (\SCROC) \Cmc} is a tuple $\CC$ where
+  \begin{itemize}
+  \item $\occur : \CT \to \powerset{\Card \times \RG}$,
+  \item $\card : \RST \to \Card \times \Card$, and
+  \item $\intra : \RST \to \powerset{\Emc}$ with \Emc being a set of functions of the form
+    $e : \powerset{S\times S}\to \{\true, \false\}$ for an arbitrary set $S$ \todo{how to represent
+      ``symmetric'' or ``acyclic'' as function?}
+  \end{itemize}
+  are total functions. A \SCROI{} \I is \emph{valid w.r.t.\ \Cmc}, denoted by $\I\models\Cmc$, if it has
+  the following properties:
+  \begin{enumerate}
+
+  \item All occurrence constraints are respected, i.e.\ if $(k,l,A) \in \occur(\ct)$, then in every
+    \ct-compartment there must exist at least $k$ and at most $l$ objects that fulfill role group
+    $A$:\todo{im mapping überprüfen: comptype wo exakt 3 objekte rollenimplikation erfüllen}
+    \begin{align*}
+      ((k,l),A) \in \occur(\ct) \textImplies  \ct^{\I} \subseteq \left\{c \in \Csf \mmid k \leq \sum\nolimits_{o\in\Osf[\I,c]}
+      A^{\I,c,o} \leq l \right\}
+    \end{align*}
+
+  \item All role groups must be satisfied, i.e.\ if an object $o$ plays an \rt-role and \rt is an
+    atom of role group A, then $o$ must fulfill $A$:
+    \begin{align*}
+      (o,c,r) \in \plays \text{, } r \in \rt^{\I} \text{ and } \rt \in \atom(A) \textImplies
+      A^{\I,c,o} = 1\text{, for all $o \in \Osf$, $A \in \RG$}
+    \end{align*}
+
+  \item All cardinality constraints are respected, i.e.\ every role that is played in a compartment
+    $c$ and whose type is either the domain or the range of a relationship type \rst with
+    $\card(\rst) = (i..j, k..l)$ must have at least $k$ and at most $l$ \rst-successors in $c$ or at
+    least $i$ and at most $j$ \rst-predecessors in $c$, respectively:
+    \begin{align*}
+      & (\cdot,c,r) \in \plays \text{, } r \in \rt[1]^{\I} \text{, } \rel(\rst) = (\rt[1], \cdot) \text{ and
+        } \card(\rst)=(\cdot,k..l)\\
+      & \qquad \textImplies k \leq | \Succ(\rst,r,c) | \leq l \\[1ex]
+      & (\cdot,c,r) \in \plays \text{, } r \in \rt[2]^{\I} \text{, } \rel(\rst) = (\cdot, \rt[2]) \text{ and
+        } \card(\rst)=(i..j,\cdot)\\
+      & \qquad \textImplies i \leq | \Pred(\rst,r,c) | \leq j
+    \end{align*}
+
+  \item All intra-relationship type constraints are respected, i.e.\ every function $\fsf \in
+    \intra(\rst)$, evaluated over the players of the roles related via \rst, must return \true:
+    \begin{align*}
+      & \fsf \in \intra(\rst) \textImplies \fsf(\links^{*}(\rst,c)) = \true, \\
+      & \qquad\text{for all $c$ in $\ct^{\I}$ with $\rel(\rst)\subseteq\parts(\ct)$}.
+    \end{align*}
+  \end{enumerate}
+
+  The auxiliary functions used above are defined as follows:
+  \begin{align*}
+    \Succ(\rst,r,c) & \coloneqq \{r' \in \Rsf \mid (r,r') \in \links(\rst,c)\}, \\
+    \Pred(\rst,r,c) & \coloneqq \{r' \in \Rsf \mid (r',r) \in \links(\rst,c)\}\text{, and} \\
+    \links^{*}(\rst,c) & \coloneqq \{ (o_{1}, o_{2}) \mid (r_{1}, r_{2}) \in \links(\rst,c) \text{
+                         and } (o_{1}, c, r_{1}), (o_{2}, c, r_{2}) \in \plays\}.
+                         \qedhere
+  \end{align*}
+
+\end{definition}
+
+\todo[inline]{paragraph about fulfilling equations (13) to (16) in SLE15}
+
+
+\begin{definition}[Constrained $\Sigma$-Compartment Role Object Model, Validity Problem]
+  \label{def:constrained-sigma-crom}
+  \mbox{}\\
+  Let $\Sigma = (\NT, \RT, \CT, \RST)$ be a vocabulary, let \Mmc be a \SCROM, let \Amc be a \SCROA
+  and let \Cmc be a \SCROC.
+  %
+  Then, a \emph{Constrained $\Sigma$-Compartment Role Object Model \SCCROM} is the tuple
+  $\Kmc = (\Mmc, \Amc, \Cmc)$.
+
+  The \emph{validity problem} for \SCCROM{s} is the problem of deciding for a given \SCCROM{}
+  $\Kmc = (\Mmc, \Amc, \Cmc)$ whether there exists a \SCROI that is valid \todo{correct definitions
+    above} for \Mmc, \Amc and \Cmc.
+\end{definition}
+
+
+\section{Representing Role-Based Models}
+\label{sec:representating-role-based-models}
+
+research on how to formally represent objects of OOP
+
+translate UML to DLs
+
+object -> attributes as DL roles
+
+for role-based models, we have context-dependant knowledge
+
+central design decision how to represent an object $o$ playing a role $r$ in a context $c$. Ternary
+relation that cannot be expressed in classical description logics. More precisely, role-playing can
+be expressed as binary relation using CDLs and context-local knowledge. Compartment types as meta
+concept names. Natural types and Role types as object concept names.
+
+Still two possibilities to represent that $o$ plays an \rt-role. 
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    %\grid{(-6,-1.5)}{(6,1.5)}
+    \node[node,label={Person, Student}] (a) at (-4,0) {};
+    \node[node,label={Person}] (b) at (0,0) {};
+    \node[node,label={Student}] (c) at (3,0) {};
+    \draw[edge, bend right=10] (b) to[swap] node{\plays} (c);
+    \draw[very thin] (-1.5,-1) -- (-1.5,1);
+  \end{tikzpicture}
+  \caption{Representing an object playing a role}
+  \label{fig:two-ways-to-represent-roles}
+\end{figure}
+
+\vspace{2cm}
+
+
+Consider the meta and object signatures $\Msig=(\MC,\MR,\MI)$ and $\Osig=(\OC,\OR,\OI)$ such that
+\begin{itemize}
+\item $\CT \subseteq \MC$ since every compartment type is a meta concept,
+\item $\NT\cup\RT \subseteq \OC$ since every natural type and every \rosirole type is an object concept, and
+\item $\RST \subseteq \OR \setminus \ORR$ since every relationship type is an flexible object role.
+\end{itemize}
+Additionally, we have the flexible object role $\plays \in \OR \setminus \ORR$ to express the \plays-relation.
+
 
 
 \section{Adding Inheritance}
@@ -143,7 +404,7 @@ we discuss the main reasoning tasks for this
 
 
 
-\section{Going beyond CROM}
+\section{Going beyond \texorpdfstring{$\Sigma$}{Sigma}-CROMs}
 \label{sec:going-beyond-crom}
 
 
@@ -158,4 +419,4 @@ we discuss the main reasoning tasks for this
 %%% TeX-master: "../thesis"
 %%% End:
 
-%  LocalWords:  logics Kühn irreflexivity
+%  LocalWords:  logics Kühn irreflexivity assertional

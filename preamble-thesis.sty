@@ -722,7 +722,13 @@
 
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname #1sf\endcsname{\@math{\mathsf{#1}}}} 
-\docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+\docsvlist{A,B,  D,E,F,G,H,I,J,K,L,M,    P,Q,  S,T,U,V,W,X,Y,Z,
+           a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}
+
+\NewDocumentCommand{\Csf}{O{\I}}{\@math{\mathsf{C}^{#1}}}
+\NewDocumentCommand{\Nsf}{O{\I}}{\@math{\mathsf{N}^{#1}}}
+\NewDocumentCommand{\Osf}{O{\I}}{\@math{\mathsf{O}^{#1}}}
+\NewDocumentCommand{\Rsf}{O{\I}}{\@math{\mathsf{R}^{#1}}}
 
 
 \@ifpackageloaded{dsfont}{
@@ -740,6 +746,7 @@
 %%% Numbers %%%
 \newcommand{\nat}{\@math{\mathbb{N}}}
 \newcommand{\natwz}{\@math{\mathbb{N}_0}}
+\newcommand{\natinf}{\@math{\mathbb{N}_\infty}}
 \newcommand{\integ}{\@math{\mathbb{Z}}}
 \newcommand{\rat}{\@math{\mathbb{Q}}}
 \newcommand{\real}{\@math{\mathbb{R}}}
@@ -898,7 +905,6 @@
 \newcommand{\Bmfb}{\@math{\Bmf^{\bsf}}}
 \newcommand{\BBb}{\@math{\Bmf^{\bsf}=(\Bb,\RM)}}
 \newcommand{\Jb}{\@math{\J^{\bsf}}}
-\newcommand{\bsf}{\@math{\mathsf{b}}}
 \newcommand{\ran}{\@math{\mathsf{ran}}}
 \newcommand{\dom}{\@math{\mathsf{dom}}}
 \newcommand{\im}{\@math{\mathsf{Im}}}
@@ -1085,7 +1091,10 @@
 \newcommand{\Rosirole}{R\^ole\xspace}
 \newcommand{\rosiroles}{r\^oles\xspace}
 \newcommand{\Rosiroles}{R\^oles\xspace}
-\newcommand{\RBS}{\Rosirole-Based Systems\xspace}
+\newcommand{\RBS}{\rosirole-based systems\xspace}
+
+
+
 
 
 %%% CROM macros %%%
@@ -1095,33 +1104,47 @@
 
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname #1\endcsname{\@math{\mathsf{#1}}}}
-\docsvlist{fills,parts,rel,type,plays,links,rolec,card,intra,counts,atom}
+\docsvlist{fills,parts,rel,type,plays,links,occur,card,intra,counts,atom}
 
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname #1ass\endcsname{\@math{\mathsf{#1\_assert}}}}
 \docsvlist{play,link}
 
 \renewcommand*{\do}[1]{%
-  \expandafter\newcommand\csname #1ds\endcsname{\@math{\mathds{#1}}}}
+  \expandafter\newcommand\csname #1bb\endcsname{\@math{\mathbb{#1}}}}
 \docsvlist{NT,RT}
 
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname #1sf\endcsname{\@math{\mathsf{#1}}}}
 \docsvlist{NT,RT,CT,RST,Card,RG,IND}
 
+\newcommand{\NT}{\@math{\mathsf{N_{NT}}}}
+\newcommand{\RT}{\@math{\mathsf{N_{RT}}}}
+\newcommand{\CT}{\@math{\mathsf{N_{CT}}}}
+\newcommand{\RST}{\@math{\mathsf{N_{RST}}}}
+\newcommand{\IND}{\@math{\mathsf{N_{IND}}}}
+\newcommand{\RG}{\@math{\mathsf{RG}}}
+\newcommand{\Card}{\@math{\mathsf{Card}}}
+\newcommand{\textImplies}{\quad\text{implies}\quad}
+\newcommand{\Succ}{\@math{\mathsf{succ}}}
+\newcommand{\Pred}{\@math{\mathsf{pred}}}
+
 \newcommand{\MM}{\@math{\Mmc=(\fills,\parts,\rel)}}
-\newcommand{\CC}{\@math{\Cmc=(\rolec,\card,\intra)}}
+\newcommand{\CC}{\@math{\Cmc=(\occur, \card, \intra)}}
 
-\newcommand{\rt}{\@math{r{\kern-0.09em}t}}
-\newcommand{\ct}{\@math{c{\kern-0.09em}t}}
-\newcommand{\rst}{\@math{r{\kern-0.06em}s{\kern-0.08em}t}}
+\newcommand{\rt}[1][]{\@math{R{\kern-0.08em}T_{#1}}}
+\newcommand{\ct}{\@math{C{\kern-0.09em}T}}
+\newcommand{\rst}{\@math{R{\kern+0.03em}S{\kern-0.09em}T}}
 
 
-\newcommand{\SCROM}{\@math{\Sigma}-CROM}
-\newcommand{\SCROI}{\@math{\Sigma}-CROI}
-% \newcommand{\SCROA}{\@math{\Sigma}-CROA}
-% \newcommand{\SCROC}{\@math{\Sigma}-CROC}
-% \newcommand{\SCCROM}{\@math{\Sigma}-CCROM}
+\newcommand{\SCROM}{\@math{\Sigma}-CROM\xspace}
+\newcommand{\SCROI}{\@math{\Sigma}-CROI\xspace}
+\newcommand{\SCROA}{\@math{\Sigma}-CROA\xspace}
+\newcommand{\SCROC}{\@math{\Sigma}-CROC\xspace}
+\newcommand{\SCCROM}{\@math{\Sigma}-CCROM\xspace}
+
+
+
 
 %%% ToDo macros %%%
 \@ifpackageloaded{todonotes}{
@@ -1186,6 +1209,10 @@
 }{
   \newcommand*{\follows}[1][semithick]{{\tikz[baseline=-0.6ex]{ \draw[#1,->] (0,1ex) |- (2ex,0);}}\xspace}
 }
+
+
+
+
 \newcommand{\iotasun}{%
 \tikz[overlay,scale=0.6, every node/.style={transform shape}]{%
   \coordinate (c) at ($(current page.north east)-(1.5,1.5)$);%
@@ -1219,6 +1246,10 @@
     baselineskip: \printlength{\baselineskip}
 }}
 }{}
+
+\newcommand{\true}{\@math{\mathsf{true}}}
+\newcommand{\false}{\@math{\mathsf{false}}}
+
 
 \endinput
 
