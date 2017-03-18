@@ -127,10 +127,14 @@ some text
   Boolean axiom formula.
 \end{definition}
 
+Again as usual in description logics, we use $C \equiv D$ (concept equivalence) as abbreviation
+for $(C \sqsubseteq D) \land (D \sqsubseteq C)$ and $\Bmc_1\lor\Bmc_2$ (axiom disjunction) as
+abbreviation for $\lnot(\lnot\Bmc_1\land\lnot\Bmc_2)$.
+%
 Often an ontology $\Omc = (\Bmc, \Rmc)$ is written as a triple $\Omc = (\Tmc, \Amc, \Rmc)$ where
 \Tmc (\emph{TBox}) is the set of all GCIs occurring in \Bmc and \Amc (\emph{ABox}) is the set of all
-assertion axioms occurring in \Bmc.  Again as usual in logics, we use $\Bmc_1\lor\Bmc_2$ (axiom
-disjunction) as abbreviation for $\lnot(\lnot\Bmc_1\land\lnot\Bmc_2)$.
+assertion axioms occurring in \Bmc.
+
 
 \begin{definition}[Semantics of axioms over \Nsig, BKBs over \Nsig]
   \label{def:semantics-of-axioms}

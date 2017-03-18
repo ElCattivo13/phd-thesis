@@ -324,8 +324,14 @@
 }
 \recalctypearea
 
-\newsavebox{\iotasunbox}
-\savebox{\iotasunbox}{%
+% \newsavebox{\iotasunbox}
+% \savebox{\iotasunbox}{%
+% \tikz[overlay,scale=0.6, every node/.style={transform shape}]{%
+%   \coordinate (c) at ($(current page.north east)-(1.5,1.5)$);%
+%   \foreach \w in {0, 30, ..., 330} \draw ($(c)+(\w:4mm)$) -- ($(c)+(\w:7mm)$);%
+%   \node[circle,draw,inner sep=2] at (c){\large$\ddot\iota$};}%
+% }
+\newcommand{\iotasun}{%
 \tikz[overlay,scale=0.6, every node/.style={transform shape}]{%
   \coordinate (c) at ($(current page.north east)-(1.5,1.5)$);%
   \foreach \w in {0, 30, ..., 330} \draw ($(c)+(\w:4mm)$) -- ($(c)+(\w:7mm)$);%
@@ -390,6 +396,8 @@
   }%
   \item[]}{\end{list}}
 
+
+\allowdisplaybreaks
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% frontmatter                                                                          %%
@@ -1132,8 +1140,9 @@
 \newcommand{\MM}{\@math{\Mmc=(\fills,\parts,\rel)}}
 \newcommand{\CC}{\@math{\Cmc=(\occur, \card, \intra)}}
 
+\newcommand{\nt}[1][]{\@math{N{\kern-0.12em}T_{#1}}}
 \newcommand{\rt}[1][]{\@math{R{\kern-0.08em}T_{#1}}}
-\newcommand{\ct}{\@math{C{\kern-0.09em}T}}
+\newcommand{\ct}[1][]{\@math{C{\kern-0.09em}T_{#1}}}
 \newcommand{\rst}{\@math{R{\kern+0.03em}S{\kern-0.09em}T}}
 
 
@@ -1142,6 +1151,14 @@
 \newcommand{\SCROA}{\@math{\Sigma}-CROA\xspace}
 \newcommand{\SCROC}{\@math{\Sigma}-CROC\xspace}
 \newcommand{\SCCROM}{\@math{\Sigma}-CCROM\xspace}
+
+\newcommand{\occurCounter}{\@math{\mathsf{counter}}}
+
+
+
+
+
+
 
 
 
@@ -1211,14 +1228,6 @@
 }
 
 
-
-
-\newcommand{\iotasun}{%
-\tikz[overlay,scale=0.6, every node/.style={transform shape}]{%
-  \coordinate (c) at ($(current page.north east)-(1.5,1.5)$);%
-  \foreach \w in {0, 30, ..., 330} \draw ($(c)+(\w:4mm)$) -- ($(c)+(\w:7mm)$);%
-  \node[circle,draw,inner sep=2] at (c){\large$\ddot\iota$};}%
-}
 
 %% How to get a \mid binary relation that grows
 % http://tex.stackexchange.com/questions/5502/how-to-get-a-mid-binary-relation-that-grows

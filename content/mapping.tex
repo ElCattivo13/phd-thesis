@@ -58,7 +58,7 @@ In the rest of this thesis, we use the following phrases:
 \begin{itemize}
 \item \emph{$T$ fills \rt} if $(T,\rt)\in\fills$,
 \item \emph{\rt participates in \ct} if $\rt\in\parts(\ct)$,
-\item \emph{\rst participates in \ct} if $\rel(\rst)\subseteq\parts(\ct)$,
+\item \emph{\rst participates in \ct} if $\rel(\rst) = (\rt[1],\rt[2])$ with $\{\rt[1], \rt[2]\}\subseteq\parts(\ct)$,
 \item \emph{\rt[1] and \rt[2] are related via \rst} if $(\rt[1],\rt[2]) = \rel(\rst)$, and
 \item \emph{\rt[1] is the domain of \rst ($\dom(\rst)$) and \rt[2] is the range of \rst
     ($\ran(\rst)$)} if $(\rt[1],\rt[2])\in\rel(\rst)$.
@@ -321,7 +321,7 @@ We first introduce the syntax of role groups.
     \intra(\rst)$, evaluated over the players of the roles related via \rst, must return \true:
     \begin{align*}
       & \fsf \in \intra(\rst) \textImplies \fsf(\links^{*}(\rst,c)) = \true, \\
-      & \qquad\text{for all $c$ in $\ct^{\I}$ with $\rel(\rst)\subseteq\parts(\ct)$}.
+      & \qquad\text{for all $c$ in $\ct^{\I}$ s.t.\ \rst participates in \ct}.
     \end{align*}
   \end{enumerate}
 
@@ -356,7 +356,14 @@ We first introduce the syntax of role groups.
 
 \section{Representing Role-Based Models}
 \label{sec:representating-role-based-models}
+\todo[inline]{Open question:
+  \protect\begin{itemize}
+  \protect\item Which DL is needed for \LM?
+  \protect\item Wich DL is needed for \LO?
+  \protect\end{itemize}
+}
 
+\todo[inline]{Objective: Given the \SCCROM \Kmc construct a \LMLO knowledge base $\Bmf_{\Kmc}$ such that $\Bmf_{\Kmc}$ is consistent iff \Kmc is validatable.}
 research on how to formally represent objects of OOP
 
 translate UML to DLs
@@ -386,18 +393,117 @@ Still two possibilities to represent that $o$ plays an \rt-role.
   \label{fig:two-ways-to-represent-roles}
 \end{figure}
 
+
+\clearpage
 \vspace{2cm}
 
 
 Consider the meta and object signatures $\Msig=(\MC,\MR,\MI)$ and $\Osig=(\OC,\OR,\OI)$ such that
 \begin{itemize}
 \item $\CT \subseteq \MC$ since every compartment type is a meta concept,
-\item $\NT\cup\RT \subseteq \OC$ since every natural type and every \rosirole type is an object concept, and
+\item $\NT \subseteq \OCR$ since every natural type is an rigid object concept,
+\item $\RT \subseteq \OCF$
 \item $\RST \subseteq \OR \setminus \ORR$ since every relationship type is an flexible object role.
 \end{itemize}
-Additionally, we have the flexible object role $\plays \in \OR \setminus \ORR$ to express the \plays-relation.
+Additionally, we introduce the rigid object concept $\Ant \in \OCR$ for all naturals, the flexible
+object concept $\Art$ for all \rosiroles and the flexible object role
+$\plays \in \OR \setminus \ORR$ to express the \plays-relation.
+%
+At first, we express general knowledge about $\Sigma$ that is independent of the specific
+\SCROM.
+
+\subparagraph{Knowledge about the vocabulary  \ensureboldmath{\Sigma}}
+
+\begin{align}
+\intertext{Every compartment belongs to exactly one compartment type.}
+  \top & \sqsubseteq \bigsqcup_{\ct\in\CT} \ct \label{eq:compartments-coverage}\\
+  \ct[1] \sqcap \ct[2] & \sqsubseteq \bot 
+  \text{\rlap{\hspace{8em} for all $\ct[1], \ct[2] \in \CT$, $\ct[1]\neq\ct[2]$}}\\
+\intertext{In every compartment, every natural and every \rosirole belongs to exactly one type.}
+  \top & \sqsubseteq \oax{ \Ant \equiv \bigsqcup\limits_{\nt\in\NT}\nt}\\
+  \top & \sqsubseteq \bigsqcap_{\substack{\nt[1],\,\nt[2]\in\NT,\\ \nt[1]\neq\nt[2]}}
+         \oax{\nt[1] \sqcap \nt[2] \sqsubseteq \bot}\\
+  \top & \sqsubseteq \oax{ \Art \equiv \bigsqcup\limits_{\rt\in\RT}\rt} \label{eq:roles-coverage}\\
+  \top & \sqsubseteq \bigsqcap_{\substack{\rt[1],\,\rt[2]\in\RT,\\ \rt[1]\neq\rt[2]}}
+         \oax{\rt[1] \sqcap \rt[2] \sqsubseteq \bot} \label{eq:roles-disjoint}\\
+\intertext{On object level, every element is either a \rosirole, a natural or the individual
+  \occurCounter.}
+  \top & \sqsubseteq \oax{\top \sqsubseteq \Ant \sqcup \Art \sqcup \{\occurCounter\}}\\
+  \top & \sqsubseteq \oax{\Ant \sqcap \Art \sqsubseteq \bot} 
+         \sqcap \oax{\lnot\Ant(\occurCounter)}
+         \sqcap \oax{\lnot\Art(\occurCounter)}\\
+\intertext{Next, every natural can only play one \rt-\rosirole in each compartment and each
+  \rosirole must be played by some object.}
+  \top & \sqsubseteq \bigsqcap_{\rt\in\RT} \oax{\Ant \sqsubseteq \atmost{1}{\plays}{\rt}} \\
+  \top & \sqsubseteq \oax{\Art \sqsubseteq \atleast{1}{\plays^{-}}{\top} 
+         \sqcap \atmost{1}{\plays^{-}}{\top}}
+\end{align}
+Finally, we could formalize a general domain and range restriction for \plays but as these must be
+refined for specific \SCROM{s} we will omit them here.
+
+\subparagraph{Knowledge about the \SCROM{} \Mmc}
+
+\begin{align}
+  \intertext{Let \MM be a \SCROM. The \fills-relation restricts which natural types are allowed to
+  play which \rosirole types. Hence, all \plays-successors in a natural type are
+  instances of a \rosirole type that are filled by that natural type. Analogously, a \rosirole type
+  has as \plays-predecessors only instances of natural types which fill that \rosirole type.}
+  \top & \sqsubseteq \bigsqcap_{\nt\in\NT}\oax{\nt \sqsubseteq \forall\plays.\bigg( \bigsqcup\nolimits_{(\nt,\rt)\in\fills} \rt \bigg)}\\
+  \top & \sqsubseteq \bigsqcap_{\rt\in\RT}\oax{\exists\plays.\rt \sqsubseteq \bigg(
+         \bigsqcup\nolimits_{(\nt,\rt)\in\fills} \nt \bigg)} \\
+  \intertext{Since in a valid \SCROI the \plays-relation respects \parts, only \rt-\rosiroles with
+  $\rt\in\parts(\ct)$ exist in a \ct-compartment.}
+  \ct & \sqsubseteq \oax{\Art \sqsubseteq \bigsqcup_{\rt\in\parts(\ct)}\rt} \text{\rlap{\hspace{5em}
+        for all $\ct\in\CT$}} \label{eq:roles-in-compartment}\\
+  \intertext{Analogous to \fills restricting the domain and range of \plays, the \rel-function
+  restricts those for each relationship type.}
+  \begin{split}
+    \top & \sqsubseteq \oax{\exists\rst.\top\sqsubseteq\rt[1]} \sqcap
+         \oax{\top\sqsubseteq\forall\rst.\rt[2]}\\
+       & \hspace{5em}\text{for all $\rst\in\RST$ and $\rel(\rst) = (\rt[1],\rt[2])$}
+  \end{split}
+\end{align}
+
+Note here, that due to equations~\eqref{eq:compartments-coverage},
+\eqref{eq:roles-coverage},~\eqref{eq:roles-disjoint} and~\eqref{eq:roles-in-compartment} and the
+fact that \parts' codomain is a partition of \RT, in any context that is not in \ct there are no
+\rosiroles of a type the participates in \ct , e.g. the following axiom is entailed for all
+$\ct\in\CT$:
+\begin{align*}
+  \lnot\ct & \sqsubseteq \oax{\bigsqcup_{\rt\in\parts(\ct)}\rt\sqsubseteq\bot}
+\end{align*}
+
+\subparagraph{Knowledge about the \SCROA{} \A}
+
+\begin{align}
+  \intertext{Let \A be a \SCROA. For any assertion of the form $\ct(a)\in\A$ with $\ct\in\CT$ the
+  individual $a$ must be a context of type \ct.}
+  \ct(a)\\
+  \intertext{For $T(a)\in\A$ with $T\in\NT\cup\RT$ the individual $a$ is a natural or \rosirole
+  that belongs to the concept $T$ in some context.}
+  \oax{T(a)}(x_{new})\\
+  \intertext{A \plays assertion $\playass(a_{1}, a_{2}, a_{3}) \in \A$ states that $a_{1}$ plays $a_{3}$
+  in $a_{2}$.}
+  \oax{\plays(a_{1},a_{3})}(a_{2})\\
+  \intertext{A \links assertion $\linkass(\rst,a_{1},a_{2},a_{3}) \in \A$ states that $a_{2}$ is
+  related to $a_{3}$ in $a_{1}$ via \rst.}
+  \oax{\rst(a_{2}, a_{3})}(a_{1})
+\end{align}
+
+\subparagraph{Knowledge about the \SCROC{} \Cmc}
+
+\begin{align}
+  \intertext{Let \Cmc be a \SCROC.}
+\end{align}
 
 
+
+
+
+
+
+
+\clearpage
 
 \section{Adding Inheritance}
 \label{sec:adding-inheritance}
