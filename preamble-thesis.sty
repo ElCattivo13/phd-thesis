@@ -155,6 +155,23 @@
   textsize=scriptsize,
 ]{todonotes} % provides the commands \todo[inline]{}, \missingfigure \listoftodos,
 
+% %% to make todo work inside align
+% %% http://tex.stackexchange.com/a/132451/123973
+% \RequirePackage{marginnote}
+% \renewcommand{\@todonotes@drawMarginNoteWithLine}{%
+% \begin{tikzpicture}[remember picture, overlay, baseline=-0.75ex]%
+%     \node [coordinate] (inText) {};%
+% \end{tikzpicture}%
+% \marginnote[{% Draw note in left margin
+%     \@todonotes@drawMarginNote%
+%     \@todonotes@drawLineToLeftMargin%
+% }]{% Draw note in right margin
+%     \@todonotes@drawMarginNote%
+%     \@todonotes@drawLineToRightMargin%
+% }%
+% }
+
+
 %\RequirePackage{textcomp} % Euro-Zeichen etc.
 %\RequirePackage{mathdots} % fuer \iddots
 \RequirePackage{mathrsfs} % for \mathscr{A} (math script font)
@@ -847,6 +864,7 @@
 \newcommand{\LMEL}{\@condl{\LM}{\EL}}
 \newcommand{\ELLO}{\@condl{\EL}{\LO}}
 \newcommand{\ELSHOIQ}{\@condl{\EL}{\SHOIQ}}
+\newcommand{\ALCSHOIQ}{\@condl{\ALC}{\SHOIQ}}
 
 \newcommand{\klarALC}{\@math{\ALC_{\!\ALC}}}
 \renewcommand*{\do}[1]{%
@@ -1131,7 +1149,7 @@
 \newcommand{\CT}{\@math{\mathsf{N_{CT}}}}
 \newcommand{\RST}{\@math{\mathsf{N_{RST}}}}
 \newcommand{\IND}{\@math{\mathsf{N_{IND}}}}
-\newcommand{\RG}{\@math{\mathsf{RG}}}
+\newcommand{\RG}{\@math{\mathbb{RG}}}
 \newcommand{\Card}{\@math{\mathsf{Card}}}
 \newcommand{\textImplies}{\quad\text{implies}\quad}
 \newcommand{\Succ}{\@math{\mathsf{succ}}}
@@ -1144,6 +1162,7 @@
 \newcommand{\rt}[1][]{\@math{R{\kern-0.08em}T_{#1}}}
 \newcommand{\ct}[1][]{\@math{C{\kern-0.09em}T_{#1}}}
 \newcommand{\rst}{\@math{R{\kern+0.03em}S{\kern-0.09em}T}}
+\newcommand{\rg}[1][]{\@math{R{\kern-0.08em}G_{#1}}}
 
 
 \newcommand{\SCROM}{\@math{\Sigma}-CROM\xspace}
@@ -1165,10 +1184,10 @@
 
 %%% ToDo macros %%%
 \@ifpackageloaded{todonotes}{
-  \newcommand{\missingproof}{%
+  \NewDocumentCommand{\missingproof}{O{2cm}}{%
     \begin{proof}
       \mbox{}
-      \todo[inline]{\vspace{2cm} The proof here is still missing!}
+      \todo[inline]{\vspace{#1} The proof here is still missing!}
     \end{proof}
   }
 }

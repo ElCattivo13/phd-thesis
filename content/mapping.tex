@@ -289,7 +289,7 @@ We first introduce the syntax of role groups.
   the following properties:
   \begin{enumerate}
 
-  \item All occurrence constraints are respected, i.e.\ if $(k,l,A) \in \occur(\ct)$, then in every
+  \item All occurrence constraints are respected, i.e.\ if $(k..l,A) \in \occur(\ct)$, then in every
     \ct-compartment there must exist at least $k$ and at most $l$ objects that fulfill role group
     $A$:\todo{im mapping überprüfen: comptype wo exakt 3 objekte rollenimplikation erfüllen}
     \begin{align*}
@@ -393,8 +393,6 @@ Still two possibilities to represent that $o$ plays an \rt-role.
   \label{fig:two-ways-to-represent-roles}
 \end{figure}
 
-
-\clearpage
 \vspace{2cm}
 
 
@@ -407,11 +405,13 @@ Consider the meta and object signatures $\Msig=(\MC,\MR,\MI)$ and $\Osig=(\OC,\O
 \end{itemize}
 Additionally, we introduce the rigid object concept $\Ant \in \OCR$ for all naturals, the flexible
 object concept $\Art$ for all \rosiroles and the flexible object role
-$\plays \in \OR \setminus \ORR$ to express the \plays-relation.
+$\plays \in \OR \setminus \ORR$ to express the \plays-relation. Since we will consider \rosirole
+groups of the constraint set similar to roles, we also introduce the flexible object concept $\Arg$.
 %
 At first, we express general knowledge about $\Sigma$ that is independent of the specific
 \SCROM.
 
+\clearpage
 \subparagraph{Knowledge about the vocabulary  \ensureboldmath{\Sigma}}
 
 \begin{align}
@@ -426,29 +426,38 @@ At first, we express general knowledge about $\Sigma$ that is independent of the
   \top & \sqsubseteq \oax{ \Art \equiv \bigsqcup\limits_{\rt\in\RT}\rt} \label{eq:roles-coverage}\\
   \top & \sqsubseteq \bigsqcap_{\substack{\rt[1],\,\rt[2]\in\RT,\\ \rt[1]\neq\rt[2]}}
          \oax{\rt[1] \sqcap \rt[2] \sqsubseteq \bot} \label{eq:roles-disjoint}\\
-\intertext{On object level, every element is either a \rosirole, a natural or the individual
+\intertext{On object level, every element is either a \rosirole, a natural, an instance of a role group or the individual
   \occurCounter.}
-  \top & \sqsubseteq \oax{\top \sqsubseteq \Ant \sqcup \Art \sqcup \{\occurCounter\}}\\
+  \top & \sqsubseteq \oax{\top \sqsubseteq \Ant \sqcup \Art \sqcup \Arg \sqcup \{\occurCounter\}}\\
+  \begin{split}
   \top & \sqsubseteq \oax{\Ant \sqcap \Art \sqsubseteq \bot} 
-         \sqcap \oax{\lnot\Ant(\occurCounter)}
-         \sqcap \oax{\lnot\Art(\occurCounter)}\\
+         \sqcap \oax{\Ant \sqcap \Arg \sqsubseteq \bot}
+         \sqcap \oax{\Art \sqcap \Arg \sqsubseteq \bot} \\
+       & \qquad \sqcap \oax{\lnot\Ant(\occurCounter)}
+         \sqcap \oax{\lnot\Art(\occurCounter)}
+         \sqcap \oax{\lnot\Arg(\occurCounter)}
+  \end{split}
 \intertext{Next, every natural can only play one \rt-\rosirole in each compartment and each
   \rosirole must be played by some object.}
   \top & \sqsubseteq \bigsqcap_{\rt\in\RT} \oax{\Ant \sqsubseteq \atmost{1}{\plays}{\rt}} \\
   \top & \sqsubseteq \oax{\Art \sqsubseteq \atleast{1}{\plays^{-}}{\top} 
-         \sqcap \atmost{1}{\plays^{-}}{\top}}
+         \sqcap \atmost{1}{\plays^{-}}{\top}}\\
+\intertext{Finally, we formalize a general domain and range restriction for \plays. Only naturals
+  can play something, and only roles or instances of role groups can be played.}
+  \top & \sqsubseteq \oax{ \exists\plays.\top \sqsubseteq \Ant} \sqcap \oax{\top \sqsubseteq \forall\plays.(\Art\sqcup\Arg)}
 \end{align}
-Finally, we could formalize a general domain and range restriction for \plays but as these must be
-refined for specific \SCROM{s} we will omit them here.
 
+
+\clearpage
 \subparagraph{Knowledge about the \SCROM{} \Mmc}
 
 \begin{align}
   \intertext{Let \MM be a \SCROM. The \fills-relation restricts which natural types are allowed to
-  play which \rosirole types. Hence, all \plays-successors in a natural type are
-  instances of a \rosirole type that are filled by that natural type. Analogously, a \rosirole type
-  has as \plays-predecessors only instances of natural types which fill that \rosirole type.}
-  \top & \sqsubseteq \bigsqcap_{\nt\in\NT}\oax{\nt \sqsubseteq \forall\plays.\bigg( \bigsqcup\nolimits_{(\nt,\rt)\in\fills} \rt \bigg)}\\
+  play which \rosirole types. Hence, all \plays-successors in a natural type are either instances of a
+  \rosirole type that are filled by that natural type or instances of a role group. Analogously, a
+  \rosirole type has as \plays-predecessors only instances of natural types which fill that
+  \rosirole type.}
+  \top & \sqsubseteq \bigsqcap_{\nt\in\NT}\oax{\nt \sqsubseteq \forall\plays.\bigg(\Arg \sqcup \bigsqcup\nolimits_{(\nt,\rt)\in\fills} \rt \bigg)}\\
   \top & \sqsubseteq \bigsqcap_{\rt\in\RT}\oax{\exists\plays.\rt \sqsubseteq \bigg(
          \bigsqcup\nolimits_{(\nt,\rt)\in\fills} \nt \bigg)} \\
   \intertext{Since in a valid \SCROI the \plays-relation respects \parts, only \rt-\rosiroles with
@@ -473,9 +482,10 @@ $\ct\in\CT$:
   \lnot\ct & \sqsubseteq \oax{\bigsqcup_{\rt\in\parts(\ct)}\rt\sqsubseteq\bot}
 \end{align*}
 
+\clearpage
 \subparagraph{Knowledge about the \SCROA{} \A}
 
-\begin{align}
+\begin{gather}
   \intertext{Let \A be a \SCROA. For any assertion of the form $\ct(a)\in\A$ with $\ct\in\CT$ the
   individual $a$ must be a context of type \ct.}
   \ct(a)\\
@@ -488,16 +498,63 @@ $\ct\in\CT$:
   \intertext{A \links assertion $\linkass(\rst,a_{1},a_{2},a_{3}) \in \A$ states that $a_{2}$ is
   related to $a_{3}$ in $a_{1}$ via \rst.}
   \oax{\rst(a_{2}, a_{3})}(a_{1})
-\end{align}
+\end{gather}
 
+\clearpage
 \subparagraph{Knowledge about the \SCROC{} \Cmc}
 
 \begin{align}
-  \intertext{Let \Cmc be a \SCROC.}
+  \intertext{Let \Cmc be a \SCROC and let $\RG(\Cmc) = \{\rg[1], \dots, \rg[n]\}$ be the
+  set of all complex \rosirole groups occurring in \Cmc. Analogous to \rosiroles, role groups are
+  disjoint, every instance of a role group must be played by some object and every object can either
+  fulfill or not fulfill a role group.}
+  \top & \sqsubseteq \oax{ \Arg \equiv \bigsqcup\limits_{\rg\in\RG(\Cmc)}\rg} 
+         \sqcap \bigsqcap_{\substack{\rg[1],\,\rg[2]\in\RG(\Cmc),\\ \rg[1]\neq\rg[2]}} 
+         \oax{\rg[1] \sqcap \rg[2] \sqsubseteq \bot}
+         \label{eq:rolegroups-coverage-and-disjoint}\\
+  \top & \sqsubseteq \oax{\Arg \sqsubseteq \atleast{1}{\plays^{-}}{\top} 
+         \sqcap \atmost{1}{\plays^{-}}{\top}} \\
+  \top & \sqsubseteq \bigsqcap_{\rg\in\RG(\Cmc)} \oax{\Ant \sqsubseteq \atmost{1}{\plays}{\rg}}\\
+\intertext{definition of role groups
+%\todo{details}
+}
+  \top & \sqsubseteq \bigsqcap_{\substack{\rg\in\RG(\Cmc),\\\rg = (\{A_{1}, \dots, A_{n}\},k,l)}}
+         \oax{\exists\plays.\rg \equiv (\atleast{k}{\plays}{(A_{1} \sqcup \dots \sqcup A_{n})}) 
+         \sqcap (\atmost{l}{\plays}{(A_{1} \sqcup \dots \sqcup A_{n})})}\\
+  \top & \sqsubseteq \bigsqcap_{\rg\in\RG(\Cmc)} \oax{\exists\plays.\bigg(\bigsqcup\nolimits_{\rg'\in\atom(\rg)}\rg'\bigg)\sqsubseteq \exists\plays.\rg}\\
+\intertext{occurrence constraints
+%\todo{details}\todo{explain dl role \counts}
+}
+  \top & \sqsubseteq \oax{\Art \sqcup \Arg \sqsubseteq \atleast{1}{\counts^{-}}{\{\occurCounter\}} 
+         \sqcap \atmost{1}{\counts^{-}}{\{\occurCounter\}}}\\
+  \begin{split}
+    \ct & \sqsubseteq \oax{(\atleast{k}{\counts}{\rg})(\occurCounter)}
+    \sqcap \oax{(\atmost{l}{\counts}{\rg})(\occurCounter)}\\
+    & \text{\rlap{\hspace{5em} for all $(k..l,\rg)\in\occur(\ct)$, for all $\ct\in\CT$}}
+  \end{split}
+\intertext{cardinal constraints
+%\todo{details}
+}
+  \top & \sqsubseteq \bigsqcap_{\substack{\rst\in\RST, \\ \rel(\rst) = (\rt[1], \rt[2]), \\
+  \card(\rst) = (i..j, k..l)}}
+  \oax{\rt[1] \sqsubseteq \atleast{k}{\rst}{\top} \sqcap \atmost{l}{\rst}{\top}}
+  \sqcap \oax{\rt[2] \sqsubseteq \atleast{i}{\rst^{-}}{\top} \sqcap \atmost{j}{\rst^{-}}{\top}} \label{eq:last-equation}
 \end{align}
 
+Some explanation about intra constraints, and that they cannot be expressed.
 
+\todo[inline]{\vspace{2cm}}
 
+Given a \SCCROM{} \Kmc, we obtain the \ALCSHOIQ ontology
+$\Bmf_{\Kmc} = (\Bmc_{\Kmc}, \emptyset, \emptyset)$ where $\Bmc_{\Kmc}$ is the conjunction of all
+meta axioms from~\eqref{eq:compartments-coverage} to~\eqref{eq:last-equation}. In the next theorem
+we establish the desired relationship between \Kmc and $\Bmf_{\Kmc}$.
+
+\begin{theorem}
+  Let \Kmc be a \SCCROM. Then, \Kmc is satisfiable iff $\Bmf_{\Kmc}$ is consistent.
+\end{theorem}
+
+\missingproof[5cm]
 
 
 
