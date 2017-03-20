@@ -411,15 +411,28 @@ groups of the constraint set similar to roles, we also introduce the flexible ob
 At first, we express general knowledge about $\Sigma$ that is independent of the specific
 \SCROM.
 
+
+\todo[inline]{contexts in \LMLO as compartments.}
+
+\todo[inline]{restrictions on mapping
+  
+  What I cannot express:
+  \protect\begin{itemize}
+  \protect\item intra relationship constraints
+  \protect\item compartments that play roles
+  \protect\end{itemize}
+}
+
+
 \clearpage
 \subparagraph{Knowledge about the vocabulary  \ensureboldmath{\Sigma}}
 
 \begin{align}
-\intertext{Every compartment belongs to exactly one compartment type.}
+\intertext{Every context belongs to exactly one compartment type.}
   \top & \sqsubseteq \bigsqcup_{\ct\in\CT} \ct \label{eq:compartments-coverage}\\
   \ct[1] \sqcap \ct[2] & \sqsubseteq \bot 
   \text{\rlap{\hspace{8em} for all $\ct[1], \ct[2] \in \CT$, $\ct[1]\neq\ct[2]$}}\\
-\intertext{In every compartment, every natural and every \rosirole belongs to exactly one type.}
+\intertext{In every context, every natural and every \rosirole belongs to exactly one type.}
   \top & \sqsubseteq \oax{ \Ant \equiv \bigsqcup\limits_{\nt\in\NT}\nt}\\
   \top & \sqsubseteq \bigsqcap_{\substack{\nt[1],\,\nt[2]\in\NT,\\ \nt[1]\neq\nt[2]}}
          \oax{\nt[1] \sqcap \nt[2] \sqsubseteq \bot}\\
@@ -433,9 +446,7 @@ At first, we express general knowledge about $\Sigma$ that is independent of the
   \top & \sqsubseteq \oax{\Ant \sqcap \Art \sqsubseteq \bot} 
          \sqcap \oax{\Ant \sqcap \Arg \sqsubseteq \bot}
          \sqcap \oax{\Art \sqcap \Arg \sqsubseteq \bot} \\
-       & \qquad \sqcap \oax{\lnot\Ant(\occurCounter)}
-         \sqcap \oax{\lnot\Art(\occurCounter)}
-         \sqcap \oax{\lnot\Arg(\occurCounter)}
+       & \qquad \sqcap \oax{\lnot(\Ant \sqcup \Art \sqcup \Arg)(\occurCounter)}
   \end{split}
 \intertext{Next, every natural can only play one \rt-\rosirole in each compartment and each
   \rosirole must be played by some object.}
@@ -453,7 +464,7 @@ At first, we express general knowledge about $\Sigma$ that is independent of the
 
 \begin{align}
   \intertext{Let \MM be a \SCROM. The \fills-relation restricts which natural types are allowed to
-  play which \rosirole types. Hence, all \plays-successors in a natural type are either instances of a
+  play which \rosirole types. Hence, all \plays-successors of naturals of a specific natural type are either instances of a
   \rosirole type that are filled by that natural type or instances of a role group. Analogously, a
   \rosirole type has as \plays-predecessors only instances of natural types which fill that
   \rosirole type.}
