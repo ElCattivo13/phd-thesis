@@ -141,6 +141,86 @@ We are now ready to define the semantics of \LMLO.
 \section{Complexity of the Consistency Problem}
 \label{sec:complexity-consis-problem}
 
+{\renewcommand{\arraystretch}{1.1}
+\begin{table}[t]
+  \centering
+  \caption{The complexity results for the consistency problem in \LMLO}
+  \label{tab:compl-results-no-rigid-names}
+  \begin{tabularx}{1.0\linewidth}[t]{clC@{\ }C@{\ }C@{\ }C}
+    \toprule
+    &\diagbox[width=2cm]{\LM}{\LO}& \EL & \ALC & \SHOQ & \SHOIQ \\
+    \midrule \noalign{\hbox{\tikzmark{rawY1}}}
+    % \EL    & constant & \multicolumn{2}{c}{\cellcolor[gray]{0.9}} & \cellcolor[gray]{0.8}\\
+    % \ALC   & \multicolumn{3}{c}{\cellcolor[gray]{0.9}}            & \cellcolor[gray]{0.8}\\
+    % \SHOQ  & \multicolumn{3}{c}{\multirow{-2}{*}{\cellcolor[gray]{0.9} \ExpTime-complete}} & \cellcolor[gray]{0.8}\\
+    % \SHOIQ &\multicolumn{3}{c}{\cellcolor[gray]{0.8}} & \multirow{-4}{*}{\cellcolor[gray]{0.8} \NExpTime-complete} \\
+    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (i)}}
+    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY2}}}
+    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY3}}}
+    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY4}}}
+    & \SHOIQ & \tikzmark{X1l}\hfill\tikzmark{X1r}
+             & \tikzmark{X2l}\hfill\tikzmark{X2r}
+             & \tikzmark{X3l}\hfill\tikzmark{X3r}
+             & \tikzmark{X4l}\hfill\tikzmark{X4r} \\ \noalign{\hbox{\tikzmark{rawY5}}}
+    \midrule \noalign{\hbox{\tikzmark{rawY6}}}
+    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (ii)}}
+    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY7}}}
+    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY8}}}
+    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY9}}}
+    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY10}}}
+    \midrule \noalign{\hbox{\tikzmark{rawY11}}}
+    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (iii)}}
+    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY12}}}
+    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY13}}}
+    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY14}}}
+    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY15}}}
+    \bottomrule
+  \end{tabularx}
+  \caption*{Settings: (i) no rigid names are allowed, i.e.\ $\OCR=\ORR=\emptyset$. (ii) only rigid
+    concepts are allowed, i.e.\ $\OCR\neq\emptyset$ and $\ORR=\emptyset$. (iii) rigid concepts and
+    rigid roles are allowed, i.e.\ $\OCR\neq\emptyset$ and $\ORR\neq\emptyset$.}
+\end{table}
+}
+\begin{tikzpicture}[remember picture, overlay]
+  % \foreach \x in {1,...,5}
+  %   \foreach \y in {1,...,5}
+  %     \node[node] at (X\x|-Y\y) {}; 
+  %
+  \pgfmathsetmacro{\eps}{0.05}
+  %
+  \coordinate (Y1) at ($(rawY1)-(0,\eps)$);
+  \coordinate (Y2) at ($(rawY2)-(0,\eps)$);
+  \coordinate (Y3) at ($(rawY3)+(0,0)$);
+  \coordinate (Y4a) at ($(rawY4)+(0,\eps)$);
+  \coordinate (Y4b) at ($(rawY4)-(0,\eps)$);
+  \coordinate (Y5) at ($(rawY5)+(0,\eps)$);
+  \fill[gray!30] (X2l|-Y1) -- (X2l|-Y2) -- (X1l|-Y2) -- (X1l|-Y4a) -- (X3r|-Y4a) -- (X3r|-Y1) -- cycle;
+  \fill[gray!60] (X4l|-Y1) -- (X4l|-Y4b) -- (X1l|-Y4b) -- (X1l|-Y5) -- (X4r|-Y5) -- (X4r|-Y1) -- cycle;
+  \node at ($0.5*(X1l|-Y3)+0.5*(X3r|-Y3)+(0.9,0.2)$) {\ExpTime-complete};
+  \node[align=center] at ($0.5*(X4l|-Y3)+0.5*(X4r|-Y3)$) {\NExpTime-\\complete};
+  %
+  \coordinate (Y6) at ($(rawY6)-(0,\eps)$);
+  \coordinate (Y7) at ($(rawY7)-(0,\eps)$);
+  \coordinate (Y8) at ($(rawY8)+(0,0)$);
+  \coordinate (Y10) at ($(rawY10)+(0,\eps)$);
+  \fill[gray!60] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
+  \node at ($0.5*(X1l|-Y10)+0.5*(X4r|-Y6)+(0.5,-0.1)$) {\NExpTime-complete};
+  %
+  \coordinate (Y11) at ($(rawY11)-(0,\eps)$);
+  \coordinate (Y12) at ($(rawY12)-(0,\eps)$);
+  \coordinate (Y13) at ($(rawY13)+(0,0)$);
+  \coordinate (Y14a) at ($(rawY14)+(0,\eps)$);
+  \coordinate (Y14b) at ($(rawY14)-(0,\eps)$);
+  \coordinate (Y15) at ($(rawY15)+(0,\eps)$);
+  \fill[gray!100] (X2l|-Y11) -- (X2l|-Y14a) -- (X3r|-Y14a) -- (X3r|-Y11) -- cycle;
+  \fill[gray!60] (X1l|-Y12) -- (X1l|-Y14a) -- (X1r|-Y14a) -- (X1r|-Y12) -- cycle;
+  \draw[draw=gray!60, pattern=north east lines, pattern color=gray!50] (X4l|-Y11) -- (X4l|-Y14b) --
+  (X1l|-Y14b) -- (X1l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
+  \node[align=center] at ($0.5*(X1l|-Y15)+0.5*(X1r|-Y12)$) {\NExpTime-\\complete};
+  \node at ($0.5*(X2l|-Y14a)+0.5*(X3r|-Y11)$) {\TwoExpTime-complete};
+  %
+\end{tikzpicture}
+
 \todo[inline]{somewhere a few words about top down view, can't go up, because of that its possible
   to divide reasoning problem into two subtasks, later on }
 
@@ -537,7 +617,7 @@ are allowed. So we fix $\OCR=\ORR=\emptyset$.
   consistency problem in \SHOQSHOQ.
 
   It remains to analyze the complexity.  There are exponentially many
-  $Xmc \in \powerset{\ran(\bsf)}$, but each \SHOQ-BKB~$\Bmf_{X}$ can be constructed in time
+  $\Xmc \in \powerset{\ran(\bsf)}$, but each \SHOQ-BKB~$\Bmf_{X}$ can be constructed in time
   polynomial in the size of~\Bmf.  We can decide consistency of~$\Bmf_{X}$ in time
   exponential~\cite{Lip-PhD14}.  Thus, the set~\Xmc can be constructed in time exponential in the size
   of~\Bmf and it is of exponential size.  Due to Lemma \ref{lem:shoq-outer-consisteny-exptime},

@@ -88,6 +88,7 @@
   \usetikzlibrary{decorations.pathreplacing}
   \usetikzlibrary{through}
   \usetikzlibrary{shadows}
+  \usetikzlibrary{patterns}
   \usetikzlibrary{mindmap,trees}
   \ifpre@oldtikz
     \usetikzlibrary{arrows} % deprecated, see pgfmanual_v3.00.pdf, page 183
@@ -644,6 +645,11 @@
     }
   \end{tikzpicture}
 }
+
+\newcommand{\tikzmark}[2][]{%
+  \tikz[remember picture,overlay]\coordinate[#1](#2);%
+}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% used macros                                                                          %%
