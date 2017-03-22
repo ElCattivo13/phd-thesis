@@ -1132,11 +1132,13 @@
 %%% CROM macros %%%
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname A#1\endcsname{\@math{A_{\mathsf{\MakeUppercase{#1}}}}}}
-\docsvlist{nt,rt,ct,rg}
+\docsvlist{rt,ct,rg}
+
+\newcommand{\Ant}{\@math{A_{\mathsf{O}}}}
 
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname #1\endcsname{\@math{\mathsf{#1}}}}
-\docsvlist{fills,parts,rel,type,plays,links,occur,card,intra,counts,atom}
+\docsvlist{fills,parts,rel,type,plays,links,occur,card,intra,counts,atom,nested}
 
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname #1ass\endcsname{\@math{\mathsf{#1\_assert}}}}
@@ -1152,7 +1154,7 @@
 
 \newcommand{\NT}{\@math{\mathsf{N_{NT}}}}
 \newcommand{\RT}{\@math{\mathsf{N_{RT}}}}
-\newcommand{\CT}{\@math{\mathsf{N_{CT}}}}
+\NewDocumentCommand{\CT}{s}{\@math{\mathsf{N_{CT\IfBooleanTF{#1}{'}{}}}}}
 \newcommand{\RST}{\@math{\mathsf{N_{RST}}}}
 \newcommand{\IND}{\@math{\mathsf{N_{IND}}}}
 \newcommand{\RG}{\@math{\mathbb{RG}}}
@@ -1166,7 +1168,7 @@
 
 \newcommand{\nt}[1][]{\@math{N{\kern-0.12em}T_{#1}}}
 \newcommand{\rt}[1][]{\@math{R{\kern-0.08em}T_{#1}}}
-\newcommand{\ct}[1][]{\@math{C{\kern-0.09em}T_{#1}}}
+\NewDocumentCommand{\ct}{sO{}}{\@math{{C{\kern-0.09em}T\IfBooleanTF{#1}{'{\kern-0.1em}}{}}_{#2}}}
 \newcommand{\rst}{\@math{R{\kern+0.03em}S{\kern-0.09em}T}}
 \newcommand{\rg}[1][]{\@math{R{\kern-0.08em}G_{#1}}}
 
