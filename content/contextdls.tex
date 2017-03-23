@@ -148,20 +148,17 @@ We are now ready to define the semantics of \LMLO.
   \label{tab:compl-results-no-rigid-names}
   \begin{tabularx}{1.0\linewidth}[t]{clC@{\ }C@{\ }C@{\ }C}
     \toprule
-    &\diagbox[width=2cm]{\LM}{\LO}& \EL & \ALC & \SHOQ & \SHOIQ \\
+    & \diagbox[width=2cm]{\LM}{\LO}
+    & \tikzmark{X1l} \hfill \EL    \hfill \tikzmark{X1r}
+    & \tikzmark{X2l} \hfill \ALC   \hfill \tikzmark{X2r}
+    & \tikzmark{X3l} \hfill \SHOQ  \hfill \tikzmark{X3r}
+    & \tikzmark{X4l} \hfill \SHOIQ \hfill \tikzmark{X4r}\\
     \midrule \noalign{\hbox{\tikzmark{rawY1}}}
-    % \EL    & constant & \multicolumn{2}{c}{\cellcolor[gray]{0.9}} & \cellcolor[gray]{0.8}\\
-    % \ALC   & \multicolumn{3}{c}{\cellcolor[gray]{0.9}}            & \cellcolor[gray]{0.8}\\
-    % \SHOQ  & \multicolumn{3}{c}{\multirow{-2}{*}{\cellcolor[gray]{0.9} \ExpTime-complete}} & \cellcolor[gray]{0.8}\\
-    % \SHOIQ &\multicolumn{3}{c}{\cellcolor[gray]{0.8}} & \multirow{-4}{*}{\cellcolor[gray]{0.8} \NExpTime-complete} \\
     \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (i)}}
     & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY2}}}
     & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY3}}}
     & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY4}}}
-    & \SHOIQ & \tikzmark{X1l}\hfill\tikzmark{X1r}
-             & \tikzmark{X2l}\hfill\tikzmark{X2r}
-             & \tikzmark{X3l}\hfill\tikzmark{X3r}
-             & \tikzmark{X4l}\hfill\tikzmark{X4r} \\ \noalign{\hbox{\tikzmark{rawY5}}}
+    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY5}}}
     \midrule \noalign{\hbox{\tikzmark{rawY6}}}
     \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (ii)}}
     & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY7}}}
@@ -558,24 +555,27 @@ The following lemma is a consequence of the previous one.
 \todo[inline]{some text}
 
 \begin{lemma}\label{lem:shoq-outer-consisteny-exptime}
-  Deciding whether a \cSHOQ-BKB \Bmfb is outer consistent w.r.t.~\Xmc can be done in time
+  Deciding whether a \SHOQ-BKB \Bmfb is outer consistent w.r.t.~\Xmc can be done in time
   exponential in the size of~\Bmfb and linear in size of~\Xmc.
 \end{lemma}
 
 \begin{proof}
   It is enough to show that deciding whether~\Bmfb has a model that weakly respects
   $(\ran(\bsf),\Xmc)$ can be done in time exponential in the size of~\Bmfb and linear in the size
-  of~\Xmc.  It is not hard to see that we can adapt the notion of a quasimodel respecting a pair
-  $(\Umc,\Ymc)$ of~\cite{Lip-PhD14} to a quasimodel \emph{weakly} respecting $(\Umc,\Ymc)$.  Indeed,
-  one just has to drop Condition~(i) in Definition~3.25 of~\cite{Lip-PhD14}.  Then, the proof of
-  Lemma~3.26 there can be adapted such that our claim follows.  This is done by dropping one check
-  in Step~4 of the algorithm of~\cite{Lip-PhD14}.
+  of~\Xmc.  
 
-    \todo[inline]{complete rewrite necessary}
+  Here, we will adapt the ideas of~\cite{Lip-PhD14}.  It is not hard to see that we can adapt the
+  notion of a quasimodel respecting a pair $(\Umc,\Ymc)$ of~\cite{Lip-PhD14} to a quasimodel
+  \emph{weakly} respecting $(\Umc,\Ymc)$.  Indeed, one just has to drop Condition~(i) in
+  Definition~3.25 of~\cite{Lip-PhD14}.  Then, the proof of Lemma~3.26 of~\cite{Lip-PhD14} can be
+  adapted such that our claim follows.  This is done by dropping one check in Step~4 of the
+  algorithm of~\cite{Lip-PhD14}.
+
+    \todo[inline]{complete rewrite necessary, warum linear in X}
 \end{proof}
 
 \begin{lemma}\label{lem:shoiq-outer-consisteny-exptime}
-  Deciding whether a \cSHOIQ-BKB \Bmfb is outer consistent w.r.t.~\Xmc can be non-deterministically
+  Deciding whether a \SHOIQ-BKB \Bmfb is outer consistent w.r.t.~\Xmc can be non-deterministically
   done in time exponential in the size of~\Bmfb and linear in size of~\Xmc.
 \end{lemma}
 
@@ -626,14 +626,28 @@ are allowed. So we fix $\OCR=\ORR=\emptyset$.
   exponential time.
 \end{proof}
 
-Together with the lower bounds shown in Section~\ref{sec:case-el}, we obtain \ExpTime-completeness
-for the consistency problem in \LMLO for \LM and \LO being DLs between \ALC and \SHOQ if
-$\OCR=\ORR=\emptyset$.
-
 \begin{theorem}\label{thm:shoiqshoiq-without-rigid-exptime}
   If $\OCR=\ORR=\emptyset$, the consistency problem in \SHOIQSHOIQ is in \NExpTime.
 \end{theorem}
-\missingproof
+\begin{proof}
+  Let \Bmf be a \cSHOIQ-BKB and \Bmfb is outer abstraction.  Analogous to the proof of
+  Theorem~\ref{thm:shoqshoq-without-rigid-exptime} we construct the maximal admissible subset~\Xmc
+  of $\powerset{\ran(\bsf)}$.  Again, \Bmf is consistent iff \Bmfb is outer consistent w.r.t.~\Xmc.
+
+  In contrast to the proof of Theorem~\ref{thm:shoqshoq-without-rigid-exptime} we can decide
+  consistency of~$\Bmf_{X}$ non-deter\-ministically in time exponential in the size of~$\Bmf_{X}$
+  (Theorem~\ref{thm:shoiq-bkb-consistency-nexptime}).  Thus, the set~\Xmc can be constructed
+  non-deterministically in time exponential in the size of~\Bmf.  Also due to
+  Lemma~\ref{lem:shoiq-outer-consisteny-exptime}, deciding whether \Bmfb is outer consistent
+  w.r.t.~\Xmc can be non-deterministically done in time exponential in the size of \Bmfb and linear
+  in the size of~\Xmc.  
+\end{proof}
+
+Together with the lower bounds shown in
+Theorems~\ref{thm:alcel-lower-no-rigid},~\ref{thm:shoiqel-lower-no-rigid}
+and~\ref{thm:elshoiq-lower-no-rigid} we obtain \ExpTime-completeness for the consistency problem in
+\LMLO for \LM and \LO being DLs between \ALC and \SHOQ, and \NExpTime-completeness for \LMLO where
+either \LM or \LO is \SHOIQ, if $\OCR=\ORR=\emptyset$.
 
 \subsection{Consistency with rigid concept and role names}
 \label{sec:cons-with-rigid}
