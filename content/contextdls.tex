@@ -191,8 +191,8 @@ We are now ready to define the semantics of \LMLO.
   \coordinate (Y4a) at ($(rawY4)+(0,\eps)$);
   \coordinate (Y4b) at ($(rawY4)-(0,\eps)$);
   \coordinate (Y5) at ($(rawY5)+(0,\eps)$);
-  \fill[gray!30] (X2l|-Y1) -- (X2l|-Y2) -- (X1l|-Y2) -- (X1l|-Y4a) -- (X3r|-Y4a) -- (X3r|-Y1) -- cycle;
-  \fill[gray!60] (X4l|-Y1) -- (X4l|-Y4b) -- (X1l|-Y4b) -- (X1l|-Y5) -- (X4r|-Y5) -- (X4r|-Y1) -- cycle;
+  \fill[gray!20] (X2l|-Y1) -- (X2l|-Y2) -- (X1l|-Y2) -- (X1l|-Y4a) -- (X3r|-Y4a) -- (X3r|-Y1) -- cycle;
+  \fill[gray!50] (X4l|-Y1) -- (X4l|-Y4b) -- (X1l|-Y4b) -- (X1l|-Y5) -- (X4r|-Y5) -- (X4r|-Y1) -- cycle;
   \node at ($0.5*(X1l|-Y3)+0.5*(X3r|-Y3)+(0.9,0.2)$) {\ExpTime-complete};
   \node[align=center] at ($0.5*(X4l|-Y3)+0.5*(X4r|-Y3)$) {\NExpTime-\\complete};
   %
@@ -200,7 +200,7 @@ We are now ready to define the semantics of \LMLO.
   \coordinate (Y7) at ($(rawY7)-(0,\eps)$);
   \coordinate (Y8) at ($(rawY8)+(0,0)$);
   \coordinate (Y10) at ($(rawY10)+(0,\eps)$);
-  \fill[gray!60] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
+  \fill[gray!50] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
   \node at ($0.5*(X1l|-Y10)+0.5*(X4r|-Y6)+(0.5,-0.1)$) {\NExpTime-complete};
   %
   \coordinate (Y11) at ($(rawY11)-(0,\eps)$);
@@ -209,10 +209,11 @@ We are now ready to define the semantics of \LMLO.
   \coordinate (Y14a) at ($(rawY14)+(0,\eps)$);
   \coordinate (Y14b) at ($(rawY14)-(0,\eps)$);
   \coordinate (Y15) at ($(rawY15)+(0,\eps)$);
-  \fill[gray!100] (X2l|-Y11) -- (X2l|-Y14a) -- (X3r|-Y14a) -- (X3r|-Y11) -- cycle;
-  \fill[gray!60] (X1l|-Y12) -- (X1l|-Y14a) -- (X1r|-Y14a) -- (X1r|-Y12) -- cycle;
-  \draw[draw=gray!60, pattern=north east lines, pattern color=gray!50] (X4l|-Y11) -- (X4l|-Y14b) --
-  (X1l|-Y14b) -- (X1l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
+  \fill[gray!70] (X2l|-Y11) -- (X2l|-Y14a) -- (X3r|-Y14a) -- (X3r|-Y11) -- cycle;
+  \fill[gray!50] (X1l|-Y12) -- (X1l|-Y14a) -- (X1r|-Y14a) -- (X1r|-Y12) -- cycle;
+  \draw[draw=gray!60, pattern=north east lines, pattern color=gray!50] (X1l|-Y14b) -- (X1l|-Y15) --
+  (X1r|-Y15) -- (X1r|-Y14b) -- cycle; 
+  \fill[gray!100] (X4l|-Y11) -- (X4l|-Y14b) -- (X2l|-Y14b) -- (X2l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
   \node[align=center] at ($0.5*(X1l|-Y15)+0.5*(X1r|-Y12)$) {\NExpTime-\\complete};
   \node at ($0.5*(X2l|-Y14a)+0.5*(X3r|-Y11)$) {\TwoExpTime-complete};
   %
