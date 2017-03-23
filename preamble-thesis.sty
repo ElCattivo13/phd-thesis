@@ -76,7 +76,12 @@
 \RequirePackage{enumitem}
 
 % Anpassung an Landessprache
-\RequirePackage[main=british,ngerman,swedish]{babel}
+\RequirePackage[main=british,ngerman]{babel}
+% \shorthandon{"}
+% \defineshorthand{"-}{\babelhyphen{soft}}
+% \defineshorthand{"=}{\babelhyphen{hard}}
+% \babelhyphenation{non=de-ter-min-isti-cal-ly}
+
 \RequirePackage[style=british]{csquotes}
 
 \RequirePackage{tikz}
@@ -866,6 +871,7 @@
 \newcommand{\ELALC}{\@condl{\EL}{\ALC}}
 \newcommand{\ALCEL}{\@condl{\ALC}{\EL}}
 \newcommand{\SHOQEL}{\@condl{\SHOQ}{\EL}}
+\newcommand{\SHOIQEL}{\@condl{\SHOIQ}{\EL}}
 \newcommand{\ELEL}{\@condl{\EL}{\EL}}
 \newcommand{\LMEL}{\@condl{\LM}{\EL}}
 \newcommand{\ELLO}{\@condl{\EL}{\LO}}
@@ -1195,7 +1201,7 @@
   \NewDocumentCommand{\missingproof}{O{2cm}}{%
     \begin{proof}
       \mbox{}
-      \todo[inline]{\vspace{#1} The proof here is still missing!}
+      \todo[inline, caption={missing proof}]{\vspace{#1} The proof here is still missing!}
     \end{proof}
   }
 }

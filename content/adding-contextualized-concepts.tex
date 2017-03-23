@@ -1,0 +1,165 @@
+
+\todo[inline, caption={intro paragraph for adding contextualized concepts}]{
+\ALCALC without rigid names sublogic of \klarALC, relation to \klarALC
+
+explain a bit more the restriction of \LMLO, what cannot be expressed.
+
+introduce new o-concept constructor
+
+undecidability result
+}
+
+The contextualized description logic \LMLOplus is an extension of \LMLO where we additionally allow
+contextualized object concepts. Therefore, we update the definition of o-concepts from
+Def. \ref{def:syntax-cdls}.  
+
+\begin{definition}[Object concepts of \LMLOplus]
+The set of \emph{concepts of the object logic \LO (o-concepts)} is the smallest set such that
+\begin{itemize}
+\item for all $A\in\OC$, $A$ is an object concept,
+\item if $D$ is an object concept, $\mathbf{C}\in\MC$, $\mathbf{r}\in\MR$, then $\ocont{C}[r]{D}$ is
+  also an object concept, and
+\item all complex concepts that can be built with the concept constructors allowed in \LO are
+  object concepts.
+\end{itemize}
+
+Furthermore, for a nested interpretation \JJ the mapping $\cdot^{\I_{c}}$ is extended to
+$\ocont{C}[r]{D}$ as follows: $(\ocont{C}[r]{D})^{\I_{c}} \coloneqq \{d \in \Delta \mid \text{there is
+some $c'$ s.t.\ $(c,c')\in r^{\J}$ and $d \in D^{\I_{c'}}$}\}$.
+\end{definition}
+
+Following customs of modal logic, we use $\ocont*{C}[r]{D}$ as an abbreviation for
+$\lnot\ocont{C}[r]{(\lnot D)}$. Intuitively, in a context $c$ the concept $\ocont{C}[r]{D}$ denotes
+the set of all object domain elements that belong to the concept $D$ in some other context $c'$
+which belongs to the meta concept $\mathbf{C}$ and is related to $c$ via $\mathbf{r}$. An object
+domain element is in the concept $\ocont*{C}[r]{D}$ in context $c$, if it belongs to $D$ in all
+contexts $c'$ that belong to the meta concept $\mathbf{C}$ and are related to $c$ via $\mathbf{r}$.
+
+\todo[inline]{example}
+\begin{example}\label{ex:alcalc-plus}
+  
+\end{example}
+
+The contextualized description logic \ALCALCplus without rigid names is a syntactical variant of
+\klarALC \textbf{[??]}\todo{cite klarman}. Consequently, the consistency problem in \ALCALCplus has
+the same complexity.
+
+\begin{theorem}\label{thm:alcalcplus-without-rigid-twoexptime}
+  The consistency problem in \ALCALCplus is \TwoExpTime-complete if $\OCR = \emptyset$ and
+  $\ORR = \emptyset$.
+\end{theorem}
+
+mutual reduction. 
+
+\missingproof
+
+
+The more interesting case of rigid roles behaves much worse. One can even show that the consistency
+problem becomes undecidable.
+
+\begin{theorem}\label{thm:elalcplus-with-rigid-undecidable}
+  The consistency problem in \ELALCplus is undecidable if $\ORR \neq \emptyset$.
+\end{theorem}
+
+\begin{proof}
+  Similar to the idea of \cite{LuWZ-TIME08} we proof the claim by reduction of a well-known
+  undecidable problem, namely the \emph{domino problem} \cite{Ber-66}: given a triple
+  $\Dmc = (D, H, V)$ with a set of domino types $D=\{d_{1}, \dots, d_{n}\}$, a horizontal
+  compatibility relation $H \subseteq D \times D$ and a vertical compatibility relation
+  $V \subseteq D \times D$, decide whether there exists a solution to cover the
+  $\nat\times\nat$-grid with these domino types respecting the compatibility relations, i.e.\ does
+  there exist a \emph{tiling} $\mathsf{t}:\nat\times\nat\to D$ s.t.\
+  $(\mathsf{t}(i,j),\mathsf{t}(i+1,j))\in H$ and $(\mathsf{t}(i,j),\mathsf{t}(i,j+1))\in V$?
+
+  We encode this problem in \ELALCplus with a single rigid role $v\in\ORR$. Let $\Bmc_{\Dmc}$ be the
+  conjunction of the following meta axioms. Each context represents a \emph{column} of the
+  grid. Using a meta role $h \in \MR$ and a rigid object role $v \in \ORR$ we build the grid:
+  \begin{align*}
+    \top & \sqsubseteq \exists h.\top \tag{$\alpha_{1}$}\\
+    \top & \sqsubseteq \oax{\top \sqsubseteq \exists v.\top} \tag{$\alpha_{2}$}
+  \end{align*}
+  Let $A_{0}, \dots, A_{n} \in \OC$ be object concept names representing the given domino types. To
+  ensure that a single domino type is assigned to each grid position, we use
+  \begin{align*}
+    \top & \sqsubseteq \oax{\top \sqsubseteq (A_{1} \sqcup \dots \sqcup A_{n})
+           \sqcap \bigsqcap_{1 \leq i < j \leq n} \lnot(A_{i} \sqcap A_{j})}.
+           \tag{$\alpha_{3}$}
+  \end{align*}
+  To enforce the compatibility relations, we have
+  \begin{align*}
+    \top & \sqsubseteq \bigsqcap_{i=1}^{n} 
+           \oax{A_{i} \sqsubseteq \forall v.(\bigsqcup_{(d_{i},d_{j})\in V} A_{j})}, \text{ and} \tag{$\alpha_{4}$}\\
+    \top & \sqsubseteq \bigsqcap_{i=1}^{n} 
+           \oax{A_{i} \sqsubseteq \bigsqcup_{(d_{i},d_{j})\in H} \ocont*{\top}[h]{A_{j}}}.\tag{$\alpha_{5}$}
+  \end{align*}
+
+  \begin{claim}
+    $\Bmc_{\Dmc}$ is consistent iff \Dmc has a
+    solution.
+  \end{claim}
+
+  \begin{claimproof}
+    Assume that $\mathsf{t}$ is a solution for \Dmc. Then, based on $\mathsf{t}$ we define the
+    nested interpretation
+    $\J_{\mathsf{t}} = (\nat, \cdot^{\J_{\mathsf{t}}}, \nat, (\cdot^{\I_{x}})_{x\in\nat})$ with
+    \begin{align*}
+      h^{\J_{\mathsf{t}}} & \coloneqq \{(k,k+1) \mid k \geq 0\}\\
+      v^{\I_{x}} & \coloneqq \{(l, l+1) \mid l \geq 0\} \qquad \text{for all $n \geq 0$}\\
+      %
+      A_{i}^{\I_{x}} & \coloneqq \{ y \in \nat \mid \mathsf{t}(x,y) = d_{i}\}
+    \end{align*}
+    By definition, $\J_{\mathsf{t}}$ models $\alpha_{1}$ and $\alpha_{2}$. For each object domain
+    element $y \in \nat$ and each $\I_{x}$, $x \geq 0$, we have that $y \in {A_{i}}^{\I_{x}}$ and
+    $y \notin {A_{j}}^{\I_{x}}$, $1 \leq j \leq n, i\neq j$, for $\mathsf{t}(x,y)=d_{i}$. Hence,
+    $\J_{\mathsf{t}} \models \alpha_{3}$. By definition, $y+1$ is the only $v$-successor of $y$. If
+    $y \in A_{i}^{\I_{x}}$ we know that
+    $y+1 \in \smash{\big(\bigsqcup_{(d_{i},d_{j})\in V} A_{j}\big)^{\I_{x}}}$ because $\mathsf{t}$
+    is a solution and $(\mathsf{t}(x,y),\mathsf{t}(x,y+1))\in V$. Analogously, $x+1$ is the only
+    $h$-successor of $x$ and if $y \in A_{i}^{\I_{x}}$, we know that
+    $y \in \smash{\big(\bigsqcup_{(d_{i},d_{j})\in H} A_{j}\big)^{\I_{x+1}}}$ because $\mathsf{t}$
+    is a solution and $(\mathsf{t}(x,y),\mathsf{t}(x+1,y))\in H$. Hence,
+    $\J_{\mathsf{t}} \models \alpha_{4} \land \alpha_{5}$. Thus, $\Bmc_{\Dmc}$ is consistent.
+
+    Assume that \JJ is a model of $\Bmc_{\Dmc}$. Let $\Psf_{\Msf}$ and $\Psf_{\Osf}$ be infinite
+    paths $\Psf_{\Msf} = c_{0}c_{1}\dots$ and $\Psf_{\Osf} = o_{0}o_{1}\dots$ with $c_{i} \in \Cbb$,
+    $(c_{i}, c_{i+1}) \in h^{\J}$, $o_{i} \in \Delta^{\J}$ and $(o_{i}, o_{i+1}) \in v^{\I_{c}}$ for
+    some $c \in \Cbb$. Such paths exists, because $\J\models\alpha_{1}$, $\J\models\alpha_{2}$ and
+    $v$ is a rigid role. We define the nested interpretation
+    $\J_{\Psf} \coloneqq (\{c_{i} \mid i \geq 0\}, \cdot^{\J_{\Psf}}, \{o_{i} \mid i \geq 0\},
+    (\cdot^{\I_{\Psf,c_{i}}})_{i \geq 0})$ where $\cdot^{\J_{\Psf}}$ is the restriction of
+    $\cdot^{\J}$ to the domain ${c_{i} \mid i \geq 0}$ and $\cdot^{\I_{\Psf,c_{i}}}$ is the restriction of
+    $\cdot^{\I_{c_{i}}}$ to the domain ${o_{i} \mid i \geq 0}$.
+
+    By construction, $\J_{\Psf}$ is a model of $\alpha_{1}$ and $\alpha_{2}$. Since $\alpha_{3}$ to
+    $\alpha_{5}$ do not contain any existential or at-least restrictions, the restriction of the
+    meta and the object domain does preserve the entailment relation and
+    $\J_{\Psf}\models\Bmc_{\Dmc}$. We define the tiling $\mathsf{t}$ as follows:
+    \begin{align*}
+      t(x,y) = d_{i} \quad\text{ if $o_{y} \in A_{i}^{\I_{\Psf,c_{x}}}$}.
+    \end{align*}
+    The tiling $\mathsf{t}$ is a total function and well-defined, due to $\alpha_{3}$. Let
+    $o_{j} \in {A_{k_{1}}}^{\!\!\!\I_{\Psf,c_{i}}}$,
+    $o_{j+1} \in {A_{k_{2}}}^{\!\!\!\I_{\Psf,c_{i}}}$ and
+    $o_{j} \in {A_{k_{3}}}^{\I_{\Psf,c_{i+1}}}$. Thus, we have $\mathsf{t}(i,j) = d_{k_{1}}$,
+    $\mathsf{t}(i,j+1) = d_{k_{2}}$ and $\mathsf{t}(i+1,j) = d_{k_{3}}$. By $\alpha_{4}$ we know
+    that
+    $o_{j} \in \smash{\forall v.\big(\bigsqcup_{(d_{k_{1}},d_{j})\in V}
+      A_{j}\big)^{\I_{\Psf,c_{i}}}}$ and, hence, $(d_{k_{1}}, d_{k_{2}})\in V$. Analogously by
+    $\alpha_{5}$, we get $(d_{k_{1}}, d_{k_{3}})\in H$. Thus, \Dmc has a solution.
+  \end{claimproof}
+
+  Thus, deciding whether $\Bmc_{\Dmc}$ is consistent is undecidable.
+\end{proof}
+
+Besides the negative result about rigid roles, it is still unclear how \LMLOplus behaves in the case
+when only rigid concepts are allowed. But based on the necessity to express rigid roles when
+modelling RoSIs \todo{reference to section 2.2} as discussed in Section \ref{sec:rosiroles}, we did
+not look into this setting any further and it is left open as future work when appropriate use cases
+emerge.
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../thesis"
+%%% reftex-default-bibliography: ("../references.bib")
+%%% End:
