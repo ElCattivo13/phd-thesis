@@ -615,7 +615,13 @@
   mylabel/.style={nominsize,rounded corners=0pt},
   nominwidth/.style={minimum width=0pt},
   outline/.style 2 args={circle,draw=#1,fill=#1,align=center,minimum size=#2,text=white},
-  outline edge/.style 2 args={circle connection bar switch color=from (#1) to (#2)}
+  outline edge/.style 2 args={circle connection bar switch color=from (#1) to (#2)},
+  %
+  % colors for table of complexity results
+  ExpTime/.style={black!15},
+  NExpTime/.style={black!30},
+  2ExpTime/.style={black!45},
+  N2ExpTime/.style={black!60}
   %,
 }
 
@@ -1065,8 +1071,8 @@
 \newcommand{\TwoExpTime}{\@compclasshelp{2ExpTime}}
 \newcommand{\TwoEXPTime}{\@compclasshelp{2ExpTime}}
 \newcommand{\NExpTime}{\@compclasshelp{NExpTime}}
-\newcommand{\TwoNExpTime}{\@compclasshelp{2NExpTime}}
-\newcommand{\TwoNEXPTime}{\@compclasshelp{2NExpTime}}
+\newcommand{\TwoNExpTime}{\@compclasshelp{N2ExpTime}}
+\newcommand{\TwoNEXPTime}{\@compclasshelp{N2ExpTime}}
 \newcommand{\PSpace}{\@compclasshelp{PSpace}}
 \newcommand{\NPSpace}{\@compclasshelp{NPSpace}}
 \newcommand{\ExpSpace}{\@compclasshelp{ExpSpace}}
@@ -1098,17 +1104,18 @@
   \ifmmode
     \mathcal{P}(#1)
   \else
-    \PackageError{contemp-preamble}{%
+    \PackageError{preamble-thesis}{%
       The command \protect\powerset\space is only
       available in math mode
     }{}
   \fi
 }
+
 \newcommand{\restr}[2]{
   \ifmmode
     \left.#1\right|_{#2}
   \else
-    \PackageError{contemp-preamble}{%
+    \PackageError{preamble-thesis}{%
       The command \protect\restr\space is only
       available in math mode%
     }{}
@@ -1117,7 +1124,8 @@
 
 
 %%% miscellaneous text macros %%%
-%\newcommand{\comment}[1]{{\MetaSyntaxHighlightOff\color{lightgray} #1}\MetaSyntaxHighlightOn}
+\newcommand{\commented}[1]{{\leavevmode\color{lightgray}#1}}
+%\newcommand{\commented}[1]{\textcolor{lightgray}{#1}}
 \newcommand{\unsure}[1]{{\color{lorange} #1}}
 \newcommand{\suth}{\mbox{s.\,t.\ }}
 

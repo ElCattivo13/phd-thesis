@@ -191,8 +191,8 @@ We are now ready to define the semantics of \LMLO.
   \coordinate (Y4a) at ($(rawY4)+(0,\eps)$);
   \coordinate (Y4b) at ($(rawY4)-(0,\eps)$);
   \coordinate (Y5) at ($(rawY5)+(0,\eps)$);
-  \fill[gray!20] (X2l|-Y1) -- (X2l|-Y2) -- (X1l|-Y2) -- (X1l|-Y4a) -- (X3r|-Y4a) -- (X3r|-Y1) -- cycle;
-  \fill[gray!50] (X4l|-Y1) -- (X4l|-Y4b) -- (X1l|-Y4b) -- (X1l|-Y5) -- (X4r|-Y5) -- (X4r|-Y1) -- cycle;
+  \fill[ExpTime] (X2l|-Y1) -- (X2l|-Y2) -- (X1l|-Y2) -- (X1l|-Y4a) -- (X3r|-Y4a) -- (X3r|-Y1) -- cycle;
+  \fill[NExpTime] (X4l|-Y1) -- (X4l|-Y4b) -- (X1l|-Y4b) -- (X1l|-Y5) -- (X4r|-Y5) -- (X4r|-Y1) -- cycle;
   \node at ($0.5*(X1l|-Y3)+0.5*(X3r|-Y3)+(0.9,0.2)$) {\ExpTime-complete};
   \node[align=center] at ($0.5*(X4l|-Y3)+0.5*(X4r|-Y3)$) {\NExpTime-\\complete};
   %
@@ -200,7 +200,7 @@ We are now ready to define the semantics of \LMLO.
   \coordinate (Y7) at ($(rawY7)-(0,\eps)$);
   \coordinate (Y8) at ($(rawY8)+(0,0)$);
   \coordinate (Y10) at ($(rawY10)+(0,\eps)$);
-  \fill[gray!50] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
+  \fill[NExpTime] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
   \node at ($0.5*(X1l|-Y10)+0.5*(X4r|-Y6)+(0.5,-0.1)$) {\NExpTime-complete};
   %
   \coordinate (Y11) at ($(rawY11)-(0,\eps)$);
@@ -209,13 +209,14 @@ We are now ready to define the semantics of \LMLO.
   \coordinate (Y14a) at ($(rawY14)+(0,\eps)$);
   \coordinate (Y14b) at ($(rawY14)-(0,\eps)$);
   \coordinate (Y15) at ($(rawY15)+(0,\eps)$);
-  \fill[gray!70] (X2l|-Y11) -- (X2l|-Y14a) -- (X3r|-Y14a) -- (X3r|-Y11) -- cycle;
-  \fill[gray!50] (X1l|-Y12) -- (X1l|-Y14a) -- (X1r|-Y14a) -- (X1r|-Y12) -- cycle;
-  \draw[draw=gray!60, pattern=north east lines, pattern color=gray!50] (X1l|-Y14b) -- (X1l|-Y15) --
-  (X1r|-Y15) -- (X1r|-Y14b) -- cycle; 
-  \fill[gray!100] (X4l|-Y11) -- (X4l|-Y14b) -- (X2l|-Y14b) -- (X2l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
+  \fill[2ExpTime] (X2l|-Y11) -- (X2l|-Y14a) -- (X3r|-Y14a) -- (X3r|-Y11) -- cycle;
+  \fill[NExpTime] (X1l|-Y12) -- (X1l|-Y15) -- (X1r|-Y15) -- (X1r|-Y12) -- cycle;
+  % \draw[draw=gray!60, pattern=north east lines, pattern color=gray!50] (X1l|-Y14b) -- (X1l|-Y15) --
+  % (X1r|-Y15) -- (X1r|-Y14b) -- cycle;
+  \fill[N2ExpTime] (X4l|-Y11) -- (X4l|-Y14b) -- (X2l|-Y14b) -- (X2l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
   \node[align=center] at ($0.5*(X1l|-Y15)+0.5*(X1r|-Y12)$) {\NExpTime-\\complete};
   \node at ($0.5*(X2l|-Y14a)+0.5*(X3r|-Y11)$) {\TwoExpTime-complete};
+  \node[align=center] at ($0.5*(X4l|-Y13)+0.5*(X4r|-Y13)$) {\TwoExpTime-hard\\ and\\ in \TwoNExpTime};
   %
 \end{tikzpicture}
 
@@ -460,7 +461,8 @@ w.r.t.~\Xmc.
   \end{enumerate}
 \end{lemma}
 
-\begin{proof}
+\begin{proof}\todo{noch nicht drüber gelesen, hier müssen sicher noch einige Formelzeichen angepasst
+    werden. Und ist er verständlich???}
   (1 $\Rightarrow$ 2): Let \JJ be a model of~\Bmf with $\Jb=\Hmc$.  Since $\Jb=\Hmc$, we have that
   $\Cbb=\Delta^{\Hmc}$.  By Lemma~\ref{lem:interpretation-outer-abstraction}, we have that \Hmc is a
   model of~\Bmfb.
@@ -515,14 +517,10 @@ w.r.t.~\Xmc.
     %
   Since \Hmc is a model of~\Bmfb and, by construction of \J, \J is a model of \RO, we have by
   Lemma~\ref{lem:interpretation-outer-abstraction} that \J is a model of~\Bmf.
-
-  \todo[inline]{noch nicht drüber gelesen, hier müssen sicher noch einige Formelzeichen angepasst
-    werden. Und ist er verständlich???}
 \end{proof}
 
-The following lemma is a consequence of the previous one.
-
-\todo[inline]{a few more words? :/}
+The following lemma is a direct consequence of the previous one. It states that we can split the
+consistency check into two subtasks.
 
 \begin{lemma}\label{lem:admissible-and-outerConsistent}%
   The \LMLO-BKB~\Bmf is consistent iff there is a set
@@ -532,8 +530,8 @@ The following lemma is a consequence of the previous one.
   \item \Bmfb is outer consistent w.r.t.~\Xmc.
   \end{enumerate}
 \end{lemma}
-
 \begin{proof}
+  \todo{not proof-read yet!}
   \onlyifdirection Let \J be a model of \Bmf, and let $\Jb=(\Cbb,\cdot^{\Jb})$.  By
   Lemma~\ref{lem:model-equivalent-to-admissible}, we have that $\Jb$ is a model of~\Bmfb, and the
   set $\Xmc \coloneqq \{X_c \mid c \in \Cbb\}$ is admissible.  By construction, $\Jb$ weakly
@@ -548,19 +546,23 @@ The following lemma is a consequence of the previous one.
   $(\ran(\bsf),\Xmc)$ and $c \in (C_{\ran(b),Y_c})^\Gmc$ for every $c \in \Cbb$, we have that
   $\Xmc' \subseteq \Xmc$.  Since \Xmc is admissible, this yields admissibility of~$\Xmc'$.
   Lemma~\ref{lem:model-equivalent-to-admissible} yields now consistency of~\Bmf.
-  %
-  \todo[inline]{noch nicht drübergelesen!}
 \end{proof}
 
 
-\todo[inline]{some text}
+
+Before we can analyse the complexity of the consistency problem in \LMLO, we need to state two
+complexity results for the consistency problem of \SHOQ-BKBs and \SHOIQ-BKBs. For the former we follow the idea of~\cite{Lip-PhD14}.
+%
+The former is a corollary of Theorem~\ref{thm:shoiq-bkb-consistency-nexptime} which is proven
+is Section \ref{sec:consistency-shoiq-bkb}.
+
+
 
 \begin{lemma}\label{lem:shoq-outer-consisteny-exptime}
   Deciding whether a \SHOQ-BKB \Bmfb is outer consistent w.r.t.~\Xmc can be done in time
   exponential in the size of~\Bmfb and linear in size of~\Xmc.
 \end{lemma}
-
-\begin{proof}
+\begin{proof}\todo{complete rewrite necessary, why linear in X}
   It is enough to show that deciding whether~\Bmfb has a model that weakly respects
   $(\ran(\bsf),\Xmc)$ can be done in time exponential in the size of~\Bmfb and linear in the size
   of~\Xmc.  
@@ -571,16 +573,20 @@ The following lemma is a consequence of the previous one.
   Definition~3.25 of~\cite{Lip-PhD14}.  Then, the proof of Lemma~3.26 of~\cite{Lip-PhD14} can be
   adapted such that our claim follows.  This is done by dropping one check in Step~4 of the
   algorithm of~\cite{Lip-PhD14}.
-
-    \todo[inline]{complete rewrite necessary, warum linear in X}
 \end{proof}
 
-\begin{lemma}\label{lem:shoiq-outer-consisteny-exptime}
+
+
+\begin{lemma}\label{lem:shoiq-outer-consisteny-nexptime}
   Deciding whether a \SHOIQ-BKB \Bmfb is outer consistent w.r.t.~\Xmc can be non-deterministically
   done in time exponential in the size of~\Bmfb and linear in size of~\Xmc.
 \end{lemma}
+\begin{proof}
+  Let \Umc be the set $\ran(\bsf)$. Due to Theorem~\ref{thm:shoiq-bkb-consistency-nexptime},
+  deciding whether there exists a model that weakly respects $(\ran(\bsf),\Xmc)$ can be
+  non-deterministically done in time exponential in the size of \Bmf and linear in the size of \Xmc.
+\end{proof}
 
-\missingproof
 
 
 \subsection{Consistency without rigid names}
@@ -639,7 +645,7 @@ are allowed. So we fix $\OCR=\ORR=\emptyset$.
   consistency of~$\Bmf_{X}$ non-deter\-ministically in time exponential in the size of~$\Bmf_{X}$
   (Theorem~\ref{thm:shoiq-bkb-consistency-nexptime}).  Thus, the set~\Xmc can be constructed
   non-deterministically in time exponential in the size of~\Bmf.  Also due to
-  Lemma~\ref{lem:shoiq-outer-consisteny-exptime}, deciding whether \Bmfb is outer consistent
+  Lemma~\ref{lem:shoiq-outer-consisteny-nexptime}, deciding whether \Bmfb is outer consistent
   w.r.t.~\Xmc can be non-deterministically done in time exponential in the size of \Bmfb and linear
   in the size of~\Xmc.  
 \end{proof}
@@ -661,12 +667,13 @@ $\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
 \end{theorem}
 
 \begin{proof}
-  Let \BB be a \SHOQSHOQ-BKB and \BBb its outer abstraction.  We can decide consistency of~\Bmf using
-  Lemma~\ref{lem:admissible-and-outerConsistent}.  For that, we enumerate all sets $\Xmc \subseteq \powerset{\ran(\bsf)}$,
-  which can be done in time doubly exponential in~\Bmf.  For each of these sets
-  $\Xmc = \{X_1,\dots,X_k\}$, we check whether \Bmfb is outer consistent w.r.t.~\Xmc, which can be done in
-  time exponential in the size of~\Bmfb and linear in the size of~\Xmc.
-  %
+  Let \BB be a \SHOQSHOQ-BKB and \BBb its outer abstraction.  We can decide consistency of~\Bmf
+  using Lemma~\ref{lem:admissible-and-outerConsistent}.  For that, we enumerate all sets
+  $\Xmc \subseteq \powerset{\ran(\bsf)}$, which can be done in time doubly exponential in~\Bmf.  For
+  each of these sets $\Xmc = \{X_1,\dots,X_k\}$, we check whether \Bmfb is outer consistent
+  w.r.t.~\Xmc, which can be done in time exponential in the size of~\Bmfb and linear in the size
+  of~\Xmc.
+  
   Then, we check \Xmc for admissibility using the renaming technique \todo{define separately?}
   of~\cite{BaGL-KR08,BaGL-ToCL12}.  For every~$i$, $1\le i\le k$, every flexible concept name~$A$
   occurring in~\Bb, and every flexible role name~$r$ occurring in~\Bb or~\RO, we introduce
@@ -676,17 +683,36 @@ $\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
   \begin{align*}
     \Bmf_\Xmc \coloneqq \left(\bigwedge\nolimits_{1\le i\le k}\B_{X_i}^{(i)}, \bigcup\nolimits_{1\le i\le k} \RO^{(i)}\right).
   \end{align*}
-  It is not hard to verify \todo{just do it} (using arguments of~\cite{Lip-PhD14}) that \Xmc is
-  admissible iff $\Bmf_\Xmc$ is consistent.  Note that $\Bmf_\Xmc$ is of size at most exponential in~\Bmf and
-  can be constructed in exponential time.  Moreover, consistency of~$\Bmf_\Xmc$ can be decided in time
-  exponential in the size of~$\Bmf_\Xmc$~\cite{Lip-PhD14}, and thus in time doubly
-  exponential in the size of~\Bmf.
+  It is not hard to verify \todo{do short argumentation here} (using arguments of~\cite{Lip-PhD14})
+  that \Xmc is admissible iff $\Bmf_\Xmc$ is consistent.  Note that $\Bmf_\Xmc$ is of size at most
+  exponential in~\Bmf and can be constructed in exponential time.  Moreover, consistency
+  of~$\Bmf_\Xmc$ can be decided in time exponential in the size of~$\Bmf_\Xmc$~\cite{Lip-PhD14}, and
+  thus in time doubly exponential in the size of~\Bmf.
+\end{proof}
+
+\begin{theorem}\label{thm:shoiqshoiq-with-rigid-names-ntwoexptime}
+  The consistency problem in \SHOIQSHOIQ is in \TwoNExpTime if $\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
+\end{theorem}
+
+\begin{proof}
+  Let \BB be a \SHOIQSHOIQ-BKB and \BBb its outer abstraction. We proceed the same as in the proof
+  of Theorem~\ref{thm:shoqshoq-with-rigid-names-twoexptime}. Enumerating all sets
+  $\Xmc \subseteq \powerset{\ran(\bsf)}$ can still be done in time doubly exponential in the size of
+  \Bmf, but checking for each \Xmc whether \Bmfb is outer consistent w.r.t.~\Xmc can be done
+  non-deterministically in time exponential in the size of \Bmfb and linear in the size of \Xmc.
+
+  To check \Xmc for admissibility we again use the renaming technique
+  of~\cite{BaGL-KR08,BaGL-ToCL12} and by the same arguments as above \Xmc is admissible iff $\Bmf_\Xmc$ is
+  consistent.  Again, $\Bmf_\Xmc$ is of size at most exponential in~\Bmf and can be constructed in
+  exponential time, but consistency of~$\Bmf_\Xmc$ can be decided non-deterministically in time
+  exponential in the size of~$\Bmf_\Xmc$ (Theorem~\ref{thm:shoiq-bkb-consistency-nexptime}) and thus
+  non-deterministically in time doubly exponential in the size of \Bmf.
 \end{proof}
 
 Together with the lower bounds shown in Section~\ref{sec:case-el}, we obtain
 \TwoExpTime-completeness for the consistency problem in \LMLO
 for \LM and \LO being DLs between \ALC and \SHOQ if $\OCR\neq\emptyset$
-and $\ORR\neq\emptyset$.
+and $\ORR\neq\emptyset$. \todo{update for \LMLO with \SHOIQ}
 
 \subsection{Consistency with only rigid concept names}
 \label{sec:cons-with-only}
@@ -694,6 +720,7 @@ and $\ORR\neq\emptyset$.
 In this section, we consider the case where rigid concept are present, but rigid role names are not
 allowed.  So we fix $\OCR \neq \emptyset$ but $\ORR=\emptyset$.
 
+\commented{
 \begin{theorem}\label{thm:shoqshoq-with-rigid-concepts-nexptime}
   The consistency problem in \SHOQSHOQ is in \NExpTime if $\OCR \neq \emptyset$ and $\ORR=\emptyset$.
 \end{theorem}
@@ -722,17 +749,42 @@ allowed.  So we fix $\OCR \neq \emptyset$ but $\ORR=\emptyset$.
   $(\OCR(\B),\Ymc)$ in time exponential in the size of $\widehat{\Bmf}_{X_{i}}$
   \cite{BaGL-KR08,BaGL-ToCL12}, and thus exponential in the size of \Bmf.
 \end{proof}
+}
 
-Together with the lower bounds shown in Section~\ref{sec:case-el}, we obtain \NExpTime-completeness
-for the consistency problem in \LMLO for \LM and \LO being DLs between \ALC and \SHOQ if
-$\OCR \neq \emptyset$ and $\ORR = \emptyset$.
 
 \begin{theorem}\label{thm:shoiqshoiq-with-rigid-concepts-nexptime}
   The consistency problem in \SHOIQSHOIQ is in \NExpTime if $\OCR \neq \emptyset$ and $\ORR=\emptyset$.
 \end{theorem}
 
-\missingproof
+\begin{proof}
+  Let \BB be a \SHOIQSHOIQ-BKB and \BBb its outer abstraction.  We can decide consistency of~\Bmf
+  using Lemma~\ref{lem:admissible-and-outerConsistent}. We first non-deterministically guess the set
+  $\Xmc = \{X_{1},\ldots,X_{k}\} \subseteq \powerset{\ran(\bsf)}$, which is of size at most
+  exponential in \Bmf. Due to Lemma~\ref{lem:shoiq-outer-consisteny-nexptime} we can check whether
+  \Bmfb is outer consistent w.r.t.~\Xmc non-deterministically in time exponential in the size
+  of~\Bmfb and linear in the size of~\Xmc.
+  
+  It remains to check \Xmc for admissibility. For that let $\OCR(\B) \subseteq \OCR$ and
+  $\OI(\B) \subseteq \OI$ be the sets of all rigid concept names and individual names occurring in
+  \B, respectively. As done in~\cite{BaGL-KR08,BaGL-ToCL12} we non-deterministically guess a set
+  $\Ymc \subseteq \powerset{\OCR(\B)}$ and a mapping $\kappa\colon\OI(\B)\to\Ymc$ which also can be
+  done in time exponential in the size of \Bmf. Using the same arguments as
+  in~\cite{BaGL-KR08,BaGL-ToCL12} we can show that \Xmc is admissible iff
+  \begin{align*}
+    \widehat{\Bmf}_{X_{i}}\coloneqq\left(\B_{X_{i}} \land \bigwedge_{a\in\OI(\B)} \left(\bigsqcap_{A\in\kappa(a)} A \sqcap
+    \bigsqcap_{A\in\OCR(\B)\setminus\kappa(a)} \lnot A\right)(a),\ \RO\right)
+  \end{align*}
+  has a model that respects $(\OCR(\B),\Ymc)$, for all $1 \leq i \leq k$. The \SHOIQ-BKB
+  $\widehat{\Bmf}_{X_{i}}$ is of size polynomial in the size of \B and can be constructed in time
+  exponential in the size of \B. We can check if $\widehat{\Bmf}_{X_{i}}$ has a model that respects
+  $(\OCR(\B),\Ymc)$ non-deterministically in time exponential in the size of
+  $\widehat{\Bmf}_{X_{i}}$ \cite{BaGL-KR08,BaGL-ToCL12}, and thus non-deterministically in time
+  exponential in the size of \Bmf.
+\end{proof}
 
+Together with the lower bound shown in Theorem~\ref{thm:alcel-rigid-concepts-nexptime-hard}, we
+obtain \NExpTime-complete\-ness for the consistency problem in \LMLO for \LM and \LO being DLs between
+\ALC and \SHOIQ if $\OCR \neq \emptyset$ and $\ORR = \emptyset$.
 
 Summing up the results, we obtain the following corollary.
 
@@ -837,7 +889,7 @@ in \EL-LTL to the consistency problem in \ALCEL to obtain the lower bounds of \N
 use the fact that the lower bounds of~\cite{BoTh-IJCAI15,BoTh-LTCS-15-07} hold already for a
 syntactically restricted fragment of \EL-LTL.
 
-\begin{theorem}\label{thm:alcel-lower-rigid}
+\begin{theorem}\label{thm:alcel-rigid-concepts-nexptime-hard}
   The consistency problem in \ALCEL is \NExpTime-hard if $\OCR \neq \emptyset$ and
   $\ORR = \emptyset$.
 \end{theorem}
@@ -1009,9 +1061,9 @@ Summming up the results of this section, we obtain the following corollary.
 
 \begin{proof}
   The lower bounds follow from Theorems~\ref{thm:alcel-lower-no-rigid}
-  and~\ref{thm:alcel-lower-rigid}.  The upper bound of \ExpTime in the case $\OCR=\ORR=\emptyset$
-  follows immediately from Theorem~\ref{thm:shoqshoq-without-rigid-exptime}, whereas the upper bound
-  of \NExpTime follows from Theorem~\ref{thm:shoqel-upper-bound}.
+  and~\ref{thm:alcel-rigid-concepts-nexptime-hard}.  The upper bound of \ExpTime in the case
+  $\OCR=\ORR=\emptyset$ follows immediately from Theorem~\ref{thm:shoqshoq-without-rigid-exptime},
+  whereas the upper bound of \NExpTime follows from Theorem~\ref{thm:shoqel-upper-bound}.
 \end{proof}
 
 \subsection{The Contextualized Description Logics \texorpdfstring{\ELLO}{EL[LO]}}
@@ -1271,10 +1323,10 @@ Section~\ref{sec:complexity-consis-problem}, we obtain the following corollary.
   Let \Bmf be a \SHOIQ-BKB. weakly respects iff quasimodel exists.
 \end{lemma}
 
-\begin{theorem}\label{thm:shoiq-bkb-consistency-nexptime}ø
+\begin{theorem}\label{thm:shoiq-bkb-consistency-nexptime}
   Let \Bmf be a \SHOIQ-BKB, let $\Umc \subseteq \NC$ and let $\Ymc\subseteq\powerset{\Umc}$. Then
   deciding whether there exists a model of \Bmf that weakly respects $(\Umc,\Ymc)$ can be
-  non-deterministically done in time exponential in the size of \Bmf.
+  non-deterministically done in time exponential in the size of \Bmf and linear in the size of \Ymc.
 \end{theorem}
 
 \begin{corollary}
