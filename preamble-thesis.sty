@@ -936,7 +936,13 @@
 %%% mathcal letters (short macro) %%%
 \newcommand{\T}{\Tmc}
 \newcommand{\A}{\Amc}
+\newcommand{\Ap}{\@math{\A'}}
+\newcommand{\ZH}{\@math{\Zmc_{\Hmc}}}
 \newcommand{\B}{\Bmc}
+\newcommand{\Bmfex}{\@math{\Bmf_{\mathsf{ex}}}}
+\newcommand{\Bmcex}{\@math{\Bmc_{\mathsf{ex}}}}
+\newcommand{\Bmfbex}{\@math{\Bmf_{\mathsf{ex}}^{\bsf}}}
+\newcommand{\Omcb}{\@math{\Omc^{\bsf}}}
 
 
 %%% Role Boxes, temporal operators and outer abstractions %%%
@@ -952,6 +958,10 @@
 \newcommand{\ran}{\@math{\mathsf{ran}}}
 \newcommand{\dom}{\@math{\mathsf{dom}}}
 \newcommand{\im}{\@math{\mathsf{Im}}}
+
+\newcommand{\Cex}{\@math{\Cmc_{\mathsf{ex}}}}
+\newcommand{\Aex}{\@math{\A_{\mathsf{ex}}}}
+\newcommand{\CAex}{\@math{\left(\Cex, \Aex\right)}}
 
 \newcommand*{\oOnt}[1]{\@math{\Omc_{\!#1}}}
 \newcommand{\nnf}[1]{\mathsf{nnf}(#1)}
@@ -1174,6 +1184,7 @@
 \newcommand{\RG}{\@math{\mathbb{RG}}}
 \newcommand{\Card}{\@math{\mathsf{Card}}}
 \newcommand{\textImplies}{\quad\text{implies}\quad}
+\newcommand{\textIff}{\quad\text{iff}\quad}
 \newcommand{\Succ}{\@math{\mathsf{succ}}}
 \newcommand{\Pred}{\@math{\mathsf{pred}}}
 
@@ -1278,6 +1289,10 @@
 \newcommand{\onlyifdirection}{($\Longrightarrow$):\ }
 \newcommand{\ifdirection}{($\Longleftarrow$):\ }
 
+\NewDocumentCommand{\Zpos}{O{\A}m}{\@math{Z^{+}_{#1}(#2)}}
+\NewDocumentCommand{\Zneg}{O{\A}m}{\@math{Z^{-}_{#1}(#2)}}
+\NewDocumentCommand{\types}{O{\A}m}{\@math{\tau_{#1}(#2)}}
+\NewDocumentCommand{\typesA}{O{\A}}{\@math{\tau_{#1}}}
 \newcommand{\Xpos}{\@math{X_{\mathsf{pos}}}}
 \newcommand{\Xneg}{\@math{X_{\mathsf{neg}}}}
 \newcommand{\Xposi}{\@math{X_{\mathsf{pos},i}}}
