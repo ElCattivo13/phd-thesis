@@ -2,29 +2,36 @@
 \chapter{Preliminiaries}
 \label{cha:preliminiaries}
 
-In this chapter, we introduce 
+In this chapter, we present some basic notions which we use throughout this thesis. We first
+introduce \emph{description logics (DLs)} as logical formalism that we use to reason on complex
+domain models. In Section~\ref{sec:rosiroles}, we give an ontological overview of the notion of a
+\emph{role}.
+%
+Specific definitions, such as the \emph{restricted type} of an element, are given in the respective
+chapters.
 
-\todo[inline]{some introduction}
 
 
 \section{Description Logics}
 \label{sec:description-logics}
 
-\todo[inline]{a few words to begin with}
+Description logics are a family of knowledge representation formalisms. As already outlined in the
+introduction, DLs allow to represent application domains in a well-structured way. In this section,
+we present the notations, definitions and known results which are used in this thesis.
+%
+For a more thorough introduction into description logics we refer the reader to
+\cite{DLhandbook-07}.
 
 \subsection{Description Logic Concepts}
 \label{sec:dl-concepts}
 
-
-The basic building blocks in description logics are so-called \emph{concepts}. As described
-
-used as description, classify a set of objects
-\todo[inline]{what are concepts and for what are they good}
-
-Note that in the following definitions we refer to the triple \Nsig explicitly although it is
-usually left implicit in standard definitions.  This turns out to be useful in chapter
-\ref{cha:context-dls} as we need to distinguish between the symbols used in the meta level and the
-object level.  Sometimes we omit \Nsig, however, if it is clear from the context.
+As shown in Section~\ref{sec:intro-description-logics}, DL concepts describe a set of
+elements. Concepts are build from \emph{concept names}, \emph{role names} and \emph{individual
+  names} using concept and role constructors.  Note that in the following definitions we refer to
+the triple $\Nsig \coloneqq (\NC, \NR, \NI)$ explicitly although it is usually left implicit in
+standard definitions.  This turns out to be useful in Chapter~\ref{cha:context-dls} as we need to
+distinguish between the symbols used in the meta level and the object level.  Sometimes we omit
+\Nsig, however, if it is clear from the context.
 %
 
 \begin{definition}[Syntax of \Nsig-roles and \Nsig-concepts]
@@ -43,7 +50,8 @@ object level.  Sometimes we omit \Nsig, however, if it is clear from the context
   \end{itemize}
 \end{definition}
 
-As usual in description logics, we use the following abbreviations:
+\noindent Non-atomic concepts are also called \emph{concept descriptions}. As usual in description
+logics, we use the following abbreviations:
 \begin{itemize}
 \item $C\sqcup D$ (\emph{disjunction}) for $\lnot(\lnot C \sqcap \lnot D)$,
 \item $\top$ (\emph{top}) for $A \sqcup \lnot A$ where $A\in\NC$ is arbitrary but fixed,
@@ -60,12 +68,14 @@ interpretations.
   \label{def:n-interpretation}
   Let $\Nsig\coloneqq(\NC,\NR,\NI)$ be the signature. Then, an \emph{\Nsig-interpretation \I} is a pair
   $(\Delta^{\I}, \cdot^{\I})$ where the \emph{domain} $\Delta^{\I}$ is a non-empty set and
-  the \emph{interpretation function} $\cdot^{\I}$ maps \todo{sth. about UNA?}
+  the \emph{interpretation function} $\cdot^{\I}$ maps
   \begin{itemize}
   \item every concept name $A\in\NC$ to the set $A^{\I}\subseteq\Delta^{\I}$,
   \item every role name $r\in\NR$ to the binary relation
     $r^{\I}\subseteq\Delta^{\I}\times\Delta^{\I}$, and
-  \item every individual name $a\in\NI$ to the element $a^{\I}\in\Delta^{\I}$.
+  \item every individual name $a\in\NI$ to the element $a^{\I}\in\Delta^{\I}$ such that different
+    individual names are mapped to different elements, i.e.\ for $a,b\in\NI$ it holds that
+    $a^{\I}\neq b^{\I}$ if $a\neq b$.
   \end{itemize}
 
   Now, that function is extended for inverse roles and complex concepts as follows:
@@ -82,17 +92,16 @@ interpretations.
   where $\sharp S$ denotes the cardinality of the set $S$.
 \end{definition}
 
-\todo[inline]{paragraph about UNA, ontological motivation, an individual name is supposed to
-  represent an individual. It is not only a tag. It is its identity in an ontological sense. }
+Note that in the above definition of an interpretation, we include the so-called \emph{unique name
+  assumption} stating that every individual is interpreted as distinct element. Here, we emphasize
+that an individual name is meant to be the identity of an individual, rather than just a tag as it is usually
+used in the context of semantic web.
 
-
-With these notions at hand, we can already define some first 
-
-\todo[inline]{some text and example of a complex concept with an interpretation.}
-some text
+Now, we can look at a first example.
 
 \begin{example}
-  
+  \mbox{ }
+  \todo[inline]{example about football concepts}
 \end{example}
 
 
@@ -101,15 +110,22 @@ some text
 \subsection{Boolean Knowledge Bases}
 \label{sec:dl-axioms}
 
-\todo[inline]{introducing words, why BKB, what are they made of, what are axioms}
+With the notion of concepts at hand, we can formulate \emph{axioms} to capture domain knowledge in a
+so-called \emph{Boolean knowledge base (BKB)}. Each BKB consists of a Boolean combination of certain
+axioms and an RBox which states the general knowledge about roles.
 
 \begin{definition}[Syntax of axioms over \Nsig, BKBs over \Nsig]
   Let $\Nsig\coloneqq(\NC,\NR,\NI)$ be the signature. Then, if $C$ and $D$ are \Nsig-concepts, $r$
-  and $s$ are a \Nsig-roles, and $\{a,b\}\subseteq\NI$, then $C \sqsubseteq D$ (\emph{general concept inclusion,
-    GCI}), $C(a)$ (\emph{concept assertion}), $r(a,b)$ (\emph{role assertion}), $r \sqsubseteq s$
-  (\emph{role inclusion}), and $\mathsf{trans}(r)$ (\emph{transitivity axiom}) are
-  \emph{axioms over \Nsig}.
-
+  and $s$ are a \Nsig-roles, and $\{a,b\}\subseteq\NI$, then
+  \begin{itemize}
+  \item $C \sqsubseteq D$ (\emph{general concept inclusion, GCI}),
+  \item $C(a)$ (\emph{concept assertion}),
+  \item $r(a,b)$ (\emph{role assertion}),
+  \item $r \sqsubseteq s$ (\emph{role inclusion}), and
+  \item $\mathsf{trans}(r)$ (\emph{transitivity axiom})
+  \end{itemize}
+  are \emph{axioms over \Nsig}.
+  %
   Moreover, an \emph{RBox \Rmc over \Nsig} is a finite set of role inclusions over \Nsig and
   transitivity axioms over \Nsig. A \emph{Boolean axiom formula over \Nsig} is defined inductively
   as follows:
@@ -127,8 +143,8 @@ some text
   Boolean axiom formula.
 \end{definition}
 
-Again as usual in description logics, we use $C \equiv D$ (concept equivalence) as abbreviation
-for $(C \sqsubseteq D) \land (D \sqsubseteq C)$ and $\Bmc_1\lor\Bmc_2$ (axiom disjunction) as
+Again as usual in description logics, we use $C \equiv D$ (\emph{concept equivalence}) as abbreviation
+for $(C \sqsubseteq D) \land (D \sqsubseteq C)$ and $\Bmc_1\lor\Bmc_2$ (\emph{axiom disjunction}) as
 abbreviation for $\lnot(\lnot\Bmc_1\land\lnot\Bmc_2)$.
 %
 Often an ontology $\Omc = (\Bmc, \Rmc)$ is written as a triple $\Omc = (\Tmc, \Amc, \Rmc)$ where
@@ -163,8 +179,6 @@ assertion axioms occurring in \Bmc.
   \emph{consistency problem} is the problem of deciding whether a given BKB is consistent.
 \end{definition}
 
-\todo[inline]{some paragraph for reasoning tasks and why only consider consistency problem}
-
 Note that besides the consistency problem there are several other reasoning tasks for description
 logics.  The entailment problem, for instance, is the problem of deciding, given a BKB~\Bmf and an
 axiom~$\beta$, whether \Bmf \emph{entails} $\beta$, i.e.~whether all models of~\Bmf are also models
@@ -176,15 +190,65 @@ For the entailment problem, note that it can be reduced to the \emph{in}consiste
 entails $\beta$ iff $(\B\land\lnot\beta,\Rmc)$ is inconsistent.  Hence, we focus in this thesis only
 on the consistency problem.
 
+\todo[inline]{few words about next example}
 
+\begin{example}
+  
+\end{example}
 
-\todo[inline]{paragraph about names of DLs, what is \EL, \ALC, \SHOIQ, ...}
+\subsection{Specific Description Logics}
+\label{sec:specific-description-logics}
 
-\todo[inline]{paragraph about simple roles, restrictions for \SHQ ...}
+The specific description logics differ in the concept and role constructors they allow to formulate
+concepts and axioms, and also in the axioms that are allowed to use in a knowledge base.
+
+The prototypical description logic is \ALC, the \emph{attributive language with complement}, which does not
+allow any inverse roles and only negation, conjunction and existential restriction are allowed as
+concept constructors. Furthermore, only GCIs, concept and role assertions are allowed as
+axioms. The DL \ALC is the smallest propositionally closed DL \todo{cite}. Adding a letter to \ALC stands for certain constructors or axioms that are additionally
+allowed. For example, \ALCI additionally allows inverse roles in concept descriptions.
+%
+By the naming convention of DLs, specific letters denote a concept or role constructor or a type of
+axioms that is allowed in that DL:
+\begin{itemize}
+\item \Omc means nominals,
+\item \Imc means inverse roles,
+\item \Qmc means at-least restrictions,
+\item \Hmc means role inclusions, and
+\item \Smc means transitivity axioms.
+\end{itemize}
+%
+Only, \ALC with additional transitivity axioms is called \Smc instead of $\mathcal{ALCS}$ due to its
+connection to the modal logic $\mathsf{S4}$. Thus, \SHOIQ, for example, is the DL that allows all
+constructors and axioms which were introduced above. Besides extensions of \ALC, there also exist many
+sublogics of \ALC of which in this thesis we only consider \EL. The sub-Boolean description logic
+\EL is the fragment of \ALC where only conjunction, existential restriction, and the top concept
+(which cannot be expressed as an abbreviation anymore due to the lack of negation) are
+admitted.
+
+In~\cite{HoST-IGPL00}, it was shown for \SHQ that allowing arbitrary roles in number restrictions lead to
+undecidability of the consistency problem. Decidability can be regained by restricting roles used in
+number restrictions to simple roles. To define what a simple role is, for a given BKB
+$\Bmf = (\Bmc,\Rmc)$, we introduce $\transClosure$ as the transitive-reflexive closure of
+$\sqsubseteq$ on
+$\Rmc \cup \{\mathsf{Inv}(r)\sqsubseteq\mathsf{Inv}(s) \mid r\sqsubseteq s\in\Rmc\}$ where
+$\mathsf{Inv}(r)$ is defined as
+\begin{align*}
+  \mathsf{Inv}(r) \coloneqq
+  \begin{cases}
+    r^{-} & \text{ if $r\in\NR$, and} \\
+    s    & \text{ if $r$ is an inverse role with $r=s^{-}$}
+  \end{cases}
+\end{align*}
+and $r \equiv_{\Rmc} s$ as abbreviation for $r \transClosure s$ and $s \transClosure r$. A role $r$
+is \emph{transitive w.r.t.\ \Rmc} if for some $s$ with $r \equiv_{\Rmc} s$, we have
+$\trans{s}\in\Rmc$ or $\trans{\mathsf{Inv}(s)}\in\Rmc$. A role $r$ is called \emph{simple w.r.t.\
+  \Rmc} if it is neither transitive nor has any transitive sub-role, i.e. there is no $s$ such that
+$s\transClosure r$ and $s$ is transitive w.r.t.\ \Rmc.
 
 In the rest of this thesis, we make this restriction to the syntax of \SHQ and all its
 extensions.
-
+%
 This restriction is also the reason why there are no Boolean combinations of
 role inclusions and transitivity axioms allowed in the RBox~\Rmc over~\Nsig in
 the above definition.  Otherwise the notion of a simple role w.r.t.~\Rmc
@@ -192,16 +256,17 @@ involves reasoning.  Consider, for instance, the Boolean combination of axioms
 $(\mathsf{trans}(r)\lor\mathsf{trans}(s))\land r\sqsubseteq s$.  It should be
 clear that $s$ is not simple, but this is no longer a pure syntactic check.
 
-\todo[inline]{few words about next example}
+The complexity of the consistency problem for DL ontologies is well-investigated. Is is
+\ExpTime-complete for any DL between \ALC and \SHOQ and \NExpTime-complete for \SHOIQ. The lower
+bound for \ALC was shown in~\cite{Sch-IJCAI91}, the upper bound for \SHOQ in~\cite{Tob-PhD01}. For
+\SHOIQ the lower and upper bound were proven in~\cite{Tob-JAIR00} and~\cite{Tob-PhD01},
+respectively. While for BKBs the complexity class stays the same, this is much less explored. It is
+in \ExpTime for \SHOQ~(\cite{Lip-PhD14}) and we show in Section~\ref{sec:consistency-shoiq-bkb} that
+it remains in \NExpTime for \SHOIQ.
 
-\begin{example}
-  
-\end{example}
-
-\subsection{Complexity results for specific description logics}
-\label{sec:compl-results-spec}
-
-\todo[inline]{paragraph about expTime of \ALC, BKBs for SHOQ (Marcels thesis), ...}
+For \EL ontologies, the consistency problem is trivial since no contradictions can be expressed and, thus,
+every \EL ontology is consistent. On the other hand, we do not consider \EL-BKBs as it seems very unnatural to
+admit axiom negation while denying concept negation at the same time.
 
 \clearpage
 
@@ -228,3 +293,5 @@ identity
 %%% TeX-master: "../thesis"
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
+
+%  LocalWords:  logics sublogics ontologies DL BKB proven
