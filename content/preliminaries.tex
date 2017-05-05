@@ -97,13 +97,36 @@ Note that in the above definition of an interpretation, we include the so-called
 that an individual name is meant to be the identity of an individual, rather than just a tag as it is usually
 used in the context of semantic web.
 
-Now, we can look at a first example.
+Now, we can look at a first example using the notions just defined.
 
-\begin{example}
-  \mbox{ }
-  \todo[inline]{example about football concepts}
+\begin{example}\label{ex:concept-nfl}
+  Consider the following concept description $C$:
+  \begin{align*}
+    & \mathsf{NFL\_{}Team} \sqcap \lnot \mathsf{AFC} \sqcap
+    \atleast{1}{\mathsf{playsFor}^{-}}{(\exists\mathsf{position}.\mathsf{Quarterback})} \\
+    & \qquad\sqcap \exists\mathsf{coaches}^{-}.\{\text{\textit{MikeMcCarthy}}\}
+  \end{align*}
+  It describes all NFL teams which are not in the AFC, have at least one person playing for them at
+  quarterback position and are coached by Mike McCarthy.
+
+  Figure~\ref{fig:example-concept} depicts an interpretation in which the Green Bay Packers are in the extension of the above concept.
 \end{example}
-
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \node[node, label={[align=center]270:\textit{GreenBayPackers},\\\textsf{NFL\_Team}, \textsf{NFC}}] (gbp) at (0,0) {};
+    \node[node, label={[align=center]270:\textit{MikeMcCarthy}}] (mmc) at (-4,0) {};
+    \node[node, label={[align=center]270:\textit{AaronRodgers}, \\\textsf{NFL\_PLayer}}] (ar) at (4,0) {};
+    \node[node, label={[align=center]270:\textsf{Quarterback}}] (qb) at (8,0) {};
+    %
+    \draw[edge] (mmc) to[bend left=10] node{$\mathsf{coaches}$} (gbp);
+    \draw[edge] (ar) to[bend right=10, swap] node{$\mathsf{playsFor}$} (gbp);
+    \draw[edge] (ar) to[bend left=10] node{$\mathsf{position}$} (qb);
+  \end{tikzpicture}
+  \caption{An Interpretation \I such that $\text{\textit{GreenBayPackers}}^{\I} \in C^{\I}$ and
+    $\I\models\Omc$ with $C$ from Example~\ref{ex:concept-nfl} and \Omc from Example~\ref{ex:bkb-nfl}.}
+  \label{fig:example-concept}
+\end{figure}
 
 
 
@@ -190,10 +213,29 @@ For the entailment problem, note that it can be reduced to the \emph{in}consiste
 entails $\beta$ iff $(\B\land\lnot\beta,\Rmc)$ is inconsistent.  Hence, we focus in this thesis only
 on the consistency problem.
 
-\todo[inline]{few words about next example}
+To show an example of an ontology, we continue contentwise with American football.
 
-\begin{example}
-  
+\begin{example}\label{ex:bkb-nfl}
+  Consider the following ontology $\Omc = (\Bmc,\emptyset)$ with $\Bmc =$
+  \begin{gather*}
+    \mathsf{NFC}(\text{\textit{GreenBayPackers}}) \quad\land\\
+    \mathsf{playsFor}(\text{\textit{AaronRodgers}}, \text{\textit{GreenBayPackers}})\quad\land\\
+    \begin{aligned}
+      \exists\mathsf{playsFor}.\mathsf{NFL\_Team} & \sqsubseteq \mathsf{NFL\_Player}\quad\land\\
+      \mathsf{NFL\_Team} & \equiv \mathsf{NFC} \sqcup \mathsf{AFC}\quad\land\\
+      \mathsf{NFC} \sqcap \mathsf{AFC} & \sqsubseteq \bot.
+    \end{aligned}
+  \end{gather*}
+  The first two axioms assert that the Green Bay Packers are in the NFC and that Aaron Rodgers plays
+  for Green Bay. The third axiom states that everybody who plays for an NFL team is an NFL
+  player. Finally, the last two axioms define NFL teams as a disjoint union of the NFC and the AFC.
+
+  The ontology \Omc is consistent and Figure~\ref{fig:example-concept} depicts a model of \Omc. Note
+  here, that it is not coincidentally that Aaron Rodgers is in the extension of
+  $\mathsf{NFL\_Player}$ since \Omc entails
+  \begin{gather*}
+    \mathsf{NFL\_Player}(\text{\textit{AaronRodgers}}). \qedhere
+  \end{gather*}
 \end{example}
 
 \subsection{Specific Description Logics}
@@ -205,7 +247,7 @@ concepts and axioms, and also in the axioms that are allowed to use in a knowled
 The prototypical description logic is \ALC, the \emph{attributive language with complement}, which does not
 allow any inverse roles and only negation, conjunction and existential restriction are allowed as
 concept constructors. Furthermore, only GCIs, concept and role assertions are allowed as
-axioms. The DL \ALC is the smallest propositionally closed DL \todo{cite}. Adding a letter to \ALC stands for certain constructors or axioms that are additionally
+axioms. The DL \ALC is the smallest propositionally closed DL~\cite{ScSm-AIJ91}. Adding a letter to \ALC stands for certain constructors or axioms that are additionally
 allowed. For example, \ALCI additionally allows inverse roles in concept descriptions.
 %
 By the naming convention of DLs, specific letters denote a concept or role constructor or a type of
@@ -268,7 +310,7 @@ For \EL ontologies, the consistency problem is trivial since no contradictions c
 every \EL ontology is consistent. On the other hand, we do not consider \EL-BKBs as it seems very unnatural to
 admit axiom negation while denying concept negation at the same time.
 
-\clearpage
+%\clearpage
 
 \section{Roles}
 \label{sec:rosiroles}

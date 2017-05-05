@@ -60,7 +60,6 @@
 %\RequirePackage{amssymb}
 \RequirePackage{wasysym}
 \RequirePackage{stmaryrd} % needed for \llbracket
-\RequirePackage{bbm}
 \RequirePackage{pifont}   % for \cmark and \xmark
 
 \RequirePackage{url}
@@ -246,6 +245,10 @@
 %% font settings                                                                        %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% https://tex.stackexchange.com/a/155208/123973
+% to avoid 'Too many math alphabets used in version normal.'
+\DeclareMathVersion{prelim}
+
 \DeclareFontFamily{OMS}{lmsy}{} %\skewchar\font48}
 \DeclareFontShape{OMS}{lmsy}{m}{n}{%
     <-5.5>    s*[.925] lmsy5
@@ -261,6 +264,7 @@
     <8->  s*[.925] lmbsy10
     }{}
 \SetMathAlphabet{\mathcal}{normal}{OMS}{lmsy}{m}{n}
+\SetMathAlphabet{\mathcal}{prelim}{OMS}{lmsy}{m}{n}
 \SetMathAlphabet{\mathcal}{bold}{OMS}{lmsy}{b}{n}
 
 
@@ -928,7 +932,6 @@
 %\newcommand{\G}{\Gmc}
 \newcommand{\II}{\@math{\I=(\Delta^{\I},\cdot^{\I})}}
 \newcommand{\HH}{\@math{\Hmc=(\Delta^{\Hmc},\cdot^{\Hmc})}}
-\newcommand{\Cbbm}{\@math{\mathbbm{C}}}
 \newcommand{\JJ}{\@math{\J=(\Cbb,\cdot^{\J},\Delta^{\J}{\kern-0.2em},(\cdot^{\I_c})_{c\in\Cbb})}}
 
 \newcommand{\KK}{\@math{\Kmc=(\T,\A,\RM,\RO)}}
