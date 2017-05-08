@@ -1,11 +1,10 @@
-
 \chapter{Preliminiaries}
 \label{cha:preliminiaries}
 
 In this chapter, we present some basic notions which we use throughout this thesis. We first
 introduce \emph{description logics (DLs)} as logical formalism that we use to reason on complex
 domain models. In Section~\ref{sec:rosiroles}, we give an ontological overview of the notion of a
-\emph{role}.
+\emph{\rosiroles}.
 %
 Specific definitions, such as the \emph{restricted type} of an element, are given in the respective
 chapters.
@@ -28,29 +27,32 @@ For a more thorough introduction into description logics we refer the reader to
 As shown in Section~\ref{sec:intro-description-logics}, DL concepts describe a set of
 elements. Concepts are build from \emph{concept names}, \emph{role names} and \emph{individual
   names} using concept and role constructors.  Note that in the following definitions we refer to
-the triple $\Nsig \coloneqq (\NC, \NR, \NI)$ explicitly although it is usually left implicit in
-standard definitions.  This turns out to be useful in Chapter~\ref{cha:context-dls} as we need to
-distinguish between the symbols used in the meta level and the object level.  Sometimes we omit
-\Nsig, however, if it is clear from the context.
+the description logic \Lmc and the triple $\Nsig \coloneqq (\NC, \NR, \NI)$ explicitly although it
+is usually left implicit in standard definitions.  This turns out to be useful in
+Chapter~\ref{cha:context-dls} as we need to distinguish between the DL and symbols used in the meta
+level and the object level.  Sometimes we omit \Lmc and \Nsig, however, if it is irrelevant or if it
+is clear from the context.
 %
 
-\begin{definition}[Syntax of \Nsig-roles and \Nsig-concepts]
+\begin{definition}[Syntax of \Lmc-roles over \Nsig and \Lmc-concepts over \Nsig]
   \label{def:syntax-concepts}
-  Let \NC, \NR, \NI be countably infinite, pairwise disjoint sets of \emph{concept names}, \emph{role names},
+  Let \Lmc be a DL and
+  let \NC, \NR, \NI be countably infinite, pairwise disjoint sets of \emph{concept names}, \emph{role names},
   and \emph{individual names}. Then, the triple $\Nsig\coloneqq(\NC,\NR,\NI)$ is the
-  \emph{signature}. An \emph{\Nsig-role} $r$ is either a role name, i.e.~$r\in\NR$, or it is of the
+  \emph{signature}. An \emph{\Lmc-role over \Nsig} $r$ is either a role name, i.e.~$r\in\NR$, or it is of the
   form $s^{-}$ with $s\in\NR$ (\emph{inverse role}).
 
-  The set of \emph{\Nsig-concepts} is the smallest set, such that
+  The set of \emph{\Lmc-concepts over \Nsig} is the smallest set, such that
   \begin{itemize}
-  \item for all $A\in\NC$, $A$ is a \Nsig-concept (\emph{atomic concept}), and
-  \item if $C$ and $D$ are \Nsig-concepts, $r$ is a \Nsig-role, $a\in\NI$, then $\lnot C$ (\emph{negation}),
-    $C\sqcap D$ (\emph{conjunction}), $\exists r.C$ (\emph{existential restriction}), $\{a\}$
-    (\emph{nominal}) and $\atleast{n}{r}{C}$ (\emph{at-least restriction}) are \Nsig-concepts. \qedhere
+  \item for all $A\in\NC$, $A$ is an \Lmc-concept over \Nsig (\emph{atomic concept}), and
+  \item if $C$ and $D$ are \Lmc-concepts over \Nsig, $r$ is a \Lmc-role over \Nsig, $a\in\NI$, then
+    $\lnot C$ (\emph{negation}), $C\sqcap D$ (\emph{conjunction}), $\exists r.C$ (\emph{existential
+      restriction}), $\{a\}$ (\emph{nominal}) and $\atleast{n}{r}{C}$ (\emph{at-least restriction})
+    are \Lmc-concepts over \Nsig. \qedhere
   \end{itemize}
 \end{definition}
 
-\noindent Non-atomic concepts are also called \emph{concept descriptions}. As usual in description
+\noindent Non-atomic concepts are also called \emph{complex concepts}. As usual in description
 logics, we use the following abbreviations:
 \begin{itemize}
 \item $C\sqcup D$ (\emph{disjunction}) for $\lnot(\lnot C \sqcap \lnot D)$,
@@ -64,7 +66,7 @@ logics, we use the following abbreviations:
 The semantics of description logic concepts are defined in a model-theoretic way using the notion of
 interpretations.
 
-\begin{definition}[\Nsig-interpretation, Semantics of \Nsig-concepts]
+\begin{definition}[\Nsig-interpretation, Semantics of concepts over \Nsig]
   \label{def:n-interpretation}
   Let $\Nsig\coloneqq(\NC,\NR,\NI)$ be the signature. Then, an \emph{\Nsig-interpretation \I} is a pair
   $(\Delta^{\I}, \cdot^{\I})$ where the \emph{domain} $\Delta^{\I}$ is a non-empty set and
@@ -92,15 +94,15 @@ interpretations.
   where $\sharp S$ denotes the cardinality of the set $S$.
 \end{definition}
 
-Note that in the above definition of an interpretation, we include the so-called \emph{unique name
-  assumption} stating that every individual is interpreted as distinct element. Here, we emphasize
-that an individual name is meant to be the identity of an individual, rather than just a tag as it is usually
-used in the context of semantic web.
+Note that in the above definition of an interpretation, we adopt the so-called \emph{unique name
+  assumption} stating that every individual is interpreted as a distinct element. By doing so, we emphasize
+that an individual name is meant to be the identity of an individual, rather than just a tag as it
+is usually used in the context of semantic web.
 
 Now, we can look at a first example using the notions just defined.
 
 \begin{example}\label{ex:concept-nfl}
-  Consider the following concept description $C$:
+  Consider the following complex concept $C$:
   \begin{align*}
     & \mathsf{NFL\_{}Team} \sqcap \lnot \mathsf{AFC} \sqcap
     \atleast{1}{\mathsf{playsFor}^{-}}{(\exists\mathsf{position}.\mathsf{Quarterback})} \\
@@ -137,9 +139,10 @@ With the notion of concepts at hand, we can formulate \emph{axioms} to capture d
 so-called \emph{Boolean knowledge base (BKB)}. Each BKB consists of a Boolean combination of certain
 axioms and an RBox which states the general knowledge about roles.
 
-\begin{definition}[Syntax of axioms over \Nsig, BKBs over \Nsig]
-  Let $\Nsig\coloneqq(\NC,\NR,\NI)$ be the signature. Then, if $C$ and $D$ are \Nsig-concepts, $r$
-  and $s$ are a \Nsig-roles, and $\{a,b\}\subseteq\NI$, then
+\begin{definition}[Syntax of \Lmc-axioms over \Nsig and \Lmc-BKBs over \Nsig]
+  Let \Lmc be a DL and
+  let $\Nsig\coloneqq(\NC,\NR,\NI)$ be the signature. Then, if $C$ and $D$ are \Lmc-concepts over \Nsig, $r$
+  and $s$ are a \Lmc-roles over \Nsig, and $\{a,b\}\subseteq\NI$, then
   \begin{itemize}
   \item $C \sqsubseteq D$ (\emph{general concept inclusion, GCI}),
   \item $C(a)$ (\emph{concept assertion}),
@@ -147,23 +150,23 @@ axioms and an RBox which states the general knowledge about roles.
   \item $r \sqsubseteq s$ (\emph{role inclusion}), and
   \item $\mathsf{trans}(r)$ (\emph{transitivity axiom})
   \end{itemize}
-  are \emph{axioms over \Nsig}.
+  are \emph{\Lmc-axioms over \Nsig}.
   %
-  Moreover, an \emph{RBox \Rmc over \Nsig} is a finite set of role inclusions over \Nsig and
-  transitivity axioms over \Nsig. A \emph{Boolean axiom formula over \Nsig} is defined inductively
+  Moreover, an \emph{\Lmc-RBox \Rmc over \Nsig} is a finite set of \Lmc-role inclusions over \Nsig and
+  \Lmc-transitivity axioms over \Nsig. A \emph{Boolean \Lmc-axiom formula over \Nsig} is defined inductively
   as follows:
   \begin{itemize}
-  \item every GCI over \Nsig is a Boolean axiom formula over \Nsig,
-  \item every concept and role assertion over \Nsig is a Boolean axiom formula over \Nsig,
-  \item if $\Bmc_{1}$, $\Bmc_{2}$ are Boolean axiom formulas over \Nsig, then so are $\lnot\Bmc_{1}$
+  \item every \Lmc-GCI over \Nsig is a Boolean \Lmc-axiom formula over \Nsig,
+  \item every \Lmc-concept and \Lmc-role assertion over \Nsig is a Boolean \Lmc-axiom formula over \Nsig,
+  \item if $\Bmc_{1}$, $\Bmc_{2}$ are Boolean \Lmc-axiom formulas over \Nsig, then so are $\lnot\Bmc_{1}$
     (axiom negation) and $\Bmc_{1}\land\Bmc_{2}$ (axiom conjunction), and
-  \item nothing else is a Boolean axiom formula over \Nsig.
+  \item nothing else is a Boolean \Lmc-axiom formula over \Nsig.
   \end{itemize}
 
-  Finally, a \emph{Boolean knowledge base (BKB) over \Nsig} is a pair $\Bmf = (\Bmc, \Rmc)$, where
-  \Bmc is a Boolean axiom formula over \Nsig and \Rmc is an RBox over \Nsig. An \emph{ontology over
-    \Nsig} is a BKB over \Nsig, where only axiom conjunction and no axiom negation is allowed in the
-  Boolean axiom formula.
+  Finally, a \emph{Boolean \Lmc-knowledge base (\Lmc-BKB) over \Nsig} is a pair
+  $\Bmf = (\Bmc, \Rmc)$, where \Bmc is a Boolean \Lmc-axiom formula over \Nsig and \Rmc is an
+  \Lmc-RBox over \Nsig. An \emph{\Lmc-ontology over \Nsig} is an \Lmc-BKB over \Nsig, where only
+  axiom conjunction and no axiom negation is allowed in the Boolean axiom formula.
 \end{definition}
 
 Again as usual in description logics, we use $C \equiv D$ (\emph{concept equivalence}) as abbreviation
@@ -244,14 +247,16 @@ To show an example of an ontology, we continue contentwise with American footbal
 The specific description logics differ in the concept and role constructors they allow to formulate
 concepts and axioms, and also in the axioms that are allowed to use in a knowledge base.
 
-The prototypical description logic is \ALC, the \emph{attributive language with complement}, which does not
-allow any inverse roles and only negation, conjunction and existential restriction are allowed as
-concept constructors. Furthermore, only GCIs, concept and role assertions are allowed as
-axioms. The DL \ALC is the smallest propositionally closed DL~\cite{ScSm-AIJ91}. Adding a letter to \ALC stands for certain constructors or axioms that are additionally
-allowed. For example, \ALCI additionally allows inverse roles in concept descriptions.
+The prototypical description logic is \ALC, the \emph{attributive language with complement}, which
+does not allow any inverse roles and only negation, conjunction and existential restriction are
+allowed as concept constructors. Furthermore, only GCIs, concept and role assertions are allowed as
+axioms. Hence, only role names are \ALC-roles and an \ALC-RBox is always the empty set.  The DL \ALC
+is the smallest propositionally closed DL~\cite{ScSm-AIJ91}.
 %
-By the naming convention of DLs, specific letters denote a concept or role constructor or a type of
-axioms that is allowed in that DL:
+Adding a letter to \ALC stands for certain constructors or axioms that are additionally allowed. For
+example, \ALCI additionally allows inverse roles in complex concepts.  By the naming convention of
+DLs, specific letters denote a concept or role constructor or a type of axioms that is allowed in
+that DL:
 \begin{itemize}
 \item \Omc means nominals,
 \item \Imc means inverse roles,

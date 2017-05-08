@@ -6,12 +6,14 @@
   bibstyle=alphabetic,
 ]{preamble-thesis}
 
-%\includeonly{content/introduction}
-%\includeonly{content/preliminaries}
-%\includeonly{content/contextdls}
-%\includeonly{content/mapping}
-%\includeonly{content/jconht}
-%\includeonly{content/conclusions}
+\includeonly{
+%  content/introduction,
+%  content/preliminaries,
+  content/contextdls,
+%  content/mapping,
+%  content/jconht,
+%  content/conclusions
+}
 
 \title{Context Reasoning for Role-Based Models}
 \author{Stephan Böhme}
@@ -32,7 +34,9 @@
 
 \mainmatter
 \include{content/introduction}
-\mathversion{prelim}\include{content/preliminaries}\mathversion{normal}
+\mathversion{prelim}
+\include{content/preliminaries}
+\mathversion{normal}
 \include{content/contextdls}
 \include{content/mapping}
 \include{content/jconht}
@@ -48,3 +52,5 @@
 %%% TeX-master: t
 %%% reftex-default-bibliography: ("references.bib")
 %%% End:
+
+%  LocalWords:  contextdls jconht
