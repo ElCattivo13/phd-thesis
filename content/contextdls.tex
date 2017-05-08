@@ -83,10 +83,6 @@ The semantics of \LMLO is defined by the notion of \emph{nested interpretations}
 \Osig-interpretations for the specific contexts and an \Msig-interpretation for the relational
 structure between them.  We assume that all contexts speak about the same non-empty domain
 (\emph{constant domain assumption}). We show later, that this is no real restriction.
-\todo{here something more about constant domain assumption, references. Argument about
-  varying domains and how they can be reduced to CDA. Maybe with example, maybe a bit later after
-  semantics are defined.}
-
 
 As argued earlier, sometimes it is desired that concepts or roles in the object logic are
 interpreted the same in all contexts. Therefore we introduce \emph{rigid names}. Let
@@ -210,144 +206,126 @@ Section~\ref{sec:description-logics}.
           };
     \draw[edge] (a.east) to[bend left] node{$\mathsf{organizes}$} (b.west);
   \end{tikzpicture}
-  \caption{A Nested interpretation \J such that $\text{\textit{GreenBayPackers}}^{\J} \in C'^{\J}$ }
+  \caption{A Nested interpretation \J such that $\text{\textit{GreenBayPackers}}^{\J} \in C'^{\J}$
+    and $\J\models\Omc'$.}
   \label{fig:example-nfl-contexts}
 \end{figure}
 
-To show that the constant domain assumption is no serious restriction, we can adapt the proof of
-\cite{GKW+-03}. Let \Bmf be an \LMLO-BKB and let $\J_{v}$ denote a nested interpretation with
-varying domains, i.e.\
+To argue that the constant domain assumption is no serious restriction, we show that consistency
+with varying domains can be polynomially reduced to consistency with constant domains. Here, we can adapt
+the ideas of \cite{GKW+-03} and \cite{LuWZ-TIME08}. Let \Bmf be an \LMLO-BKB and let $\J_{v}$ denote a nested
+interpretation with varying domains, i.e.\
 $\J_{v} = (\Cbb,\cdot^{\J},(\Delta^{\I_{c}})_{c\in\Cbb},(\cdot^{\I_c})_{c\in\Cbb})$ where
 $(\Delta^{\I_{c}})_{c\in\Cbb}$ is a set of, possibly overlapping, object domains. We introduce a
-fresh object concept name $E$ that expresses the existence of an element in an object domain and
-obtain $\Bmf_{E}$ from \Bmf by replacing every occurrence of an object concept name $A$ in \Bmf with
-$(A \sqcap E)$.
-
-\begin{proposition}
+fresh object concept name $E$ that expresses the existence of an element in an object
+domain. W.l.o.g.\ we assume that all o-GCIs are of the form $\top \sqsubseteq C$. We obtain $C_{E}$
+from the o-concept $C$ by replacing every o-subconcept $\exists r.D$ with $\exists r.(D \sqcap
+E)$ and every o-subconcept $\atleast{n}{r}{D}$ with $\atleast{n}{r}{(D \sqcap E)}$. We
+obtain $\Bmf_{E}$ from \Bmf by replacing  every occurrence of an o-axiom $\alpha$ in \Bmf with
+$\alpha_{E}$, where $\alpha_{E}$ is defined as follows:
+\begin{align*}
+  \alpha_{E} \coloneqq
+  \begin{cases}
+    E \sqsubseteq (C_{E} \sqcap E) & \text{ if $\alpha = \top \sqsubseteq C$,} \\
+    (C_{E}\sqcap E)(a) & \text{ if $\alpha = C(a)$, and} \\
+    \alpha & \text{otherwise.}
+  \end{cases}
+\end{align*}
+\footnotetext{A Hail Mary pass is a very long forward pass in American football, made in desperation with only a small chance of success.}
+%
+\begin{proposition}\label{prop:constant-domain-assumption}
   \Bmf is consistent w.r.t. varying domains if and only if $\Bmf_{E}$ is consistent w.r.t. constant
   domains and $\Bmf_{E}$ is of size polynomial in the size of \Bmf.
 \end{proposition}
 
-\footnotetext{A Hail Mary pass is a very long forward pass in American football, made in desperation with only a small chance of success.}
-
 \begin{proof}
-  For a complex object concept $C$ occurring in \Bmf, let $C_{E}$ be obtained from $C$ by replacing
-  every occurrence of $A\in\OC$ in $C$ with $(A \sqcap E)$.
+  For the `only if' direction, let
+  $\J_{v} = (\Cbb,\cdot^{\J},(\Delta^{\I_{c}})_{c\in\Cbb},(\cdot^{\I_c})_{c\in\Cbb})$ be a model of
+  \Bmf with varying domains. We construct the nested interpretation \JJ with a constant domain from
+  $\J_{v}$ such that $\Delta^{\J}\coloneqq\bigcup_{c\in\Cbb}\Delta^{\I_{c}}$ and
+  $E^{\I_{c}} \coloneqq \Delta^{\I_{c}}$. Let $\I'_{c} = (\Delta^{\I_{c}}, \cdot^{\I_{c}})$ and
+  $\I_{c} = (\Delta^{\J}, \cdot^{\I_{c}})$ .
+  \begin{claim}
+    $\{c\in\Cbb \mid \I'_{c}\models \alpha\} = \{c\in\Cbb \mid \I_{c}\models \alpha_{E}\}$
+  \end{claim}
+  \begin{claimproof}
+    We prove the claim by showing $\I'_{c}\models\alpha$ iff $\I_{c}\models\alpha_{E}$ for the
+    different cases of $\alpha$:
+    \begin{tabularx}{\linewidth}{lX}
+      $\alpha = \top \sqsubseteq C$: & $\I'_{c}\models \top \sqsubseteq C$ 
+                                       iff $\Delta^{\I_{c}} = C^{\I_{c}}$
+                                       iff\,\footnote{Exchanging $C$ with $C_{E}$ can be done here, as the concept
+    $E$ is equivalent to $\top$ for $\I'_{c}$.} $E^{\I_{c}} = C_{E}^{\I_{c}}$
+                                       iff $\I_{c} \models E \sqsubseteq (C_{E} \sqcap E) = \alpha_{E}$.\\
+      $\alpha = C(a)$: & $\I'_{c}\models C(a)$ 
+                        iff $a^{\I_{c}}\in C^{\I_{c}}$. Since $E^{\I_{c}}=\Delta^{\I_{c}}$, we also have
+                         $a^{\I_{c}}\in E^{\I_{c}}$ and, hence, $\I_{c} \models (C \sqcap E)(a)$.\\
+      $\alpha = r(a,b)$: & We have $\alpha = \alpha_{E}$ and, since $a^{\I_{c}}, b^{\I_{c}}\in\Delta^{\I_{c}}$,
+    $\I'_{c} \models \alpha$ iff $\I_{c} \models \alpha_{E}$.
+    \end{tabularx}
 
-  Let $\J_{v} = (\Cbb,\cdot^{\J},(\Delta^{\I_{c}})_{c\in\Cbb},(\cdot^{\I_c})_{c\in\Cbb})$ be a model
-  of \Bmf with varying domains. Then we construct the nested interpretation \JJ with a constant
-  domain from $\J_{v}$ such that $\Delta^{\J}\coloneqq\bigcup_{c\in\Cbb}\Delta^{\I'_{c}}$ and
-  $E^{\I_{c}} = \Delta^{\I_{c}}$.
+    \vspace*{-1.62\baselineskip}
+  \end{claimproof}
+
+  \noindent Since we do not change the meta interpretation and $\oax{\alpha}^{\J_{v}} =
+  \oax{\alpha_{E}}^{\J}$, we get that $\J\models\Bmf_{E}$.
+
+  For the `if' direction, let \JJ be a model of $\Bmf_{E}$. Then, we define $\J_{v} =
+  (\Cbb,\cdot^{\J},(\Delta^{\I'_{c}})_{c\in\Cbb},(\cdot^{\I'_c})_{c\in\Cbb})$ with
+  $\Delta^{\I'_{c}}\coloneqq E^{\I_{c}}$ and $A^{\I'_{c}} \coloneqq A^{\I_{c}} \cap
+  E^{\I_{c}}$.
+  %Again, let $\I_{c} = (\Delta^{\J}, \cdot^{\I_{c}})$, $\I'_{c} =
+  %(\Delta^{\I_{c}}, \cdot^{\I_{c}})$. 
+  By similar arguments as above, we have $\oax{\alpha}^{\J_{v}} = \oax{\alpha_{E}}^{\J}$ and
+  therefore $\J_{v}\models\Bmf$.
 \end{proof}
 
-\blindtext
+\pagebreak
+
+Thus, for the rest of the thesis, we concentrate on constant domains. The above proposition,
+however, does not imply that \Bmf is consistent w.r.t.\ constant domains if and only if it is
+consistent w.r.t.\ varying domains. For example, 
+$\Bmf = (\oax{\top \sqsubseteq A} \sqcap\ \exists t.\oax{A \sqsubseteq \exists r.\lnot A})(c)$
+with $A\in\OCR$ is
+consistent w.r.t.\ varying domains, but not w.r.t.\ constant domains.
 
 
 \section{Complexity of the Consistency Problem}
 \label{sec:complexity-consis-problem}
 
-\blindtext 
+After we introduced the syntax and semantics of our contextualized description logics, in this
+section we will investigate the computational complexity of the consistency problem. Therefore, we
+consider three different settings dependent on whether rigid concepts and rigid roles are
+admitted. In the first setting no rigid names are allowed at all. In the second setting rigid
+concepts are allowed, but no rigid roles. The third setting then allows both rigid roles and rigid
+concepts. It is not necessary to consider a forth setting, in which rigid roles are allowed, but
+rigid concepts are not, since rigid concepts can be emulated via rigid roles. One could simply
+replace the concept $A$ by $\exists r_{A}.\top$ where $r_{A}$ is a rigid role which does not occur
+in the knowledge base before.
 
-\blindtext
+Our results for the complexity of the consistency problem are listed in
+Table~\ref{tab:compl-results-no-rigid-names}. Here, it is worth noting that if no rigid names are
+admitted the complexity class does not increase compared to the consistency problem for the
+classical DL, i.e.\ for any \LMLO up to \SHOQSHOQ the consistency problem is \ExpTime-complete, if
+\SHOIQ is involved, it is \NExpTime-complete. Furthermore, for the case of rigid roles we can retain
+decidability.
 
-{\renewcommand{\arraystretch}{1.1}
-\begin{table}[t]
-  \centering
-  \caption{The complexity results for the consistency problem in \LMLO}
-  \label{tab:compl-results-no-rigid-names}
-  \begin{tabularx}{1.0\linewidth}[t]{clC@{\ }C@{\ }C@{\ }C}
-    \toprule
-    & \diagbox[width=2cm]{\LM}{\LO}
-    & \tikzmark{X1l} \hfill \EL    \hfill \tikzmark{X1r}
-    & \tikzmark{X2l} \hfill \ALC   \hfill \tikzmark{X2r}
-    & \tikzmark{X3l} \hfill \SHOQ  \hfill \tikzmark{X3r}
-    & \tikzmark{X4l} \hfill \SHOIQ \hfill \tikzmark{X4r}\\
-    \midrule \noalign{\hbox{\tikzmark{rawY1}}}
-    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (i)}}
-    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY2}}}
-    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY3}}}
-    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY4}}}
-    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY5}}}
-    \midrule \noalign{\hbox{\tikzmark{rawY6}}}
-    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (ii)}}
-    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY7}}}
-    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY8}}}
-    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY9}}}
-    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY10}}}
-    \midrule \noalign{\hbox{\tikzmark{rawY11}}}
-    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (iii)}}
-    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY12}}}
-    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY13}}}
-    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY14}}}
-    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY15}}}
-    \bottomrule
-  \end{tabularx}
-  \caption*{Settings: (i) no rigid names are allowed, i.e.\ $\OCR=\ORR=\emptyset$. (ii) only rigid
-    concepts are allowed, i.e.\ $\OCR\neq\emptyset$ and $\ORR=\emptyset$. (iii) rigid concepts and
-    rigid roles are allowed, i.e.\ $\OCR\neq\emptyset$ and $\ORR\neq\emptyset$.}
-\end{table}
-}
-\begin{tikzpicture}[remember picture, overlay]
-  % \foreach \x in {1,...,5}
-  %   \foreach \y in {1,...,5}
-  %     \node[node] at (X\x|-Y\y) {}; 
-  %
-  \pgfmathsetmacro{\eps}{0.05}
-  %
-  \coordinate (Y1) at ($(rawY1)-(0,\eps)$);
-  \coordinate (Y2) at ($(rawY2)-(0,\eps)$);
-  \coordinate (Y3) at ($(rawY3)+(0,0)$);
-  \coordinate (Y4a) at ($(rawY4)+(0,\eps)$);
-  \coordinate (Y4b) at ($(rawY4)-(0,\eps)$);
-  \coordinate (Y5) at ($(rawY5)+(0,\eps)$);
-  \fill[ExpTime] (X2l|-Y1) -- (X2l|-Y2) -- (X1l|-Y2) -- (X1l|-Y4a) -- (X3r|-Y4a) -- (X3r|-Y1) -- cycle;
-  \fill[NExpTime] (X4l|-Y1) -- (X4l|-Y4b) -- (X1l|-Y4b) -- (X1l|-Y5) -- (X4r|-Y5) -- (X4r|-Y1) -- cycle;
-  \node at ($0.5*(X1l|-Y3)+0.5*(X3r|-Y3)+(0.9,0.2)$) {\ExpTime-complete};
-  \node[align=center] at ($0.5*(X4l|-Y3)+0.5*(X4r|-Y3)$) {\NExpTime-\\complete};
-  %
-  \coordinate (Y6) at ($(rawY6)-(0,\eps)$);
-  \coordinate (Y7) at ($(rawY7)-(0,\eps)$);
-  \coordinate (Y8) at ($(rawY8)+(0,0)$);
-  \coordinate (Y10) at ($(rawY10)+(0,\eps)$);
-  \fill[NExpTime] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
-  \node at ($0.5*(X1l|-Y10)+0.5*(X4r|-Y6)+(0.5,-0.1)$) {\NExpTime-complete};
-  %
-  \coordinate (Y11) at ($(rawY11)-(0,\eps)$);
-  \coordinate (Y12) at ($(rawY12)-(0,\eps)$);
-  \coordinate (Y13) at ($(rawY13)+(0,0)$);
-  \coordinate (Y14a) at ($(rawY14)+(0,\eps)$);
-  \coordinate (Y14b) at ($(rawY14)-(0,\eps)$);
-  \coordinate (Y15) at ($(rawY15)+(0,\eps)$);
-  \fill[2ExpTime] (X2l|-Y11) -- (X2l|-Y14a) -- (X3r|-Y14a) -- (X3r|-Y11) -- cycle;
-  \fill[NExpTime] (X1l|-Y12) -- (X1l|-Y15) -- (X1r|-Y15) -- (X1r|-Y12) -- cycle;
-  % \draw[draw=gray!60, pattern=north east lines, pattern color=gray!50] (X1l|-Y14b) -- (X1l|-Y15) --
-  % (X1r|-Y15) -- (X1r|-Y14b) -- cycle;
-  \fill[N2ExpTime] (X4l|-Y11) -- (X4l|-Y14b) -- (X2l|-Y14b) -- (X2l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
-  \node[align=center] at ($0.5*(X1l|-Y15)+0.5*(X1r|-Y12)$) {\NExpTime-\\complete};
-  \node at ($0.5*(X2l|-Y14a)+0.5*(X3r|-Y11)$) {\TwoExpTime-complete};
-  \node[align=center] at ($0.5*(X4l|-Y13)+0.5*(X4r|-Y13)$) {\TwoExpTime-hard\\ and\\ in \TwoNExpTime};
-  %
-\end{tikzpicture}
 
-\todo[inline]{somewhere a few words about top down view, can't go up, because of that its possible
-  to divide reasoning problem into two subtasks, later on }
 
-\todo[inline]{results later}
-
-\todo[inline]{paragraph that we will handle lower bounds in 3.3 where we talk about EL}
-
+Since the lower bounds already hold for the case of \EL, we handle them in Section~\ref{sec:case-el}.
+%
 For the upper bounds, let in the following \BB be an \LMLO-BKB.  We proceed
 similar to what was done for \ALC-LTL in~\cite{BaGL-KR08,BaGL-ToCL12} (and
 \SHOQ-LTL in~\cite{Lip-PhD14}) and reduce the consistency problem to two separate
 decision problems.
 
 For the first problem, we consider the so-called \emph{outer abstraction}, which is the \LM-BKB
-over~\Msig obtained by replacing each \todo{referring m-concept?} m-concept of the form \oalpha
+over~\Msig obtained by replacing each referring m-concept of the form \oalpha
 occurring in~\B by a fresh concept name such that there is a 1--1 relationship between them.
 
 \begin{definition}[Outer abstraction]
-  Let \BB be an \LMLO-BKB.  Let \bsf be the bijection mapping every m-concept of the form \oalpha
-  occurring in~\B to the concept name $A_{\oalpha}\in\MC$, where we assume w.l.o.g.\ that
+  Let \BB be an \LMLO-BKB.  Let \bsf be the bijection mapping every referring m-concept of the form \oalpha
+  occurring in~\B to the so-called \emph{abstracted concept name $A_{\oalpha}\in\MC$}, where we assume w.l.o.g.\ that
   $A_{\oalpha}$ does not occur in~\B.
   \begin{enumerate}
   \item The \LM-concept $C^{\bsf}$ over \Msig is obtained from the m-concept~$C$ by replacing every occurrence of
@@ -385,6 +363,7 @@ Now let us consider the following small example.
   \end{align*}
   is the outer abstraction of $\Bmf_\text{ex}$.
 \end{example}
+\TableComplexityResults
 
 The following lemma makes the relationship between \Bmf and its outer abstraction
 \Bmfb explicit.  It is proved by induction on the structure of~\B.
@@ -405,9 +384,8 @@ The following lemma makes the relationship between \Bmf and its outer abstractio
   \end{claim}
 
   \begin{claimproof}
-    We prove the claim by induction on the structure of $C$: \todo{müssen hier noch inverse rollen
-      betrachtet werden? eigentlich nicht.}
-
+    We prove the claim by induction on the structure of $C$: 
+    %
     \begin{tabularx}{\linewidth}{@{}l@{ }X@{}}
       $C = A \in \MC\!\setminus\!\ran(\bsf)$: 
       & $x \in A^{\J}$ 
@@ -517,11 +495,13 @@ bottom concept).
     It \emph{weakly respects} $(\Umc,\Ymc)$ if $\Zmc \subseteq \Ymc$.
 \end{definition}
 
-\todo[inline]{a few words about the meaning of the definition, explanation. Types usual definition}
-
-
+For $\Umc = \ran(\bsf)$, the \Umc-type of a context, i.e.\ an element $c\in\Cbb$ in a nested
+interpretation, is the set of all abstracted concept names which $c$ is an instance of. In other
+words, it describes all o-axioms which hold in that context. The $\ran(\bsf)$-type of $c$ is also
+called its \emph{restricted type}.
+%
 The second decision problem that we use for deciding consistency is needed to make sure that such a
-set of concept names is admissible in the following sense.
+set of abstracted concept names is admissible in the following sense.
 
 \begin{definition}[Admissibility]\label{def:admissibility}
   Let $\Xmc=\{X_1,~\dots,\ X_k\}\subseteq\powerset{\ran(\bsf)}$.  We call \Xmc \emph{admissible} if
@@ -541,16 +521,16 @@ set of concept names is admissible in the following sense.
 
 Note that any subset $\Xmc'\subseteq\Xmc$ is admissible if \Xmc is admissible.
 %
-Intuitively, the sets $X_i$ in an admissible set \Xmc consist of concept names \todo{referring concept
-  names} such that the corresponding o-axioms \enquote{fit together}.  Consider again
+Intuitively, the sets $X_i$ in an admissible set \Xmc consist of referring meta concepts such that
+the corresponding o-axioms \enquote{fit together}.  Consider again
 Example~\ref{ex:outer-abstraction-continued}.  Clearly, the set
 $\{A_{\oax{A\sqsubseteq\bot}},A_{\oax{A(a)}}\}\in\powerset{\ran(\bsf)}$ \emph{cannot} be contained
-in any admissible set~\Xmc.  
+in any admissible set~\Xmc.
 
 The next definition captures the above mentioned restriction on the model~\Hmc
 of~\Bmfb.
 
-\todo[inline]{explanation of outer consistency}
+\todo[inline]{explanation of outer consistency, restricted types that occur in meta interpretation}
 
 \begin{definition}[Outer consistency]\label{def:outer-consistency}
   Let $\Xmc \subseteq \powerset{\ran(\bsf)}$.  We call the \LM-BKB~\Bmfb over \Msig \emph{outer
