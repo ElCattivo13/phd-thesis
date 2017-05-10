@@ -173,43 +173,7 @@ Section~\ref{sec:description-logics}.
   context Aaron Rodgers actually plays quarterback if modelled with standard DLs.
 \end{example}
 
-\begin{figure}[t]
-  \centering
-  \begin{tikzpicture}
-    \node[rectangle,
-          draw,
-          rounded corners= 5mm, 
-          minimum height = 4.5cm, 
-          %minimum width = 6cm,
-          label={[align=left, anchor=south west]135:$\mathsf{NFL\_Team}$, $\mathsf{NFC}$, \\\textit{GreenBayPackers}}] (a) at (2.0,0){
-            \begin{tikzpicture}
-              \node[node,label={[align=left]270:\textit{MikeMcCarthy},\\ $\mathsf{Coach}$}] (mmc) at (0,3){};
-              \node[node] (kid) at (2.5, 2.5){};
-              \node[node,label={[align=left]270:\textit{AaronRodgers}, \\ $\mathsf{NFL\_Player}$}] (ar) at (0,0.5){};
-              \node[node,label={[align=right]south:$\mathsf{Quarterback}$}] (qb) at (3,0.5){};
-              \draw[edge] (ar) to[bend left=10] node{\plays} (qb);
-            \end{tikzpicture}
-          };
-    \node[rectangle,
-          draw,
-          rounded corners= 5mm,
-          minimum height = 4.5cm,
-          %minimum width = 6cm,
-          label={[anchor=south]90:$\mathsf{Junior Power Pack Football Clinic}$}] (b) at (9.45,0){
-            \begin{tikzpicture}
-              \node[node,label={270:\textit{MikeMcCarthy}}] (mmc) at (0,3){};
-              \node[node,label={0:$\mathsf{Kid}$}] (kid) at (2.5,2.5){};
-              \node[node,label={[align=left]270:\textit{AaronRodgers},\\ $\mathsf{Coach}$}] (ar) at (0,0.5){};
-              \node[node] (qb) at (3,0.5){};
-              \draw[edge] (ar) to[bend left=20, swap] node{$\textsf{teaches\_HailMarys}\footnotemark$} (kid);
-            \end{tikzpicture}
-          };
-    \draw[edge] (a.east) to[bend left] node{$\mathsf{organizes}$} (b.west);
-  \end{tikzpicture}
-  \caption{A Nested interpretation \J such that $\text{\textit{GreenBayPackers}}^{\J} \in C'^{\J}$
-    and $\J\models\Omc'$.}
-  \label{fig:example-nfl-contexts}
-\end{figure}
+
 
 To argue that the constant domain assumption is no serious restriction, we show that consistency
 with varying domains can be polynomially reduced to consistency with constant domains. Here, we can adapt
@@ -238,6 +202,45 @@ $\alpha_{E}$, where $\alpha_{E}$ is defined as follows:
   domains and $\Bmf_{E}$ is of size polynomial in the size of \Bmf.
 \end{proposition}
 
+\begin{figure}[t]
+  \centering
+  % \begin{tikzpicture}
+  %   \node[rectangle,
+  %         draw,
+  %         rounded corners= 5mm, 
+  %         minimum height = 3.5cm, 
+  %         %minimum width = 6cm,
+  %         label={[align=left, anchor=south west]135:$\mathsf{NFL\_Team}$, $\mathsf{NFC}$, \\\textit{GreenBayPackers}}] (a) at (2.0,0){
+  %           \begin{tikzpicture}
+  %             \node[node,label={[align=left]270:\textit{MikeMcCarthy},\\ $\mathsf{Coach}$}] (mmc) at (0,1.8){};
+  %             \node[node] (kid) at (2.5, 1.5){};
+  %             \node[node,label={[align=left]270:\textit{AaronRodgers}, \\ $\mathsf{NFL\_Player}$}] (ar) at (0,0){};
+  %             \node[node,label={[align=right]south:$\mathsf{Quarterback}$}] (qb) at (3,0){};
+  %             \draw[edge] (ar) to[bend left=10] node{\plays} (qb);
+  %           \end{tikzpicture}
+  %         };
+  %   \node[rectangle,
+  %         draw,
+  %         rounded corners= 5mm,
+  %         minimum height = 3.5cm,
+  %         %minimum width = 6cm,
+  %         label={[anchor=south]90:$\mathsf{Junior Power Pack Football Clinic}$}] (b) at (9.45,0){
+  %           \begin{tikzpicture}
+  %             \node[node,label={270:\textit{MikeMcCarthy}}] (mmc) at (0,1.8){};
+  %             \node[node,label={0:$\mathsf{Kid}$}] (kid) at (2.5,1.5){};
+  %             \node[node,label={[align=left]270:\textit{AaronRodgers},\\ $\mathsf{Coach}$}] (ar) at (0,0){};
+  %             \node[node] (qb) at (3,0){};
+  %             \draw[edge] (ar) to[bend left=20, swap] node[inner sep=0pt]{$\textsf{teaches\_HailMarys}\footnotemark$} (kid);
+  %           \end{tikzpicture}
+  %         };
+  %   \draw[edge] (a.east) to[bend left] node{$\mathsf{organizes}$} (b.west);
+  % \end{tikzpicture}
+  \rule{10pt}{150pt}
+  \caption{A Nested interpretation \J such that $\text{\textit{GreenBayPackers}}^{\J} \in C'^{\J}$
+    and $\J\models\Omc'$.}
+  \label{fig:example-nfl-contexts}
+\end{figure}
+
 \begin{proof}
   For the `only if' direction, let
   $\J_{v} = (\Cbb,\cdot^{\J},(\Delta^{\I_{c}})_{c\in\Cbb},(\cdot^{\I_c})_{c\in\Cbb})$ be a model of
@@ -263,32 +266,32 @@ $\alpha_{E}$, where $\alpha_{E}$ is defined as follows:
       $\alpha = r(a,b)$: & We have $\alpha = \alpha_{E}$ and, since $a^{\I_{c}}, b^{\I_{c}}\in\Delta^{\I_{c}}$,
     $\I'_{c} \models \alpha$ iff $\I_{c} \models \alpha_{E}$.
     \end{tabularx}
-
+    
     \vspace*{-1.62\baselineskip}
   \end{claimproof}
-
+  %
   \noindent Since we do not change the meta interpretation and $\oax{\alpha}^{\J_{v}} =
   \oax{\alpha_{E}}^{\J}$, we get that $\J\models\Bmf_{E}$.
 
-  For the `if' direction, let \JJ be a model of $\Bmf_{E}$. Then, we define $\J_{v} =
-  (\Cbb,\cdot^{\J},(\Delta^{\I'_{c}})_{c\in\Cbb},(\cdot^{\I'_c})_{c\in\Cbb})$ with
-  $\Delta^{\I'_{c}}\coloneqq E^{\I_{c}}$ and $A^{\I'_{c}} \coloneqq A^{\I_{c}} \cap
-  E^{\I_{c}}$.
-  %Again, let $\I_{c} = (\Delta^{\J}, \cdot^{\I_{c}})$, $\I'_{c} =
-  %(\Delta^{\I_{c}}, \cdot^{\I_{c}})$. 
-  By similar arguments as above, we have $\oax{\alpha}^{\J_{v}} = \oax{\alpha_{E}}^{\J}$ and
-  therefore $\J_{v}\models\Bmf$.
+  For the `if' direction, let \JJ be a model of $\Bmf_{E}$. Then, we define
+  $\J_{v} = (\Cbb,\cdot^{\J},(\Delta^{\I'_{c}})_{c\in\Cbb},(\cdot^{\I'_c})_{c\in\Cbb})$ with
+  $\Delta^{\I'_{c}}\coloneqq E^{\I_{c}}$ and $A^{\I'_{c}} \coloneqq A^{\I_{c}} \cap E^{\I_{c}}$.  By
+  similar arguments as above and due to the restriction in existential and at-least restrictions for
+  $r$-successors being in $E$, we have $\oax{\alpha}^{\J_{v}} = \oax{\alpha_{E}}^{\J}$ and therefore
+  $\J_{v}\models\Bmf$.
 \end{proof}
 
-\pagebreak
+%\pagebreak
 
-Thus, for the rest of the thesis, we concentrate on constant domains. The above proposition,
-however, does not imply that \Bmf is consistent w.r.t.\ constant domains if and only if it is
-consistent w.r.t.\ varying domains. For example, 
-$\Bmf = (\oax{\top \sqsubseteq A} \sqcap\ \exists t.\oax{A \sqsubseteq \exists r.\lnot A})(c)$
-with $A\in\OCR$ is
-consistent w.r.t.\ varying domains, but not w.r.t.\ constant domains.
+tilde
 
+The above proposition, however, does not imply that \Bmf is consistent w.r.t.\ constant domains if
+and only if it is consistent w.r.t.\ varying domains. For example, with a rigid concept name
+$A\in\OCR$ the BKB
+$\Bmf = (\oax{\top \sqsubseteq A} \sqcap\ \exists t.\oax{A \sqsubseteq \exists r.\lnot A})(c)$ is consistent w.r.t.\ varying domains, but not w.r.t.\ constant domains. Nonetheless,
+$\Bmf_{E}$ is consistent w.r.t.\ constant domains and checking consistency of \Bmf w.r.t.\ varying
+domains can be done by considering $\Bmf_{E}$.  Thus, for the rest of the thesis, we concentrate on
+constant domains.
 
 \section{Complexity of the Consistency Problem}
 \label{sec:complexity-consis-problem}
@@ -528,9 +531,8 @@ $\{A_{\oax{A\sqsubseteq\bot}},A_{\oax{A(a)}}\}\in\powerset{\ran(\bsf)}$ \emph{ca
 in any admissible set~\Xmc.
 
 The next definition captures the above mentioned restriction on the model~\Hmc
-of~\Bmfb.
-
-\todo[inline]{explanation of outer consistency, restricted types that occur in meta interpretation}
+of~\Bmfb. The set of restricted types that occur in the meta interpretation must be a subset of some
+admissible set.
 
 \begin{definition}[Outer consistency]\label{def:outer-consistency}
   Let $\Xmc \subseteq \powerset{\ran(\bsf)}$.  We call the \LM-BKB~\Bmfb over \Msig \emph{outer
@@ -545,25 +547,23 @@ w.r.t.~\Xmc.
   For every \Msig-interpretation \HH, the following two statements are equivalent:
   \begin{enumerate}
   \item There exists a model~\J of~\Bmf with $\Jb=\Hmc$.
-  \item \Hmc is a model of~\Bmfb and the set $\{X_d\mid d\in\Gamma\}$ is admissible, where $X_d$ is
-    defined as $X_{d}:=\{A\in\ran(\bsf)\mid d\in A^\Hmc\}$.
+  \item \Hmc is a model of~\Bmfb and the set $\{X_{d}\mid d\in\Delta^{\Hmc}\}$ is admissible, where $X_{d}$
+    is defined as $X_{d} \coloneqq \type_{\ran(\bsf)}^{\Hmc}(d)$.
   \end{enumerate}
 \end{lemma}
 
-\begin{proof}\todo{noch nicht drüber gelesen, hier müssen sicher noch einige Formelzeichen angepasst
-    werden. Und ist er verständlich???}
+\begin{proof}
   (1 $\Rightarrow$ 2): Let \JJ be a model of~\Bmf with $\Jb=\Hmc$.  Since $\Jb=\Hmc$, we have that
   $\Cbb=\Delta^{\Hmc}$.  By Lemma~\ref{lem:interpretation-outer-abstraction}, we have that \Hmc is a
   model of~\Bmfb.
     %
-  Moreover, since \bsf is a bijection between m-concepts of the form \oalpha occurring in~\Bmf and
-  concept names of~\MC, we have that $\ran(\bsf)$ is finite, and thus also the set
-  $\Xmc \coloneqq \{X_d\mid d \in \Delta^{\Hmc} \} \subseteq \powerset{\ran(\bsf)}$ is finite.  Let
-  $\Xmc = \{Y_1, \dots, Y_k\}$.  Since $\Cbb = \Delta^{\Hmc}$, there exists an index function
-  $\nu\colon\Cbb\to\{1,\dots,k\}$ such that $X_c = Y_{\nu(c)}$ for every $c\in\Cbb$, i.e.
+  Moreover, since \bsf is a bijection between referring meta concepts of the form \oalpha occurring
+  in~\Bmf and abstracted concept names of~\MC, we have that $\ran(\bsf)$ is finite, and thus also
+  the set $\Xmc \coloneqq \{X_{d}\mid d \in \Delta^{\Hmc} \} \subseteq \powerset{\ran(\bsf)}$ is
+  finite.  Let $\Xmc = \{Y_1, \dots, Y_k\}$.  Since $\Cbb = \Delta^{\Hmc}$, there exists an index
+  function $\nu\colon\Cbb\to\{1,\dots,k\}$ such that $X_{c} = Y_{\nu(c)}$ for every $c\in\Cbb$, i.e.
   \begin{align*}
-    Y_{\nu(c)} & = \bigl\{\bsf(\oalpha)\mid\text{\oalpha occurs in~\Bmf and}\
-                 c\in\oalpha^\Hmc\bigr\} \\
+    Y_{\nu(c)} & = \bigl\{\bsf(\oalpha)\mid\text{\oalpha occurs in~\Bmf and $c\in\bsf(\oalpha)^\Hmc$}\bigr\} \\
                & =  \bigl\{\bsf(\oalpha)\mid\text{\oalpha occurs in~\Bmf and}\ \I_c\models\alpha\bigr\}.
   \end{align*}
   Conversely, for every $\mu\in\{1,\dots,k\}$, there is an element $c\in\Cbb$ such that
@@ -572,32 +572,33 @@ w.r.t.~\Xmc.
   The \Osig-interpretations for showing admissibility of~\Xmc are obtained as follows.  Take
   $c_1,\dots,c_k \in \Cbb$ such that $\nu(c_1) = 1$,~\dots, $\nu(c_k) = k$.  Now, for every~$i$,
   $1 \leq i \leq k$, we define the \Osig-interpretation $\Gmc_i:=(\Delta,\cdot^{\I_{c_i}})$.
-  Clearly, we have that $Gmc_i\models\B_{Y_i}$ and since $\J\models\RO$, we have that
-  $Gmc_i\models\Bmf_{Y_i}$.  Moreover, the definition of a nested interpretation yields that
+  Clearly, we have that $\Gmc_i\models\B_{Y_i}$ and since $\J\models\RO$, we have that
+  $\Gmc_i\models\Bmf_{Y_i}$.  Moreover, the definition of a nested interpretation yields that
   $x^{\Gmc_i}=x^{\Gmc_j}$ for all $x\in\OI\cup\OCR\cup\ORR$ and all $i,j \in \{1,\dots,k\}$.  Hence,
   the \Osig-interpretations $\Gmc_1, \dots, \Gmc_k$ attest admissibility of~\Xmc.
 
   (2 $\Rightarrow$ 1): Assume that \HH is a model of~\Bmfb and that the set
-  $\Xmc \coloneqq \{X_d\mid d\in\Gamma\}$ is admissible.  Again, since $\ran(\bsf)$ is finite, we
+  $\Xmc \coloneqq \{X_d\mid d\in\Delta^{\Hmc}\}$ is admissible.  Again, since $\ran(\bsf)$ is finite, we
   have that $\Xmc \subseteq \powerset{\ran(\bsf)}$ is finite.  Let $\Xmc = \{Y_1,\dots,Y_k\}$.
-  Since \Xmc is admissible, there are \Osig-interpretations $\Gmc_1=(\Delta,\cdot^{\Gmc_1})$,~\dots,
-  $\Gmc_k=(\Delta,\cdot^{\Gmc_k})$ such that $\Gmc_i\models\Bmf_{Y_i}$ and $x^{\Gmc_i}=x^{\Gmc_j}$
+  Since \Xmc is admissible, there are \Osig-interpretations $\Gmc_1=(\Delta^{\Gmc},\cdot^{\Gmc_1})$,~\dots,
+  $\Gmc_k=(\Delta^{\Gmc},\cdot^{\Gmc_k})$ such that $\Gmc_i\models\Bmf_{Y_i}$ and $x^{\Gmc_i}=x^{\Gmc_j}$
   for all $x\in\OI\cup\OCR\cup\ORR$ and all $i,j\in\{1,\dots,k\}$.
     %
-  Furthermore, there exists an index function $\nu\colon\Gamma\to\{1,\dots,k\}$ such that
-  $Y_{\nu(d)}=X_d$ for every $d\in\Gamma$.
+  Furthermore, there exists an index function $\nu\colon\Delta^{\Hmc}\to\{1,\dots,k\}$ such that
+  $Y_{\nu(d)}=X_d$ for every $d\in\Delta^{\Hmc}$.
     %
   We define a nested interpretation \JJ as follows:
   \begin{itemize}
-  \item $\Cbb \coloneqq \Delta^{\Hmc}$;
-  \item $x^\J \coloneqq x^\Hmc$ for every $x\in\MC\cup\MR\cup\MI$; and
+  \item $\Cbb \coloneqq \Delta^{\Hmc}$,
+  \item $x^\J \coloneqq x^\Hmc$ for every $x\in\MC\cup\MR\cup\MI$,
+  \item $\Delta^{\J} \coloneqq \Delta^{\Gmc}$, and
   \item $x^{\I_c}:=x^{\Gmc_{\nu(c)}}$ for every $x \in \OC \cup \OR \cup \OI$ and every $c \in \Cbb$.
   \end{itemize}
     %
   By construction of \J, we have that $x^{\Jb} = x^\Hmc$ for every
   $x \in \MR \cup \MI \cup (\MC \setminus \ran(\bsf))$.
     %
-  Let $A \in \ran(\bsf)$, and let $\bsf^{-1}(A) = \oalpha$.  We have for every $d \in \Gamma = \Cbb$
+  Let $A \in \ran(\bsf)$, and let $\bsf^{-1}(A) = \oalpha$.  We have for every $d \in \Delta^{\Hmc} = \Cbb$
   that $d\in A^{\Jb}$ iff $d\in(\bsf^{-1}(A))^\J$ iff $d \in \oalpha^\J$ iff $\I_d \models \alpha$
   iff $\Gmc_{\nu(d)}\models\alpha$ iff $\bsf(\oalpha)=A\in Y_{\nu(d)}$ (since
   $\Gmc_{\nu(d)}\models\B_{Y_{\nu(d)}}$) iff $A\in X_d$ iff $d\in A^\Hmc$.
@@ -620,48 +621,54 @@ consistency check into two subtasks.
   \end{enumerate}
 \end{lemma}
 \begin{proof}
-  \todo{not proof-read yet!}
   \onlyifdirection Let \J be a model of \Bmf, and let $\Jb=(\Cbb,\cdot^{\Jb})$.  By
   Lemma~\ref{lem:model-equivalent-to-admissible}, we have that $\Jb$ is a model of~\Bmfb, and the
-  set $\Xmc \coloneqq \{X_c \mid c \in \Cbb\}$ is admissible.  By construction, $\Jb$ weakly
+  set $\Xmc \coloneqq \{\type_{\ran(\bsf)}^{\Jb}(c) \mid c \in \Cbb\}$ is admissible.  By construction, $\Jb$ weakly
   respects $(\ran(\bsf),\Xmc)$, and hence \Bmfb is outer consistent w.r.t.~\Xmc.
     
   \ifdirection Let $\Xmc = \{X_1,\dots,X_k\}\subseteq\powerset{\ran(b)}$ such that \Xmc is
   admissible and \Bmfb is outer consistent w.r.t.~\Xmc.  Hence there is a model
-  $\Gmc=(\Cbb,\cdot^\Gmc)$ of~\Bmfb that weakly respects $(\ran(\bsf),\Xmc)$.
+  $\Hmc=(\Delta^{\Hmc},\cdot^\Hmc)$ of~\Bmfb that weakly respects $(\ran(\bsf),\Xmc)$.
     %
-  We define $\Xmc' \coloneqq \{Y_c \mid c\in\Cbb\}$, where
-  $Y_c \coloneqq \{A \in \ran(b) \mid c \in A^\Gmc\}$.  Since \Gmc weakly respects
-  $(\ran(\bsf),\Xmc)$ and $c \in (C_{\ran(b),Y_c})^\Gmc$ for every $c \in \Cbb$, we have that
-  $\Xmc' \subseteq \Xmc$.  Since \Xmc is admissible, this yields admissibility of~$\Xmc'$.
-  Lemma~\ref{lem:model-equivalent-to-admissible} yields now consistency of~\Bmf.
+  We define $\Zmc \coloneqq \{\type_{\ran(\bsf)}^{\Hmc}(c) \mid c\in\Delta^{\Hmc}\}$.  Since \Hmc
+  weakly respects $(\ran(\bsf),\Xmc)$, we have that $\Zmc \subseteq \Xmc$.  Since \Xmc is
+  admissible, this yields admissibility of~$\Zmc$.  Lemma~\ref{lem:model-equivalent-to-admissible}
+  now yields consistency of~\Bmf.
 \end{proof}
 
 
 
 Before we can analyse the complexity of the consistency problem in \LMLO, we need to state two
-complexity results for the consistency problem of \SHOQ-BKBs and \SHOIQ-BKBs. For the former we follow the idea of~\cite{Lip-PhD14}.
+complexity results for the consistency problem of \SHOQ-BKBs and \SHOIQ-BKBs. For the former we
+follow the idea of~\cite{Lip-PhD14}.
 %
-The former is a corollary of Theorem~\ref{thm:shoiq-bkb-consistency-nexptime} which is proven
-is Section \ref{sec:consistency-shoiq-bkb}.
+The latter is a direct consequence of Theorem~\ref{thm:shoiq-bkb-consistency-nexptime} which is
+proven is Section \ref{sec:consistency-shoiq-bkb}.
 
 
 
 \begin{lemma}\label{lem:shoq-outer-consisteny-exptime}
-  Deciding whether a \SHOQ-BKB \Bmfb is outer consistent w.r.t.~\Xmc can be done in time
-  exponential in the size of~\Bmfb and linear in size of~\Xmc.
+  Deciding whether a \SHOQ-BKB \Bmfb is outer consistent w.r.t.~\Xmc can be done in time exponential
+  in the size of~\Bmfb and linear in size of~\Xmc.
 \end{lemma}
-\begin{proof}\todo{complete rewrite necessary, why linear in X}
+\begin{proof}
   It is enough to show that deciding whether~\Bmfb has a model that weakly respects
   $(\ran(\bsf),\Xmc)$ can be done in time exponential in the size of~\Bmfb and linear in the size
-  of~\Xmc.  
+  of~\Xmc.
 
   Here, we will adapt the ideas of~\cite{Lip-PhD14}.  It is not hard to see that we can adapt the
-  notion of a quasimodel respecting a pair $(\Umc,\Ymc)$ of~\cite{Lip-PhD14} to a quasimodel
-  \emph{weakly} respecting $(\Umc,\Ymc)$.  Indeed, one just has to drop Condition~(i) in
-  Definition~3.25 of~\cite{Lip-PhD14}.  Then, the proof of Lemma~3.26 of~\cite{Lip-PhD14} can be
-  adapted such that our claim follows.  This is done by dropping one check in Step~4 of the
-  algorithm of~\cite{Lip-PhD14}.
+  notion of a quasimodel respecting a pair $(\ran(\bsf),\Xmc)$ of~\cite{Lip-PhD14} to a quasimodel
+  \emph{weakly} respecting $(\ran(\bsf),\Xmc)$.
+  %
+  Condition~(i) in Definition~3.25 of~\cite{Lip-PhD14} states that for every $X\in\Xmc$ there must
+  exist a concept type that, restricted to $\ran(\bsf)$, coincides with $X$. \todo{gibt es beim
+    quasi model zu jedem concept type min 1 element mit diesem typ?} Hence, dropping Condition~(i)
+  yields that the quasimodel weakly respects $(\ran(\bsf),\Xmc)$.  Then, the proof of Lemma~3.26
+  of~\cite{Lip-PhD14} can be adapted such that our claim follows.  This is done by dropping the
+  check whether Condition~(i) is satisfied in Step~4 of the algorithm of~\cite{Lip-PhD14}.
+
+  The only condition for which \Xmc is relevant, is Condition~(h) which is checked in
+  Step~2. Clearly, this check can be done in time linear in the size of~\Xmc.
 \end{proof}
 
 
@@ -700,10 +707,10 @@ are allowed. So we fix $\OCR=\ORR=\emptyset$.
   domain. Thus, w.l.o.g.\ we can assume that all models have the same domain~$\Delta$.  Furthermore,
   we can assume that individual names are interpreted the same.  Since $\OCR=\ORR=\emptyset$, the
   set~\Xmc fulfills all conditions of Definition~\ref{def:admissibility} for admissibility.
-
+  %
   Thus, if \Bmfb is outer consistent w.r.t.~\Xmc, then we have by
   Lemma~\ref{lem:admissible-and-outerConsistent} that \Bmf is consistent.
-  %
+  
   Conversely, assume that \Bmf is consistent.  Then, by
   Lemma~\ref{lem:admissible-and-outerConsistent}, there is an admissible set
   $\Xmc' \subseteq \powerset{\ran(\bsf)}$ and \Bmfb is outer consistent w.r.t.~$\Xmc'$.  Since \Xmc
@@ -731,19 +738,20 @@ are allowed. So we fix $\OCR=\ORR=\emptyset$.
   of $\powerset{\ran(\bsf)}$.  Again, \Bmf is consistent iff \Bmfb is outer consistent w.r.t.~\Xmc.
 
   In contrast to the proof of Theorem~\ref{thm:shoqshoq-without-rigid-exptime} we can decide
-  consistency of~$\Bmf_{X}$ non-deter\-ministically in time exponential in the size of~$\Bmf_{X}$
-  (Theorem~\ref{thm:shoiq-bkb-consistency-nexptime}).  Thus, the set~\Xmc can be constructed
-  non-deterministically in time exponential in the size of~\Bmf.  Also due to
+  consistency of~$\Bmf_{X}$ non-deter\-ministically in time exponential in the size of~$\Bmf_{X}$, see
+  Theorem~\ref{thm:shoiq-bkb-consistency-nexptime}.  Thus, the set~\Xmc can be constructed
+  non-deterministically in time exponential in the size of~\Bmf.  By
   Lemma~\ref{lem:shoiq-outer-consisteny-nexptime}, deciding whether \Bmfb is outer consistent
   w.r.t.~\Xmc can be non-deterministically done in time exponential in the size of \Bmfb and linear
-  in the size of~\Xmc.  
+  in the size of~\Xmc.  Overall we can decide the consistency problem non-deterministically in
+  exponential time. 
 \end{proof}
 
 Together with the lower bounds shown in
 Theorems~\ref{thm:alcel-lower-no-rigid},~\ref{thm:shoiqel-lower-no-rigid}
 and~\ref{thm:elshoiq-lower-no-rigid} we obtain \ExpTime-completeness for the consistency problem in
-\LMLO for \LM and \LO being DLs between \ALC and \SHOQ, and \NExpTime-completeness for \LMLO where
-either \LM or \LO is \SHOIQ, if $\OCR=\ORR=\emptyset$.
+\LMLO for \LM and \LO being DLs between \EL and \SHOQ excluding \ELEL, and \NExpTime-completeness
+for \LMLO where either \LM or \LO is \SHOIQ, if $\OCR=\ORR=\emptyset$.
 
 \subsection{Consistency with rigid concept and role names}
 \label{sec:cons-with-rigid}
@@ -763,7 +771,7 @@ $\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
   w.r.t.~\Xmc, which can be done in time exponential in the size of~\Bmfb and linear in the size
   of~\Xmc.
   
-  Then, we check \Xmc for admissibility using the renaming technique \todo{define separately?}
+  Then, we check \Xmc for admissibility using the renaming technique
   of~\cite{BaGL-KR08,BaGL-ToCL12}.  For every~$i$, $1\le i\le k$, every flexible concept name~$A$
   occurring in~\Bb, and every flexible role name~$r$ occurring in~\Bb or~\RO, we introduce
   copies~$A^{(i)}$ and~$r^{(i)}$.  The \SHOQ-BKB~$\Bmf_{X_i}^{(i)} = (\B_{X_i}^{(i)},\RO^{(i)})$
@@ -772,8 +780,38 @@ $\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
   \begin{align*}
     \Bmf_\Xmc \coloneqq \left(\bigwedge\nolimits_{1\le i\le k}\B_{X_i}^{(i)}, \bigcup\nolimits_{1\le i\le k} \RO^{(i)}\right).
   \end{align*}
-  It is not hard to verify \todo{do short argumentation here} (using arguments of~\cite{Lip-PhD14})
-  that \Xmc is admissible iff $\Bmf_\Xmc$ is consistent.  Note that $\Bmf_\Xmc$ is of size at most
+  \vspace{-\baselineskip}
+  \begin{claim}
+    \Xmc is admissible iff $\Bmf_\Xmc$ is consistent.
+  \end{claim}
+  \begin{claimproof}
+    We prove the claim similarly to what was done in~\cite{Lip-PhD14}.
+
+    If \Xmc is admissible, then there exist \Osig-interpretations
+    $\Gmc_{1} = (\Delta^{\Gmc}, \cdot^{\Gmc_{1}})$, \dots,
+    $\Gmc_{k} = (\Delta^{\Gmc}, \cdot^{\Gmc_{k}})$. We define the \Osig-interpretation
+    $\Gmc = (\Delta^{\Gmc}, \cdot^{\Gmc})$ as follows:
+  \begin{align*}
+    x^{\Gmc} & \coloneqq x^{\Gmc_{1}} \text{ for all $x \in \OCR \cup \ORR \cup \OI$}\\
+    (x^{(i)})^{\Gmc} & \coloneqq x^{\Gmc_{i}} \text{ for all $A\in(\OC\setminus\OCR)\cup(\OR\setminus\ORR)$}
+  \end{align*}
+  It is not hard to verify that \Gmc is a model of $\Bmf_{\Xmc}$.
+
+  If $\Bmf_{\Xmc}$ is consistent, then there exists a model $\Gmc = (\Delta^{\Gmc},
+  \cdot^{\Gmc})$. Analogously, we define the \Osig-interpretations
+  $\Gmc_{1} = (\Delta^{\Gmc}, \cdot^{\Gmc_{1}})$, \dots,
+  $\Gmc_{k} = (\Delta^{\Gmc}, \cdot^{\Gmc_{k}})$ as follows:
+  \begin{align*}
+    x^{\Gmc_{i}} \coloneqq
+    \begin{cases}
+      x^{\Gmc} & \text{ for all $x \in \OCR \cup \ORR \cup \OI$}\\
+      (x^{(i)})^{\Gmc} & \text{ for all $A\in(\OC\setminus\OCR)\cup(\OR\setminus\ORR)$}
+    \end{cases}
+  \end{align*}
+  Again, it is not hard to verify that \Xmc is admissible.
+  \end{claimproof}
+
+  Note that $\Bmf_\Xmc$ is of size at most
   exponential in~\Bmf and can be constructed in exponential time.  Moreover, consistency
   of~$\Bmf_\Xmc$ can be decided in time exponential in the size of~$\Bmf_\Xmc$~\cite{Lip-PhD14}, and
   thus in time doubly exponential in the size of~\Bmf.
@@ -798,10 +836,11 @@ $\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
   non-deterministically in time doubly exponential in the size of \Bmf.
 \end{proof}
 
-Together with the lower bounds shown in Section~\ref{sec:case-el}, we obtain
-\TwoExpTime-completeness for the consistency problem in \LMLO
-for \LM and \LO being DLs between \ALC and \SHOQ if $\OCR\neq\emptyset$
-and $\ORR\neq\emptyset$. \todo{update for \LMLO with \SHOIQ}
+Together with the lower bound shown in Theorem~\ref{thm:el-lower-2exp}, we obtain
+\TwoExpTime-completeness for the consistency problem in any \LMLO between \ELALC and \SHOQSHOQ if
+$\OCR\neq\emptyset$ and $\ORR\neq\emptyset$. If \SHOIQ is involved, the consistency problem in
+\LMLO, excluding \SHOIQEL, is \TwoExpTime-hard and in \TwoNExpTime if $\OCR\neq\emptyset$ and
+$\ORR\neq\emptyset$.
 
 \subsection{Consistency with only rigid concept names}
 \label{sec:cons-with-only}

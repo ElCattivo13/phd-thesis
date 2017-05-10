@@ -551,14 +551,24 @@
   {proof}
 
 \declaretheoremstyle[
-  spaceabove=\topsep,
-  spacebelow=\topsep,
+  spaceabove=0.5\topsep,
+  spacebelow=0.5\topsep,
   headfont=\normalfont\itshape,
   notefont=\normalfont\itshape,
   headpunct=,
   bodyfont=\normalfont\itshape,
   headformat=\underline{\smash{\NAME:}}]
   {claimstyle}
+
+\declaretheoremstyle[
+  spaceabove=0pt,
+  spacebelow=0.5\topsep,
+  headfont=\normalfont\itshape,
+  notefont=\normalfont\itshape,
+  headpunct=,
+  bodyfont=\normalfont\itshape,
+  headformat=\underline{\smash{\NAME:}}]
+  {claimstylenotopsep}
 
 \declaretheorem[
   style=claimstyle,
@@ -573,6 +583,11 @@
   qed=\ensuremath{\diagup}]
   {claimproof}
 
+\declaretheorem[
+  style=claimstylenotopsep,
+  name=Claim,
+  numbered=no]
+  {claimnotopsep}
 %\newenvironment{claim}[1]{\par\noindent\ul{\textit{Claim}:}\space#1}{}
 % \newenvironment{claimproof}[1]{\par\noindent\ul{\textit{Proof}:}\space#1}{\leavevmode\unskip\penalty9999
 %     \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
@@ -1324,6 +1339,89 @@
 
 %\newcommand{\transClosure}[1][\Rmc]{\@math{\sqsubseteq\kern-0.75em\raisebox{-0.37ex}{\ensuremath{^*}}_{#1}}}
 \DeclareMathOperator{\transClosure}{\@math{\sqsubseteq\kern-0.75em\raisebox{-0.75ex}{\ensuremath{^*}}\kern0.05em_{\Rmc}}}
+
+
+\newcommand{\TableComplexityResults}{%
+{\renewcommand{\arraystretch}{1.1}
+\begin{table}[t]
+  \centering
+  \caption{The complexity results for the consistency problem in \LMLO}
+  \label{tab:compl-results-no-rigid-names}
+  \begin{tabularx}{1.0\linewidth}[t]{clC@{\ }C@{\ }C@{\ }C}
+    \toprule
+    & \diagbox[width=2cm]{\LM}{\LO}
+    & \tikzmark{X1l} \hfill \EL    \hfill \tikzmark{X1r}
+    & \tikzmark{X2l} \hfill \ALC   \hfill \tikzmark{X2r}
+    & \tikzmark{X3l} \hfill \SHOQ  \hfill \tikzmark{X3r}
+    & \tikzmark{X4l} \hfill \SHOIQ \hfill \tikzmark{X4r}\\
+    \midrule \noalign{\hbox{\tikzmark{rawY1}}}
+    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (i)}}
+    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY2}}}
+    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY3}}}
+    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY4}}}
+    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY5}}}
+    \midrule \noalign{\hbox{\tikzmark{rawY6}}}
+    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (ii)}}
+    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY7}}}
+    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY8}}}
+    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY9}}}
+    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY10}}}
+    \midrule \noalign{\hbox{\tikzmark{rawY11}}}
+    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (iii)}}
+    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY12}}}
+    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY13}}}
+    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY14}}}
+    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY15}}}
+    \bottomrule
+  \end{tabularx}
+  \caption*{Settings: (i) no rigid names are allowed, i.e.\ $\OCR=\ORR=\emptyset$. (ii) only rigid
+    concepts are allowed, i.e.\ $\OCR\neq\emptyset$ and $\ORR=\emptyset$. (iii) rigid concepts and
+    rigid roles are allowed, i.e.\ $\OCR\neq\emptyset$ and $\ORR\neq\emptyset$.}
+\end{table}
+}
+\begin{tikzpicture}[remember picture, overlay]
+  % \foreach \x in {1,...,5}
+  %   \foreach \y in {1,...,5}
+  %     \node[node] at (X\x|-Y\y) {}; 
+  %
+  \pgfmathsetmacro{\eps}{0.05}
+  %
+  \coordinate (Y1) at ($(rawY1)-(0,\eps)$);
+  \coordinate (Y2) at ($(rawY2)-(0,\eps)$);
+  \coordinate (Y3) at ($(rawY3)+(0,0)$);
+  \coordinate (Y4a) at ($(rawY4)+(0,\eps)$);
+  \coordinate (Y4b) at ($(rawY4)-(0,\eps)$);
+  \coordinate (Y5) at ($(rawY5)+(0,\eps)$);
+  \fill[ExpTime] (X2l|-Y1) -- (X2l|-Y2) -- (X1l|-Y2) -- (X1l|-Y4a) -- (X3r|-Y4a) -- (X3r|-Y1) -- cycle;
+  \fill[NExpTime] (X4l|-Y1) -- (X4l|-Y4b) -- (X1l|-Y4b) -- (X1l|-Y5) -- (X4r|-Y5) -- (X4r|-Y1) -- cycle;
+  \node at ($0.5*(X1l|-Y3)+0.5*(X3r|-Y3)+(0.9,0.2)$) {\ExpTime-complete};
+  \node[align=center] at ($0.5*(X4l|-Y3)+0.5*(X4r|-Y3)$) {\NExpTime-\\complete};
+  %
+  \coordinate (Y6) at ($(rawY6)-(0,\eps)$);
+  \coordinate (Y7) at ($(rawY7)-(0,\eps)$);
+  \coordinate (Y8) at ($(rawY8)+(0,0)$);
+  \coordinate (Y10) at ($(rawY10)+(0,\eps)$);
+  \fill[NExpTime] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
+  \node at ($0.5*(X1l|-Y10)+0.5*(X4r|-Y6)+(0.5,-0.1)$) {\NExpTime-complete};
+  %
+  \coordinate (Y11) at ($(rawY11)-(0,\eps)$);
+  \coordinate (Y12) at ($(rawY12)-(0,\eps)$);
+  \coordinate (Y13) at ($(rawY13)+(0,0)$);
+  \coordinate (Y14a) at ($(rawY14)+(0,\eps)$);
+  \coordinate (Y14b) at ($(rawY14)-(0,\eps)$);
+  \coordinate (Y15) at ($(rawY15)+(0,\eps)$);
+  \fill[2ExpTime] (X2l|-Y11) -- (X2l|-Y14a) -- (X3r|-Y14a) -- (X3r|-Y11) -- cycle;
+  \fill[NExpTime] (X1l|-Y12) -- (X1l|-Y15) -- (X1r|-Y15) -- (X1r|-Y12) -- cycle;
+  % \draw[draw=gray!60, pattern=north east lines, pattern color=gray!50] (X1l|-Y14b) -- (X1l|-Y15) --
+  % (X1r|-Y15) -- (X1r|-Y14b) -- cycle;
+  \fill[N2ExpTime] (X4l|-Y11) -- (X4l|-Y14b) -- (X2l|-Y14b) -- (X2l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
+  \node[align=center] at ($0.5*(X1l|-Y15)+0.5*(X1r|-Y12)$) {\NExpTime-\\complete};
+  \node at ($0.5*(X2l|-Y14a)+0.5*(X3r|-Y11)$) {\TwoExpTime-complete};
+  \node[align=center] at ($0.5*(X4l|-Y13)+0.5*(X4r|-Y13)$) {\TwoExpTime-hard\\ and\\ in \TwoNExpTime};
+  %
+\end{tikzpicture}
+}
+
 
 \endinput
 
