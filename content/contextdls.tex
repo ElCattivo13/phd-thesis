@@ -173,7 +173,43 @@ Section~\ref{sec:description-logics}.
   context Aaron Rodgers actually plays quarterback if modelled with standard DLs.
 \end{example}
 
-
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}
+    \node[rectangle,
+          draw,
+          rounded corners= 5mm, 
+          minimum height = 3.5cm, 
+          %minimum width = 6cm,
+          label={[align=left, anchor=south west]135:$\mathsf{NFL\_Team}$, $\mathsf{NFC}$, \\\textit{GreenBayPackers}}] (a) at (2.0,0){
+            \begin{tikzpicture}
+              \node[node,label={[align=left]270:\textit{MikeMcCarthy},\\ $\mathsf{Coach}$}] (mmc) at (0,1.8){};
+              \node[node] (kid) at (2.5, 1.5){};
+              \node[node,label={[align=left]270:\textit{AaronRodgers}, \\ $\mathsf{NFL\_Player}$}] (ar) at (0,0){};
+              \node[node,label={[align=right]south:$\mathsf{Quarterback}$}] (qb) at (3,0){};
+              \draw[edge] (ar) to[bend left=10] node{\plays} (qb);
+            \end{tikzpicture}
+          };
+    \node[rectangle,
+          draw,
+          rounded corners= 5mm,
+          minimum height = 3.5cm,
+          %minimum width = 6cm,
+          label={[anchor=south]90:$\mathsf{Junior Power Pack Football Clinic}$}] (b) at (9.45,0){
+            \begin{tikzpicture}
+              \node[node,label={270:\textit{MikeMcCarthy}}] (mmc) at (0,1.8){};
+              \node[node,label={0:$\mathsf{Kid}$}] (kid) at (2.5,1.5){};
+              \node[node,label={[align=left]270:\textit{AaronRodgers},\\ $\mathsf{Coach}$}] (ar) at (0,0){};
+              \node[node] (qb) at (3,0){};
+              \draw[edge] (ar) to[bend left=20, swap] node[inner sep=0pt]{$\textsf{teaches\_HailMarys}\footnotemark$} (kid);
+            \end{tikzpicture}
+          };
+    \draw[edge] (a.east) to[bend left] node{$\mathsf{organizes}$} (b.west);
+  \end{tikzpicture}
+  \caption{A Nested interpretation \J such that $\text{\textit{GreenBayPackers}}^{\J} \in C'^{\J}$
+    and $\J\models\Omc'$.}
+  \label{fig:example-nfl-contexts}
+\end{figure}
 
 To argue that the constant domain assumption is no serious restriction, we show that consistency
 with varying domains can be polynomially reduced to consistency with constant domains. Here, we can adapt
@@ -202,45 +238,6 @@ $\alpha_{E}$, where $\alpha_{E}$ is defined as follows:
   domains and $\Bmf_{E}$ is of size polynomial in the size of \Bmf.
 \end{proposition}
 
-\begin{figure}[t]
-  \centering
-  % \begin{tikzpicture}
-  %   \node[rectangle,
-  %         draw,
-  %         rounded corners= 5mm, 
-  %         minimum height = 3.5cm, 
-  %         %minimum width = 6cm,
-  %         label={[align=left, anchor=south west]135:$\mathsf{NFL\_Team}$, $\mathsf{NFC}$, \\\textit{GreenBayPackers}}] (a) at (2.0,0){
-  %           \begin{tikzpicture}
-  %             \node[node,label={[align=left]270:\textit{MikeMcCarthy},\\ $\mathsf{Coach}$}] (mmc) at (0,1.8){};
-  %             \node[node] (kid) at (2.5, 1.5){};
-  %             \node[node,label={[align=left]270:\textit{AaronRodgers}, \\ $\mathsf{NFL\_Player}$}] (ar) at (0,0){};
-  %             \node[node,label={[align=right]south:$\mathsf{Quarterback}$}] (qb) at (3,0){};
-  %             \draw[edge] (ar) to[bend left=10] node{\plays} (qb);
-  %           \end{tikzpicture}
-  %         };
-  %   \node[rectangle,
-  %         draw,
-  %         rounded corners= 5mm,
-  %         minimum height = 3.5cm,
-  %         %minimum width = 6cm,
-  %         label={[anchor=south]90:$\mathsf{Junior Power Pack Football Clinic}$}] (b) at (9.45,0){
-  %           \begin{tikzpicture}
-  %             \node[node,label={270:\textit{MikeMcCarthy}}] (mmc) at (0,1.8){};
-  %             \node[node,label={0:$\mathsf{Kid}$}] (kid) at (2.5,1.5){};
-  %             \node[node,label={[align=left]270:\textit{AaronRodgers},\\ $\mathsf{Coach}$}] (ar) at (0,0){};
-  %             \node[node] (qb) at (3,0){};
-  %             \draw[edge] (ar) to[bend left=20, swap] node[inner sep=0pt]{$\textsf{teaches\_HailMarys}\footnotemark$} (kid);
-  %           \end{tikzpicture}
-  %         };
-  %   \draw[edge] (a.east) to[bend left] node{$\mathsf{organizes}$} (b.west);
-  % \end{tikzpicture}
-  \rule{10pt}{150pt}
-  \caption{A Nested interpretation \J such that $\text{\textit{GreenBayPackers}}^{\J} \in C'^{\J}$
-    and $\J\models\Omc'$.}
-  \label{fig:example-nfl-contexts}
-\end{figure}
-
 \begin{proof}
   For the `only if' direction, let
   $\J_{v} = (\Cbb,\cdot^{\J},(\Delta^{\I_{c}})_{c\in\Cbb},(\cdot^{\I_c})_{c\in\Cbb})$ be a model of
@@ -254,6 +251,8 @@ $\alpha_{E}$, where $\alpha_{E}$ is defined as follows:
   \begin{claimproof}
     We prove the claim by showing $\I'_{c}\models\alpha$ iff $\I_{c}\models\alpha_{E}$ for the
     different cases of $\alpha$:
+
+    \noindent
     \begin{tabularx}{\linewidth}{lX}
       $\alpha = \top \sqsubseteq C$: & $\I'_{c}\models \top \sqsubseteq C$ 
                                        iff $\Delta^{\I_{c}} = C^{\I_{c}}$
@@ -267,7 +266,7 @@ $\alpha_{E}$, where $\alpha_{E}$ is defined as follows:
     $\I'_{c} \models \alpha$ iff $\I_{c} \models \alpha_{E}$.
     \end{tabularx}
     
-    \vspace*{-1.62\baselineskip}
+    \vspace*{-1.0\baselineskip}
   \end{claimproof}
   %
   \noindent Since we do not change the meta interpretation and $\oax{\alpha}^{\J_{v}} =
@@ -282,8 +281,6 @@ $\alpha_{E}$, where $\alpha_{E}$ is defined as follows:
 \end{proof}
 
 %\pagebreak
-
-tilde
 
 The above proposition, however, does not imply that \Bmf is consistent w.r.t.\ constant domains if
 and only if it is consistent w.r.t.\ varying domains. For example, with a rigid concept name
@@ -388,7 +385,8 @@ The following lemma makes the relationship between \Bmf and its outer abstractio
 
   \begin{claimproof}
     We prove the claim by induction on the structure of $C$: 
-    %
+    
+    \noindent
     \begin{tabularx}{\linewidth}{@{}l@{ }X@{}}
       $C = A \in \MC\!\setminus\!\ran(\bsf)$: 
       & $x \in A^{\J}$ 
@@ -433,7 +431,7 @@ The following lemma makes the relationship between \Bmf and its outer abstractio
         iff $x \in ((\atleast{n}{r}{D})^{\bsf})^{\Jb}$ 
     \end{tabularx}
 
-    \vspace{-2.0\baselineskip}
+    \vspace{-1.0\baselineskip}
   \end{claimproof}
 
   If $\gamma$ is of the form $C \sqsubseteq D$, we have that $\J \models C
@@ -839,7 +837,7 @@ $\OCR\ne\emptyset$ and $\ORR\ne\emptyset$.
 Together with the lower bound shown in Theorem~\ref{thm:el-lower-2exp}, we obtain
 \TwoExpTime-completeness for the consistency problem in any \LMLO between \ELALC and \SHOQSHOQ if
 $\OCR\neq\emptyset$ and $\ORR\neq\emptyset$. If \SHOIQ is involved, the consistency problem in
-\LMLO, excluding \SHOIQEL, is \TwoExpTime-hard and in \TwoNExpTime if $\OCR\neq\emptyset$ and
+\LMLO, excluding \SHOIQEL, is \TwoExpTime-hard and in \TwoNExpTime, if $\OCR\neq\emptyset$ and
 $\ORR\neq\emptyset$.
 
 \subsection{Consistency with only rigid concept names}
@@ -847,38 +845,6 @@ $\ORR\neq\emptyset$.
 
 In this section, we consider the case where rigid concept are present, but rigid role names are not
 allowed.  So we fix $\OCR \neq \emptyset$ but $\ORR=\emptyset$.
-
-\commented{
-\begin{theorem}\label{thm:shoqshoq-with-rigid-concepts-nexptime}
-  The consistency problem in \SHOQSHOQ is in \NExpTime if $\OCR \neq \emptyset$ and $\ORR=\emptyset$.
-\end{theorem}
-
-\begin{proof}
-  Let \BB be a \SHOQSHOQ-BKB and \BBb its outer abstraction.  We can decide consistency of~\Bmf
-  using Lemma~\ref{lem:admissible-and-outerConsistent}. We first non-deterministically guess the set
-  $\Xmc = \{X_{1},\ldots,X_{k}\} \subseteq \powerset{\ran(\bsf)}$, which is of size at most
-  exponential in \Bmf. Due to Lemma~\ref{lem:shoq-outer-consisteny-exptime} we can check whether
-  \Bmfb is outer consistent w.r.t.~\Xmc in time exponential in the size of~\Bmfb and linear in the
-  size of~\Xmc.
-  
-  It remains to check \Xmc for admissibility. For that let $\OCR(\B) \subseteq \OCR$ and
-  $\OI(\B) \subseteq \OI$ be the sets of all rigid concept names and individual names occurring in
-  \B, respectively. As done in~\cite{BaGL-KR08,BaGL-ToCL12} we non-deterministically guess a set
-  $\Ymc \subseteq \powerset{\OCR(\B)}$ and a mapping $\kappa\colon\OI(\B)\to\Ymc$ which also can be
-  done in time exponential in the size of \Bmf. Using the same arguments as
-  in~\cite{BaGL-KR08,BaGL-ToCL12} we can show that \Xmc is admissible iff
-  \begin{align*}
-    \widehat{\Bmf}_{X_{i}}\coloneqq\left(\B_{X_{i}} \land \bigwedge_{a\in\OI(\B)} \left(\bigsqcap_{A\in\kappa(a)} A \sqcap
-    \bigsqcap_{A\in\OCR(\B)\setminus\kappa(a)} \lnot A\right)(a),\ \RO\right)
-  \end{align*}
-  has a model that respects $(\OCR(\B),\Ymc)$, for all $1 \leq i \leq k$. The \SHOQ-BKB
-  $\widehat{\Bmf}_{X_{i}}$ is of size polynomial in the size of \B and can be constructed in time
-  exponential in the size of \B. We can check if $\widehat{\Bmf}_{X_{i}}$ has a model that respects
-  $(\OCR(\B),\Ymc)$ in time exponential in the size of $\widehat{\Bmf}_{X_{i}}$
-  \cite{BaGL-KR08,BaGL-ToCL12}, and thus exponential in the size of \Bmf.
-\end{proof}
-}
-
 
 \begin{theorem}\label{thm:shoiqshoiq-with-rigid-concepts-nexptime}
   The consistency problem in \SHOIQSHOIQ is in \NExpTime if $\OCR \neq \emptyset$ and $\ORR=\emptyset$.
@@ -892,23 +858,71 @@ allowed.  So we fix $\OCR \neq \emptyset$ but $\ORR=\emptyset$.
   \Bmfb is outer consistent w.r.t.~\Xmc non-deterministically in time exponential in the size
   of~\Bmfb and linear in the size of~\Xmc.
   
-  It remains to check \Xmc for admissibility. For that let $\OCR(\B) \subseteq \OCR$ and
-  $\OI(\B) \subseteq \OI$ be the sets of all rigid concept names and individual names occurring in
-  \B, respectively. As done in~\cite{BaGL-KR08,BaGL-ToCL12} we non-deterministically guess a set
-  $\Ymc \subseteq \powerset{\OCR(\B)}$ and a mapping $\kappa\colon\OI(\B)\to\Ymc$ which also can be
-  done in time exponential in the size of \Bmf. Using the same arguments as
-  in~\cite{BaGL-KR08,BaGL-ToCL12} we can show that \Xmc is admissible iff
-  \begin{align*}
+  It remains to check \Xmc for admissibility. Here we follow the ideas
+  of~\cite{BaGL-KR08,BaGL-ToCL12}. Instead of checking the consistency of $\Bmf_{\Xmc}$ directly
+  which would yield a non-deterministically double-exponential time bound, we reduce it to $k$
+  separate consistency checks of which each can be decided non-deterministically in time exponential
+  in the size of \Bmc. Therefore, for each individual name $a$ in \Bmf we guess the set of rigid
+  concepts of which $a$
+  is an instance of.
+  % 
+  More precisely, let $\OCR(\B) \subseteq \OCR$ and $\OI(\B) \subseteq \OI$ be the sets of all rigid
+  concept names and individual names occurring in \B, respectively. We non-deterministically guess a
+  set $\Ymc \subseteq \powerset{\OCR(\B)}$ and a mapping $\kappa\colon\OI(\B)\to\Ymc$ which also can
+  be done in time exponential in the size of \Bmf.
+
+  \begin{claim}
+    \Xmc is admissible iff $\widehat{\Bmf}_{X_{i}}$ has a model that respects $(\OCR(\B),\Ymc)$, for
+    all $1 \leq i \leq k$, where $\widehat{\Bmf}_{X_{i}}$ is defined as:
+    \begin{align*}
     \widehat{\Bmf}_{X_{i}}\coloneqq\left(\B_{X_{i}} \land \bigwedge_{a\in\OI(\B)} \left(\bigsqcap_{A\in\kappa(a)} A \sqcap
-    \bigsqcap_{A\in\OCR(\B)\setminus\kappa(a)} \lnot A\right)(a),\ \RO\right)
+    \bigsqcap_{A\in\OCR(\B)\setminus\kappa(a)} \lnot A\right)(a),\ \RO\right).
   \end{align*}
-  has a model that respects $(\OCR(\B),\Ymc)$, for all $1 \leq i \leq k$. The \SHOIQ-BKB
-  $\widehat{\Bmf}_{X_{i}}$ is of size polynomial in the size of \B and can be constructed in time
-  exponential in the size of \B. We can check if $\widehat{\Bmf}_{X_{i}}$ has a model that respects
-  $(\OCR(\B),\Ymc)$ non-deterministically in time exponential in the size of
-  $\widehat{\Bmf}_{X_{i}}$ \cite{BaGL-KR08,BaGL-ToCL12}, and thus non-deterministically in time
+  \end{claim}
+  \begin{claimproof}
+    If \Xmc is admissible, then there exists an \Osig-interpretation
+    $\Gmc_{i} = (\Delta^{\Gmc}, \cdot^{\Gmc_{i}})$ such that $\Gmc_{i}$ is a model of
+    $(\Bmc_{X_{i}}, \RO)$. Let \Ymc be the set of all \OCR-types in $\Gmc_{i}$, i.e.\
+    $\Ymc = \{\smash{\type_{\OCR}^{\Gmc_{i}}(d)} \mid d\in\Delta^{\Gmc_{i}}\}$ and let $\kappa$ map $d$ to
+    its type, i.e.\ $\smash{\kappa(d) = \type_{\OCR}^{\Gmc_{i}}(d)}$. It is easy to see, that $\Gmc_{i}$ is
+    a model of $\widehat{\Bmf}_{X_{i}}$ and by construction $\Gmc_{i}$ respects $(\OCR(\B),\Ymc)$.
+
+    Now, assume that there exist \Osig-interpretations
+    $\Gmc_{1} = (\Delta^{\Gmc_{1}}, \cdot^{\Gmc_{1}})$, \dots,
+    $\Gmc_{k} = (\Delta^{\Gmc_{k}}, \cdot^{\Gmc_{k}})$ s.t.\ $\Gmc_{i}\models\widehat{\Bmf}_{X_{i}}$
+    and $\Gmc_{i}$ respects $(\OCR(\B),\Ymc)$, for all $1 \leq i \leq k$.  By the same arguments as
+    in the proof of Theorem~\ref{thm:shoqshoq-without-rigid-exptime} we can assume w.l.o.g.\ that
+    all models have a countably infinite domain. Since a disjoint union of $\Gmc_{i}$ with itself is
+    again a model of $\widehat{\Bmf}_{X_{i}}$, we can also assume that for each $Y\in\Ymc$ there are
+    infinitely many elements $d$ in ${C_{Y}}^{\Gmc_{i}}$ where
+    \begin{align*}
+    C_{Y}\coloneqq\bigsqcap_{A \in Y}A\sqcap\bigsqcap_{A \in \OCR \setminus Y}\lnot A.
+    \end{align*}
+    Hence, we can partition the domain $\Delta^{\Gmc_{i}}$ into % countably infinite sets
+    \begin{align*}
+      \Delta^{\Gmc_{i}} = \bigcup_{Y\in\Ymc} P_{i}(Y) \text{\quad with \quad} P_{i}(Y)\coloneqq \{d\in\Delta^{\Gmc_{i}}\mid d\in C_{Y}\}.
+    \end{align*}
+    Because of the above assumptions and since $\Gmc_{i}\models
+    \bigwedge_{a\in\OI(\B)}C_{\kappa(a)}(a)$, there exist bijections $\pi_{i} : \Delta^{\Gmc_{1}} \to
+    \Delta^{\Gmc_{i}}$, $2 \leq i \leq k$, such that
+    \begin{itemize}
+    \item $\pi_{i}(P_{1}(Y)) = P_{i}(Y)$, for every $Y\in\Ymc$, and
+    \item $\pi_{i}(a^{\Gmc_{1}}) = a^{\Gmc_{i}}$ for every $a\in\OI(\B)$.
+    \end{itemize}
+    Hence, we can assume that all $\Gmc_{i}$ have the same domain and interpret individual names and
+    rigid concept names in the same way.
+  \end{claimproof}
+
+  \noindent
+  The \SHOIQ-BKB $\smash{\widehat{\Bmf}_{X_{i}}}$ is of size polynomial in the size of \B and can be
+  constructed in time exponential in the size of \B. We can check if
+  $\smash{\widehat{\Bmf}_{X_{i}}}$ has a model that respects $(\OCR(\B),\Ymc)$ non-deterministically
+  in time exponential in the size of $\smash{\widehat{\Bmf}_{X_{i}}}$
+  (Theorem~\ref{thm:shoiq-bkb-consistency-nexptime}), and thus non-deterministically in time
   exponential in the size of \Bmf.
 \end{proof}
+
+\todo[inline]{hier bin ich}
 
 Together with the lower bound shown in Theorem~\ref{thm:alcel-rigid-concepts-nexptime-hard}, we
 obtain \NExpTime-complete\-ness for the consistency problem in \LMLO for \LM and \LO being DLs between
@@ -1046,9 +1060,11 @@ syntactically restricted fragment of \EL-LTL.
       t^\J & \coloneqq \{(c_{i},c_{i+1}) \mid i \geq 0\}.
     \end{align*}
     
+    \noindent
     We now show that for every $i\ge 0$, we have $\Imf,i\models\phi$ iff $c_i\in C_\phi^\J$ by
     induction on the structure of~$\phi$:
     
+    \noindent
     \begin{tabularx}{\linewidth}{@{}l@{ }X@{}}
       $\phi = \alpha:$ & $\Imf,i\models\phi$ 
                iff $\I_{i} \models \alpha$ 
@@ -1102,6 +1118,7 @@ syntactically restricted fragment of \EL-LTL.
     Again, we show that for every $i \geq 0$, that we have $c_i \in C_{\phi}^{\J_{\Psf}}$ iff
     $\Imf,i\models\phi$ by induction on the structure of~$\phi$:
 
+    \noindent
     \begin{tabularx}{\linewidth}{@{}l@{ }X@{}}
       $\phi = \alpha:$ & $c_{i} \in C_{\phi}^{\J_{\Psf}} = \oax{\alpha}^{\J_{\Psf}}$
                iff $\I_{c_{i}} \models \alpha$
@@ -1469,4 +1486,4 @@ Section~\ref{sec:complexity-consis-problem}, we obtain the following corollary.
 %%% End:
 
 %  LocalWords:  Löwenheim Skolem Logics logics iff temporalized Quasimodel quasimodel BKB Klarman
-%  LocalWords:  DL et al GreenBayPackers AaronRodgers DLs
+%  LocalWords:  DL et al GreenBayPackers AaronRodgers DLs bijections
