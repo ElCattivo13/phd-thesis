@@ -635,13 +635,6 @@
   nominwidth/.style={minimum width=0pt},
   outline/.style 2 args={circle,draw=#1,fill=#1,align=center,minimum size=#2,text=white},
   outline edge/.style 2 args={circle connection bar switch color=from (#1) to (#2)},
-  %
-  % colors for table of complexity results
-  ExpTime/.style={black!15},
-  NExpTime/.style={black!30},
-  2ExpTime/.style={black!45},
-  N2ExpTime/.style={black!60}
-  %,
 }
 
 
@@ -892,15 +885,18 @@
 \newcommand{\ALCOALC}{\@condl{\ALCO}{\ALC}}
 \newcommand{\SHOQSHOQ}{\@condl{\SHOQ}{\SHOQ}}
 \newcommand{\SHOIQSHOIQ}{\@condl{\SHOIQ}{\SHOIQ}}
+\newcommand{\SHOIQSHOQ}{\@condl{\SHOIQ}{\SHOQ}}
 \newcommand{\SHIQSHIQ}{\@condl{\SHIQ}{\SHIQ}}
 \newcommand{\ELALC}{\@condl{\EL}{\ALC}}
 \newcommand{\ALCEL}{\@condl{\ALC}{\EL}}
 \newcommand{\SHOQEL}{\@condl{\SHOQ}{\EL}}
 \newcommand{\SHOIQEL}{\@condl{\SHOIQ}{\EL}}
+\newcommand{\SHOIQLO}{\@condl{\SHOIQ}{\LO}}
 \newcommand{\ELEL}{\@condl{\EL}{\EL}}
 \newcommand{\LMEL}{\@condl{\LM}{\EL}}
 \newcommand{\ELLO}{\@condl{\EL}{\LO}}
 \newcommand{\ELSHOIQ}{\@condl{\EL}{\SHOIQ}}
+\newcommand{\LMSHOIQ}{\@condl{\LM}{\SHOIQ}}
 \newcommand{\ALCSHOIQ}{\@condl{\ALC}{\SHOIQ}}
 
 \newcommand{\klarALC}{\@math{\ALC_{\!\ALC}}}
@@ -1374,16 +1370,22 @@
     & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY15}}}
     \bottomrule
   \end{tabularx}
-  \caption*{Settings: (i) no rigid names are allowed, i.e.\ $\OCR=\ORR=\emptyset$. (ii) only rigid
-    concepts are allowed, i.e.\ $\OCR\neq\emptyset$ and $\ORR=\emptyset$. (iii) rigid concepts and
-    rigid roles are allowed, i.e.\ $\OCR\neq\emptyset$ and $\ORR\neq\emptyset$.}
+  \caption*{Settings: (i) No rigid names are allowed, i.e.\ $\OCR=\ORR=\emptyset$. (ii) Only rigid
+    concepts are allowed, i.e.\ $\OCR\neq\emptyset$ and $\ORR=\emptyset$. (iii) Rigid roles
+    are allowed, i.e.\ $\ORR\neq\emptyset$.}
 \end{table}
 }
-\begin{tikzpicture}[remember picture, overlay]
-  % \foreach \x in {1,...,5}
-  %   \foreach \y in {1,...,5}
-  %     \node[node] at (X\x|-Y\y) {}; 
+\begin{tikzpicture}[remember picture, overlay,
+  % colors for table of complexity results
+  ExpTime/.style = {black!10},
+  NExpTime/.style = {black!23},
+  2ExpTime/.style = {black!36},
+  N2ExpTime1/.style = {black!49},
+  N2ExpTime2/.style = {black!62},
+  theoremSE/.style = {text=black!80, font=\tiny, inner sep = 2pt, anchor = south east},
+  theoremNW/.style = {text=black!80, font=\tiny, inner sep = 2pt, anchor = north west},]
   %
+
   \pgfmathsetmacro{\eps}{0.05}
   %
   \coordinate (Y1) at ($(rawY1)-(0,\eps)$);
@@ -1401,8 +1403,10 @@
   \coordinate (Y7) at ($(rawY7)-(0,\eps)$);
   \coordinate (Y8) at ($(rawY8)+(0,0)$);
   \coordinate (Y10) at ($(rawY10)+(0,\eps)$);
-  \fill[NExpTime] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
-  \node at ($0.5*(X1l|-Y10)+0.5*(X4r|-Y6)+(0.5,-0.1)$) {\NExpTime-complete};
+  \fill[NExpTime] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X3r|-Y10) -- (X3r|-Y6) -- cycle;
+  \fill[N2ExpTime1] (X4l|-Y6) -- (X4l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
+  \node at ($0.5*(X1l|-Y10)+0.5*(X3r|-Y6)+(0.5,-0.1)$) {\NExpTime-complete};
+  \node[align=center] at ($0.5*(X4l|-Y8)+0.5*(X4r|-Y8)$) {\NExpTime-hard\\ and\\ in \TwoNExpTime};
   %
   \coordinate (Y11) at ($(rawY11)-(0,\eps)$);
   \coordinate (Y12) at ($(rawY12)-(0,\eps)$);
@@ -1410,18 +1414,31 @@
   \coordinate (Y14a) at ($(rawY14)+(0,\eps)$);
   \coordinate (Y14b) at ($(rawY14)-(0,\eps)$);
   \coordinate (Y15) at ($(rawY15)+(0,\eps)$);
-  \fill[2ExpTime] (X2l|-Y11) -- (X2l|-Y14a) -- (X3r|-Y14a) -- (X3r|-Y11) -- cycle;
+  \fill[2ExpTime] (X2l|-Y11) -- (X2l|-Y15) -- (X3r|-Y15) -- (X3r|-Y11) -- cycle;
+%  \fill[2ExpTime] (X2l|-Y11) -- (X2l|-Y14a) -- (X3r|-Y14a) -- (X3r|-Y11) -- cycle;
   \fill[NExpTime] (X1l|-Y12) -- (X1l|-Y15) -- (X1r|-Y15) -- (X1r|-Y12) -- cycle;
-  % \draw[draw=gray!60, pattern=north east lines, pattern color=gray!50] (X1l|-Y14b) -- (X1l|-Y15) --
-  % (X1r|-Y15) -- (X1r|-Y14b) -- cycle;
-  \fill[N2ExpTime] (X4l|-Y11) -- (X4l|-Y14b) -- (X2l|-Y14b) -- (X2l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
+  \fill[N2ExpTime2] (X4l|-Y11) -- (X4l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
+%  \fill[N2ExpTime] (X4l|-Y11) -- (X4l|-Y14b) -- (X2l|-Y14b) -- (X2l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
   \node[align=center] at ($0.5*(X1l|-Y15)+0.5*(X1r|-Y12)$) {\NExpTime-\\complete};
-  \node at ($0.5*(X2l|-Y14a)+0.5*(X3r|-Y11)$) {\TwoExpTime-complete};
+  \node at ($0.5*(X2l|-Y15)+0.5*(X3r|-Y11)$) {\TwoExpTime-complete};
   \node[align=center] at ($0.5*(X4l|-Y13)+0.5*(X4r|-Y13)$) {\TwoExpTime-hard\\ and\\ in \TwoNExpTime};
   %
+  \node[theoremSE] at (X3r|-Y4a) {Th.~\ref{thm:shoqshoq-without-rigid-exptime}};
+  \node[theoremSE] at (X4r|-Y5)  {Th.~\ref{thm:shoiqshoiq-without-rigid-exptime}};
+  \node[theoremSE] at (X3r|-Y15) {Th.~\ref{thm:shoiqshoq-with-rigid-names-twoexptime}};
+  \node[theoremSE] at (X4r|-Y15) {Th.~\ref{thm:shoiqshoiq-with-rigid-names-ntwoexptime}};
+  \node[theoremSE] at (X3r|-Y10) {Th.~\ref{thm:shoiqshoq-with-rigid-concepts-nexptime}};
+  \node[theoremSE] at (X4r|-Y10) {Th.~\ref{thm:shoiqshoiq-with-rigid-names-ntwoexptime}};
+  \node[theoremNW] at (X1l|-Y2)  {Th.~\ref{thm:alcel-exp-hard-no-rigid}};
+  \node[theoremNW] at (X2l|-Y1)  {Th.~\ref{thm:elalc-exp-hard-no-rigid}};
+  \node[theoremNW] at (X1l|-Y4b) {Th.~\ref{thm:shoiqel-lower-no-rigid}};
+  \node[theoremNW] at (X4l|-Y1)  {Th.~\ref{thm:elshoiq-lower-no-rigid}};
+  \node[theoremNW] at (X2l|-Y11) {Th.~\ref{thm:elalc-2exp-hard-rigid-roles}};
+  \node[theoremNW] at (X1l|-Y7)  {Th.~\ref{thm:alcel-nexp-hard-rigid-concepts}};
+  \node[theoremNW] at (X2l|-Y6)  {Th.~\ref{thm:elalc-nexp-hard-rigid-concepts}};
+  \node[theoremSE] at (X1r|-Y15) {Th.~\ref{thm:shoiqel-in-nexp-rigid-roles}};
 \end{tikzpicture}
 }
-
 
 \endinput
 
