@@ -624,7 +624,7 @@
   domain/.default={0cm}{0cm}{1pt},
   is/.style={inner sep=#1},
   is/.default={1pt},
-  edge/.style={shorten <=1pt, shorten >=1pt},
+  edge/.style={shorten <=3pt, shorten >=3pt},
   coord/.style={anchor=base,inner sep=0pt},
   brace/.style={decorate,decoration={brace,amplitude=4pt},thick},
   wavy/.style={decorate,decoration,decoration={coil,aspect=0,amplitude=1.5pt,post length=2.1pt}},
@@ -821,7 +821,9 @@
 \newcommand{\ALC}{\@DLhelper{ALC}}
 \newcommand{\ALCI}{\@DLhelper{ALCI}}
 \newcommand{\ALCO}{\@DLhelper{ALC{\kern-.07em}O}}
-\newcommand{\ALCQ}{\@DLhelper{ALC{\kern-.12em}Q}}
+\newcommand{\ALCQ}{\@DLhelper{ALC{\kern-.14em}Q}}
+\newcommand{\ALCH}{\@DLhelper{ALC{\kern-.07em}H}}
+\newcommand{\ALCHI}{\@DLhelper{ALC{\kern-.07em}HI}}
 \newcommand{\ALCOI}{\@DLhelper{ALC{\kern-.07em}O{\kern-.02em}I}}
 \newcommand{\ALCIQ}{\@DLhelper{ALCI{\kern-.12em}Q}}
 \newcommand{\ALCOQ}{\@DLhelper{ALC{\kern-.07em}O{\kern-.12em}Q}}
@@ -1256,6 +1258,10 @@
   %%% columns. See tabularx documentation, section 4.3                                   %
   \newcolumntype{Y}[1]{>{\hsize=#1\hsize}X}                                              %
 }
+
+
+\newcolumntype{N}{@{}m{0pt}@{}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
 
 %%% tried to have optional arguments in newcolumntype, but didn't work
 %%% http://tex.stackexchange.com/questions/8000/is-it-possible-to-create-a-newcolumntype-like-macro-accepting-more-than-one-arg

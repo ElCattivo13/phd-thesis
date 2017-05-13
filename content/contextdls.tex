@@ -138,7 +138,7 @@ We are now ready to define the semantics of \LMLO.
 With these notions, we can refine the examples of
 Section~\ref{sec:description-logics}. 
 
-\begin{example}
+\begin{example}\label{ex:nfl-with-contexts}
   Considering again Example~\ref{ex:concept-nfl} and Example~\ref{ex:bkb-nfl}, we recognize that
   $\mathsf{NFL\_Team}$ actually is a context. The meta concept $C'$ analogous to $C$ could be:
   \begin{align*}
@@ -641,8 +641,7 @@ Before we can analyse the complexity of the consistency problem in \LMLO, we nee
 complexity results for the consistency problem of \SHOQ-BKBs and \SHOIQ-BKBs. For the former we
 follow the idea of~\cite{Lip-PhD14}.
 %
-The latter is a direct consequence of Theorem~\ref{thm:shoiq-bkb-consistency-nexptime} which is
-proven is Section \ref{sec:consistency-shoiq-bkb}.
+The latter is an adaptation of a proof of~\cite{Pra-JLLI05}.
 
 
 
@@ -743,8 +742,7 @@ are allowed.
   of $\powerset{\ran(\bsf)}$.  Again, \Bmf is consistent iff \Bmfb is outer consistent w.r.t.~\Xmc.
 
   In contrast to the proof of Theorem~\ref{thm:shoqshoq-without-rigid-exptime} we can decide
-  consistency of~$\Bmf_{X}$ non-deter\-ministically in time exponential in the size of~$\Bmf_{X}$, see
-  Theorem~\ref{thm:shoiq-bkb-consistency-nexptime}.  Thus, the set~\Xmc can be constructed
+  consistency of~$\Bmf_{X}$ non-deter\-ministically in time exponential in the size of~$\Bmf_{X}$.  Thus, the set~\Xmc can be constructed
   non-deterministically in time exponential in the size of~\Bmf.  By
   Lemma~\ref{lem:shoiq-outer-consisteny-nexptime}, deciding whether \Bmfb is outer consistent
   w.r.t.~\Xmc can be non-deterministically done in time exponential in the size of \Bmfb and linear
@@ -1464,6 +1462,9 @@ only.
 \label{sec:adding-cont-concepts}
 
 \input{content/adding-contextualized-concepts}
+
+
+\cleardoublepage
 
 
 % \section{Consistency of Boolean \texorpdfstring{\SHOIQ}{SHOIQ} knowledge bases}

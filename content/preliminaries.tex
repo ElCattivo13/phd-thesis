@@ -62,7 +62,7 @@ logics, we use the following abbreviations:
 \item $\atmost{n}{r}{C}$ (\emph{at-most restriction}) for $\lnot(\atleast{n+1}{r}{C})$.
 \end{itemize}
 
-
+\noindent
 The semantics of description logic concepts are defined in a model-theoretic way using the notion of
 interpretations.
 
@@ -79,7 +79,7 @@ interpretations.
     individual names are mapped to different elements, i.e.\ for $a,b\in\NI$ it holds that
     $a^{\I}\neq b^{\I}$ if $a\neq b$.
   \end{itemize}
-
+  %
   Now, that function is extended for inverse roles and complex concepts as follows:
   \begin{itemize}
   \item $(s^{-})^{\I} \coloneqq \left\{(d,c)\in\Delta^{\I}\times\Delta^{\I}\mmid (c,d)\in
@@ -94,10 +94,12 @@ interpretations.
   where $\sharp S$ denotes the cardinality of the set $S$.
 \end{definition}
 
-Note that in the above definition of an interpretation, we adopt the so-called \emph{unique name
-  assumption} stating that every individual is interpreted as a distinct element. By doing so, we emphasize
-that an individual name is meant to be the identity of an individual, rather than just a tag as it
-is usually used in the context of semantic web.
+\noindent
+For any $x\in\NC\cup\NR\cup\NI$, $x^{\I}$ is called the \emph{extension of $x$}.  Note that in the
+above definition of an interpretation, we adopt the so-called \emph{unique name assumption} stating
+that every individual is interpreted as a distinct element. By doing so, we emphasize that an
+individual name is meant to be the identity of an individual, rather than just a tag as it is
+usually used in the context of semantic web.
 
 Now, we can look at a first example using the notions just defined.
 
@@ -116,13 +118,13 @@ Now, we can look at a first example using the notions just defined.
 \begin{figure}
   \centering
   \begin{tikzpicture}
-    \node[node, label={[align=center]270:\textit{GreenBayPackers},\\\textsf{NFL\_Team}, \textsf{NFC}}] (gbp) at (0,0) {};
-    \node[node, label={[align=center]270:\textit{MikeMcCarthy}}] (mmc) at (-4,0) {};
-    \node[node, label={[align=center]270:\textit{AaronRodgers}, \\\textsf{NFL\_PLayer}}] (ar) at (4,0) {};
-    \node[node, label={[align=center]270:\textsf{Quarterback}}] (qb) at (8,0) {};
+    \node[node, label={[align=center]180:\textit{GreenBayPackers},\\\textsf{NFL\_Team}, \textsf{NFC}}] (gbp) at (0,0) {};
+    \node[node, label={[align=center]270:\textit{MikeMcCarthy}}] (mmc) at (4,1.0) {};
+    \node[node, label={[align=center]270:\textit{AaronRodgers}, \\\textsf{NFL\_PLayer}}] (ar) at (4,-1.0) {};
+    \node[node, label={[align=center]270:\textsf{Quarterback}}] (qb) at (8,-1.0) {};
     %
-    \draw[edge] (mmc) to[bend left=10] node{$\mathsf{coaches}$} (gbp);
-    \draw[edge] (ar) to[bend right=10, swap] node{$\mathsf{playsFor}$} (gbp);
+    \draw[edge] (mmc) to[bend right=10,swap] node{$\mathsf{coaches}$} (gbp);
+    \draw[edge] (ar) to[bend left=10] node{$\mathsf{playsFor}$} (gbp);
     \draw[edge] (ar) to[bend left=10] node{$\mathsf{position}$} (qb);
   \end{tikzpicture}
   \caption{An Interpretation \I such that $\text{\textit{GreenBayPackers}}^{\I} \in C^{\I}$ and
@@ -162,13 +164,14 @@ axioms and an RBox which states the general knowledge about roles.
     (axiom negation) and $\Bmc_{1}\land\Bmc_{2}$ (axiom conjunction), and
   \item nothing else is a Boolean \Lmc-axiom formula over \Nsig.
   \end{itemize}
-
+  %
   Finally, a \emph{Boolean \Lmc-knowledge base (\Lmc-BKB) over \Nsig} is a pair
   $\Bmf = (\Bmc, \Rmc)$, where \Bmc is a Boolean \Lmc-axiom formula over \Nsig and \Rmc is an
   \Lmc-RBox over \Nsig. An \emph{\Lmc-ontology over \Nsig} is an \Lmc-BKB over \Nsig, where only
   axiom conjunction and no axiom negation is allowed in the Boolean axiom formula.
 \end{definition}
 
+\noindent
 Again as usual in description logics, we use $C \equiv D$ (\emph{concept equivalence}) as abbreviation
 for $(C \sqsubseteq D) \land (D \sqsubseteq C)$ and $\Bmc_1\lor\Bmc_2$ (\emph{axiom disjunction}) as
 abbreviation for $\lnot(\lnot\Bmc_1\land\lnot\Bmc_2)$.
@@ -189,13 +192,13 @@ assertion axioms occurring in \Bmc.
   \item the transitivity axiom $\mathsf{trans}(r)$ over \Nsig if $r^\I=(r^\I)^+$, where $\cdot^{+}$
     denotes the transitive closure of a binary relation.
   \end{itemize}
-
+  %
   This is extended to Boolean axiom formulas over~\Nsig inductively as follows:
   \begin{itemize}
   \item \I is a model of $\lnot\B_1$ if it is not a model of~$\B_1$, and
   \item \I is a model of $\B_1\land\B_2$ if it is a model of both $\B_1$ and~$\B_2$.
   \end{itemize}
-
+  %
   We write $\I\models\alpha$ and $\I\models\Bmc$ if \I is a model of the axiom~$\alpha$ over~\Nsig
   or \I is a model of the Boolean axiom formula~\B, respectively. Furthermore, \I is a model of an
   RBox~\Rmc over~\Nsig (written $\I\models\Rmc$) if it is a model of each axiom in \Rmc.
@@ -205,6 +208,7 @@ assertion axioms occurring in \Bmc.
   \emph{consistency problem} is the problem of deciding whether a given BKB is consistent.
 \end{definition}
 
+\noindent
 Note that besides the consistency problem there are several other reasoning tasks for description
 logics.  The entailment problem, for instance, is the problem of deciding, given a BKB~\Bmf and an
 axiom~$\beta$, whether \Bmf \emph{entails} $\beta$, i.e.~whether all models of~\Bmf are also models
@@ -308,8 +312,8 @@ The complexity of the consistency problem for DL ontologies is well-investigated
 bound for \ALC was shown in~\cite{Sch-IJCAI91}, the upper bound for \SHOQ in~\cite{Tob-PhD01}. For
 \SHOIQ the lower and upper bound were proven in~\cite{Tob-JAIR00} and~\cite{Tob-PhD01},
 respectively. While for BKBs the complexity class stays the same, this is much less explored. It is
-in \ExpTime for \SHOQ~(\cite{Lip-PhD14}) and we show in Section~\ref{sec:consistency-shoiq-bkb} that
-it remains in \NExpTime for \SHOIQ.
+in \ExpTime for \SHOQ~\cite{Lip-PhD14} and it remains in \NExpTime for \SHOIQ as a consequence of
+Theorem~2 in \cite{Pra-JLLI05}.
 
 For \EL ontologies, the consistency problem is trivial since no contradictions can be expressed and, thus,
 every \EL ontology is consistent. On the other hand, we do not consider \EL-BKBs as it seems very unnatural to

@@ -1,14 +1,67 @@
 
-\todo[inline, caption={intro paragraph for adding contextualized concepts}]{
-\ALCALC without rigid names sublogic of \klarALC, relation to \klarALC
+In this section we discuss a possible extension to our contextualized description logic.  We start
+with a little comparison to temporal description logics. Both DL-LTL-structures and nested DL
+interpretations use a \emph{possible worlds semantics}. Single time points or contexts are
+represented in a meta dimension and for each such a meta element, or possible world, there exists
+one DL interpretation on object level. Important for both the expressivity and the complexity of
+reasoning problems is how these two dimensions can interact. Syntactically, it is a question where
+these \emph{meta} operators, i.e.\ temporal or contextual, are allowed.
 
-explain a bit more the restriction of \LMLO, what cannot be expressed.
+\begin{table}
+  \caption{Classification of different two-dimensional temporal and contextual description logics
+    (\cite{LuWZ-TIME08,BaGL-ToCL12,KG-JELIA10}) }
+  \centering
+  \begin{tabular}{lM{0.1\linewidth}M{0.25\linewidth}M{0.17\linewidth}N}
+    \toprule
+    \multicolumn{2}{c}{\multirow{2}{5cm}[-1ex]{\centering Temporal or contextual operators}}
+    & \multicolumn{2}{c}{in front of axioms}\\
+    & & yes & no &\\[10pt]
+    \midrule
+    & yes & temporal $\text{LTL}_{\ALC}$, \klarALC, \LMLOplus & $\text{LTL}_{\ALC}$, \hspace{2cm}$\emptyset$ &\\[15pt]
+    \cmidrule{2-4}
+    \multirow{-2}{*}[2.4ex]{
+    \centering inside concepts
+    }& no & \ALC-LTL, \hspace{2cm}\LMLO & \ALC &\\[15pt]
+    \bottomrule
+  \end{tabular}
+  \label{tab:classification-tdl-cdl}
+\end{table}
 
-introduce new o-concept constructor
+Table~\ref{tab:classification-tdl-cdl} gives an overview over some two-dimensional DLs. By all
+means, this is not complete and is used to illustrate some common properties about the complexity of
+the consistency problem. Note first, that neither having meta operators in front of axioms nor
+inside concepts subsumes each other. Meta operators in front of axioms can handle general knowledge
+that holds in some or all worlds.  On the other hand meta operators inside object concepts allow to
+access the extension of concepts in other worlds.
+%
+We illustrate this by an example taken from \cite{LuWZ-TIME08}.
+\begin{gather*}
+  \Diamond\Box(\mathsf{European\_country} \sqsubseteq \mathsf{EU\_country})\\
+  \mathsf{Independent\_country} \sqsubseteq \Box\mathsf{Independent\_country}
+\end{gather*}
+The first temporalized GCI states that eventually, i.e.\ at some time point $t$ in future, all European
+countries will be EU members forever, i.e.\ in every time point after $t$. The second axiom says that the
+extension of the concept $\mathsf{Independent\_country}$ does not decrease.
 
-undecidability result
-}
+The first setting that we want to focus on is the presence of rigid roles.  If meta operators are
+allowed within object concepts, the consistency problem becomes undecidable. This holds for all
+logics in the first row of Table~\ref{tab:classification-tdl-cdl}. Below, we prove it for \LMLOplus
+below. If meta operators are only allowed in front of axioms, we may retain decidability but still
+at the cost that the consistency problem is exponentially harder.
+%
+Secondly, if no rigid names are allowed, the complexity of the consistency problem increases for
+logics with meta operators both in front of axioms and in object concepts: from ExpTime-completeness for \ALC
+to \ExpSpace-completeness for temporal $\text{LTL}_{\ALC}$ TBoxes and to \TwoExpTime-completeness
+for \klarALC knowledge bases. If only one kind of meta operators is allowed, the complexity
+class stays the same, i.e.\ the
+consistency problem is ExpTime-complete in \ALCALC, \ALC-LTL, and $\text{LTL}_{\ALC}$.
 
+A setting in which only rigid concepts, but no rigid roles are allowed, is only interesting if meta
+operators are not allowed inside object concepts. Otherwise, rigid concepts can easily be
+simulated. In $\text{LTL}_{\ALC}$, this can be done by adding $C\sqsubseteq\Box C$ and
+$\lnot C\sqsubseteq\Box\lnot C$ to the TBox.  We show below how rigid concepts can be simulated in
+\LMLOplus.
+%
 The contextualized description logic \LMLOplus is an extension of \LMLO where we additionally allow
 contextualized object concepts. Therefore, we update the definition of o-concepts from
 Def. \ref{def:syntax-cdls}.  
@@ -24,24 +77,35 @@ The set of \emph{concepts of the object logic \LO (o-concepts)} is the smallest 
 \end{itemize}
 
 Furthermore, for a nested interpretation \JJ the mapping $\cdot^{\I_{c}}$ is extended to
-$\ocont{C}[r]{D}$ as follows: $(\ocont{C}[r]{D})^{\I_{c}} \coloneqq \{d \in \Delta \mid \text{there is
-some $c'$ s.t.\ $(c,c')\in r^{\J}$ and $d \in D^{\I_{c'}}$}\}$.
+$\ocont{C}[r]{D}$ as follows: $(\ocont{C}[r]{D})^{\I_{c}} \coloneqq \{d \in \Delta^{\J} \mid \text{there is
+some $c'\in\Cbb$ s.t.\ $(c,c')\in r^{\J}$ and $d \in D^{\I_{c'}}$}\}$.
 \end{definition}
 
+\noindent
 Following customs of modal logic, we use $\ocont*{C}[r]{D}$ as an abbreviation for
 $\lnot\ocont{C}[r]{(\lnot D)}$. Intuitively, in a context $c$ the concept $\ocont{C}[r]{D}$ denotes
 the set of all object domain elements that belong to the concept $D$ in some other context $c'$
 which belongs to the meta concept $\mathbf{C}$ and is related to $c$ via $\mathbf{r}$. An object
-domain element is in the concept $\ocont*{C}[r]{D}$ in context $c$, if it belongs to $D$ in all
+domain element is in the extension of concept $\ocont*{C}[r]{D}$ in context $c$, if it belongs to $D$ in all
 contexts $c'$ that belong to the meta concept $\mathbf{C}$ and are related to $c$ via $\mathbf{r}$.
 
-\todo[inline]{example}
+Thus, within a context we can talk about object elements that belong to some object concept in some
+other context. This is somehow similar to $\Next C$ in $\text{LTL}_{\ALC}$, which denotes the set of all
+elements that are in $C$ \emph{in the next time point}.
 \begin{example}\label{ex:alcalc-plus}
-  
+  Going back to Example~\ref{ex:nfl-with-contexts}, the following meta concept assertion states that someone who
+  plays quarterback for the Green Bay Packers must work as coach in a junior training camp that is organized by
+  Green Bay:
+  \begin{align*}
+    & \oax{\exists\plays.\mathsf{Quarterback} \sqsubseteq
+    \ocont{\mathsf{JuniorFootballClinic}}[\mathsf{organizes}]{\mathsf{Coach}}}(\text{\textit{GreenBayPackers}}).
+  \end{align*}
+  Note here, that Green Bay Packers and the junior training camp are two different contexts and that
+  this cannot be expressed in \LMLO.
 \end{example}
 
 The contextualized description logic \ALCALCplus without rigid names is a syntactical variant of
-\klarALC \textbf{[??]}\todo{cite klarman}. Consequently, the consistency problem in \ALCALCplus has
+\klarALC~\cite{KG-JELIA10,KG16}. Consequently, the consistency problem in \ALCALCplus has
 the same complexity.
 
 \begin{theorem}\label{thm:alcalcplus-without-rigid-twoexptime}
@@ -49,12 +113,94 @@ the same complexity.
   $\ORR = \emptyset$.
 \end{theorem}
 
-mutual reduction. 
+\begin{proof}[Sketch]
+  We can prove the theorem by a mutual reduction of an \klarALC and an \ALCALCplus knowledge base.
+  Without introducing the complete syntax of \klarALC, we show how to map an \klarALC ontology into
+  \ALCALCplus.
 
-\missingproof
+  Table~\ref{tab:syntax-klarALC} shows in the upper part the two special constructors for object
+  concepts available in \klarALC. The middle part provides the syntax and semantics of \emph{object
+    formulas} which in turn constitute the \emph{object ontology axioms}, shown in lower part. The
+  rightmost column states the mapping $\tau$ which translates terms from \klarALC to
+  \ALCALCplus. The following example shows how an object ontology axiom is mapped.
+  \begin{align*}
+    \mathbf{C}:\langle \mathbf{C} \rangle_{\mathbf{r}}(\langle \mathbf{C}\rangle_{\mathbf{r}}D
+    \sqsubseteq A) 
+    \qquad\leadsto\qquad
+    C\sqsubseteq\exists r.\left(C\sqcap\oax{\ocont{C}[r]{D}}\right)
+  \end{align*}
+
+  \begin{table}[t]    
+    \caption{Syntax and semantics of \klarALC, mapping into \ALCALCplus}
+    \centering
+    \begin{tabularx}{0.96\linewidth}{ll@{ iff }X@{}l}
+      \toprule
+      Syntax   & \multicolumn{2}{l}{Semantics} 
+               & mapping $\tau(x)$ \\
+      \midrule
+      $\langle \mathbf{C} \rangle_{\mathbf{r}}D$ 
+               & \multicolumn{2}{l}{
+                 $\cdot^{\I_{c}} = \{d\in\Delta\mid\text{there is $c'$ s.t.\
+                 $(c,c')\in\mathbf{r}^{\J}$, $c'\in C^{\J}$, $d\in D^{\I_{c'}}$}\}$} 
+               & $\ocont{C}[r]{D}$ \\
+      $[\mathbf{C}]_{\mathbf{r}}D$ 
+               & \multicolumn{2}{l}{
+                 $\cdot^{\I_{c}} = \{d\in\Delta\mid\text{$(c,c')\in\mathbf{r}^{\J}$ and $c' \in
+                 C^{\J}$ imply $d\in D^{\I_{c'}}$}\}$}
+               & $\ocont*{C}[r]{D}$ \\
+      \midrule
+      $B \sqsubseteq D$  & $\I_{c}\models B \sqsubseteq D$
+               & $B^{\I_{c}}\subseteq D^{\I_{c}}$ 
+               & $\oax{B \sqsubseteq D}$\\
+      $D(a)$   & $\I_{c}\models D(a)$
+               & $a^{\I_{c}}\in D^{\I_{c}}$
+               & $\oax{D(a)}$\\
+      $s(a,b)$ & $\I_{c}\models s(a,b)$
+               & $(a^{\I_{c}}, b^{\I_{c}})\in s^{\I_{c}}$
+               & $\oax{s(a,b)}$\\
+      $\lnot\varphi$     & $\I_{c}\models\lnot\varphi $
+               & $\I_{c}\not\models\varphi$
+               & $\lnot\tau(\varphi)$\\
+      $\varphi\land\psi$    & $\I_{c}\models\varphi\land\psi $
+               & $\I_{c}\models\varphi$ and $\I_{c}\models\psi$
+               & $\tau(\varphi) \sqcap \tau(\psi)$\\
+      $\langle \mathbf{C}\rangle_{\mathbf{r}}\varphi$ 
+               & $\I_{c}\models\langle\mathbf{C}\rangle_{\mathbf{r}}\varphi$
+               & \text{there is $c'\in \mathbf{C}^{\J}$ s.t.\ $(c,c')\in\mathbf{r}^{\J}$, $\I_{c'}\models\varphi$}
+               & $\exists r.(C\sqcap\tau(\varphi))$\\
+      $[\mathbf{C}]_{\mathbf{r}}\varphi$ 
+               & $\I_{c}\models [\mathbf{C}]_{\mathbf{r}}\varphi$
+               & \text{every $c'\in \mathbf{C}^{\J}$, $(c,c')\in\mathbf{r}^{\J}$ implies $\I_{c'}\models\varphi$ }
+               & $\forall r.(\lnot C \sqcup \tau(\varphi))$\\
+      \midrule
+      $\mathbf{a} : \varphi$ 
+               & $\J\models \mathbf{a} : \varphi$
+               & $\I_{c}\models\varphi$ with $c=\mathbf{a}^{\J}$
+               & $(\tau(\varphi))(a)$\\
+      $\mathbf{C} : \varphi$
+               & $\J\models \mathbf{C} : \varphi$ 
+               & $\I_{c}\models\varphi$ for every $c$ with $c\in\mathbf{C}^{\J}$
+               & $C \sqsubseteq \tau(\varphi)$\\
+      \bottomrule
+    \end{tabularx}
+    \label{tab:syntax-klarALC}
+  \end{table}
+
+  An \klarALC ontology $\Kmc = (\Cmc, \Omc)$ consists of a context ontology \Cmc, which is in fact a
+  standard \ALC ontology, and of an object ontology. Given \Kmc, let us define the \ALCALC ontology
+  $\Bmc_{\Kmc} \coloneqq \Cmc \land \tau(\Omc)$. It is easy to verify, that a nested interpretation
+  \J is a model of \Kmc if and only if it is a model of $\Bmc_{\Kmc}$.
+
+  Conversely, for an \ALCALC ontology \Bmc, we take the outer abstraction \Bb as context ontology and for each
+  \oalpha in \Bmc, we add $(\mathbf{A_{\oalpha}} : \alpha)$ and $(\lnot\mathbf{A_{\oalpha}} :
+  \lnot\alpha)$ to the object ontology $\Omc_{\Bmc}$. Again, it is easy (and tedious) to show that
+  \J models \Bmc iff \J models $\Kmc_{\Bmc} = (\Bb,\Omc_{\Bmc})$.
+  
+\end{proof}
 
 
-The more interesting case of rigid roles behaves much worse. One can even show that the consistency
+
+The more interesting setting with rigid roles behaves much worse. One can easily show that the consistency
 problem becomes undecidable.
 
 \begin{theorem}\label{thm:elalcplus-with-rigid-undecidable}
@@ -151,11 +297,45 @@ problem becomes undecidable.
   Thus, deciding whether $\Bmc_{\Dmc}$ is consistent is undecidable.
 \end{proof}
 
-Besides the negative result about rigid roles, it is still unclear how \LMLOplus behaves in the case
-when only rigid concepts are allowed. But based on the necessity to express rigid roles when
-modelling RoSIs \todo{reference to section 2.2} as discussed in Section \ref{sec:rosiroles}, we did
-not look into this setting any further and it is left open as future work when appropriate use cases
-emerge.
+% Besides the negative result about rigid roles, it is still unclear how \LMLOplus behaves in the case
+% when only rigid concepts are allowed. But based on the necessity to express rigid roles when
+% modelling RoSIs \todo{reference to section 2.2} as discussed in Section \ref{sec:rosiroles}, we did
+% not look into this setting any further and it is left open as future work when appropriate use cases
+% emerge.
+
+\noindent
+To simulate rigid concepts in \LMLOplus, let \BB be an \LMLOplus ontology. We first have to
+simulate an universal role $u$ on meta level. We can assume w.l.o.g.\
+that $u\in\MR$ does not occur in \Bmf. We obtain $\Bmf_{u}$ from \Bmf by adding the following axioms
+to \Bmf:
+\begin{itemize}
+\item $u^{-} \sqsubseteq u$,
+%\item $\trans{u}$,
+\item $r \sqsubseteq u$, for all $r\in\MR$ occurring in \Bmf,
+\item $u(a,b)$ for all $a,b\in\MI$ occurring in \Bmf. 
+\end{itemize}
+Note that $\Bmf_{u}$ is of size polynomial in the size of \Bmf and that we need at least \ALCHI as
+\LM to simulate the universal role.
+%
+If there exists an unnamed context in a model of \Bmf, i.e.\ $c\in\Cbb$ such that there is no
+$a\in\MI$ occurring in \Bmf with $a^{\J}=c$, which is not connected to any named context by some
+path, we can always remove that unnamed context from the interpretation and still have a model.
+Hence, we can assume that every model of $\Bmc_{u}$ is connected and that every context can be
+reached by any other context via a path of $u$-edges.
+%
+Here, we restrict \Bmf to \LMLOplus-ontologies, since in a \LMLOplus-BKB a negated meta GCI can
+enforce the existence of an unnamed context that is not necessarily connected to the rest of the model.
+
+
+With the help of $u$ and contextualized concepts, we can express that $A\in\OC$ is rigid by the
+following two axioms:
+\begin{align*}
+  \top & \sqsubseteq \oax{A \sqsubseteq \ocont*{\top}[u]{A}} \\
+  \top & \sqsubseteq \oax{\lnot A \sqsubseteq \ocont*{\top}[u]{\lnot A}}
+\end{align*}
+Due to these axioms, the extension of $A$ in a context $c$ are exactly these elements which are in
+$A$ in every context $c'$ that is related to $c$ via $u$. Thus, the extension of $A$ is equal in
+every context, i.e.\ $A$ is rigid.
 
 
 %%% Local Variables:
@@ -163,3 +343,5 @@ emerge.
 %%% TeX-master: "../thesis"
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
+
+%  LocalWords:  logics DL LTL expressivity temporalized ontologies
