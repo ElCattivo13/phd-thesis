@@ -593,6 +593,11 @@
 %     \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
 
 
+% no indentation after end of definitions
+\AfterEndEnvironment{definition}{\par\@afterindentfalse\@afterheading}
+\AfterEndEnvironment{proof}{\par\@afterindentfalse\@afterheading}
+
+
 
 \colorlet{alertcolor}{red}
 \NewDocumentCommand{\alert}{O{alertcolor}m}{\textcolor{#1}{#2}}
@@ -1111,6 +1116,10 @@
 % \newcommand{\NPToNExpTime}{\mbox{\ensuremath{\textsc{NP}^\textsc{NExpTime}}}\xspace}
 % \newcommand{\coNPToNExpTime}{\mbox{\ensuremath{\textsc{co\nobreakdash-NP}^\textsc{NExpTime}}}\xspace}
 
+\newcommand{\transsf}{\@math{\mathsf{trans}}}
+\newcommand{\symm}{\@math{\mathsf{symm}}}
+
+
 
 \let\origblindtext\blindtext
 \RenewDocumentCommand{\blindtext}{o}{
@@ -1196,8 +1205,9 @@
 \newcommand{\RT}{\@math{\mathsf{N_{RT}}}}
 \NewDocumentCommand{\CT}{s}{\@math{\mathsf{N_{CT\IfBooleanTF{#1}{'}{}}}}}
 \newcommand{\RST}{\@math{\mathsf{N_{RST}}}}
-\newcommand{\IND}{\@math{\mathsf{N_{IND}}}}
-\newcommand{\RG}{\@math{\mathbb{RG}}}
+\newcommand{\IND}{\@math{\mathsf{N_{O\text{-}IND}}}}
+\NewDocumentCommand{\INDC}{s}{\@math{\mathsf{N_{M\text{-}IND\IfBooleanTF{#1}{'}{}}}}}
+\NewDocumentCommand{\RG}{s}{\@math{\mathbb{RG}\IfBooleanTF{#1}{\smash{\!^{\top}\!}}{}}}
 \newcommand{\Card}{\@math{\mathsf{Card}}}
 \newcommand{\textImplies}{\quad\text{implies}\quad}
 \newcommand{\textIff}{\quad\text{iff}\quad}
@@ -1222,7 +1232,7 @@
 
 \newcommand{\occurCounter}{\@math{\mathsf{counter}}}
 
-
+\newcommand{\IK}{\@math{\I_{\Kmc}}}
 
 
 
@@ -1321,6 +1331,14 @@
 %% to remove vertical space before an itemize inside tabularx
 \newcommand*{\compress}{\@minipagetrue}
 
+\newcommand{\shrinkdisplayskip}[1][11pt]{%
+  \setlength{\abovedisplayskip}{#1 plus 3pt minus 6pt}%
+  \setlength{\belowdisplayskip}{#1 plus 3pt minus 6pt}%
+}
+\newcommand{\resetdisplayskip}{%
+  \setlength{\abovedisplayskip}{11pt plus 3pt minus 6pt}%
+  \setlength{\belowdisplayskip}{11pt plus 3pt minus 6pt}%
+}
 \@ifpackageloaded{printlen}{
 \newcommand{\printseps}{\noindent\parbox[t]{10cm}{%
     topsep: \printlength{\topsep}\\
@@ -1328,7 +1346,9 @@
     partopsep: \printlength{\partopsep}\\
     parsep: \printlength{\parsep}\\
     itemsep: \printlength{\itemsep}\\
-    baselineskip: \printlength{\baselineskip}
+    baselineskip: \printlength{\baselineskip}\\
+    abovedisplayskip: \printlength{\abovedisplayskip}\\
+    belowdisplayskip: \printlength{\belowdisplayskip}
 }}
 }{}
 

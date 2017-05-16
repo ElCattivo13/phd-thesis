@@ -3,52 +3,27 @@
 \label{cha:mapping}
 
 In the last chapter we introduced a family of description logics which are capable of expressing
-contextual knowledge. 
+contextual knowledge. This provides the needed expressiveness to be able to reason on role-based
+models. But due to the rather elaborate semantics both of role-based models and of contextualized
+description logics it will be tedious and error-prone to construct the DL ontology which exactly
+captures a role-based model. Hence, an automated mapping from role-based models into DL would be
+desirable. Therefore a formal representation of role-based system with a well-defined semantics is
+necessary.
 
- 
-
-How to use cDLs in practice?
-
-Semantics, even when durchdacht und präzise, hard to comprehend.
-
-Motivation for looking into cDLs were role-based systems.
-
-automatic mapping from such a system desirable.
-
-Formal representation of role-based system necessary.
-
-Chosen the family of CROMs introduced by Kühn.
-
-Also say what limitations occur, what cannot be represented in cDL
-
-\todo[inline]{paragraph about related work -> formalizing UML diagrams}
-
-
-\section{section}
-\label{sec:section}
-
-As explained in the introduction ``classical'' description logics lack the expressive power to
-formalize contextual knowledge. In the recent years many different approaches and extensions of DLs
-have been proposed. In principle they can be grouped into two categories. 
-
-tag axioms that belong to a context
-
-serafini
-
-
-
-
-
-context as first class citizen
-
-
-Italiener Ismail C-OWL
-
-
-
-Latter McCarthy Klarman
- have means to express RBMs, but undecidable in presence of rigid roles. Furthermore no efficient
- reasoning algorithm available.
+In this chapter we will present a mapping from such role-based models into contextualized DLs in
+order to automate this step.
+%
+To avoid the confusion with the notations, from now on we distinguish between \emph{\rosiroles} as
+in \rosirole-based systems and \emph{roles} as used in description logics whenever we feel it is
+necessary. Otherwise, we drop that distinction if it is clear from the context.
+%
+In Section~\ref{sec:sigma-crom} we introduce a syntactical variant of the \emph{Compartment Role
+  Object Model (CROM)}~\cite{KBG-SLE15}.  Then, after discussing requirements for the logical
+formalism and analyze possible candidates for the translation in
+Section~\ref{sec:requirements-and-CDLs}, we present the actual mapping in
+Section~\ref{sec:representating-role-based-models}. We close this chapter in
+Section~\ref{sec:going-beyond-crom} with possible features of role-based systems that go beyond CROM
+but still can be expressed in an ontology.
 
 
 
@@ -57,27 +32,34 @@ Latter McCarthy Klarman
 
 
 In this section we will present a syntactical variant of the \emph{Compartment Role Object Model}
-defined in \textbf{[Ku-SLE15]}\todo{citation}. This variant is simply introduced for easier
+defined in \cite{KBG-SLE15}. This variant is simply introduced for easier
 explanation of the mapping to description logics.
 
 \subsection{Type and Instance Level}
 \label{sec:type-instance-level}
 
+In CROM, we can model role-based systems via different kinds of concepts: \emph{natural types},
+\emph{\rosirole types}, \emph{compartment types} and \emph{relationship types}. These differ in the
+three ontological properties \emph{rigidity}, \emph{foundedness} and \emph{identity}.
+
+\Rosirole types are rigid, non-founded and have
+%
+\todo{alles noch zu sehr abhängig von Section 2.2}
 
 
 
-To define a CROModel, we 
 
-We omit the graphical notation and 
+% Instances of these
+% types are called \emph{naturals}, \emph{\rosiroles}, \emph{compartments} and \emph{relationships},
+% respectively. Naturals denote non-founded and context-independent objects
 
-\todo[inline]{some more information}
 
 
 
 \begin{definition}[Compartment Role Object Model]\label{def:scrom}
   Let \NT, \RT, \CT and \RST be finite and mutually disjoint sets of Natural Types, Role
   Types, Compartment Types, and Relationship Types, respectively.  The tuple
-  $\Sigma = (\NT, \RT, \CT,\RST)$ is a \todo{or better alphabet?}\emph{vocabulary}.
+  $\Sigma = (\NT, \RT, \CT,\RST)$ is the \emph{vocabulary}.
   A \emph{Compartment Role Object Model \Mmc over $\Sigma$ ($\Sigma$-CROM)} is a tuple \MM where
   \begin{enumerate}
   \item $\fills\subseteq(\NT\cup\CT)\times\RT$ is a right-total binary relation,
@@ -88,6 +70,11 @@ We omit the graphical notation and
   \end{enumerate}
 \end{definition}
 
+\noindent
+In the above definition, \fills specifies which rigid type is allowed to play which role
+type. Expressing in which compartment type a certain role type can be played is stated
+in \parts. Finally, \rel defines the domain and range of relationship types.
+%
 In the rest of this thesis, we use the following phrases:
 \begin{itemize}
 \item \emph{$T$ fills \rt} if $(T,\rt)\in\fills$,
@@ -97,48 +84,55 @@ In the rest of this thesis, we use the following phrases:
 \item \emph{\rt[1] is the domain of \rst ($\dom(\rst)$) and \rt[2] is the range of \rst
     ($\ran(\rst)$)} if $(\rt[1],\rt[2])\in\rel(\rst)$.
 \end{itemize}
-
-
-
-Since \fills is a right-total relation, for each role type there exists a natural type or
-compartment type that fills it.  As each element of \Pmf is a non-empty subset of \RT, the image
-of \parts does not contain the empty set.  Since \Pmf is a partition each role type participates in
-only one compartment type.  Due to the irreflexivity of \Smc there exists no $\rst \in \RST$ and
-$\rt \in \RT$ such that $\rel(\rst) = (\rt,\rt)$. Furthermore, since \Smc is a subset of
-$\bigcup_{P\in\Pmf}P\times P$, the pair of role types in the image of \rel always participate in the
-same compartment type. Hence, equations (1) to (5) of \textbf{[Ku-SLE15]} are satisfied.
+To show that our definition satisfies Equations~(1) to~(5) of~\cite{KBG-SLE15}, we exploit the
+different assumptions made in the definition.  Since \fills is a right-total relation, for each role
+type there must exist a natural type or compartment type that fills it.  As each element of \Pmf is
+a non-empty subset of \RT, the range of \parts does not contain the empty set.  Since \Pmf is a
+partition each role type participates in exactly one compartment type.  Due to the irreflexivity of
+\Smc there exists no $\rst \in \RST$ and $\rt \in \RT$ such that $\rel(\rst) =
+(\rt,\rt)$. Furthermore, since \Smc is a subset of $\bigcup_{P\in\Pmf}P\times P$, the pair of role
+types in the range of \rel always participate in the same compartment type. Hence, a \SCROM is
+always well-formed.
 
 Note here, that reasoning about role-based models does not include checking \emph{well-formed\-ness}
-as defined in Definition 1 of \textbf{[Ku-SLE15]}, since that is a pure syntactical check. Therefore the
-above definition already ensures that a \SCROM is well-formed. 
-
-Next, we introduce instances based on role-based models.
+as defined in Definition 1 of~\cite{KBG-SLE15}, since that is a pure syntactical check.  Next, we
+introduce instances based on role-based models.
 
 
 \begin{definition}[Compartment Role Object Instance, Satisfiability]\label{def:scroi}
-  Let $\Sigma = (\NT, \RT,$ \todo{Zeilenumbruch hier???}$\CT,\RST)$ be a vocabulary.  Then, a
-  \emph{Compartment Role Object Instance \I over $\Sigma$ ($\Sigma$-CROI)} is a tuple
+  Let $\Sigma = (\NT, \RT,$ $\CT,\RST)$ be a vocabulary.  Then, a
+  \emph{Compartment Role Object Instance \I over $\Sigma$ (\SCROI)} is a tuple
   $\I=(\Gamma^{\I},\type,\plays,\links)$, where
   \begin{itemize}
   \item $\Gamma^{\I}$ is a non-empty domain,
   \item $\type:\Gamma^{\I}\to\NT\cup\RT\cup\CT$ is a total function,
   \item $\plays \subseteq \Osf\times\Csf\times\Rsf$ is a ternary relation, and
-  \item $\links: (\RST\times\Csf) \to \powerset{\Rsf\times\Rsf}$ is a total function.
+  \item $\links: (\RST\times\Csf) \to \powerset{\Rsf\times\Rsf}$ is a total function
   \end{itemize}
   with 
   \begin{align*}
-    \Nsf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \NT\}, \\
-    \Rsf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \RT\}, \\
-    \Csf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \CT\}\text{ and} \\
-    \Osf & \coloneqq \Nsf \cup \Csf
+    \Nsf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \NT\} \text{ (\emph{naturals})}, \\
+    \Rsf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \RT\} \text{ (\emph{roles})}, \\
+    \Csf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \CT\} \text{ (\emph{compartments}) and} \\
+    \Osf & \coloneqq \Nsf \cup \Csf \text{ (\emph{objects})}.
   \end{align*}
-  being the sets of \emph{naturals}, \emph{roles}, \emph{compartments} and
-  \emph{objects}, respectively. Furthermore, the set of all objects playing a role in $c$ is denoted by
-  $\Osf[\I,c]$, i.e.\ $\Osf[\I,c] \coloneqq \{o \in \Osf \mid (o,c,\cdot) \in \plays\}$. For
-  $T \in \NT\cup\RT\cup\CT$, $T^{\I}$ is the set of all elements of that type, i.e.\
-  $T^{\I} \coloneqq \{d \in \Gamma \mid \type(d) = T\}$.
-
-  A $\Sigma$-CROI \I \emph{satisfies} a \SCROM{} \Mmc, denoted by $\I\models\Mmc$, if it has the following
+  % being the sets of \emph{naturals}, \emph{roles}, \emph{compartments} and
+  % \emph{objects}, respectively. 
+  Furthermore, %
+  the set $T^{\I}$ of all elements of type $T$, %
+  the set \Osf[\I,c] of all objects playing a role in $c$, %
+  the set \Osf[\I,c,\rt] of all objects playing an \rt-role in $c$, and %
+  the set \Rsf[\I,c] of all roles played in $c$ %
+  are defined as follows:
+  \begin{align*}
+    T^{\I}     & \coloneqq \{d \in \Gamma \mid \type(d) = T\},\\
+    \Osf[\I,c] & \coloneqq \{o \in \Osf \mid \text{there is some $r$ with $(o,c,r) \in \plays$}\}, \text{ and}\\
+    \Osf[\I,c,\rt] & \coloneqq \{o \in \Osf \mid \text{there is some $r$ with $(o,c,r) \in \plays$
+                     and $r\in\rt^{\I}$}\}\\
+    \Rsf[\I,c] & \coloneqq \{r \in \Rsf \mid \text{there is some $o$ with $(o,c,r) \in \plays$}\}.
+  \end{align*}
+  %
+  A \SCROI{} \I \emph{satisfies} a \SCROM{} \Mmc, denoted by $\I\models\Mmc$, if it has the following
   properties:
   \begin{enumerate}
   \item The \plays-relation respects \fills, i.e.~for each tuple $(o,c,r)\in\plays$ the type of $o$
@@ -151,7 +145,7 @@ Next, we introduce instances based on role-based models.
     participates in the type of $c$:
     \begin{align*}
       & \{(c,r)\mid(\cdot,c,r)\in\plays\}\\
-      & \qquad \subseteq\ \{(c,r)\mid \text{there exists $\ct \in \CT$, $\rt \in \RT$ s.t. $c \in
+      & \quad \subseteq\ \{(c,r)\mid \text{there exists $\ct \in \CT$, $\rt \in \RT$ s.t. $c \in
         \ct^{\I}$, $r \in \rt^{\I}$, $\rt \in \parts(\ct)$}\}.
     \end{align*}
   \item Each object can only play one role of each role type in each compartment:
@@ -177,20 +171,21 @@ Next, we introduce instances based on role-based models.
   A \SCROM{} \Mmc is \emph{satisfiable} if there exists any \SCROI{} \I such that $\I\models\Mmc$. 
 \end{definition}
 
-We say that $r$ is an $\rt$-role or $c$ is a $\ct$-compartment if, respectively,
-$\type(r) = \rt \in \RT$ or $\type(c) = \ct \in \CT$.  Furthermore, \emph{$o$ plays $r$ in $c$} and
+We say that $r$ is an $\rt$-role and $c$ is a $\ct$-compartment if, respectively,
+$\type(r) = \rt \in \RT$ and $\type(c) = \ct \in \CT$.  Furthermore, \emph{$o$ plays $r$ in $c$} and
 $o$ is the \emph{player} of $r$ if $(o,c,r) \in \plays$, and \emph{$r_{1}$ is linked to $r_{2}$ via
   $\rst$ in $c$} if $(r_{1}, r_{2}) \in \links(\rst, c)$.
 
+Again, it is easy to verify that our definition of a \SCROI satisfying a \SCROM is equivalent to the
+definition of~\cite{KBG-SLE15}.
 Since the \plays-relation respects the \fills- and the \parts-relation, if $o$ plays an \rt-role in
 a \ct-compartment, then the type of $o$ must fill \rt and \rt must participate in \ct. If $o$ plays
 $r_{1}$ and $r_{2}$ in $c$ then $r_{1}$ and $r_{2}$ must have different types, because each object
 can only play one role of each type in the same compartment. Moreover, for each role there exists
 exactly one object that plays it and one compartment where it is played in. In contrast to the
-formalisation in \textbf{[Ku-SLE15]} we omit $\varepsilon$-roles, but roles that are linked via a
+formalisation in~\cite{KBG-SLE15} we omit $\varepsilon$-roles, but roles that are linked via a
 relationship type are both played in the same compartment and must be instances of the correct types
-since \links respects \rel.  Thus, equations (6) to (11) of \textbf{[Ku-SLE15]} are satisfied.
-
+since \links respects \rel.  Thus, equations (6) to (11) of~\cite{KBG-SLE15} are satisfied.
 
 Before we investigate how the information about a \SCROM can be encoded in a description logic
 ontology, we have to discuss the main reasoning tasks for role-based models. The arguably most
@@ -202,39 +197,48 @@ Instead, given a \SCROM{} \Mmc, it is much more interesting whether there exists
 compliant with \Mmc.  Additionally we often want to know for a specific \SCROM{} \Mmc whether there
 exists a compliant \SCROI that fulfills certain assertions, e.g.\ that a role of a certain type is
 played.  To express these assertional knowledge, we introduce a so-called \SCROA, a set of
-assertions which should be fulfilled by an \SCROI.
+assertions which should also be satisfied by an \SCROI.
 
 \begin{definition}[$\Sigma$-Compartment Role Object Assertions] \label{def:scroa} Let
-  $\Sigma = (\NT, \RT, \CT, \RST)$ be a vocabulary and let \IND be a non-empty set of individual
-  names disjoint from $\Sigma$.  A \emph{Compartment Role Object Assertion over $\Sigma$} is of the
-  form
+  $\Sigma = (\NT, \RT, \CT, \RST)$ be a vocabulary and let \INDC and \IND be two non-empty, disjoint
+  sets of meta and object individual names disjoint from $\Sigma$.  A \emph{Compartment Role Object
+    Assertion over $\Sigma$} is of the form
   \begin{itemize}
-  \item $T(a)$ with $T \in \NT \cup \CT \cup \RT$,
-  \item $\playass(a_{1}, a_{2}, a_{3})$ with $a_{1}, a_{2}, a_{3} \in \IND$, or
-  \item $\linkass(\rst, a_{1}, a_{2}, a_{3})$ with $\rst \in \RST$ and  $a_{1}, a_{2}, a_{3} \in \IND$ .
+  \item $T(c)$ with $T\in\CT$ and $c\in\INDC$ (\emph{meta type assertion}),
+  \item $T(a,c)$ with $T \in \NT \cup \CT \cup \RT$, $a\in\IND$ and $c\in\INDC$ (\emph{object type assertion}),
+  \item $\playass(a_{1}, c, a_{2})$ with $a_{1}, a_{2} \in \IND$ and $c\in\INDC$ (\emph{plays assertion}), or
+  \item $\linkass(\rst, c, a_{1}, a_{2})$ with $\rst \in \RST$ and  $a_{1}, a_{2} \in \IND$ and
+    $c\in\INDC$ (\emph{link assertion}). 
   \end{itemize}
 
   A \emph{set of Compartment Role Object Assertions \A over $\Sigma$ (\SCROA)} is a set of such
   assertions.
   %
-  We extend the \SCROI{} \I to additionally map individual names to domain elements, e.g.\ $a$ is
-  mapped to a domain element $a^{\I} \in \Gamma^{\I}$. A \SCROI{} \I \emph{satisfies an assertion
-    $\alpha$}, denoted by $\I\models\alpha$ if
+  We extend the \SCROI{} \I to additionally map individual names to domain elements, e.g.\
+  $a\in\IND$ and $c\in\INDC$ are
+  mapped to a domain elements $a^{\I} \in \Gamma^{\I}$ and $c^{\I} \in \Gamma^{\I}$. A \SCROI{} \I \emph{satisfies an assertion
+    $\alpha$}, denoted by $\I\models\alpha$, if
   \begin{itemize}
-  \item for $\alpha$ of the form $T(a)$: $a^{\I} \in T^{\I}$,
-  \item for $\alpha$ of the form $\playass(a_{1}, a_{2}, a_{3})$:
-    $(a_{1}^{\I}, a_{2}^{\I}, a_{3}^{\I}) \in \plays$, and
-  \item for $\alpha$ of the form $\linkass(\rst, a_{1}, a_{2}, a_{3})$:
-    $(\rst, a_{1}^{\I}, a_{2}^{\I}, a_{3}^{\I}) \in \links$.
+  \item for $\alpha$ of the form $T(c)$: $c^{\I} \in T^{\I}$,
+  \item for $\alpha$ of the form $T(a, c)$: $a^{\I} \in T^{\I} \cap (\Osf\cup\Rsf[\I,c])$,
+  \item for $\alpha$ of the form $\playass(a_{1}, c, a_{2}, )$:
+    $(a_{1}^{\I}, c^{\I}, a_{2}^{\I}) \in \plays$, and
+  \item for $\alpha$ of the form $\linkass(\rst, c, a_{1}, a_{2})$: there exist $r_{1}, r_{2}$ with
+    $(a_{1}, c, r_{1})\in\plays$, $(a_{2}, c, r_{2})\in\plays$, and
+    $(r_{1}^{\I}, r_{2}^{\I}) \in \links(\rst, c^{\I})$.
   \end{itemize}
 
   A \SCROI{} \I \emph{satisfies \A}, denoted by $\I\models\A$ if it satisfies all assertions
   in \A.
 \end{definition}
 
-Note here, that without any assertions or further restrictions as introduced in
-Section~\ref{sec:constraint-level} there always exists a trivial CROI with the singleton set $\Gamma =
-\{o\}$, the type of $o$ being some natural type, and \plays and \links being empty sets that satisfies \Mmc.
+Note here that the link assertion asserts for two objects that they play roles which are related via
+\rst, and not that the objects themselves are related.
+%
+Moreover, without any assertions or further restrictions as introduced in
+Section~\ref{sec:constraint-level} there always exists a trivial CROI with the singleton set
+$\Gamma = \{o\}$, the type of $o$ being some natural type, and \plays and \links being empty sets
+that satisfies \Mmc.
 
 
 \subsection{Constraint Level}
@@ -249,26 +253,22 @@ formalized with  so-called \emph{role groups}. These consist of a set of role
 types (or again role groups) and a lower and an upper bound. An object fulfills a role group if it
 plays at least the lower and at most the upper bound of roles from the set of role types.
 
-
- 
-
 \begin{definition}[Syntax of Role Groups]\label{def:syntax-role-groups}
   Let \RT be a set of role types. The set of \emph{role groups over \RT} is the smallest such that
   \begin{itemize}
   \item if $\rt \in \RT$, then \rt is an (\emph{atomic}) role group, and
-  \item if $A_{1}$, \dots, $A_{n}$ are role groups, $k,l \in \nat$, then $(\{A_{1}, \dots, A_{n}\},
-    k,l)$ is a (\emph{complex}) role group.
+  \item if $A_{1}$, \dots, $A_{n}$ are role groups, $k,\ell \in \nat$, then $(\{A_{1}, \dots, A_{n}\},
+    k,\ell)$ is a (\emph{complex}) role group.
   \end{itemize}
   \emph{Atoms} of a role group $A$ are defined as:
   \begin{align*}
     \atom(A) & \coloneqq
                \begin{cases}
                  \{\rt\} & \text{if $A = \rt \in \RT$}\\
-                 \bigcup_{i=1}^{n} \atom(A_{i}) & \text{if $A = (\{A_{1}, \dots, A_{n}\},k,l)$}.
+                 \bigcup_{i=1}^{n} \atom(A_{i}) & \text{if $A = (\{A_{1}, \dots, A_{n}\},k,\ell)$}.
                \end{cases}
   \end{align*}
-
-  \vspace{-1.81\baselineskip}
+  Role groups that occur within other role groups are called \emph{nested}.
 \end{definition}
 
 The semantics of a role group are based on a \SCROI and are locally evaluated for each domain
@@ -282,8 +282,8 @@ whether an object fulfills the role group.
     A^{\I,c,o} & \coloneqq 
                  \begin{cases}
                    1 & \text{if $A = \rt\in\RT$ and $o$ plays an \rt-role in $c$,} \\
-                   1 & \text{if $A = (\{B_{1},\dots,B_{n}\},k,l)$ and $k \leq \sum_{i=1}^{k}
-                     B_{i}^{\I,c,o} \leq l$, and}\\
+                   1 & \text{if $A = (\{B_{1},\dots,B_{n}\},k,\ell)$ and $k \leq \sum_{i=1}^{k}
+                     B_{i}^{\I,c,o} \leq \ell$, and}\\
                    0 & \text{otherwise.}
                  \end{cases}
   \end{align*}
@@ -291,57 +291,96 @@ whether an object fulfills the role group.
   If $A^{\I,c,o} = 1$, we say that $o$ fulfills $A$ in $c$.
 \end{definition}
 
-\todo[inline]{role groups: role implication, equivalence, and so on can be expressed via role
-  groups. very expressive role constraints can be expressed}
+\noindent
+Basic role constraints, for example as defined in~\cite{RiGr-OOPLSLA98}, i.e.\ role implication,
+role equivalence and role prohibition, can be expressed with role groups as well as much more
+complex ones. In fact, any propositional formula can be emulated with role groups.
+
+\begin{proposition}
+  Let $\varphi$ be some propositional formula. Then, there exists a role group $A_{\varphi}$ such
+  that $\varphi$ is satisfiable if and only if $A_{\varphi}$ can be fulfilled.
+\end{proposition}
+\begin{proof}
+  We define $A_{\varphi}$ inductively as follows:
+  
+  \vspace{\topsep}
+  \begin{tabular}{@{ if }l@{\quad then\quad }l}
+    $\varphi = p$ & $A_{\varphi} \coloneqq \rt[p]$,\\
+    $\varphi = \lnot \psi$ & $A_{\varphi} \coloneqq (\{A_{\psi}\}, 0, 0)$,\\
+    $\varphi = \psi_{1}\land\psi_{2}$ & $A_{\varphi} \coloneqq (\{A_{\psi_{1}}, A_{\psi_{2}}\}, 2, 2)$, and\\
+    $\varphi = \psi_{1}\lor\psi_{2}$ & $A_{\varphi} \coloneqq (\{A_{\psi_{1}}, A_{\psi_{2}}\}, 1, 2)$.
+  \end{tabular}
+  \vspace{\topsep}
+  
+  \noindent
+  Next, we establish a 1-to-1-relation between a valuation $\rho$ for $\varphi$ and a
+  $\Sigma$-CROI{} \I. For every propositional variable $P_{i}$ occurring in $\varphi$, we introduce
+  a role type \rt[i] and assume that $o$ plays an \rt[i]-role iff $\rho(P_{i}) = \true$. By
+  induction, it follows that $\rho(\varphi) = \true$ iff $o$ fulfills $A_{\varphi}$.
+\end{proof}
 
 
-\todo[inline]{occurrence constraints}
+The next category of constraints are \emph{occurrence constraints}. These state how often a role
+type or role group must at least or at most be played in a compartment. Therefore, we introduce the
+notion of a \emph{cardinality}, a pair $(k,\ell)\in\nat\times\natinf$ with $k\leq\ell$. We usually
+denote cardinalities by $(k..\ell)$. Since role types are also atomic role groups, it suffices to
+specify occurrence constraints for role groups.
+%
+Similar to multiplicities specified for associations in UML class diagrams, we specify
+\emph{cardinal constraints} for relationship types. They express how often a role of certain type
+must be related via a relationship type to some other role type.
 
-\todo[inline]{cardinality constraints over relationship types}
-
-\todo[inline]{intra-relationship type constraints.}
-
-
-
+Last but not least, the category of \emph{intra-relationship type constraints} imposes constraints on the
+players of roles which are related via a relationship type. For example, stating that the
+relationship type $\mathsf{isAncestorOf}$ between the role types $\mathsf{Parent}$ and
+$\mathsf{Child}$ is transitive assures the existence of an respective link between a grandparent and
+a grandchild. Note here, that the transitivity is evaluated over the players and not the roles
+themselves.
 
 \begin{definition}[Constraint Set]
   Let $\Sigma = (\NT, \RT, \CT, \RST)$ be a vocabulary, let \RG be the set of role groups over \RT
   and let $\Card \coloneqq \nat \times \natinf$ be the set of cardinalities.  Then, a
   \emph{$\Sigma$-Compartment Role Object Constraint Set (\SCROC) \Cmc} is a tuple $\CC$ where
-  \begin{itemize}
+  \begin{itemize}[topsep=5pt]
   \item $\occur : \CT \to \powerset{\Card \times \RG}$,
   \item $\card : \RST \to \Card \times \Card$, and
   \item $\intra : \RST \to \powerset{\Emc}$ with \Emc being a set of functions of the form
-    $e : \powerset{S\times S}\to \{\true, \false\}$ for an arbitrary set $S$ \todo{how to represent
-      ``symmetric'' or ``acyclic'' as function?}
+    $e : \powerset{A\times B}\to \{\true, \false\}$ for arbitrary sets $A$, $B$.
   \end{itemize}
-  are total functions. A \SCROI{} \I \emph{satisfies \Cmc}, denoted by $\I\models\Cmc$, if it has
-  the following properties:
+  are total functions.  The set of all non-nested role groups that appear in \occur is the set of
+  \emph{top-level role groups \RG*}.
+  %
+  A \SCROC{} \Cmc is \emph{compliant} to a \SCROM, if all atoms of a role group that is in the occurrence
+  constraints of a compartment type participate in that compartment type.
+  %
+  A \SCROI{} \I \emph{satisfies \Cmc}, denoted by $\I\models\Cmc$, if it has the following
+  properties:
   \begin{enumerate}
 
-  \item All occurrence constraints are respected, i.e.\ if $(k..l,A) \in \occur(\ct)$, then in every
-    \ct-compartment there must exist at least $k$ and at most $l$ objects that fulfill role group
-    $A$:\todo{im mapping überprüfen: comptype wo exakt 3 objekte rollenimplikation erfüllen}
+  \item All occurrence constraints are respected, i.e.\ if $(k..\ell,A) \in \occur(\ct)$, then in every
+    \ct-compartment there must exist at least $k$ and at most $\ell$ objects that fulfill role group
+    $A$:
     \begin{align*}
-      ((k,l),A) \in \occur(\ct) \textImplies  \ct^{\I} \subseteq \left\{c \in \Csf \mmid k \leq \sum\nolimits_{o\in\Osf[\I,c]}
-      A^{\I,c,o} \leq l \right\}
+      ((k,\ell),A) \in \occur(\ct) \textImplies  \ct^{\I} \subseteq \left\{c \in \Csf \mmid k \leq \sum\nolimits_{o\in\Osf[\I,c]}
+      A^{\I,c,o} \leq \ell \right\}
     \end{align*}
-
-  \item All role groups must be satisfied, i.e.\ if an object $o$ plays an \rt-role and \rt is an
-    atom of role group A, then $o$ must fulfill $A$:
+  \item All top-level role groups must be satisfied, i.e.\ if an object $o$ plays an \rt-role and
+    \rt is an atom of a top-level role group A, then $o$ must fulfill $A$:
     \begin{align*}
-      (o,c,r) \in \plays \text{, } r \in \rt^{\I} \text{ and } \rt \in \atom(A) \textImplies
-      A^{\I,c,o} = 1\text{, for all $o \in \Osf$, $A \in \RG$}
+      & (o,c,r) \in \plays \text{, } r \in \rt^{\I} \text{ and } \rt \in \atom(A) \textImplies
+      A^{\I,c,o} = 1\text{,} \\
+      & \hspace{8cm} \text{for all $o \in \Osf$, $A \in \RG*$}.
     \end{align*}
-
   \item All cardinality constraints are respected, i.e.\ every role that is played in a compartment
     $c$ and whose type is either the domain or the range of a relationship type \rst with
-    $\card(\rst) = (i..j, k..l)$ must have at least $k$ and at most $l$ \rst-successors in $c$ or at
+    $\card(\rst) = (i..j, k..\ell)$ must have at least $k$ and at most $\ell$ \rst-successors in $c$ or at
     least $i$ and at most $j$ \rst-predecessors in $c$, respectively:
     \begin{align*}
       & (\cdot,c,r) \in \plays \text{, } r \in \rt[1]^{\I} \text{, } \rel(\rst) = (\rt[1], \cdot) \text{ and
-        } \card(\rst)=(\cdot,k..l)\\
-      & \qquad \textImplies k \leq | \Succ(\rst,r,c) | \leq l \\[1ex]
+        } \card(\rst)=(\cdot,k..\ell)\\
+      & \qquad \textImplies k \leq | \Succ(\rst,r,c) | \leq \ell
+    \end{align*}
+    \begin{align*}
       & (\cdot,c,r) \in \plays \text{, } r \in \rt[2]^{\I} \text{, } \rel(\rst) = (\cdot, \rt[2]) \text{ and
         } \card(\rst)=(i..j,\cdot)\\
       & \qquad \textImplies i \leq | \Pred(\rst,r,c) | \leq j
@@ -366,8 +405,11 @@ whether an object fulfills the role group.
 
 \end{definition}
 
-\todo[inline]{paragraph about fulfilling equations (13) to (16) in SLE15}
+The definition of satisfying a constraint model in~\cite{KBG-SLE15} is, neglecting
+$\varepsilon$-roles, exactly reflected in the above definition.
 
+At last we combine all parts of the role-based system into one \emph{constrained
+  $\Sigma$-compartment Object Role Model}
 
 \begin{definition}[Constrained $\Sigma$-Compartment Role Object Model, Satisfiability Problem]
   \label{def:constrained-sigma-crom}
@@ -382,152 +424,239 @@ whether an object fulfills the role group.
 \end{definition}
 
 
+
+\section{Requirements for Logical Formalism}
+\label{sec:requirements-and-CDLs}
+
+Basically every large software project starts with modelling the application domain in UML. While
+UML is the de facto standard as modelling language, it has several drawbacks. First of all, it has
+no formally defined semantics~\cite{FrEL-CSI98}. While UML meta-models capture the precise syntax of
+concepts used for modelling, they do little for answering questions of how to interpret non-trivial
+UML diagrams.  For example, if one wants to map UML class diagrams to a logical formalism to be able
+to reason about these diagrams, one takes certain assumptions about the intended meaning of the
+occurring elements. Then a domain expert modelling some application has to trust that the logician
+constructed the mapping with the same semantics in mind. Nevertheless, over the last years several
+approaches for formal frameworks to reason on UML
+arose~\cite{Eva-WIFT98,CaCG-ISMIS02,StMS-UML03,SiSJ-OBJ04,BeCG-AI05,SiBH-IJSEKE08,AhNa-ICET10}, from
+which we can adapt some ideas, e.g. to model attributes of a UML class with DL roles and how
+multiplicities of associations are modelled in~\cite{CaCG-ISMIS02}.
+
+Besides that, UML lacks expressive power to model context-dependent domains. There also exist some
+work on extending UML in that direction~\cite{ShB-ICMB05}, but here the semantics are even more ambiguous.
+Therefore, we focus on role-based models that are based on CROM since it has both a well-defined,
+formal semantics and the means to formulate the necessary concepts accordingly.
+
+The only drawback might be the expressive restrictions of ``classical'' description logics as
+explained in the introduction. Standard DLs cannot formalize contextual knowledge in a proper way
+which is crucial for role-based systems.  In the recent years many different approaches and
+extensions of DLs have been proposed~\cite{BoGH-WS04, BeAF-ADVIS06, BaVS-ModOnt09, BaKP-JWS12,
+  CePe-IJCAR14, CePe-JAR17}.  However, many were tailored to different goals, for example to support
+context-specific reuse of ontologies or enable probabilistic reasoning. Additionally, these
+approaches have a quite different intuition of what a context exactly is. In most cases it is simply
+a finite set of names.  Serafini et al.~\cite{SeHo-JWS12} defines contexts by a set of
+attribute-value declarations, one for each \emph{dimension}, e.g.\ time, topic or location to name a
+few. There is only one context for each dimensional vector whereas there can exist many compartments
+of one compartment type.  Furthermore, except a coverage relation, there is hardly any other
+knowledge about the contexts expressible, e.g. some relational structure between them.  Hence, these
+approaches seem not appropriate to model CROMs.
+
+A far more promising formalism is the earlier mentioned description logic of context
+\klarALC~\cite{KG-JELIA10, KG16}. Klarman et al.\ follow the ideas of McCarthy's formalization of
+contexts~\cite{McC-ACM87,McC-IJCAI93}, i.e.\ that contexts are formal objects, that they have
+properties and can be described, and that they are organized in a relational structure.  This
+results in a very expressive, two-dimensional description logic with strong interactions between
+object and context level allowing to express information within a context that is valid in some
+other context.  While transcending object knowledge through contexts is very important in
+the general application of contextualized knowledge, it is complexity-wise very costly. Especially
+in the presence of rigid roles, the consistency problem becomes undecidable.
+
+By restricting that interaction to a top-down view of contexts, we can retain decidability. From the
+meta or context level, we can impose axioms that must hold within a certain context, but on object
+level, i.e.\ within a context, we cannot ``look outside''.
+%
+When formalizing compartments, this is exactly the needed expressiveness. For each compartment type
+we want to specify the constraints which must hold within a compartment of that type.
+%
+This analysis led to the construction of \LMLO.
+In Section~\ref{sec:adding-cont-concepts}, we showed that \ALCALC is indeed a sublogic of \klarALC.
+Now, we will present how a CROM can be represented in \LMLO.
+
+
 \section{Representing Role-Based Models}
 \label{sec:representating-role-based-models}
-\todo[inline, caption={open questions}]{Open question:
-  \protect\begin{itemize}
-  \protect\item Which DL is needed for \LM?
-  \protect\item Wich DL is needed for \LO?
-  \protect\end{itemize}
-}
 
-\todo[inline]{Objective: Given the \SCCROM \Kmc construct a \LMLO knowledge base $\Bmf_{\Kmc}$ such
-  that $\Bmf_{\Kmc}$ is consistent iff \Kmc is satisfiable.}
+We would like to emphasize here once again that checking well-formedness of a \SCROM{}~\Mmc and
+compliance of a constraint set with \Mmc is not considered here, because these are purely
+syntactical checks, no reasoning is necessary. Furthermore, also checking whether a given \SCROI is
+valid is not the considered task. Much more interesting is whether there exists such a \SCROI at
+all. Additionally, we can test if certain axioms are entailed or whether specific role types can be
+played. Thus, the main objective is, given a \SCCROM{} \Kmc, to construct an \LMLO-ontology
+$\Bmf_{\Kmc}$ such that $\Bmf_{\Kmc}$ is consistent iff \Kmc is satisfiable.
 
-\todo[inline]{research on how to formally represent objects of OOP}
+The general idea is to model compartment types as concepts on meta level and an object playing a
+\rosirole, the relationship types as well as all the constraints within a compartment type on object
+level. Here, we introduce o-concepts for natural types and \rosirole types and a special object role
+\plays. The fills relation is transformed into corresponding domain and range axioms for \plays.
 
-\todo[inline]{translate UML to DLs}
-
-\todo[inline]{object -> attributes as DL roles, context-independent and hence rigid roles}
-
-\todo[inline]{for role-based models, we have context-dependant knowledge}
-
-\todo[inline]{contexts in \LMLO as compartments.}
-
-\todo[inline, caption={central design decisions}]{central design decision how to represent an object
-  $o$ playing a role $r$ in a context $c$. Ternary relation that cannot be expressed in classical
-  description logics. More precisely, role-playing can be expressed as binary relation using CDLs
-  and context-local knowledge. Compartment types as meta concept names. Natural types and Role types
-  as object concept names.}
-
-\todo[inline]{Still two possibilities to represent that $o$ plays an \rt-role. }
+Here, we made a first design decision on how to express playing a \rosirole within a
+compartment. There are two possibilities, depicted in Figure~\ref{fig:two-ways-to-play-roles}, which
+we actually already showed in Example~\ref{ex:nfl-with-contexts}. On the one hand, we can introduce
+an o-concept \rt and elements playing an \rt-\rosirole are in the extension of \rt (like Mike
+McCarthy playing the \rosirole of a coach). Here, an object $o$ and a \rosirole $r$ with
+$(o,\cdot,r)\in\plays$ would be mapped to a single element $d$ in the object interpretation for that
+compartment. On the other hand, we can introduce the o-concept \rt as well, but additionally an
+object role \plays and elements playing an \rt-\rosirole have a \plays-successor that is in the extension
+of \rt (like Aaron Rodgers playing the \rosirole of a quarterback).  This is closer to the semantics
+of \SCROI{s} but introduces new object domain elements for each \rosirole that is played.  Still, we
+chose the latter variant since later on we need to count the number of \rosiroles to assure
+occurrence and cardinality constraints. In DLs this can be done via qualified number restrictions.
 
 \begin{figure}
   \centering
   \begin{tikzpicture}
-    %\grid{(-6,-1.5)}{(6,1.5)}
-    \node[node,label={Person, Student}] (a) at (-4,0) {};
-    \node[node,label={Person}] (b) at (0,0) {};
-    \node[node,label={Student}] (c) at (3,0) {};
-    \draw[edge, bend right=10] (b) to[swap] node{\plays} (c);
-    \draw[very thin] (-1.5,-1) -- (-1.5,1);
+    \node[node,label={[align=left]270:\textit{MikeMcCarthy},\\ $\mathsf{Coach}$}] (mmc) at (-2,0){};
+    \node[node,label={[align=left]270:\textit{AaronRodgers}}] (ar) at (2,0){};
+    \node[node,label={[align=right]south:$\mathsf{Quarterback}$}] (qb) at (5,0){};
+    \draw[edge] (ar) to[bend left=10] node{\plays} (qb);
+    \draw[thin] (0,-1.5) to (0,1);
   \end{tikzpicture}
-  \caption{Representing an object playing a \rosirole}
-  \label{fig:two-ways-to-represent-roles}
+  \caption{Possibilities to formalize objects playing \rosiroles.}
+  \label{fig:two-ways-to-play-roles}
 \end{figure}
 
-Generally, in a \SCROM compartments are also allowed to play roles in other compartments. Within
-these other compartments a compartment playing a role does not behave differently than a
+Generally, in a \SCROM compartments are also allowed to play \rosiroles in other compartments. Within
+these other compartments a compartment playing a \rosirole does not behave differently than a
 natural. Hence, we have compartment types both as meta concept names, i.e.\ as contexts in which
-other objects play roles, and as object concept types, i.e.\ as objects that play roles in a
-context. In a \SCROM there is a one-to-one relationship since the compartment as role-player and as
+other objects play \rosiroles, and as object concept types, i.e.\ as objects that play \rosiroles in a
+context. In a \SCROM there is a one-to-one relationship since the compartment as \rosirole-player and as
 context is the same object. In our formalism we cannot establish that tight connection, but we can
 assure the existence of contexts of a certain compartment type via a meta role \nested if objects of
-that type play roles. Since we cannot restrict the number of existing contexts in a nested DL
+that type play \rosiroles. Since we cannot restrict the number of existing contexts in a nested DL
 interpretation, this is sufficient for the satisfiability problem. To distinguish between
 compartment types as contexts and as objects, we call the former simply \emph{contexts} and the latter
 \emph{o-compartments} and introduce a copy \CT* of all compartment types \CT.
 
-To sum up, we consider the meta signature $\Msig=(\MC,\MR,\MI)$ and object signature
-$\Osig=(\OC,\OR,\OI)$ such that
+Relationship types are intuitively modelled as object roles. Here, it might be more natural to span these
+between the played \rosiroles instead of the players. But due to the one-to-one correspondence
+between players and played \rosiroles, we can also construct the relationship types between the
+players. In doing so, we can avoid the use of role value maps, which would cause the consistency
+problem to become undecidable \cite{Sch89}, to formalize intra relationship type constraints. Even so, we
+can only support such constraints that are expressible in the underlying DL.
+
+\Rosirole groups are handled like \rosiroles with an additional axiom stating that ``playing'' a
+\rosirole group is equivalent to fulfilling the constraints specified in that \rosirole
+group. Furthermore, if an object plays an atom of a top-level \rosirole group, that object must
+fulfill the \rosirole group.
+%
+For the occurrence constraints we introduce a fresh individual name \occurCounter and a object role
+\counts and enforce that each played role or fulfilled role group is connected to this
+counter. Thereby we can use qualified number restrictions to encode the occurrence constraints.
+%
+For cardinal constraints we also utilize number restrictions.
+
+% Ontologically, natural types would be captured as rigid concepts and their attributes, if present, as
+% rigid roles, since that information does not change contexts-dependently. In our setting, rigidity
+% has no influence on the consistency, and neglecting it decreases the computational complexity
+% exponentially in the size of the input. Additionally, the case with rigid names can be handled quite
+% similar and we come back to it in Section~\ref{sec:going-beyond-crom}.
+
+To sum up, we consider the object signature $\Osig=(\OC,\OR,\OI)$ and the meta signature
+$\Msig=(\MC,\MR,\MI)$ such that
 \begin{itemize}
-\item $\CT \subseteq \MC$ since every compartment type as context is a meta concept,
-\item $\nested \in \MR$ to assure the existence of compartments that play roles,
-\item $\NT\cup\CT* \subseteq \OCR$ since every natural type and every compartment type as
-  o-compart\-ment is an rigid object concept,
-\item $\RT \subseteq \OCF$ since since every \rosirole type is a non-rigid object concept,
+\item $\CT \subseteq \MC$ since every compartment type is a meta concept,
+\item $\nested \in \MR$ to assure the existence of compartments that play \rosiroles,
+\item $\NT\cup\CT* \subseteq \OCR$ since every natural type and every o-compartment type are rigid
+  object concepts,
+\item $\RT\subseteq\OCF$ since every \rosirole type is a flexible object concept
 \item $\plays\in\ORF$ to express the \plays-relation, 
-\item $\RST \subseteq \ORF$ since every relationship type is an flexible object role, and
-\item $\occurCounter \in \OI$ \todo{}
+\item $\RST \subseteq \ORF$ since every relationship type is an object role,
+\item $\occurCounter \in \OI$ and $\counts\in\ORF$ to express the occurrence constraints, and
+\item $\INDC\in\MI$ and $\IND\in\OI$ to interpret individual names on their respective level. 
 \end{itemize}
 Additionally, we introduce the rigid object concept $\Ant \in \OCR$ for all objects eligible of
 playing \rosiroles, i.e.\ naturals and o-compartments, and the flexible object concepts
 $\Art\in\OCF$ for all \rosiroles and $\Arg\in\OCF$ for all instances of \rosirole groups since we
 will consider \rosirole groups of the constraint set similar to \rosiroles.
 
-At first, we express general knowledge about $\Sigma$ that is independent of the specific
+\subsection{Knowledge about the vocabulary  \texorpdfstring{\ensureboldmath{\Sigma}}{Sigma}}
+
+At first, we express general knowledge about occurring types which is independent of the specific
 \SCROM.
-
-\subsubsection*{Knowledge about the vocabulary  \ensureboldmath{\Sigma}}
-
+%
 Every context belongs to exactly one compartment type.
 \begin{align}
   \top & \sqsubseteq \bigsqcup_{\ct\in\CT} \ct \label{eq:compartments-coverage}\\
   \ct[1] \sqcap \ct[2] & \sqsubseteq \bot 
-      \text{\hspace{3em} for all $\ct[1], \ct[2] \in \CT$, $\ct[1]\neq\ct[2]$}
+      \text{\qquad\qquad for all $\ct[1], \ct[2] \in \CT$, $\ct[1]\neq\ct[2]$}\label{eq:compartments-disjoint}
 \end{align}
 
-\noindent In every context, every natural or o-compartment and every \rosirole belongs to exactly one type.
+\noindent
+In every context, every natural or o-compartment and every \rosirole belongs to exactly one type.
 \begin{align}
-  \top & \sqsubseteq \oax{ \Ant \equiv \bigsqcup_{\nt\in\NT}\nt \sqcup \bigsqcup_{\ct*\in\CT*}\ct*}\\
-  \top & \sqsubseteq \bigsqcap_{\substack{T_{1},\,T_{2}\in\NT\cup\CT*,\\ T_{1} \neq T_{2}}}
-      \oax{T_{1} \sqcap T_{2} \sqsubseteq \bot}\\
+  \top & \sqsubseteq \oax{ \Ant \equiv \bigsqcup_{\nt\in\NT}\nt \sqcup \bigsqcup_{\ct*\in\CT*}\ct*}\label{eq:naturals-coverage}\\
   \top & \sqsubseteq \oax{ \Art \equiv \bigsqcup\limits_{\rt\in\RT}\rt} \label{eq:roles-coverage}\\
-  \top & \sqsubseteq \bigsqcap_{\substack{\rt[1],\,\rt[2]\in\RT,\\ \rt[1]\neq\rt[2]}}
-      \oax{\rt[1] \sqcap \rt[2] \sqsubseteq \bot} \label{eq:roles-disjoint}
+  \top & \sqsubseteq \bigsqcap_{\substack{T_{1},\,T_{2}\in\NT\cup\CT*\cup\RT,\\ T_{1} \neq T_{2}}}
+      \oax{T_{1} \sqcap T_{2} \sqsubseteq \bot} \label{eq:roles-disjoint}
 \end{align}
 
-\noindent On object level, every element is either a \rosirole, a natural or o-compartment, an
+\noindent
+On object level, an element can either be a \rosirole, a natural or o-compartment, an
 instance of a \rosirole group or the individual \occurCounter.
 \begin{align}
-  \top & \sqsubseteq \oax{\top \sqsubseteq \Ant \sqcup \Art \sqcup \Arg \sqcup \{\occurCounter\}}\\
+  %\top & \sqsubseteq \oax{\top \sqsubseteq \Ant \sqcup \Art \sqcup \Arg \sqcup \{\occurCounter\}}\\
   \begin{split}
   \top & \sqsubseteq \oax{\Ant \sqcap \Art \sqsubseteq \bot} 
       \sqcap \oax{\Ant \sqcap \Arg \sqsubseteq \bot}
       \sqcap \oax{\Art \sqcap \Arg \sqsubseteq \bot} \\
     & \qquad \sqcap \oax{\lnot(\Ant \sqcup \Art \sqcup \Arg)(\occurCounter)}
-  \end{split}
+  \end{split}\label{eq:obj-disjoint}
 \end{align}
 
-\noindent Next, every natural or o-compartment can only play one \rt-\rosirole in each context and
+\noindent
+Next, every natural or o-compartment can only play one \rt-\rosirole in each context and
 each \rosirole must be played by some object.
 \begin{align}
-  \top & \sqsubseteq \bigsqcap_{\rt\in\RT} \oax{\Ant \sqsubseteq \atmost{1}{\plays}{\rt}} \\
+  \top & \sqsubseteq \bigsqcap_{\rt\in\RT} \oax{\Ant \sqsubseteq \atmost{1}{\plays}{\rt}}\label{eq:roletype-played-max-once} \\
   \top & \sqsubseteq \oax{\Art \sqsubseteq \atleast{1}{\plays^{-}}{\top} 
-         \sqcap \atmost{1}{\plays^{-}}{\top}}
+         \sqcap \atmost{1}{\plays^{-}}{\top}}\label{eq:role-is-played-exactly-once}
 \end{align}
 
-\noindent We formalize a general domain and range restriction for \plays. Only naturals or o-compart\-ments
+\noindent
+We formalize a general domain and range restriction for \plays. Only naturals or o-compart\-ments
 can play something, and only \rosiroles or instances of \rosirole groups can be played.
 \begin{align}
-  \top & \sqsubseteq \oax{ \exists\plays.\top \sqsubseteq \Ant} \\
-  \top & \sqsubseteq \oax{\top \sqsubseteq \forall\plays.(\Art\sqcup\Arg)}
+  \top & \sqsubseteq \oax{ \exists\plays.\top \sqsubseteq \Ant}\label{eq:plays-domain} \\
+  \top & \sqsubseteq \oax{\top \sqsubseteq \forall\plays.(\Art\sqcup\Arg)}\label{eq:plays-range}
 \end{align}
 
-\noindent Finally, if an o-compartment plays a \rosirole in some context, the o-compartment must also exist as
+\noindent
+Finally, if an o-compartment plays a \rosirole in some context, the o-compartment must also exist as
 context.
 \begin{align}
   \lnot\oax{\ct* \sqcap \exists\plays.\top\sqsubseteq\bot} & \sqsubseteq \exists\nested.\ct
-      \text{\hspace{3em} for all $\ct* \in \CT*$}
+      \text{\hspace{3em} for all $\ct* \in \CT*$}\label{eq:nested-cts}
 \end{align}
 
+\subsection{Knowledge about the \texorpdfstring{\SCROM{} \Mmc}{Sigma-CROM M}}
 
-\noindent With the general knowledge about the vocabulary $\Sigma$ being set up, we can look into
+With the general knowledge about the vocabulary $\Sigma$ being set up, we can look into
 specific knowledge for a given \SCROM{} \MM.
 
-\subsubsection*{Knowledge about the \SCROM{} \Mmc}
-
 The \fills-relation restricts which natural or compartment types are allowed to play which \rosirole
-types. Hence, all \plays-successors of naturals or o-compartments of a specific type are either
-instances of a \rosirole type that are filled by that type or instances of a \rosirole
-group. Analogously, a \rosirole type has as \plays-predecessors only naturals or o-compartments of
+types. Hence, elements that play a certain \rosirole type can only be naturals or o-compartments of
 types which fill that \rosirole type.
 \begin{align}
-  \top & \sqsubseteq \bigsqcap_{T\in\NT\cup\CT*}\oax{T \sqsubseteq \forall\plays.
-      \bigg(\Arg \sqcup \bigsqcup\nolimits_{(T,\rt)\in\fills} \rt \bigg)}\\
   \top & \sqsubseteq \bigsqcap_{\rt\in\RT}\oax{\exists\plays.\rt \sqsubseteq 
-      \bigg( \bigsqcup\nolimits_{(T,\rt)\in\fills} T \bigg)}
+      \bigg( \bigsqcup\nolimits_{(T,\rt)\in\fills} T \bigg)} \label{eq:fills}
 \end{align}
+Note here, that Equation~\eqref{eq:fills} is sufficient in the sense that in conjunction with
+Equations~\eqref{eq:roles-coverage} and~\eqref{eq:plays-range} it entails that all \plays-successors
+of naturals or o-compartments of a specific type are either instances of a \rosirole type that are
+filled by that type or instances of a \rosirole group.
+\begin{align*}
+  \top & \sqsubseteq \bigsqcap_{T\in\NT\cup\CT*}\oax{T \sqsubseteq \forall\plays.
+      \bigg(\Arg \sqcup \bigsqcup\nolimits_{(T,\rt)\in\fills} \rt \bigg)}.
+\end{align*}
 
 \noindent Since in a valid \SCROI the \plays-relation respects \parts, only \rt-\rosiroles with
 $\rt\in\parts(\ct)$ exist in a \ct-context.
@@ -540,10 +669,10 @@ $\rt\in\parts(\ct)$ exist in a \ct-context.
 restricts them for each relationship type.
 \begin{align}
   \begin{split}
-    \top & \sqsubseteq \oax{\exists\rst.\top\sqsubseteq\rt[1]} \sqcap
-         \oax{\top\sqsubseteq\forall\rst.\rt[2]}\\
-       & \hspace{5em}\text{for all $\rst\in\RST$ and $\rel(\rst) = (\rt[1],\rt[2])$}
-  \end{split}
+    \top & \sqsubseteq \oax{\exists\rst.\top\sqsubseteq\exists\plays.\rt[1]} \sqcap
+         \oax{\top\sqsubseteq\forall\rst.(\exists\plays.\rt[2])}\\
+       & \hspace{7em}\text{for all $\rst\in\RST$ and $\rel(\rst) = (\rt[1],\rt[2])$}
+  \end{split}\label{eq:rst-domain-range}
 \end{align}
 
 \noindent Note here, that due to equations~\eqref{eq:compartments-coverage},
@@ -555,146 +684,354 @@ $\ct\in\CT$:
   \lnot\ct & \sqsubseteq \oax{\bigsqcup_{\rt\in\parts(\ct)}\rt\sqsubseteq\bot}
 \end{align*}
 
-\noindent Next, let \A be a \SCROA. Compartment role object assertions can be formalized as meta
+\subsection{Knowledge about the \texorpdfstring{\SCROA{} \A}{Sigma-CROA A}}
+
+Next, let \A be a \SCROA. Compartment role object assertions can be formalized as meta
 concept assertions.
-
-\subsubsection*{Knowledge about the \SCROA{} \A}
-
-For any assertion of the form $\ct(a)\in\A$ with $\ct\in\CT$ the individual $a$ must be a context of
+For any meta type assertion of the form $\ct(c)\in\A$ with $\ct\in\CT$ and $c\in\INDC$ the individual $a$ must be a context of
 type \ct.
 \begin{gather}
-  \ct(a)
+  \ct(c)\label{eq:meta-type-assertion}
 \end{gather}
 
-For $T(a)\in\A$ with $T\in\NT\cup\RT$ the individual $a$ is a natural or \rosirole
-  that belongs to the concept $T$ in some context.
+\noindent
+For any object type assertion $T(a,c)\in\A$ with $T\in\NT\cup\CT\cup\RT$, $a\in\IND$ and $c\in\INDC$ the individual
+$a$ is a natural, an o-compartment or \rosirole
+  that belongs to the concept $T$ in context $c$.
 \begin{gather}
-  \oax{T(a)}(x_{new})
+  \oax{T(a)}(c)\label{eq:obj-type-assertion}
 \end{gather}
 
-A \plays assertion $\playass(a_{1}, a_{2}, a_{3}) \in \A$ states that $a_{1}$ plays $a_{3}$
-  in $a_{2}$.
+\noindent
+A \plays assertion $\playass(a_{1}, c, a_{2}) \in \A$ states that $a_{1}$ plays $a_{2}$
+  in $c$.
 \begin{gather}
-  \oax{\plays(a_{1},a_{3})}(a_{2})
+  \oax{\plays(a_{1},a_{2})}(c)\label{eq:plays-assertion}
 \end{gather}
 
-A \links assertion $\linkass(\rst,a_{1},a_{2},a_{3}) \in \A$ states that $a_{2}$ is
-  related to $a_{3}$ in $a_{1}$ via \rst.
+\noindent
+A \links assertion $\linkass(\rst, c, a_{1}, a_{2}) \in \A$ states that $a_{1}$ and $a_{2}$ play
+\rosiroles which are related in $c$ via \rst. Due to the way we modelled relationship types, this is
+simply the following axiom: 
 \begin{gather}
-  \oax{\rst(a_{2}, a_{3})}(a_{1})
+  \oax{\rst(a_{1}, a_{2})}(c)\label{eq:links-assertion} 
 \end{gather}
+% This is slightly more complicated as we mapped the
+%   relationship types between the players:
+% \begin{gather}
+%   (\oax{\rst(o_{1}, o_{2})}\sqcap\oax{\plays(o_{1}, a_{1})}\sqcap\oax{\plays(o_{2},
+%     a_{2})})(c)\label{eq:links-assertion} 
+% \end{gather}
+%where w.l.o.g.\ $o_{1}, o_{2}\in\OI\setminus\IND$ are fresh individual names.
 
-\todo[inline]{introduction sentences to constraint set \Cmc}
+\subsection{Knowledge about the \texorpdfstring{\SCROC{} \Cmc}{Sigma-CROC C}}
 
-\subsubsection*{Knowledge about the \SCROC{} \Cmc}
-
-Let \Cmc be a \SCROC and let $\RG(\Cmc) = \{\rg[1], \dots, \rg[n]\}$ be the set of all complex
-\rosirole groups occurring in \Cmc. Analogous to \rosiroles, \rosirole groups are disjoint, every
-instance of a \rosirole group must be played by some object and every object can either fulfill or not
-fulfill a \rosirole group.
+Let \Cmc be a \SCROC, let $\RG(\Cmc)$ denote the set of all complex \rosirole groups occurring in
+\Cmc and let $\RG*(\Cmc) \subseteq \RG(\Cmc)$ denote the set of all complex top-level \rosirole
+groups. Analogous to \rosiroles, \rosirole groups are disjoint, every instance of a \rosirole group
+must be played by some object and every object can either fulfill or not fulfill a \rosirole group.
 \begin{align}
   \top & \sqsubseteq \oax{ \Arg \equiv \bigsqcup_{\rg\in\RG(\Cmc)}\rg} 
       \sqcap \bigsqcap_{\substack{\rg[1],\,\rg[2]\in\RG(\Cmc),\\ \rg[1]\neq\rg[2]}} 
       \oax{\rg[1] \sqcap \rg[2] \sqsubseteq \bot}
       \label{eq:rolegroups-coverage-and-disjoint}\\
   \top & \sqsubseteq \oax{\Arg \sqsubseteq \atleast{1}{\plays^{-}}{\top} 
-      \sqcap \atmost{1}{\plays^{-}}{\top}} \\
-  \top & \sqsubseteq \bigsqcap_{\rg\in\RG(\Cmc)} \oax{\Ant \sqsubseteq \atmost{1}{\plays}{\rg}}
+      \sqcap \atmost{1}{\plays^{-}}{\top}}\label{eq:rgs-exactly-one-inverse-plays} \\
+  \top & \sqsubseteq \bigsqcap_{\rg\in\RG(\Cmc)} \oax{\Ant \sqsubseteq \atmost{1}{\plays}{\rg}}\label{eq:obj-plays-max-one-rg}
 \end{align}
 
-\noindent Complex \rosirole groups are treated like abstract \rosiroles. An object can ``play'' an
-instance of a \rosirole group. This is equivalent to fulfilling that role group. So, the object must
-``play'' the required number of containing \rosirole groups.
+\noindent
+Complex \rosirole groups are treated like abstract \rosiroles. An object can ``play'' an instance of
+a \rosirole group. This is equivalent to fulfilling that role group. So, the object must ``play''
+the required number of containing \rosirole groups.
 %
-Furthermore, if an object plays a \rosirole whose type is an atom of a \rosirole group, the object
-must also fulfill that \rosirole group.
+Furthermore, if an object plays a \rosirole whose type is an atom of a top-level \rosirole group,
+the object must also fulfill that \rosirole group.
 \begin{align}
-  \top & \sqsubseteq \bigsqcap_{\substack{\rg\in\RG(\Cmc),\\\rg = (\{A_{1}, \dots, A_{n}\},k,l)}}
+  \top & \sqsubseteq \bigsqcap_{\substack{\rg\in\RG(\Cmc),\\\rg = (\{A_{1}, \dots, A_{n}\},k,\ell)}}
       \oax{\exists\plays.\rg \equiv (\atleast{k}{\plays}{(A_{1} \sqcup \dots \sqcup A_{n})}) 
-      \sqcap (\atmost{l}{\plays}{(A_{1} \sqcup \dots \sqcup A_{n})})}\\
-  \top & \sqsubseteq \bigsqcap_{\rg\in\RG(\Cmc)}
-      \oax{\exists\plays.\bigg(\bigsqcup\nolimits_{\rt\in\atom(\rg)}\rt\bigg)\sqsubseteq \exists\plays.\rg}
+      \sqcap (\atmost{\ell}{\plays}{(A_{1} \sqcup \dots \sqcup A_{n})})}\label{eq:rg-declaration}\\
+  \top & \sqsubseteq \bigsqcap_{\rg\in\RG*(\Cmc)}
+      \oax{\exists\plays.\bigg(\bigsqcup\nolimits_{\rt\in\atom(\rg)}\rt\bigg)\sqsubseteq \exists\plays.\rg}\label{eq:rg-must-play}
 \end{align}
 
-\noindent To capture the occurrence constraints we use an object individual name \occurCounter and
-introduce an \counts-role from that individual to all \rosiroles and \rosirole group
-instances. Thus, the occurrence constraints can be enforced with the help of qualified number
-restrictions.
+\noindent 
+Since for the occurrence constraints we only consider objects that play any \rosirole in this
+compartment, we assure that fulfilling a \rosirole group implies playing some \rosirole.
+\begin{align}
+  \top & \sqsubseteq \oax{\exists\plays.\Arg\sqsubseteq\exists\plays.\Art}\label{eq:rgplayer-plays-role}
+\end{align}
+
+\noindent
+To capture the occurrence constraints we use an object individual name \occurCounter and introduce
+an \counts-role from that individual to all \rosiroles and \rosirole group instances. Thus, the
+occurrence constraints can be enforced with the help of qualified number restrictions.
 \begin{align}
   \top & \sqsubseteq \oax{\Art \sqcup \Arg \sqsubseteq \atleast{1}{\counts^{-}}{\{\occurCounter\}} 
-      \sqcap \atmost{1}{\counts^{-}}{\{\occurCounter\}}}\\
+      \sqcap \atmost{1}{\counts^{-}}{\{\occurCounter\}}}\label{eq:counts-decl}\\
   \begin{split}
     \ct & \sqsubseteq \oax{(\atleast{k}{\counts}{\rg})(\occurCounter)}
-    \sqcap \oax{(\atmost{l}{\counts}{\rg})(\occurCounter)}\\
-    & \text{\rlap{\hspace{5em} for all $(k..l,\rg)\in\occur(\ct)$, for all $\ct\in\CT$}}
-  \end{split}
+    \sqcap \oax{(\atmost{\ell}{\counts}{\rg})(\occurCounter)}\\
+    & \text{\rlap{\hspace{5em} for all $(k..\ell,\rg)\in\occur(\ct)$, for all $\ct\in\CT$}}
+  \end{split}\label{eq:occurrence-constraints}
 \end{align}
 
 \noindent Cardinal constraints restrict the number of \rosiroles that are related to \rosirole via a
 relationship type. \Rosiroles whose type is the domain or range of a relationship type \rst for
 which there exists a cardinal constraint must have the correct amount of \rst successors or
 predecessors, respectively.
+
 \begin{align}
   \top & \sqsubseteq \bigsqcap_{\substack{\rst\in\RST, \\ \rel(\rst) = (\rt[1], \rt[2]), \\
-  \card(\rst) = (i..j, k..l)}}
-  \oax{\rt[1] \sqsubseteq \atleast{k}{\rst}{\top} \sqcap \atmost{l}{\rst}{\top}}
-  \sqcap \oax{\rt[2] \sqsubseteq \atleast{i}{\rst^{-}}{\top} \sqcap \atmost{j}{\rst^{-}}{\top}} \label{eq:last-equation}
+  \card(\rst) = (i..j, k..\ell)}}
+  \begin{aligned}[t]
+    & \oax{\exists\plays.\rt[1] \sqsubseteq \atleast{k}{\rst}{\top} \sqcap \atmost{\ell}{\rst}{\top}} \\
+    & \qquad\qquad \sqcap \oax{\exists\plays.\rt[2] \sqsubseteq \atleast{i}{\rst^{-}}{\top} \sqcap \atmost{j}{\rst^{-}}{\top}}
+  \end{aligned}
+   \label{eq:last-equation}
 \end{align}
 
-\todo[inline]{Some explanation about intra constraints, and that they cannot be expressed.}
+\noindent
+As mentioned above, because we spanned the relationship types between the players and not between the
+\rosiroles, we can model at least some of the intra-relationship type constraints, exactly those
+that are expressible in the object logic. In \SHOIQ, these would be transitivity and symmetry. Thus,
+we add the following role axioms to the object RBox \RO:
+\begin{gather}
+  \trans{\rst}  \text{\qquad for all $\transsf\in\intra(\rst)$}\label{eq:rbox-1}\\
+  \rst \sqsubseteq \rst^{-} \text{\qquad for all $\symm\in\intra(\rst)$}\label{eq:rbox-2}
+\end{gather}
+where $\transsf$ and $\symm$ are functions that return $\true$ if and only if the binary relation,
+respectively, is transitive or symmetric.  But it is important to note, due to the restriction that
+only simple roles are allowed to appear in number restrictions, we cannot impose any cardinal
+constraints on the relationship type \rst if \rst is supposed to be transitive.
 
-\todo[inline, caption={restriction on mapping}]{restrictions on mapping
-  
-  What I cannot express:
-  \protect\begin{itemize}
-  \protect\item intra relationship constraints
-  \protect\end{itemize}
-}
 
-\todo[inline]{\vspace{2cm}}
+Before we establish the desired relation between the CROM and the ontology, we do a short
+analysis of the required expressiveness of the meta and the object logic. To state the disjoint union
+axioms we need at least \ALC. As we do not need anything more on meta level, we can
+fix \LM to be \ALC. On object level, we need qualified number restrictions and inverse roles to
+assure that every \rosirole is played exactly once. 
+%Hence, the minimal object DL is \ALCIQ. 
+If we have a single occurrence constraint, we have to add nominals. Transitivity axioms or role
+hierarchies are only required if some intra-relationship type constraint specifies a transitive or
+symmetric relationship type, respectively. Table~\ref{tab:required-dls} shows a summary of the required DLs.
+
+\begin{table}
+  \caption{Summary of required DLs for \LM and \LO}
+  \label{tab:required-dls}  \centering
+  \begin{tabularx}{0.8\linewidth}{lXl}
+    \toprule
+    \LO & minimal                                  & \ALCIQ\\
+        & with occurrence constraints              & \ALCOIQ\\
+        & with intra-relationship type constraints & \SHOIQ\\
+    \midrule
+    \LM & & \ALC\\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 Given a \SCCROM{} \Kmc, we obtain the \ALCSHOIQ ontology
-$\Bmf_{\Kmc} = (\Bmc_{\Kmc}, \emptyset, \emptyset)$ where $\Bmc_{\Kmc}$ is the conjunction of all
-meta axioms from~\eqref{eq:compartments-coverage} to~\eqref{eq:last-equation}. In the next theorem
-we establish the desired relationship between \Kmc and $\Bmf_{\Kmc}$.
+$\Bmf_{\Kmc} = (\Bmc_{\Kmc}, \emptyset,\RO)$ where $\Bmc_{\Kmc}$ is the conjunction of all meta
+axioms from~\eqref{eq:compartments-coverage} to~\eqref{eq:last-equation} and \RO is the set of all
+role axioms~\eqref{eq:rbox-1} and~\eqref{eq:rbox-2}.
 
 \begin{theorem}
-  Let \Kmc be a \SCCROM. Then, \Kmc is satisfiable iff $\Bmf_{\Kmc}$ is consistent.
+  Let $\Kmc = (\Mmc, \Amc, \Cmc)$ be a \SCCROM. Then, \Kmc is satisfiable iff $\Bmf_{\Kmc}$ is consistent.
 \end{theorem}
+\begin{proof}
+  Assume that \Kmc is satisfiable and let \IK denote a \SCROI that satisfies \Mmc, \Amc and
+  \Cmc.  We define the set
+  $\Delta_{\RT,c}$ of all \rosiroles played in $c$,
+  the set $\Delta_{\RG,c}$ of all \rosirole group instances fulfilled in $c$,  and the nested interpretation \JJ as follows:
+  \begin{align*}
+    \Delta_{\RT,c} & \coloneqq \{r\in\Rsf[\IK] \mid (\cdot,c,r) \in\plays\} \text{\qquad for all $c\in\Csf[\IK]$}\\
+    \Delta_{\RG,c} & \coloneqq \{(x,c,y) \in \RG\times\Csf[\IK]\times\Osf[\IK] \mid x^{\IK,c,y}=1\} \text{\qquad for all $c\in\Csf[\IK]$}\\[1ex]
+    \Cbb & \coloneqq \Csf[\IK] \\
+    \ct^{\J} & \coloneqq \ct^{\IK} \text{\qquad for all $\ct\in\CT$} \\
+    \nested^{\J} & \coloneqq \{(c,o) \mid o,c\in\Csf[\IK], (o,c,\cdot)\in\plays\} \\[1ex]
+    \Delta^{\J} & \coloneqq \Nsf[\IK] \cup \Csf[\IK] \cup \Rsf[\IK] \cup \bigcup_{c\in\Csf[\IK]}\Delta_{\RG,c} \cup \{d_{\occurCounter}\}\\
+    \nt^{\I_{c}} & \coloneqq \nt^{\IK} \text{\qquad for all $\nt\in\NT$} \\
+    \ct*^{\I_{c}} & \coloneqq \ct^{\IK} \text{\qquad for all $\ct\in\CT$} \\
+    \rt^{\I_{c}} & \coloneqq \rt^{\IK} \cap \Delta_{\RT,c} \text{\qquad for all $\rt\in\RT$} \\
+    \rg^{\I_{c}} & \coloneqq \{(\rg,c,y) \mid \rg^{\IK,c,y}=1\} \text{\qquad for all $\rg\in\RG(\Cmc)$}\\
+    \Art^{\I_{c}} & \coloneqq \Delta_{\RT,c}\\
+    \Ant^{\I_{c}} & \coloneqq \Osf[\IK]\\
+    \Arg^{\I_{c}} & \coloneqq \Delta_{\RG,c}\\
+    \rst^{\I_{c}} & \coloneqq \{(o_{1},o_{2})\mid\text{ there are $r_{1}$, $r_{2}$ s.t.\
+                    $(o_{1},c,r_{1}),(o_{2},c,r_{2})\in\plays$ and}\\
+                   & \hspace{3cm}\text{$(r_{1},r_{2})\in\links(\rst,c)$}\}\\
+    \plays^{\I_{c}} & \coloneqq \{(o,r) \mid (o,c,r)\in\plays\}\\
+                   &\hspace{3cm} \cup \{(o,r{\kern-0.1em}g) \mid r{\kern-0.1em}g =
+                     (x,c,o)\in\Delta_{\RG,c}\text{ with $x^{\IK,c,o}=1$}\}\\
+    \counts^{\I_{c}} & \coloneqq \{(d_{\occurCounter},y) \mid y\in\Delta_{\RT,c}\cup\Delta_{\RG,c}\}\\
+    \occurCounter^{\I_{c}} & \coloneqq d_{\occurCounter}\\
+    c^{\J} & \coloneqq c^{\IK} \text{\qquad for $c\in\INDC$}\\
+    a^{\I_{c}} & \coloneqq a^{\IK} \text{\qquad for $a\in\IND$}
+  \end{align*}
+  It is straight forward to show that \J is a model of $\Bmf_{\Kmc}$. Note, that \J respects the
+  rigid names since all \nt, \ct*, \Ant and individual names are interpreted the same in every
+  world~$c$.
+  %
+  Axioms~\eqref{eq:compartments-coverage},
+  \eqref{eq:compartments-disjoint},
+  \eqref{eq:naturals-coverage},
+  \eqref{eq:roles-disjoint},
+  \eqref{eq:obj-disjoint},
+  \eqref{eq:plays-domain},
+  \eqref{eq:plays-range},
+  \eqref{eq:meta-type-assertion} to~\eqref{eq:obj-plays-max-one-rg},
+  \eqref{eq:counts-decl}
+  %
+  are modelled by construction of \J. Since
+  $\Delta_{\RT,c}\subseteq\bigcup_{\rt\in\RT}\rt^{\IK} = \Rsf[\IK]$, \J models \eqref{eq:roles-coverage}.
+  %
+  Axioms~\eqref{eq:roletype-played-max-once} and~\eqref{eq:role-is-played-exactly-once} are modelled due
+  to 3. and 4. of Definition~\ref{def:scroi}. 
+  %
+  Assume that $c_{1}\in(\lnot\oax{\ct* \sqcap \exists\plays.\top\sqsubseteq\bot})^{\J}$. Hence,
+  $\I_{c_{1}}\not\models\ct* \sqcap \exists\plays.\top\sqsubseteq\bot$. Thus, there exists
+  $c_{2}\in(\ct* \sqcap \exists\plays.\top)^{\I_{c_{1}}}$. Therefore,
+  $(c_{2},c_{1},\cdot)\in\plays$, $(c_{1},c_{2})\in\nested^{\J}$ and $c_{2}\in\ct^{\J}$. Overall, \J
+  models Axiom~\eqref{eq:nested-cts}.
+  %
+  Since \plays respects \fills and \parts and \links respects \rel, \eqref{eq:fills},
+  \eqref{eq:roles-in-compartment} and \eqref{eq:rst-domain-range} are satisfied.
+  %
+  Axioms~\eqref{eq:rg-declaration} to~\eqref{eq:rgplayer-plays-role} are satisfied due to the
+  semantics of \rosirole groups and the fact that all top-level \rosirole groups are satisfied.
+  %
+  \IK respecting occurrence and cardinal constraints ensures that \J
+  models~\eqref{eq:occurrence-constraints} and~\eqref{eq:last-equation}. 
+  %
+  Finally, the respective intra-relationship constraints imply the satisfaction of \RO.
+  
+  Conversely, let \JJ denote a model of $\Bmc_{\Kmc}$. W.l.o.g. we can assume that all
+  o-compartments that exist also play some \rosiroles. Otherwise we could simply delete them, and
+  still have a model. Let $\Delta_{\CT}\subseteq\Delta^{\J}$ denote the set of all o-compartments,
+  i.e. $\Delta_{\CT} \coloneqq \bigcup_{\ct*\in\CT*} \ct*^{\I_{\hat{c}}}$.
+  %
+  Due to \eqref{eq:nested-cts}, there exists a mapping $\mu: \Delta_{\CT} \to \Cbb$ which maps
+  o-compartments to contexts of respective type.  We define the \SCROI{} \I as follows:
+  \begin{align*}
+    \Gamma^{\I} & \coloneqq \Cbb^{\J} \cup \bigcup_{\nt\in\NT}\nt^{\I_{\hat{c}}} \cup \bigcup_{c\in\Cbb} \Art^{\I_{c}} \text{\qquad for
+                  some $\hat{c}\in\Cbb$}\\
+    \type(d) & \coloneqq  
+               \begin{cases}
+                 T & \text{if $T\in\CT$ and $d\in T^{\J}$}\\
+                 T & \text{if $T\in\NT\cup\RT$ and $d\in T^{\I_{c}}$ for some $c$}
+               \end{cases}\\
+    (\mu(o),c,r) \in \plays & \text{\quad iff \quad $(o,r)\in\plays^{\I_{c}}$}\\
+    (r_{1}, r_{2}) \in \links(\rst,c) & \text{\quad iff \quad $(o_{1},r_{1}), (o_{2},r_{2}) \in
+                                        \plays^{\I_{c}}$ and $(o_{1}, o_{2})\in\rst^{\I_{c}}$}
+  \end{align*}
+  \I is well-defined and analogous to above one can go through the axioms step by step and show that
+  \I satisfies \Kmc.
+\end{proof}
 
-\missingproof[5cm]
+Besides checking satisfiability in general, we can also address the following other questions a
+domain analyst would be interested in:
+\begin{enumerate}
+\item[(Q1)] Is a specific compartment type \ct instantiable, i.e.\ does there exist some \SCROI{} \I
+  s.t.\ $c \in \ct^{\I}$?
+\item[(Q2)] Is the \rosirole type \rt playable, i.e.\ does there exist some \SCROI{} \I s.t. there is
+  some $r \in \rt^{\I}$?
+\item[(Q3)] Can two \rosiroles be linked via the relationship type \rst, i.e. does there exist some
+  \SCROI{} \I s.t. there are some $r_{1}, r_{2}\in \Rsf$, $c\in \Csf$ with
+  $\links(\rst,c)=(r_{1}, r_{2})$?
+\item[(Q4)] Can more precise constraints be entailed, i.e.\ do there exist some cardinalities in \Cmc
+  which can never be reached?
+\item[(Q5)] Is some partial knowledge about an instance satisfiable, i.e.\ does there exist some
+  \SCROI{} \I based this partial knowledge?
+\end{enumerate}
 
+To answer all these questions, we utilize \SCROA{s} as introduced earlier. For~(Q1), we add the meta
+type assertion
+\begin{gather*}
+  \ct(a) 
+\end{gather*}
+to \A and check $\Bmf_{(\Mmc,\A,\Cmc)}$ for consistency. To answer~(Q2), an object type assertion of
+the form
+\begin{gather*}
+  \rt(a,c), 
+\end{gather*}
+added to \A, is sufficient. W.l.o.g. we assume that $a$ and $c$ do not occur in
+$\Bmf_{(\Mmc,\A,\Cmc)}$ before. Due to the other axioms already specified, the \rosirole must also
+be played.
+%
+Similarly, for~(Q3) we add the link assertion
+\begin{gather*}
+  \linkass(\rst, c, a_{1}, a_{2}).
+\end{gather*}
+To test whether constraints are sharp, we assert the opposite and check for inconsistency. Here, we
+will directly add axioms to $\Bmf_{(\Mmc,\A,\Cmc)}$. If, for example, there must exist at least $n$
+roles of type \rt in \ct, we add
+\begin{gather*}
+  \ct \sqsubseteq \oax{(\atmost{n}{\counts}{\rt})(\occurCounter)} \land \ct(a)
+\end{gather*}
+to $\Bmf_{(\Mmc,\A,\Cmc)}$ which states that there must also exist at most $n$ \rt-roles. Then,
+inconsistency of $\Bmf_{(\Mmc,\A,\Cmc)}$ would imply that there must indeed exist $n+1$ \rt-roles in
+\ct.
 
-
-
-
-\clearpage
-
-\section{Adding Inheritance}
-\label{sec:adding-inheritance}
-\todo[inline]{introduction paragraph}
-
-\todo[inline]{natural type inheritance - what is important in this setting}
-
-
+For~Q5, we assume that we know certain facts about the domain. This could be the existence of a
+compartment, a role or a link between two roles. These can all be formulated via a \SCROA, with
+individual names adjusted accordingly.  If adding all respective assertions still preserves
+consistency of $\Bmf_{(\Mmc,\A,\Cmc)}$, then there exists some \SCROI that satisfies \Mmc, \A and
+\Cmc and respects these facts.
 
 
 \section{Going beyond \texorpdfstring{$\Sigma$}{Sigma}-CROMs}
 \label{sec:going-beyond-crom}
 
+In \todo{cite}, Kühn et al. presented a feature model for role-based modelling languages of which
+the above defined CROM is one instance. Although the basic ideas of the mapping will persist, a
+detailed analysis which features can easily be supported, is necessary. At first we will look into
+inheritance.
+
+\subsection{Adding Inheritance}
+\label{sec:adding-inheritance}
+\todo[inline]{introduction paragraph}
+
+\todo[inline]{natural type inheritance - what is important in this setting}
+
 In the last sections we showed how contextualized description logics can represent \rosirole-based models
 
-\todo[inline]{Example of constraints that are not part of CROM -> example American president must be
-born in US}
-
-\todo[inline]{temporal dimension}
+\subsection{Further Features}
+\label{sec:further-constraints}
 
 
+\subsection{Going beyond CROM}
+\label{sec:temporal-aspects}
 
+To our opinion, two areas of constraints which might be important in practice are left out until
+now: Constraints based on attributes of players and temporal constraints.
+
+The first ones are quite easy to express in \LMLO. Besides some technical changes on the above
+axioms, we would have to change natural types and o-compartment types to be rigid, i.e.\
+$\NT\cup\CT*\in\OCR$. For each attribute $\mathsf{att_{i}}$ of a natural type we introduce the rigid
+role $\mathsf{att_{i}}\in\ORR$ since we assume that attributes of a rigid type are also rigid.
+Here, it might even be worth to consider an object logic with concrete domains as for example
+$\SHOIQ(\Dmc)$ \todo{cite}. We did not investigate these extensions of DLs, but we conjecture that
+all results of Chapter~\ref{cha:context-dls} can be transferred without much effort.
+
+Utilizing rigid types which are modelled with more detail, we can also introduce more fine-grained
+constraints. For example, the \fills-relation could be specified to not simply require a player of a
+certain \rosirole type to be of some specific natural type but rather to demand that certain
+attributes must exist. To be allowed to ``play'' the \rosirole of an employee, a person must have a
+tax ID. Going a step further, we could also restrict \rosirole-playing based on the values of the
+attributes. 
+\begin{align*}
+  \mathsf{USA} \sqsubseteq\oax{\exists\plays.\mathsf{President} \sqsubseteq \mathsf{Person} \sqcap
+  \exists \mathsf{natural\_born\_citizen}.\{\true\} \sqcap \exists\mathsf{age \geq_{35}}}
+\end{align*}
+
+
+\cleardoublepage
 
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../thesis"
+%%% reftex-default-bibliography: ("../references.bib")
 %%% End:
 
-%  LocalWords:  logics Kühn irreflexivity assertional satisfiability
+%  LocalWords:  logics Kühn irreflexivity assertional satisfiability iff cardinalities CROM UML de
+%  LocalWords:  facto ontologies DL nominals intra
