@@ -6,28 +6,24 @@
 \label{ch:introduction}
 
 Nowadays, we are surrounded by software systems literally everywhere. With regard to current
-developments there will be even more in the future. Not only the amount increases, but also the
+developments there will be even more in the future. Not only the amount of systems increases, but also the
 requirements and expectations users impose on current software steadily rise. Modern software
-systems should cope with complex scenarios. This includes the ability of context-awareness and
+systems should cope with very complex scenarios. This includes the ability of context-awareness and
 self-adaptability. For example, a robot in a smart factory should recognize when a human coworker
 approaches and switches to a different, human-friendly working mode accordingly. Similarly, software
-in autonomous cars or an the area of smart homes needs to adapt 
+in autonomous cars or an the area of smart homes needs to adapt to various situations of which some
+are not even stated explicitly. 
+%
+Furthermore, software must be easily maintainable and, when necessary, changes on the system should be realized
+without much down time which, for example, in a smart factory is very costly. 
 
-
-Besides that there is still plenty of software running in legacy code. Especially in areas
-where the correctness of the software is utterly important, e.g., in banking applications, a large
-amount of old 
-
-These software system are very hard to maintain
-
-
-To sum up, current software systems long-lasting, high complexity, easy to maintain.
+% To sum up, current software systems long-lasting, high complexity, easy to maintain.
 
 
 
-\bulletItem{Aufzählung, Beispiele}. Requirements
-users impose on these ... \bulletItem{long-lasting (legacy systems in COBOL, especially in banking
-  systems), easy to maintain, but high complexity, (self-)adapting}
+% \bulletItem{Aufzählung, Beispiele}. Requirements
+% users impose on these ... \bulletItem{long-lasting (legacy systems in COBOL, especially in banking
+%   systems), easy to maintain, but high complexity, (self-)adapting}
 
 
 
@@ -35,54 +31,118 @@ users impose on these ... \bulletItem{long-lasting (legacy systems in COBOL, esp
 \section{Role-Based Systems}
 \label{sec:intro-role-based-systems}
 
-The concept of \emph{Roles} was first imposed
+In order to achieve all these goals, the concept of \emph{roles} is very promising. First introduced
+by Bachman~\cite{BaD-VLDB77}, roles appeared over the last decades in several fields of computer
+science\todo{citations}. The relational or context-dependent properties and behaviour of objects is
+transferred into the roles that object plays in a certain context. These paradigm also supports
+Dijkstra's separation of concerns~\cite{Dij-SelWrCom82} which simplifies development and maintenance
+of such systems.  Due to the use of roles, \emph{role-based systems} can cleaner and more structured
+model application domains since ontologically different entities are modelled by different concepts.
 
-
-could solve these problems. \bulletItem{What is a role} Role-based
-systems. When investigating the ontological nature of roles, closely connected to the concept of a
-\emph{context}. \bulletItem{What is a context} 
-
-To avoid the confusion with the notations, we distinguish between \emph{rosiroles} as in
-\rosirole-based systems
-and \emph{roles} as used in description logics. However, we will drop that distinction if it is
-clear from the context. 
-
-
- of roles as used in description logics, we will 
-
-
-Role-based
-
+Consider, for example, the concepts of $\mathsf{Person}$ and $\mathsf{Customer}$. With an
+object-oriented approach of inheritance as a specialization relation, we could model
+$\mathsf{Customer}$ as a subclass of $\mathsf{Person}$, as obviously not every person is a customer.
+On the other hand, if we restrict our domain to a business context and add the concept of a
+$\mathsf{Company}$, the inheritance relation would flip and we also have $\mathsf{Company}$ as
+subclass of $\mathsf{Customer}$.  This conflict can be resolved when we realize that
+$\mathsf{Person}$ and $\mathsf{Company}$ are context-independent basic concepts, so-called
+\emph{natural types} and $\mathsf{Customer}$ is actually a role a person or company can play in a
+business context. Here, it becomes also apparent, that the concept of a \emph{context} is closely
+related to a role.
 
 While role-based modelling provides the means to handle and model complex and context-dependent
-domains, ...
-
-Besides the means of role-based models to aid modelling complex and context-dependent
-domains, the process is still tedius and hard. 
-
-Many constraints, unintended implications or even unconsistencies. imparative for domain analysts to reason
-
-reasoning
-
-Here, a feasible logical formalism is needed.
+domains in a well-structured and modular way, the process can still be tedious, hard and
+error-prone. Due to the sophisticated semantics of roles, contexts and many different kinds of
+constraints, unintended implications or even inconsistencies can easily be hidden within such a
+model. Since it is nearly impossible to uncover all inferences, it becomes imperative for domain
+analysts to reason on role-based models to find such implicit knowledge.  Here, a feasible logical
+formalism is needed.
 
 \section{Description Logics}
 \label{sec:intro-description-logics}
 
-Description Logics (DLs) are a well-known formalism for knowledge representation
+Description Logics (DLs) \cite{DLhandbook-07} are a well-known formalism for knowledge
+representation. They possess formal semantics and allow to define a variety of reasoning problems.
 
-\bulletItem{prominent, DL handbook, example, decidable reasoning tasks, connection to FOL, }
+The basic building blocks in description logics are so-called \emph{concept names} and \emph{role
+  names}. Concept names denote sets of domain elements. For example the concept names
+$\mathsf{Person}$ or $\mathsf{Bank}$ denote the sets of all persons or banks in a domain. Relational
+structures are represented by so-called DL \emph{role names}, which are essentially binary relations
+on the the domain. The term ``role'' originates from the early knowledge representation system
+KL-ONE~\cite{WoS-CMA133} and has only little in common with roles of role-based systems except that
+it reflects the relational property of a role. A person which is related to a bank via a DL role
+$\mathsf{customer}$ could be seen as someone playing the role of a customer in the context of a
+bank. Besides that, DL roles are merely binary relations. With the help of \emph{concept} and
+\emph{role constructors}, complex concepts and roles can be defined.  Which constructors are allowed
+depends on the specific DL. Complex concepts can be used as descriptions  or to
+classify domain elements, e.g.\ the complex concept
+\begin{align}
+  \label{eq:1-1}
+  \mathsf{NFL\_Player} \sqcap \mathsf{Healthy} \sqcap \exists.\mathsf{wins}(\mathsf{NFL\_Game})
+\end{align}
+describes the set of all healthy NFL players who win NFL games.
+
+With the help of concepts we can express our knowledge about a domain through \emph{DL
+  axioms}. General knowledge is phrased via \emph{general concept inclusions (GCIs)} which state
+that one concept is a sub-concept of another. For example the GCI
+\begin{align}
+  \label{eq:1-2}
+  \mathsf{NFL\_Player} \sqcap \mathsf{Healthy} \sqcap
+  \exists.\mathsf{wins}(\mathsf{NFL\_Game}) \sqsubseteq \mathsf{Happy\_NFL\_Player}
+\end{align}
+states that a healthy NFL player who wins NFL games is a happy NFL player. Conversely, it does not say
+anything whether every happy NFL player is healthy or wins games. Facts about a domain can be
+expressed via \emph{concept} and \emph{role assertions}.  To express facts, we also introduce
+\emph{individual names} which denote single domain elements. As an example consider the following axioms:
+\begin{gather}
+  (\mathsf{NFL\_Player} \sqcap \mathsf{Healthy})(\text{\textit{AaronRodgers}})\label{eq:1-3}\\
+  \mathsf{NFL\_Game}(\text{\textit{SuperBowlXLV}}),\label{eq:1-4}\\
+  \mathsf{\mathsf{wins}}(\text{\textit{AaronRodgers}},\text{\textit{SuperBowlXLV}})\label{eq:1-5}
+\end{gather}
+The first two concept assertions~\eqref{eq:1-3} and~\eqref{eq:1-4} state that Aaron Rodgers is a healthy NFL player and that Super Bowl~XLV is
+an NFL game, while~\eqref{eq:1-5} expresses that he won Super Bowl~XLV. So he is also a happy
+NFL player, even if not stated explicitly.  A \emph{DL knowledge base} is a set of such axioms.
+
+The semantics of DLs are defined in a model-theoretic way and capture exactly the above mentioned
+intentions.  An interpretation~\I consists of a domain and an interpretation function~$\cdot^{\I}$
+which maps concept, role and individual names, respectively, to subsets, binary relations and elements of the
+domain.  From there, it is exactly defined how complex concepts must be
+interpreted. For example, $(A\sqcap B)^{\I}$ is the intersection of $A^{\I}$ and $B^{\I}$.  The
+concept name $\mathsf{NFL\_Player}$ itself has no meaning and an interpretation must make sure that
+$\mathsf{NFL\_Player}^{\I}$ actually is the set of all NFL players.
+
+Now, the most interesting reasoning problems are the \emph{consistency problem} and the \emph{entailment
+problem}. A knowledge base is consistent if there exists some interpretation that \emph{models} the
+knowledge base, i.e.\ an interpretation that fulfills all the axioms. An axiom is \emph{entailed} by
+a knowledge base if every model of the knowledge base also models that axiom. For example, the following axiom is
+entailed by~\eqref{eq:1-2} to~\eqref{eq:1-5}:
+\begin{gather}
+  \mathsf{Happy\_NFL\_Player}(\text{\textit{AaronRodgers}}).\label{eq:1-6}
+\end{gather}
 
 
-The basic building blocks in description logics are so-called \emph{concepts}. 
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \node[node, label={[align=right]180:\textsf{AaronRodgers},\\ $\mathsf{Healthy}$,\\
+      $\mathsf{NFL\_Player}$,\\$\mathsf{Happy\_NFL\_Player}$}] (ar) at(-2,0) {}; 
+    \node[node, label={[align=left]0:\textsf{SuberBowlXLV},\\ $\mathsf{NFL\_Game}$}] (sb45) at (2,0)
+    {};
+    \draw[edge] (ar) to[bend left=10] node{$\mathsf{wins}$} (sb45);
+  \end{tikzpicture}
+  \caption{Interpretation that models axioms~\eqref{eq:1-2} to~\eqref{eq:1-6}.}
+  \label{fig:dl-example-intro}
+\end{figure}
 
-As described
+\noindent
+Figure~\ref{fig:dl-example-intro} depicts an interpretation which is a model of axioms~\eqref{eq:1-2} to~\eqref{eq:1-6}.
 
-used as description, classify a set of objects
-\todo[inline]{what are concepts and for what are they good}
 
 \section{Contextualized Description Logics}
 \label{sec:intro-contextualized-description-logics}
+
+
+
 
 \todo[inline]{ConDL with top down view, first describe contexts, then what's going on inside. from
   within we can't refer to other contexts, trade-off between rigid roles and contextual concepts}
@@ -129,4 +189,4 @@ forfeit expressiveness, conDL can express more than CROM
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
 
-%  LocalWords:  logics
+%  LocalWords:  logics Bachman XLV DLs
