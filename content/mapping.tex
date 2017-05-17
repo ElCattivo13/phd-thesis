@@ -982,32 +982,58 @@ consistency of $\Bmf_{(\Mmc,\A,\Cmc)}$, then there exists some \SCROI that satis
 \section{Going beyond \texorpdfstring{$\Sigma$}{Sigma}-CROMs}
 \label{sec:going-beyond-crom}
 
-In \todo{cite}, Kühn et al. presented a feature model for role-based modelling languages of which
+In \todo{cite sle14}, Kühn et al. presented a feature model for role-based modelling languages of which
 the above defined CROM is one instance. Although the basic ideas of the mapping will persist, a
 detailed analysis which features can easily be supported, is necessary. At first we will look into
 inheritance.
 
-\subsection{Adding Inheritance}
-\label{sec:adding-inheritance}
-\todo[inline]{introduction paragraph}
+Let us assume, that additionally to a CROM we also have an irreflexive, asymmetric, functional
+inheritance relation $\prec_{\nt}$ over the natural types. Inheritance is intuitively captured as a
+GCI:
+\begin{align}
+  \label{eq:1}
+  \top \sqsubseteq & \oax{\nt[a] \sqsubseteq \nt[b]} \text{ for all $\nt[a]\prec_{\nt}\nt[b]$}.
+\end{align}
+Then, obviously we have to adjust axiom~\eqref{eq:roles-disjoint} since natural types do not need to
+be disjoint anymore. This implies that if some natural type \nt fills a role type \rt, then every
+subtype of \nt also fills \rt.  Similarly, inheritance for compartment types could be handled.
+Here, one has to make sure what exactly the intended semantics of compartment inheritance is
+supposed to be. In our setting, a subtype would be a specialization in the sense that all axioms and
+constraints that hold for the supertype also hold for the subtype and there could exist additional
+axioms or constraints.
 
-\todo[inline]{natural type inheritance - what is important in this setting}
+Other features might not be relevant in our case, as they have no influence on the
+satisfiability. These are especially features about behaviour and dynamic aspects. 
+%
+Among the rest, most features can easily be supported with only little change of the axioms
+required, like deep \rosiroles, i.e. \rosiroles are allowed to play \rosiroles, or whether a same
+\rosirole type can be played several times.
 
-In the last sections we showed how contextualized description logics can represent \rosirole-based models
 
-\subsection{Further Features}
-\label{sec:further-constraints}
+% \subsection{Adding Inheritance}
+% \label{sec:adding-inheritance}
+
+% Let us assume, that additionally to a CROM we also have an inheritance relation $\prec_{\nt}$ over
+% the natural types.
+
+% \todo[inline]{introduction paragraph}
+
+% \todo[inline]{natural type inheritance - what is important in this setting}
+
+% In the last sections we showed how contextualized description logics can represent \rosirole-based models
+
+% \subsection{Further Features}
+% \label{sec:further-constraints}
 
 
-\subsection{Going beyond CROM}
-\label{sec:temporal-aspects}
+% \subsection{Going beyond CROM}
+% \label{sec:temporal-aspects}
 
-To our opinion, two areas of constraints which might be important in practice are left out until
+To our opinion, two kinds of constraints that might be important in practice were not considered until
 now: Constraints based on attributes of players and temporal constraints.
 
 The first ones are quite easy to express in \LMLO. Besides some technical changes on the above
-axioms, we would have to change natural types and o-compartment types to be rigid, i.e.\
-$\NT\cup\CT*\in\OCR$. For each attribute $\mathsf{att_{i}}$ of a natural type we introduce the rigid
+axioms, for each attribute $\mathsf{att_{i}}$ of a natural type or o-compartment we introduce the rigid
 role $\mathsf{att_{i}}\in\ORR$ since we assume that attributes of a rigid type are also rigid.
 Here, it might even be worth to consider an object logic with concrete domains as for example
 $\SHOIQ(\Dmc)$ \todo{cite}. We did not investigate these extensions of DLs, but we conjecture that
@@ -1018,11 +1044,20 @@ constraints. For example, the \fills-relation could be specified to not simply r
 certain \rosirole type to be of some specific natural type but rather to demand that certain
 attributes must exist. To be allowed to ``play'' the \rosirole of an employee, a person must have a
 tax ID. Going a step further, we could also restrict \rosirole-playing based on the values of the
-attributes. 
+attributes. In the context of USA, a person can only play president if he is a ``natural born citizen'' and at
+least 35 years old:
 \begin{align*}
   \mathsf{USA} \sqsubseteq\oax{\exists\plays.\mathsf{President} \sqsubseteq \mathsf{Person} \sqcap
-  \exists \mathsf{natural\_born\_citizen}.\{\true\} \sqcap \exists\mathsf{age \geq_{35}}}
+  \exists \mathsf{natural\_born\_citizen}.\{\true\} \sqcap \exists\mathsf{age \geq_{35}}}.
 \end{align*}
+
+Last but not least we can express additional complex constraints with arbitrary \LMLO axioms. For
+example,
+\begin{align*}
+  \oax{\exists\rst.(\exists\rst.\top)\sqsubseteq\bot} \sqsubseteq \oax{\exists\rst.\top\sqsubseteq\bot}
+\end{align*}
+states that if there are no chains of length two for an relationship type \rst, then there will not
+be any \rst at all in that particular compartment.
 
 
 \cleardoublepage
@@ -1034,4 +1069,4 @@ attributes.
 %%% End:
 
 %  LocalWords:  logics Kühn irreflexivity assertional satisfiability iff cardinalities CROM UML de
-%  LocalWords:  facto ontologies DL nominals intra
+%  LocalWords:  facto ontologies DL nominals intra irreflexive GCI
