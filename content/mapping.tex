@@ -911,7 +911,10 @@ role axioms~\eqref{eq:rbox-1} and~\eqref{eq:rbox-2}.
   i.e. $\Delta_{\CT} \coloneqq \bigcup_{\ct*\in\CT*} \ct*^{\I_{\hat{c}}}$.
   %
   Due to \eqref{eq:nested-cts}, there exists a mapping $\mu: \Delta_{\CT} \to \Cbb$ which maps
-  o-compartments to contexts of respective type.  We define the \SCROI{} \I as follows:
+  o-compartments to contexts of respective type.  W.l.o.g, we can assume that there exist
+  sufficiently many contexts $c\in\Cbb$ to assure that $\mu$ preserves the occurrence and
+  cardinality constraints, since we could introduce copies of $c$ if necessary.  We define the
+  \SCROI{} \I as follows:
   \begin{align*}
     \Gamma^{\I} & \coloneqq \Cbb^{\J} \cup \bigcup_{\nt\in\NT}\nt^{\I_{\hat{c}}} \cup \bigcup_{c\in\Cbb} \Art^{\I_{c}} \text{\qquad for
                   some $\hat{c}\in\Cbb$}\\

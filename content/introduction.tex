@@ -141,44 +141,141 @@ Figure~\ref{fig:dl-example-intro} depicts an interpretation which is a model of 
 \section{Contextualized Description Logics}
 \label{sec:intro-contextualized-description-logics}
 
+However, classical DLs lack expressive power to formalize furthermore that some individuals satisfy
+certain concepts and relate to other individuals depending on a specific context which is needed to
+reason role-based systems.  Therefore, often
+two-dimensional DLs are employed~\cite{KG-JELIA10,KLGu-DL-11,KlGu-AAAI11,KG16}. The approach is to
+have one DL \LM as the \emph{meta logic} to represent the contexts and their relationships to each
+other. This logic is combined with the \emph{object logic} \LO that captures the relational
+structure within each of the contexts.
+%
+Moreover, while some pieces of information depend on the context, other pieces of information are
+shared throughout all contexts.  For instance, the name of a person typically stays the same
+independent of the actual context.  To be able to express that, some concepts and roles are designated
+to be \emph{rigid}, i.e.~they are required to be interpreted the same in all contexts.
+Unfortunately, if rigid roles are admitted, reasoning in the above mentioned two-dimensional DLs of
+context turns out to be undecidable; see~\cite{KG-JELIA10}.
 
+We propose and investigate a family of two-dimensional context DLs \LMLO that
+meets the above requirements, but is a restricted form of the ones defined in~\cite{KG-JELIA10} in
+the sense that we limit the interaction of \LM and \LO.  More precisely, in our family of
+context DLs the meta logic can refer to the internal structure of each context, but not vice versa.
+That means that information is viewed in a top-down manner, i.e.~information of different contexts
+is strictly capsuled and can only be accessed from the meta level.  Hence, we cannot
+express, for instance, that everybody who is employed by Siemens has a certain property in the
+context of private life.  Interestingly, reasoning in \LMLO stays decidable with
+such a restriction, even in the presence of rigid roles.
+%
+In some sense this restriction is similar to what was done in~\cite{BaGL-KR08,BaGL-ToCL12,Lip-PhD14}
+to obtain a decidable temporalized DL with rigid roles.  
 
+For providing better intuition on how our formalism works, we examine the above mentioned example a bit
+further.  Consider the following axioms:
+\begin{align}
+  \top & \sqsubseteq \oax{\exists\mathsf{worksFor}.\{\text{\textit{Siemens}}\} \sqsubseteq \exists\mathsf{hasAccessRights}.\{\text{\textit{Siemens}}\}}\label{eq:1-7} \\
+  \mathsf{Work} & \sqsubseteq \oax{\mathsf{worksFor}(\text{\textit{Bob}},\text{\textit{Siemens}})} \label{eq:1-8}\\
+  \oax{(\exists\mathsf{worksFor}.\top)(\text{\textit{Bob}})}\
+  & \sqsubseteq\ \exists\mathsf{related}.(\mathsf{Private} \sqcap \oax{\mathsf{HasMoney}(\text{\textit{Bob}})})\label{eq:1-9} \\
+  \top\
+  & \sqsubseteq\ \oax{\exists\mathsf{isCustomerOf}.\top \sqsubseteq\mathsf{HasMoney}} \label{eq:1-10}\\
+  \mathsf{Private}\
+  & \sqsubseteq\ \oax{\mathsf{isCustomerOf}(\text{\textit{Bob}},\text{\textit{Siemens}})}\label{eq:1-11}\\
+  \mathsf{Private} \sqcap \mathsf{Work}\
+  & \sqsubseteq\ \bot\label{eq:1-12}\\
+  \lnot \mathsf{Work}\
+  & \sqsubseteq\ \oax{\exists\mathsf{worksFor}.\top\sqsubseteq\bot}\label{eq:1-13}
+\end{align}
+%
+The first axiom states that in all contexts somebody who
+works for Siemens also has access rights to certain data.  The second axiom
+states that Bob is an employee of Siemens in any work context.  Furthermore,
+Axioms~\eqref{eq:1-9} and~\eqref{eq:1-10} say intuitively that if Bob has a job, he will earn money,
+which he can spend as a customer.  Axiom~\eqref{eq:1-11} formalises that Bob is a customer
+of Siemens in any private context.  Moreover, Axiom~\eqref{eq:1-12} ensures that the private
+contexts are disjoint from the work contexts.  Finally, Axiom~\eqref{eq:1-13} states that
+the $\mathsf{worksFor}$ relation only exists in work contexts.
 
-\todo[inline]{ConDL with top down view, first describe contexts, then what's going on inside. from
-  within we can't refer to other contexts, trade-off between rigid roles and contextual concepts}
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[auto]
+    %\draw[thin,gray] (0,-2) grid (15,3);
+    \node[rectangle,
+          draw,
+          rounded corners= 5mm, 
+          %minimum height = 4cm, 
+          %minimum width = 6cm,
+          label={120:$\mathsf{Work}$}] (a) at (3.5,0){
+            \begin{tikzpicture}
+              \node[node,label={[align=right]180:\textit{Bob},\\ $\mathsf{Person}$}] (bob) at (0,3){};
+              \node[node,label={60:$\mathsf{SSN}$}] (ssn) at (3.7,3){};
+              \draw[edge] (bob) to[bend left=10] node{$\mathsf{hasSSN}$} (ssn);
+              \node[node,label={[align=right]180:\textit{Siemens},\\ $\mathsf{Company}$}] (siem) at (1,0.5){};
+              \draw[edge] (bob) to[bend right=15] node[mylabel,swap]{$\mathsf{worksFor}$} (siem);
+              \draw[edge] (bob) to[bend left=15] node[mylabel]{$\mathsf{hasAccessRights}$} (siem);
+              \node[node,label={[align=right]north east:$\mathsf{Person}$}] (ceo) at (3.2,0.5){};
+              \draw[edge] (siem) to[bend left=10] node{$\mathsf{hasCEO}$} (ceo);
+              \node at (1.8,0.2){$\ddots$};
+            \end{tikzpicture}
+          };
+    \node[rectangle,
+          draw,
+          rounded corners= 5mm,
+          %minimum height = 4cm,
+          %minimum width = 6cm,
+          label={120:$\mathsf{Private}$}] (b) at (11.0,0){
+            \begin{tikzpicture}
+              \node[node,label={[align=right]180:\textit{Bob},\\ $\mathsf{Person}$,\\ $\mathsf{HasMoney}$}] (bob) at (0,3){};
+              \node[node,label={60:$\mathsf{SSN}$}] (ssn) at (3,3){};
+              \draw[edge] (bob) to[bend left=10] node{$\mathsf{hasSSN}$} (ssn);
+            \node[node,label={[align=right]180:\textit{Siemens},\\ $\mathsf{Company}$}] (siem) at (1,0.5){};
+              \draw[edge] (bob) to[bend left=15] node[mylabel]{$\mathsf{isCustomerOf}$} (siem);
+              \node[node,label={[align=right]north east:$\mathsf{Person}$}] (ceo) at (2.5,0.5){};
+            \end{tikzpicture}
+          };
+    \draw[edge] (a.east) to[bend left] node{$\mathsf{related}$} (b.west);
+  \end{tikzpicture}
+  \caption{Nested interpretation that models of Axioms \eqref{eq:1-7}--~\eqref{eq:1-13}}
+  \label{fig:example-interpretation}
+\end{figure}
 
-\blindtext
-
-\section{Ontology generator}
+\section{An Ontology Generator}
 \label{sec:zweite-section}
 
-Besides capability of contextualized description logics, it is rather hard for domain analysts who
-in general are not experts in the area of DLs to capture the precise semantics of the ontology and model the
-contextual ontology correctly. Therefore, it would be ideal 
+Besides capability of context description logics, it is rather hard for domain analysts who
+in general are not experts in the area of DLs to grasp the precise semantics of the ontology and define the
+contextual ontology in a way that all entities and constraints appearing in the role-based model are
+mapped correctly. Therefore, it would be ideal to have a mapping algorithm from role-based models
+into context DL knowledge bases.  In this thesis, we present exactly such a mapping.
 
-evolved and elaborate semantics of condl
+First of all, we have to decide how to represent role-based models. Here, we focus on two essential
+properties of the representation. It is very important that the original representation of the
+role-based model is already equipped with a formal semantics. Otherwise, we cannot ensure that the
+intended meaning of some model is correctly translated into the ontology. Furthermore, the
+representation needs the expressive power to actually grasp all concepts needed in the role-based
+model. 
 
-we present mapping which captures most parts of CROM
+The \emph{Compartment Object Role Model (CROM)}\cite{KuLG-SLE14,KBG-SLE15} emerged to be a potent candidate
+that meets exactly the above mentioned requirements.   
 
-forfeit expressiveness, conDL can express more than CROM
+
+There exists graphical editor for CROM, FRAMED, 
+
+We implemented the mapping within 
 
 
-\blindtext 
+specially formatted OWL ontology
 
 
 \section{A Reasoner for Contextualized Description Logics}
 \label{sec:intro-reasoner}
 
 
-\blindtext
-
-
 
 
 \clearpage
 
-\section{General ToDos}
-\label{sec:todos}
+% \section{General ToDos}
+% \label{sec:todos}
 
 \input{content/todos}
 
@@ -189,4 +286,4 @@ forfeit expressiveness, conDL can express more than CROM
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
 
-%  LocalWords:  logics Bachman XLV DLs
+%  LocalWords:  logics Bachman XLV DLs CROM
