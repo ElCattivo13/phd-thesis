@@ -1,7 +1,4 @@
 
-
-\listoftodos
-
 \chapter{Introduction}
 \label{ch:introduction}
 
@@ -137,13 +134,14 @@ entailed by~\eqref{eq:1-2} to~\eqref{eq:1-5}:
 \noindent
 Figure~\ref{fig:dl-example-intro} depicts an interpretation which is a model of axioms~\eqref{eq:1-2} to~\eqref{eq:1-6}.
 
+However, classical DLs lack expressive power to formalize furthermore that some individuals satisfy
+certain concepts and relate to other individuals depending on a specific context which is needed to
+reason on role-based systems. 
 
 \section{Contextualized Description Logics}
 \label{sec:intro-contextualized-description-logics}
 
-However, classical DLs lack expressive power to formalize furthermore that some individuals satisfy
-certain concepts and relate to other individuals depending on a specific context which is needed to
-reason role-based systems.  Therefore, often
+To overcome that deficiency in expressiveness of classical DLs, often
 two-dimensional DLs are employed~\cite{KG-JELIA10,KLGu-DL-11,KlGu-AAAI11,KG16}. The approach is to
 have one DL \LM as the \emph{meta logic} to represent the contexts and their relationships to each
 other. This logic is combined with the \emph{object logic} \LO that captures the relational
@@ -241,43 +239,104 @@ the $\mathsf{worksFor}$ relation only exists in work contexts.
 \section{An Ontology Generator}
 \label{sec:zweite-section}
 
-Besides capability of context description logics, it is rather hard for domain analysts who
-in general are not experts in the area of DLs to grasp the precise semantics of the ontology and define the
-contextual ontology in a way that all entities and constraints appearing in the role-based model are
-mapped correctly. Therefore, it would be ideal to have a mapping algorithm from role-based models
-into context DL knowledge bases.  In this thesis, we present exactly such a mapping.
+Besides the capability of context description logics to formalize role-based models, it is rather
+hard for domain analysts who in general are not experts in the area of DLs to grasp the precise
+semantics of the ontology and define the contextual ontology in a way that all entities and
+constraints appearing in the role-based model are mapped correctly. Therefore, it would be ideal to
+have a mapping algorithm from role-based models into context DL knowledge bases.  In this thesis, we
+present exactly such a mapping.
 
 First of all, we have to decide how to represent role-based models. Here, we focus on two essential
-properties of the representation. It is very important that the original representation of the
-role-based model is already equipped with a formal semantics. Otherwise, we cannot ensure that the
-intended meaning of some model is correctly translated into the ontology. Furthermore, the
-representation needs the expressive power to actually grasp all concepts needed in the role-based
-model. 
+properties of the modelling language. It is very important that the role-based model is already
+equipped with a formal semantics. Otherwise, we cannot ensure that the intended meaning of some
+model is correctly translated into the ontology. Furthermore, the modelling language needs the
+expressive power to actually grasp all concepts needed in the role-based model.
+%
+The \emph{Compartment Role Object Model (CROM)}\cite{KuLG-SLE14,KBG-SLE15} emerged to be a potent
+candidate that meets exactly the above mentioned requirements.
 
-The \emph{Compartment Object Role Model (CROM)}\cite{KuLG-SLE14,KBG-SLE15} emerged to be a potent candidate
-that meets exactly the above mentioned requirements.   
+Next, there is some freedom on how to express roles and role-playing in an ontology. Besides
+arguments about the ontological nature of roles like identity or rigidity, practical reasons are
+also important. Whether some constraints of a role-based model can be expressed in an ontology
+highly depends on how roles and other predicates are translated.
 
-
-There exists graphical editor for CROM, FRAMED, 
-
-We implemented the mapping within 
-
-
-specially formatted OWL ontology
-
+On the one hand we can and will prove the semantic correctness of our translation from role-based
+models into an \LMLO ontology. On the other hand, for practical use there must exist some
+implementation of the mapping. We based our implementation on the reference implementation for CROM\todo{cite}, which in turn can be used by FRaMED\todo{cite}, a graphical editor allowing the
+specification of role-based models. At the end, our implemented mapping produces a specially
+formatted OWL ontology which leads to the last open part in the overall workflow.
 
 \section{A Reasoner for Contextualized Description Logics}
 \label{sec:intro-reasoner}
 
+A contextualized DL capable of formalizing role-based models and an automated mapping from
+role-based models into an ontology still helps only very little in practice, if there es no DL reasoner
+available which can process such ontologies. 
+%
+Usually DL reasoners use the Web Ontology Language (OWL) as language for the input ontology. But OWL in
+general does not have the syntactical means to express contextualized DL axioms. However, OWL gives
+the possibility to annotate axioms which we use to encode \LMLO-axioms.
+
+Although the reasoning tasks in DLs have a high complexity, Dls have been successfully introduced as
+a formalism for knowledge representation. One reason for the success of DLs is the availability of
+highly optimized reasoners which makes drawing logical inferences feasible. A black-box approach for
+deciding consistency of an \LMLO-ontology could benefit from these optimized reasoners. The main
+idea is to divide the consistency problem into separate subproblems each of which can be processed
+by a standard DL reasoner.
+%
+Taking into account the special form of the axioms of the generated ontologies further optimizations
+are possible.
 
 
+% In total, with the work presented in this thesis, it is possible for a domain analyst modelling a
+% domain of interest as a role-based model in CROM, to automatically check for inconsistencies of
+% unintended implications.
 
-\clearpage
+\section{Outline of the Thesis}
+\label{sec:outline-thesis}
+
+In the following, we give a short outline how the thesis is structured.
+
+In Chapter~\ref{cha:preliminiaries} we present in the first section the basic definitions of
+description logics which we will use throughout the thesis. We define the syntax and semantics of
+concepts, axioms and knowledge bases and state specific DLs together with the respective
+complexities of the consistency problem.
+%
+In the second section, we give an ontological overview of the notion of a role and define properties
+that are important to distinguish roles from other predicates.
+
+In Chapter~\ref{cha:context-dls} we introduce the contextualized description logic \LMLO. We again
+start with the definition of the syntax and semantics. For the complexity analysis of the
+consistency problem we first look into the upper bounds. We consider the case of the lightweight
+description logic \EL in a separate section, which at the same time are the lower bounds of the
+complexity for more expressive contextualized DLs. For the complexity analysis we consider three
+different settings which result in different complexity results. In the first setting we do not
+allow any rigid names at all. 
+% This is complexity-wise the simplest setting and we can show that the
+% complexity of the consistency problem can be retained. 
+In the second setting, we assume the presence
+of rigid concepts but forbid any rigid roles whereas in the last and complexity-wise hardest setting we allow both
+rigid concepts and rigid names. 
+%
+At last we introduce an extension of \LMLO and show that the consistency problem becomes undecidable
+in the presence of rigid roles.
+
+In
+Chapter~\ref{cha:mapping} we present the mapping from role-based models into \LMLO-ontologies.
+Therefore we introduce a syntactical variant of the Compartment Role Object Model and explain in
+detail how the different assumptions of a CROM are translated. 
+We conclude that chapter with some thoughts on how to express constraints for role-based models that
+go beyond CROM.
+
+Finally, in Chapter~\ref{cha:jconht} we present our reasoner for \LMLO.\todo{first finish Ch 5}
+
+
+% \clearpage
 
 % \section{General ToDos}
 % \label{sec:todos}
 
-\input{content/todos}
+% \input{content/todos}
 
 
 %%% Local Variables:
@@ -286,4 +345,4 @@ specially formatted OWL ontology
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
 
-%  LocalWords:  logics Bachman XLV DLs CROM
+%  LocalWords:  logics Bachman XLV DLs CROM ontologies DL FRaMED workflow Dls subproblems
