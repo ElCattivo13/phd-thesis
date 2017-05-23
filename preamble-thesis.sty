@@ -650,7 +650,7 @@
   \tikzset{
     >/.tip={Straight Barb[angle=45:1pt 3]},
     ocont/.style={semithick,solid,black,->},
-    edge/.add style={}{-{Latex[width=1pt 3 0]}}
+    edge/.add style={}{-{Latex[length=6pt 5 0, width'=0pt 0.5]}}
   }
 }{
   \tikzset{
@@ -991,8 +991,8 @@
 %%% concept constructors for ALC and ALCQ %%%
 \newcommand{\atleast}[3]{\ensuremath{{\geqslant_{#1}}#2.#3}\xspace}
 \newcommand{\atmost}[3]{\ensuremath{{\leqslant_{#1}}#2.#3}\xspace}
-\let\origexists\exists
-\renewcommand{\exists}{\origexists\,}
+% \let\origexists\exists
+% \renewcommand{\exists}{\origexists\,}
 
 
 %%% inequality relation for individuals if UNA is not assumed

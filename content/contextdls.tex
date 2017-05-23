@@ -33,7 +33,7 @@ denote the signatures for \LM and \LO, respectively. Thus, we call \MC, \MR, \MI
 respectively, the set of \emph{meta concept}, \emph{role} and \emph{individual names} and
 \emph{object concept}, \emph{role} and \emph{individual names}.
 
-\begin{definition}[Syntax of \LMLO]\label{def:syntax-cdls}
+\begin{definition}[Syntax of \LMLO]\label{def:syntax-lmlo}
   A \emph{concept of the object logic~\LO (o-concept)} is an \LO-concept over~\Osig.  An
   \emph{o-axiom} is an \LO-GCI over~\Osig, an \LO-concept assertion over~\Osig, or an
   \LO-role assertion over~\Osig.
@@ -108,6 +108,7 @@ always interpreted the same in all contexts (\emph{rigid individual assumption})
 We are now ready to define the semantics of \LMLO.
 
 \begin{definition}[Semantics of \LMLO]
+  \label{def:semantics-lmlo}
   Let \JJ be a nested interpretation.  The mapping $\cdot^\J$ is extended to referring meta concepts
   as follows:
   \begin{align*}
@@ -323,6 +324,7 @@ over~\Msig obtained by replacing each referring m-concept of the form \oalpha
 occurring in~\B by a fresh concept name such that there is a 1--1 relationship between them.
 
 \begin{definition}[Outer abstraction]
+  \label{def:outer-abstraction}
   Let \BB be an \LMLO-BKB.  Let \bsf be the bijection mapping every referring m-concept of the form \oalpha
   occurring in~\B to the so-called \emph{abstracted concept name $A_{\oalpha}\in\MC$}, where we assume w.l.o.g.\ that
   $A_{\oalpha}$ does not occur in~\B.
@@ -760,7 +762,7 @@ for \LMLO where either \LM or \LO is \SHOIQ, if $\OCR=\ORR=\emptyset$.
 \subsection{Consistency with rigid role names}
 \label{sec:cons-with-rigid}
 
-In this section, we consider the case where role names are present.
+In this section, we consider the case where rigid role names are present.
 
 \begin{theorem}\label{thm:shoiqshoq-with-rigid-names-twoexptime}
   The consistency problem in \SHOIQSHOQ is in \TwoExpTime if $\ORR\ne\emptyset$.

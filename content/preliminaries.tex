@@ -27,25 +27,23 @@ For a more thorough introduction into description logics we refer the reader to
 As shown in Section~\ref{sec:intro-description-logics}, DL concepts describe sets of
 elements. Concepts are build from \emph{concept names}, \emph{role names} and \emph{individual
   names} using concept and role constructors.  Note that in the following definitions we refer to
-the description logic \Lmc and the triple $\Nsig \coloneqq (\NC, \NR, \NI)$ explicitly although it
-is usually left implicit in standard definitions.  This turns out to be useful in
+the specific description logic \Lmc and the triple $\Nsig \coloneqq (\NC, \NR, \NI)$ explicitly
+although it is usually left implicit in standard definitions.  This turns out to be useful in
 Chapter~\ref{cha:context-dls} as we need to distinguish between the DL and symbols used in the meta
-level and the object level.  Sometimes we omit \Lmc and \Nsig, however, if it is irrelevant or if it
-is clear from the context.
-%
+level and the object level.  Sometimes we omit \Lmc and \Nsig, however, if they are irrelevant or
+clear from the context.
 
 \begin{definition}[Syntax of \Lmc-roles over \Nsig and \Lmc-concepts over \Nsig]
   \label{def:syntax-concepts}
-  Let \Lmc be a DL and
-  let \NC, \NR, \NI be countably infinite, pairwise disjoint sets of \emph{concept names}, \emph{role names},
-  and \emph{individual names}. Then, the triple $\Nsig\coloneqq(\NC,\NR,\NI)$ is the
-  \emph{signature}. An \emph{\Lmc-role over \Nsig} $r$ is either a role name, i.e.~$r\in\NR$, or it is of the
-  form $s^{-}$ with $s\in\NR$ (\emph{inverse role}).
+  Let~\Lmc be a DL and let~\NC, \NR, \NI be countably infinite, pairwise disjoint sets of
+  \emph{concept names}, \emph{role names}, and \emph{individual names}. Then, the triple
+  $\Nsig\coloneqq(\NC,\NR,\NI)$ is a \emph{signature}. An \emph{\Lmc-role $r$ over \Nsig} is either
+  a role name, i.e.~$r\in\NR$, or it is of the form $s^{-}$ with $s\in\NR$ (\emph{inverse role}).
 
-  The set of \emph{\Lmc-concepts over \Nsig} is the smallest set, such that
+  The set of \emph{\Lmc-concepts over \Nsig} is the smallest set such that
   \begin{itemize}
-  \item for all $A\in\NC$, $A$ is an \Lmc-concept over \Nsig (\emph{atomic concept}), and
-  \item if $C$ and $D$ are \Lmc-concepts over \Nsig, $r$ is a \Lmc-role over \Nsig, $a\in\NI$, then
+  \item for all $A\in\NC$, then $A$ is an \Lmc-concept over \Nsig (\emph{atomic concept}), and
+  \item if $C$ and $D$ are \Lmc-concepts over \Nsig, $r$ is a \Lmc-role over \Nsig and $a\in\NI$, then
     $\lnot C$ (\emph{negation}), $C\sqcap D$ (\emph{conjunction}), $\exists r.C$ (\emph{existential
       restriction}), $\{a\}$ (\emph{nominal}) and $\atleast{n}{r}{C}$ (\emph{at-least restriction})
     are \Lmc-concepts over \Nsig. \qedhere
@@ -72,15 +70,15 @@ interpretations.
   $(\Delta^{\I}, \cdot^{\I})$ where the \emph{domain} $\Delta^{\I}$ is a non-empty set and
   the \emph{interpretation function} $\cdot^{\I}$ maps
   \begin{itemize}
-  \item every concept name $A\in\NC$ to the set $A^{\I}\subseteq\Delta^{\I}$,
-  \item every role name $r\in\NR$ to the binary relation
+  \item every concept name $A\in\NC$ to a set $A^{\I}\subseteq\Delta^{\I}$,
+  \item every role name $r\in\NR$ to a binary relation
     $r^{\I}\subseteq\Delta^{\I}\times\Delta^{\I}$, and
-  \item every individual name $a\in\NI$ to the element $a^{\I}\in\Delta^{\I}$ such that different
+  \item every individual name $a\in\NI$ to an element $a^{\I}\in\Delta^{\I}$ such that different
     individual names are mapped to different elements, i.e.\ for $a,b\in\NI$ it holds that
     $a^{\I}\neq b^{\I}$ if $a\neq b$.
   \end{itemize}
   %
-  Now, that function is extended for inverse roles and complex concepts as follows:
+  Now, that function is extended to inverse roles and complex concepts as follows:
   \begin{itemize}
   \item $(s^{-})^{\I} \coloneqq \left\{(d,c)\in\Delta^{\I}\times\Delta^{\I}\mmid (c,d)\in
       s^{-}\right\}$,
@@ -97,7 +95,7 @@ interpretations.
 \noindent
 For any $x\in\NC\cup\NR\cup\NI$, $x^{\I}$ is called the \emph{extension of $x$}.  Note that in the
 above definition of an interpretation, we adopt the so-called \emph{unique name assumption} stating
-that every individual is interpreted as a distinct element. By doing so, we emphasize that an
+that every individual name is interpreted as a distinct element. By doing so, we emphasize that an
 individual name is meant to be the identity of an individual, rather than just a tag as it is
 usually used in the context of semantic web.
 
@@ -214,9 +212,8 @@ logics.  The entailment problem, for instance, is the problem of deciding, given
 axiom~$\beta$, whether \Bmf \emph{entails} $\beta$, i.e.~whether all models of~\Bmf are also models
 of~$\beta$.
 %
-The consistency problem, however, is fundamental in the sense that most other standard decision
-problems (reasoning tasks) can be polynomially reduced to it (in the presence of axiom negation).
-For the entailment problem, note that it can be reduced to the \emph{in}consistency problem: $\Bmf=(\B,\Rmc)$
+The consistency problem, however, is fundamental in the sense that most other standard reasoning tasks can be polynomially reduced to it in the presence of axiom negation.
+For example, the entailment problem can be reduced to the \emph{in}consistency problem: $\Bmf=(\B,\Rmc)$
 entails $\beta$ iff $(\B\land\lnot\beta,\Rmc)$ is inconsistent.  Hence, we focus in this thesis only
 on the consistency problem.
 
@@ -239,7 +236,7 @@ To show an example of an ontology, we continue contentwise with American footbal
 
   The ontology \Omc is consistent and Figure~\ref{fig:example-concept} depicts a model of \Omc. Note
   here, that it is not coincidentally that Aaron Rodgers is in the extension of
-  $\mathsf{NFL\_Player}$ since \Omc entails
+  $\mathsf{NFL\_Player}$, since \Omc entails
   \begin{gather*}
     \mathsf{NFL\_Player}(\text{\textit{AaronRodgers}}). \qedhere
   \end{gather*}
@@ -248,12 +245,12 @@ To show an example of an ontology, we continue contentwise with American footbal
 \subsection{Specific Description Logics}
 \label{sec:specific-description-logics}
 
-The specific description logics differ in the concept and role constructors they allow to formulate
-concepts and axioms, and also in the axioms that are allowed to use in a knowledge base.
+The specific description logics differ in the available concept and role constructors to formulate
+concepts and axioms, and also in the available axioms in a knowledge base.
 
-The prototypical description logic is \ALC, the \emph{attributive language with complement}, which
-does not allow any inverse roles and only negation, conjunction and existential restriction are
-allowed as concept constructors. Furthermore, only GCIs, concept and role assertions are allowed as
+The prototypical description logic is \ALC, the \emph{attributive language with complement}. There
+are no inverse roles and only negation, conjunction and existential restriction are allowed as
+concept constructors. Furthermore, only GCIs, concept and role assertions are allowed as
 axioms. Hence, only role names are \ALC-roles and an \ALC-RBox is always the empty set.  The DL \ALC
 is the smallest propositionally closed DL~\cite{ScSm-AIJ91}.
 %
@@ -269,17 +266,17 @@ that DL:
 \item \Smc means transitivity axioms.
 \end{itemize}
 %
-Only, \ALC with additional transitivity axioms is called \Smc instead of $\mathcal{ALCS}$ due to its
+\ALC with additional transitivity axioms is called \Smc instead of $\mathcal{ALCS}$, due to its
 connection to the modal logic $\mathsf{S4}$. Thus, \SHOIQ, for example, is the DL that allows all
-constructors and axioms which were introduced above. Besides extensions of \ALC, there also exist many
-sublogics of \ALC of which in this thesis we only consider \EL. The sub-Boolean description logic
+constructors and axioms which are introduced above. Besides extensions of \ALC, there also exist many
+sublogics of \ALC of which we only consider \EL in this thesis. The sub-Boolean description logic
 \EL is the fragment of \ALC where only conjunction, existential restriction, and the top concept
 (which cannot be expressed as an abbreviation anymore due to the lack of negation) are
 admitted.
 
-In~\cite{HoST-IGPL00}, it was shown for \SHQ that allowing arbitrary roles in number restrictions lead to
+In~\cite{HoST-IGPL00}, it is shown for \SHQ that allowing arbitrary roles in number restrictions leads to
 undecidability of the consistency problem. Decidability can be regained by restricting roles used in
-number restrictions to simple roles. To define what a simple role is, for a given BKB
+number restrictions to simple roles. To define what a \emph{simple} role is, for a given BKB
 $\Bmf = (\Bmc,\Rmc)$, we introduce $\transClosure$ as the transitive-reflexive closure of
 $\sqsubseteq$ on
 $\Rmc \cup \{\mathsf{Inv}(r)\sqsubseteq\mathsf{Inv}(s) \mid r\sqsubseteq s\in\Rmc\}$ where
@@ -294,18 +291,18 @@ $\mathsf{Inv}(r)$ is defined as
 and $r \equiv_{\Rmc} s$ as abbreviation for $r \transClosure s$ and $s \transClosure r$. A role $r$
 is \emph{transitive w.r.t.\ \Rmc} if for some $s$ with $r \equiv_{\Rmc} s$, we have
 $\trans{s}\in\Rmc$ or $\trans{\mathsf{Inv}(s)}\in\Rmc$. A role $r$ is called \emph{simple w.r.t.\
-  \Rmc} if it is neither transitive nor has any transitive sub-role, i.e. there is no $s$ such that
-$s\transClosure r$ and $s$ is transitive w.r.t.\ \Rmc.
+  \Rmc} if it is neither transitive nor has any transitive sub-role, i.e. there is no~$s$ such that
+$s\transClosure r$ and~$s$ is transitive w.r.t.\ \Rmc.
 
 In the rest of this thesis, we make this restriction to the syntax of \SHQ and all its
 extensions.
 %
 This restriction is also the reason why there are no Boolean combinations of
-role inclusions and transitivity axioms allowed in the RBox~\Rmc over~\Nsig in
-the above definition.  Otherwise the notion of a simple role w.r.t.~\Rmc
+role inclusions and transitivity axioms allowed in an RBox~\Rmc over~\Nsig in
+the above definition.  Otherwise, the notion of a simple role w.r.t.~\Rmc
 involves reasoning.  Consider, for instance, the Boolean combination of axioms
 $(\mathsf{trans}(r)\lor\mathsf{trans}(s))\land r\sqsubseteq s$.  It should be
-clear that $s$ is not simple, but this is no longer a pure syntactic check.
+clear that~$s$ is not simple, but this is no longer a pure syntactic check.
 
 The complexity of the consistency problem for DL ontologies is well-investigated. Is is
 \ExpTime-complete for any DL between \ALC and \SHOQ and \NExpTime-complete for \SHOIQ. The lower
@@ -315,8 +312,8 @@ respectively. While for BKBs the complexity class stays the same, this is much l
 in \ExpTime for \SHOQ~\cite{Lip-PhD14} and it remains in \NExpTime for \SHOIQ as a consequence of
 Theorem~2 in \cite{Pra-JLLI05}.
 
-For \EL ontologies, the consistency problem is trivial since no contradictions can be expressed and, thus,
-every \EL ontology is consistent. On the other hand, we do not consider \EL-BKBs as it seems very unnatural to
+For \EL-ontologies, the consistency problem is trivial since no contradictions can be expressed and, thus,
+every \EL-ontology is consistent. On the other hand, we do not consider \EL-BKBs as it seems very unnatural to
 admit axiom negation while denying concept negation at the same time.
 
 %\clearpage
@@ -329,7 +326,10 @@ rolled parchment on which were written the lines an actor had to memorize.
 Since then, a role is a function assumed or part played by a person or thing in a certain situation.
 The concept of roles is also quite popular in computer science. 
 
-Charles Bachman introduced roles to the field of data modelling in 1977. 3 Sätze über Bachmans
+Charles Bachman introduced roles to the field of data modelling in 1977 \cite{BaD-VLDB77}. 
+
+
+ 3 Sätze über Bachmans
 Rollen
 
 Steimann picked up 15 features to classify roles. He neglected some
@@ -341,8 +341,6 @@ Steimann picked up 15 features to classify roles. He neglected some
 In this section 
 
 Bachman
-
-japanisches Paper
 
 rigid
 

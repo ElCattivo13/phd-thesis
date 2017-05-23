@@ -3,37 +3,41 @@
 \label{cha:jconht}
 
 In the last chapter we presented a mapping for role-based models into contextualized description
-logic ontologies. This process can be done automatically and therefore it helps the automatic
-processing and investigation of role-based models. But one final step in this work flow is still
-missing: a reasoner that is capable of handling these ontologies.
+logic ontologies. This step can be done automatically and it therefore helps the automated
+processing and investigation of role-based models. But one final step in this workflow is still
+missing. A reasoner that is capable of handling these ontologies is necessary in order to check the
+consistency automatically.
 
-In this chapter we will present ...
+Since the translation for role-based models only produces \LMLO-ontologies, i.e.\ conjunctions of
+meta axioms, we will also only consider \LMLO-ontologies. Throughout this chapter, let $\Omf=(\Omc,\RM,\RO)$ denote a
+\SHOIQSHOIQ-ontology and let \bsf denote the bijection as in
+Definition~\ref{def:outer-abstraction}. Hence, \Ob denotes the outer abstraction of \Omc. We also
+remind the reader that the \emph{restricted type} is the $\ran(\bsf)$-type (see
+Definition~\ref{def:int-respects-D}) of some element and thus a subset of $\ran(b)$.
 
+In this chapter we will present an practical algorithm to check the consistency. Internally it only
+calls standard DL consistency checks. Furthermore, we implemented this algorithm and give details on
+the design of the implementation. 
+\todo{was machen wir noch, optimization}
 
-\todo[inline]{A reasoner capable of contextualized DL ontologies}
+We will discuss special
+requirements for these reasoners in Section~\ref{sec:implementing-jconht}. \todo{correct section?}
 
-
-\todo[inline]{In this chapter we only consider \LMLO ontologies instead of \LMLO-BKBs. Let \Omc be a
-\SHOIQSHOIQ-BKB, let \bsf be the bijection as defined in Definition ??.}
-
-\todo[inline]{We want to check consistency of \Omc.}
-
-\section{A Blackbox Approach}
+\section{A Black-Box Approach}
 \label{sec:blackbox-approach}
 
-In section \ref{sec:complexity-consis-problem} we showed that we can reduce the consistency problem
+In Section~\ref{sec:complexity-consis-problem}, we showed that we can reduce the consistency problem
 of \LMLO to two separate decision problems. Now, the general idea for an implementation is to use
-existing, highly optimized and performant reasoners for these subtasks. We will discuss special
-requirements for these reasoners in section \ref{sec:implementing-jconht}. \todo{correct section?}
-
-In this section we will discuss how the two subtasks, namely admissibility of \Xmc and outer
-consistency w.r.t.\ \Xmc, can be reduced to standard reasoning tasks.
+existing, highly optimized and performant reasoners as black-boxes for these subtasks. 
+%
+In this section we will discuss how the two subtasks, namely admissibility of a set~\Xmc and outer
+consistency w.r.t.~\Xmc, can be reduced to standard reasoning tasks.
 
 
 \subsection{Admissibility}
 \label{sec:admissibility}
 
-In the definition of admissibility (Def. \ref{def:admissibility}), where we define $\Bmc_{X_{i}}$,
+In the definition of admissibility (Definition~\ref{def:admissibility}), where we define $\Bmc_{X_{i}}$,
 we require negated o-axioms. Negated axioms, especially negated GCIs, are usually not supported by
 classical description logic reasoners. Therefore, we introduce the notion of \emph{weakly negated
   axioms}.
@@ -44,15 +48,23 @@ classical description logic reasoners. Therefore, we introduce the notion of \em
   \begin{itemize}
   \item if $\alpha = C \sqsubseteq D$, then $\alpha^{*} \coloneqq (C \sqcup \lnot D)(x)$ where $x$
     is a fresh variable,
-  \item if $\alpha = C(a)$, then $\alpha^{*} \coloneqq (\lnot C)(a)$,
-  \item if $\alpha = r(a,b)$, then $\alpha^{*} \coloneqq \lnot r(a,b)$,
+  \item if $\alpha = C(a)$, then $\alpha^{*} \coloneqq (\lnot C)(a)$, and
+%  \item if $\alpha = r(a,b)$, then $\alpha^{*} \coloneqq \lnot r(a,b)$, and
   \item for all other $\alpha$, $\alpha^{*} \coloneqq \lnot \alpha$. \qedhere
   \end{itemize}
 \end{definition}
 
-Note that this definition reflects the aspect of \todo{soundness and completeness? Are these the
-  correct terms here???} soundness, i.e.\ $\alpha\land\alpha^{*}$ is inconsistent, but not
-completeness, i.e.~$\I\models\alpha\lor\alpha^{*}$ does not hold for all \Nsig-interpretations \I.
+Note here, that for concept assertions the negation of the axiom $\lnot\alpha$ and weakly negated
+axiom $\alpha^{*}$ are semantically equal, but not syntactical since $\lnot\alpha$ uses axiom
+negation, while $\alpha^{*}$ only requires concept negation. Furthermore, in the presence of
+nominals we could rewrite a negated role assertion of the form $\lnot r(a,b)$ as
+$(\lnot\exists r.\{b\})(a)$. But as OWL reasoners in general support negated role assertions, we
+keep $\lnot r(a,b)$.  Moreover, this definition reflects the aspect of
+%
+\todo{soundness and completeness?  Are these the correct terms here???}
+%
+soundness, i.e.\ $\alpha\land\alpha^{*}$ is inconsistent, but not completeness,
+i.e.~$\I\models\alpha\lor\alpha^{*}$ does not hold for all interpretations \I.
 
 \begin{lemma}\label{lem:weakly-negation-inconsistent}
   Let $\alpha$ be an axiom. Then,
@@ -70,27 +82,29 @@ completeness, i.e.~$\I\models\alpha\lor\alpha^{*}$ does not hold for all \Nsig-i
   $C \sqsubseteq D \land (C \sqcap \lnot D)(x_{\mathsf{new}})$ is inconsistent.
 
   If $\I\not\models C \sqsubseteq D$, then there exists $d\in\Delta^{\I}$ such that
-  $d \in C^{\I} \cap (\lnot D)^{\I}$. Then, the interpretation~$\I'$, equal to~\I but sets
+  $d \in C^{\I} \cap (\lnot D)^{\I}$. Then, the interpretation~$\I'$, obtained from \I by setting
   ${x_{\mathsf{new}}}^{\I'} \coloneqq d$, models $\alpha^{*}$.
 
   For the other axioms, the weakly negated axiom is defined as the normally negated axiom and the
-  claim follows directly from the definition of $\models$ (see Def. \ref{def:semantics-of-axioms}).
+  claim follows directly from the definition of $\models$ (see Definition
+  \ref{def:semantics-of-axioms}).
 \end{proof}
 
 To check admissibility of a set of types, we distinguish whether or not rigid names are present. In
-the latter case, i.e.\ $\OCR=\ORR=\emptyset$, condition (I) of Definition~\ref{def:admissibility} is
-always fulfilled. Therefore, we can check each $\Bmf_{X_{i}}$ separately. We show that it is
-sufficient to consider the weakly negated axioms.
+the latter case, i.e.\ $\OCR=\ORR=\emptyset$, the first condition of
+Definition~\ref{def:admissibility} is always fulfilled. W.l.o.g., we can interpret the individual
+names the same in every interpretation. Therefore, we can check each $\Bmf_{X_{i}}$ separately. We
+show that it is sufficient to consider the weakly negated axioms.
 
-\begin{definition}[Sets of positive and negative induced o-axioms]
-  Let $\Xmc = \{X_{1}, \ldots, X_{k}\}$ be a set of restricted types. Then, the \emph{sets of
-    positive induced o-axioms $\Xposi$} are defined as
-  \begin{align*}
-    \Xposi & \coloneqq \{\alpha \mid \bsf(\oax{\alpha})\in X_{i}\}.\\
-  \intertext{The \emph{sets of negative induced o-axioms \Xnegi} are defined as}
-    \Xnegi & \coloneqq \{\alpha \mid \bsf(\oax{\alpha})\in\ran(\bsf)\setminus X_{i}\}.\qedhere
-  \end{align*}
-\end{definition}
+% \begin{definition}[Sets of positive and negative induced o-axioms]
+%   Let $\Xmc = \{X_{1}, \ldots, X_{k}\}$ be a set of restricted types. Then, the \emph{sets of
+%     positive induced o-axioms $\Xposi$} are defined as
+%   \begin{align*}
+%     \Xposi & \coloneqq \{\alpha \mid \bsf(\oax{\alpha})\in X_{i}\}.\\
+%   \intertext{The \emph{sets of negative induced o-axioms \Xnegi} are defined as}
+%     \Xnegi & \coloneqq \{\alpha \mid \bsf(\oax{\alpha})\in\ran(\bsf)\setminus X_{i}\}.\qedhere
+%   \end{align*}
+% \end{definition}
 
 
 \begin{lemma}\label{lem:admissibility-without-rigid}
@@ -98,33 +112,41 @@ sufficient to consider the weakly negated axioms.
   admissible iff $\Omf_{X_{i}} = (\Omc_{X_{i}}, \RO)$ is consistent for all $1 \leq i \leq k$, where
   $\Omc_{X_{i}}$ is defined as
   \begin{align*}
-    \Omc_{X_{i}}:=\bigwedge_{\alpha\in\Xposi}\alpha\ \land \bigwedge_{\alpha\in\Xnegi}\alpha^{*}.
+    \Omc_{X_{i}}:=\bigwedge_{\bsf(\oax{\alpha})\in X_{i}}\alpha\ \land \bigwedge_{\bsf(\oax{\alpha})\in\ran(\bsf)\setminus X_{i}}\alpha^{*}.
   \end{align*}
 \end{lemma}
 \begin{proof}
   Assume that \Xmc is admissible. Then there exists \Osig-interpretations
   $\I_1=(\Delta,\cdot^{\I_1})$,~\dots, $\I_k=(\Delta,\cdot^{\I_k})$ such that every $\I_i$,
   $1\le i\le k$, is a model of $\Bmf_{X_{i}}$ where $\Bmf_{X_{i}}$ is defined as in
-  Definition~\ref{def:admissibility}. By definition of \Xposi and \Xnegi, $\I_{i}$ is a model of
+  Definition~\ref{def:admissibility}. 
+  Let \Xposi and \Xnegi, respectively, denote the sets of positive and negative induced o-axioms
+  \begin{align*}
+    \Xposi & \coloneqq \{\alpha \mid \bsf(\oax{\alpha})\in X_{i}\}\text{, and}\\
+    \Xnegi & \coloneqq \{\alpha \mid \bsf(\oax{\alpha})\in\ran(\bsf)\setminus X_{i}\}.
+  \end{align*}
+  %
+  By definition of \Xposi and \Xnegi, $\I_{i}$ is a model of
   $\smash{\bigwedge_{\alpha\in\Xposi}\alpha}$ and $\smash{\bigwedge_{\alpha\in\Xnegi}\lnot\alpha}$.
   %
-  Let $\Xnegi=\{\alpha_{i,1}, \ldots, \alpha_{i,l_{i}}\}$. We have that
-  $\I_{i}\models \lnot\alpha_{i,j}$ for $1 \leq j \leq l_{i}$. By Lemma
+  Then, let $\Xnegi=\{\alpha_{i,1}, \ldots, \alpha_{i,\ell_{i}}\}$. We have that
+  $\I_{i}\models \lnot\alpha_{i,j}$ for $1 \leq j \leq \ell_{i}$. By Lemma
   \ref{lem:weakly-negation-inconsistent}, we get that there exists ${\I_{i}}'$ such that
   ${\I_{i}}'\models {\alpha_{i,j}}^{*}$. By induction, we get that ${\I_{i}}'\models\Omf_{X_{i}}$.
 
   If all $\Omf_{X_{i}}$ are consistent, there exist interpretations $\I_{i}$ such that
-  $\I_{i}\models\Omf_{X_{i}}$. Then, $\I_{i}$ is a model of $\bigwedge_{\bsf(\oalpha)\in X_i}\alpha$,
+  $\I_{i}\models\Omf_{X_{i}}$. W.l.o.g., we can assume that $\I_{i}$ share the same domain $\Delta$
+  and that individual names are interpreted the same.  Then, $\I_{i}$ is a model of
+  $\bigwedge_{\bsf(\oalpha)\in X_i}\alpha$,
   $\bigwedge_{\bsf(\oalpha)\in\ran(\bsf)\setminus X_i}\alpha^{*}$ and \RO. Due to Lemma
-  \ref{lem:weakly-negation-inconsistent}, $\I'$ also models
+  \ref{lem:weakly-negation-inconsistent}, $\I_{i}$ also models
   $\bigwedge_{\bsf(\oalpha)\in\ran(\bsf)\setminus X_i}\lnot\alpha$. Hence, $\Xmc$ is admissible.
 \end{proof}
 
-In the former case, i.e.\ $\OCR\cup\ORR\neq\emptyset$, we use the renaming approach as \hl{described in [??]}. Due to the interaction
-of the rigid names, we must reason over all $\Bmf_{X_{i}}$ simultaneously. We exploit the constant
-domain assumption
-
-\todo[inline]{Explanation renaming technique}
+In the former case, i.e.\ $\OCR\cup\ORR\neq\emptyset$, we use the renaming technique
+of~\cite{BaGL-KR08,BaGL-ToCL12} as in the proof of
+Theorem~\ref{thm:shoiqshoq-with-rigid-names-twoexptime}. Due to the interaction of the rigid names,
+we must reason over all $\Bmf_{X_{i}}$ simultaneously.
 
 \begin{definition}[Renamed axiom, Sets of positive and negative induced renamed o-axioms, Induced
   object ontology]
@@ -138,83 +160,108 @@ domain assumption
   
   Then, the \emph{set of positive induced renamed o-axioms \Xpos}, the \emph{set of negative induced
     renamed o-axioms \Xneg}, the \emph{renamed object RBox $\RO'$} and the \emph{induced object
-    ontology $\Omc_{\Xmc}$} are defined as follows:
+    ontology $\Omf_{\Xmc}=(\Omc_{\Xmc},\RO')$} are defined as follows:
   \begin{align*}
     \Xpos & \coloneqq \smash{\bigcup_{i=1}^{k}}\vphantom{\bigcup_{i}}\{\alpha^{(i)} \mid \bsf(\oax{\alpha})\in X_{i}\},\\
     \Xneg & \coloneqq \bigcup_{i=1}^{k}\{\alpha^{(i)} \mid \bsf(\oax{\alpha})\in\ran(\bsf)\setminus X_{i}\},\\
     \RO' & \coloneqq \bigcup_{i=1}^{k}\{\alpha^{(i)} \mid \alpha\in\RO\} \text{, and}\\
-    \Omc_{\Xmc} & \coloneqq \left(\bigwedge_{\beta\in\Xpos} \beta\ \land\ \bigwedge_{\beta\in\Xneg}
-                  \beta^{*}, \quad\RO'  \right).
+    \Omc_{\Xmc} & \coloneqq \bigwedge_{\beta\in\Xpos} \beta\ \land\ \bigwedge_{\beta\in\Xneg}
+                  \beta^{*}.
   \end{align*}
 
   \vspace{-1.7\baselineskip}
 \end{definition}
 
 Although the next lemma also holds if no rigid names are present, we state it explicitly with rigid
-names, as in the other case we will use Lemma~\ref{lem:admissibility-without-rigid}.
+names, as in the other case we will use Lemma~\ref{lem:admissibility-without-rigid}. From now on,
+let $\alpha$ always denote an original axiom and $\beta$ an renamed axiom.
 
 \begin{lemma}\label{lem:admissibiliy-with-rigid}
   If rigid names are present, i.e.\ $\OCR\cup\ORR\neq\emptyset$, the set \Xmc of restricted types is
-  admissible iff the induced object ontology $\Omc_{\Xmc}$ is consistent.
+  admissible iff the induced object ontology $\Omf_{\Xmc}$ is consistent.
 \end{lemma}
 \begin{proof}
-  If $\Omc_{\Xmc}$ is consistent, then there exists an interpretation \II such that
-  $\I\models\Omc_{\Xmc}$. Let $\Xneg=\{\beta_{1}, \ldots, \beta_{l}\}$. We have that
-  $\I\models{\beta_{j}}^{*}$ for $1 \leq j \leq l$. By Lemma \ref{lem:weakly-negation-inconsistent}
-  we know that $\I\not\models\beta_{j}$ and, hence, $\I\models\lnot\beta_{j}$. By induction, we get
+  We can reuse the claim made in the proof of
+  Theorem~\ref{thm:shoiqshoq-with-rigid-names-twoexptime}: \Xmc is admissible iff $\Bmf_{\Xmc}$ is
+  consistent where $\Bmf_{\Xmc}$ is defined as
   \begin{align*}
-    \I \models & \left(\bigwedge_{\beta\in\Xpos} \beta\ \land\ \bigwedge_{\beta\in\Xneg} \lnot\beta,
-    \quad\RO'  \right)
+    \Bmf_\Xmc \coloneqq \left(\bigwedge\nolimits_{1\leq\iota\leq k}\left(\bigwedge_{\bsf(\oalpha)\in X_{\iota}}\alpha^{(\iota)}\ \land
+      \bigwedge_{\bsf(\oalpha)\in\ran(\bsf)\setminus X_{\iota}}\lnot\alpha^{(\iota)}\right), \quad\RO'\right).
   \end{align*}
-  We define \Osig-interpretations $\I_1=(\Delta,\cdot^{\I_1}), \ldots, \I_k=(\Delta,\cdot^{\I_k})$
-  as follows:
-  \begin{align*}
-    \Delta & \coloneqq \Delta^{\I},\\
-    A^{\I_{i}} & \coloneqq A^{\I} \qquad \text{for all $A\in\OCR$ occurring in \Xmc,}\\
-    A^{\I_{i}} & \coloneqq (A^{(i)})^{\I} \qquad \text{for all $A\in\OC\setminus\OCR$ occurring in \Xmc,}\\
-    r^{\I_{i}} & \coloneqq r^{\I} \qquad \text{for all $r\in\ORR$ occurring in \Xmc,}\\
-    r^{\I_{i}} & \coloneqq (r^{(i)})^{\I} \qquad \text{for all $r\in\OR\setminus\ORR$ occurring in
-                 \Xmc, and}\\
-    a^{\I_{i}} & \coloneqq a^{\I} \qquad \text{for all $a\in\OI$ occurring in \Xmc.}
-  \end{align*}
-  Condition (I) of Definition \ref{def:admissibility} is fulfilled since rigid names and individual
-  names are defined the same for all $\I_{i}$.
   %
-  By the definition of $\I_{i}$, we have that $\I_{i}\models\alpha$ iff
-  $\I\models\alpha^{(i)}$. Hence, we know that $\I_{i}$ is a model of
-  $\bigwedge_{\bsf(\oax{\alpha})\in X_{i}}\alpha$,
-  $\bigwedge_{\bsf\oax{\alpha}\in\ran(\bsf)\setminus X_{i}}\lnot\alpha$ and \RO and \Xmc is
-  admissible.
+  Hence, we only have to show that $\Bmf_{\Xmc}$ is consistent iff $\Omf_{\Xmc}$ is consistent. Let
+  $\Xneg=\{\beta_{1}, \ldots, \beta_{\ell}\}$.
 
-  If \Xmc is admissible, then there exist \Osig-interpretations $\I_1=(\Delta,\cdot^{\I_1})$,
-  \ldots, $\I_k=(\Delta,\cdot^{\I_k})$ such that $x^{\I_i}=x^{\I_j}$ for all
-  $x\in\OI\cup\OCR\cup\ORR$ and all $i,j\in\{1,\dots,k\}$, and every $\I_i$, $1\le i\le k$, is a
-  model of the \LO-BKB $\Bmf_{X_{i}}= (\B_{X_i},\RO)$ over~\Osig where
-  $\B_{X_i}:=\bigwedge_{\bsf(\oalpha)\in X_i}\alpha\ \land
-  \bigwedge_{\bsf(\oalpha)\in\ran(\bsf)\setminus X_i}\lnot\alpha$. We define the
-  \Osig-interpretation \II as follows:
-  \begin{align*}
-    \Delta^{\I} & \coloneqq \Delta,\\
-    A^{\I} & \coloneqq A^{\I_{i}} \qquad \text{for $A\in\OCR$ and some $1\leq i \leq k$,}\\
-    (A^{(i)})^{\I} & \coloneqq A^{\I_{i}} \qquad \text{for $A\in\OC\setminus\OCR$,}\\
-    r^{\I} & \coloneqq r^{\I_{i}} \qquad \text{for $r\in\ORR$ and some $1\leq i \leq k$,}\\
-    (r^{(i)})^{\I} & \coloneqq r^{\I_{i}} \qquad \text{for $r\in\OR\setminus\ORR$, and}\\
-    a^{\I} & \coloneqq a^{\I_{i}} \qquad \text{for $a\in\OI$ and some $1\leq i \leq k$.}\\
-  \end{align*}
-  Again, by definition of \I, we have that $\I\models\alpha^{(i)}$ iff $\I_{i}\models\alpha$. Thus, we
-  get that \I is a model of $\bigwedge_{\beta\in\Xpos} \beta$,
-  $\bigwedge_{\beta\in\Xneg} \lnot\beta$ and $\RO'$. Due to Lemma
-  \ref{lem:weakly-negation-inconsistent}, \I is also models $\bigwedge_{\beta\in\Xneg}
-  \beta^{*}$. Hence, $\Omc_{\Xmc}$ is consistent.
+  If there exists an \Osig-interpretation \Gmc such that $\Gmc\models\Bmf_{\Xmc}$, then we also have
+  that $\Gmc\models\lnot\beta_{i}$ for all $1 \leq i \leq \ell$. Due to
+  Lemma~\ref{lem:weakly-negation-inconsistent} and by induction, there is some $\Gmc'$ such that
+  $\Gmc'\models\beta_{i}^{*}$ for all $1 \leq i \leq \ell$. Hence, $\Gmc'$ is a model of $\Omf_{\Xmc}$.
+
+  Conversely, if there exists an \Osig-interpretation \Gmc such that $\Gmc\models\Omf_{\Xmc}$, then we also have
+  that $\Gmc\models\beta_{i}^{*}$ for all $1 \leq i \leq \ell$. By
+  Lemma~\ref{lem:weakly-negation-inconsistent}, we know that $\Gmc\not\models\beta_{i}$. Hence,
+  $\Gmc\models\lnot\beta_{i}$ and $\Gmc\models\Bmf_{\Xmc}$.
+  
+
+
+  % If $\Omc_{\Xmc}$ is consistent, then there exists an interpretation \II such that
+  % $\I\models\Omc_{\Xmc}$. Let $\Xneg=\{\beta_{1}, \ldots, \beta_{l}\}$. We have that
+  % $\I\models{\beta_{j}}^{*}$ for $1 \leq j \leq l$. By Lemma \ref{lem:weakly-negation-inconsistent}
+  % we know that $\I\not\models\beta_{j}$ and, hence, $\I\models\lnot\beta_{j}$. By induction, we get
+  % \begin{align*}
+  %   \I \models & \left(\bigwedge_{\beta\in\Xpos} \beta\ \land\ \bigwedge_{\beta\in\Xneg} \lnot\beta,
+  %   \quad\RO'  \right)
+  % \end{align*}
+  % We define \Osig-interpretations $\I_1=(\Delta,\cdot^{\I_1}), \ldots, \I_k=(\Delta,\cdot^{\I_k})$
+  % as follows:
+  % \begin{align*}
+  %   \Delta & \coloneqq \Delta^{\I},\\
+  %   A^{\I_{i}} & \coloneqq A^{\I} \qquad \text{for all $A\in\OCR$ occurring in \Xmc,}\\
+  %   A^{\I_{i}} & \coloneqq (A^{(i)})^{\I} \qquad \text{for all $A\in\OC\setminus\OCR$ occurring in \Xmc,}\\
+  %   r^{\I_{i}} & \coloneqq r^{\I} \qquad \text{for all $r\in\ORR$ occurring in \Xmc,}\\
+  %   r^{\I_{i}} & \coloneqq (r^{(i)})^{\I} \qquad \text{for all $r\in\OR\setminus\ORR$ occurring in
+  %                \Xmc, and}\\
+  %   a^{\I_{i}} & \coloneqq a^{\I} \qquad \text{for all $a\in\OI$ occurring in \Xmc.}
+  % \end{align*}
+  % Condition (I) of Definition \ref{def:admissibility} is fulfilled since rigid names and individual
+  % names are defined the same for all $\I_{i}$.
+  % %
+  % By the definition of $\I_{i}$, we have that $\I_{i}\models\alpha$ iff
+  % $\I\models\alpha^{(i)}$. Hence, we know that $\I_{i}$ is a model of
+  % $\bigwedge_{\bsf(\oax{\alpha})\in X_{i}}\alpha$,
+  % $\bigwedge_{\bsf\oax{\alpha}\in\ran(\bsf)\setminus X_{i}}\lnot\alpha$ and \RO and \Xmc is
+  % admissible.
+
+  % If \Xmc is admissible, then there exist \Osig-interpretations $\I_1=(\Delta,\cdot^{\I_1})$,
+  % \ldots, $\I_k=(\Delta,\cdot^{\I_k})$ such that $x^{\I_i}=x^{\I_j}$ for all
+  % $x\in\OI\cup\OCR\cup\ORR$ and all $i,j\in\{1,\dots,k\}$, and every $\I_i$, $1\le i\le k$, is a
+  % model of the \LO-BKB $\Bmf_{X_{i}}= (\B_{X_i},\RO)$ over~\Osig where
+  % $\B_{X_i}:=\bigwedge_{\bsf(\oalpha)\in X_i}\alpha\ \land
+  % \bigwedge_{\bsf(\oalpha)\in\ran(\bsf)\setminus X_i}\lnot\alpha$. We define the
+  % \Osig-interpretation \II as follows:
+  % \begin{align*}
+  %   \Delta^{\I} & \coloneqq \Delta,\\
+  %   A^{\I} & \coloneqq A^{\I_{i}} \qquad \text{for $A\in\OCR$ and some $1\leq i \leq k$,}\\
+  %   (A^{(i)})^{\I} & \coloneqq A^{\I_{i}} \qquad \text{for $A\in\OC\setminus\OCR$,}\\
+  %   r^{\I} & \coloneqq r^{\I_{i}} \qquad \text{for $r\in\ORR$ and some $1\leq i \leq k$,}\\
+  %   (r^{(i)})^{\I} & \coloneqq r^{\I_{i}} \qquad \text{for $r\in\OR\setminus\ORR$, and}\\
+  %   a^{\I} & \coloneqq a^{\I_{i}} \qquad \text{for $a\in\OI$ and some $1\leq i \leq k$.}\\
+  % \end{align*}
+  % Again, by definition of \I, we have that $\I\models\alpha^{(i)}$ iff $\I_{i}\models\alpha$. Thus, we
+  % get that \I is a model of $\bigwedge_{\beta\in\Xpos} \beta$,
+  % $\bigwedge_{\beta\in\Xneg} \lnot\beta$ and $\RO'$. Due to Lemma
+  % \ref{lem:weakly-negation-inconsistent}, \I is also models $\bigwedge_{\beta\in\Xneg}
+  % \beta^{*}$. Hence, $\Omc_{\Xmc}$ is consistent.
 \end{proof}
 
-
+To sum up, we can decide admissibility of~\Xmc by checking, respectively,~$\Omf_{\Xmc}$
+or~$\Omf_{X_{i}}$ for consistency, depending on whether rigid names are present or not. 
 
 
 \subsection{Outer consistency}
 \label{sec:outer-consistency-to-standard-reasoning}
 
-In the decision procedures described in Section ?? \todo{} we always construct the set \Xmc first,
+In the decision procedures described in Section~\ref{sec:complexity-consis-problem} we always construct the set \Xmc first,
 and then check whether \Bmfb is outer consistent w.r.t.~\Xmc. In the general case with rigid names
 we enumerate all sets $\Xmc\subseteq\powerset{\ran(\bsf)}$. When only rigid concept names and no
 rigid role names are present we non-deterministically guess a set \Xmc and for the case without
@@ -229,19 +276,19 @@ Lemma~\ref{lem:admissible-and-outerConsistent}.
 \begin{lemma}
   \label{lem:consistant-and-admissible-types}
   The \LMLO-BKB \Bmf is consistent iff there is an \Msig-interpretation \Hmc such that
-  $\Hmc \models \Bmfb$ and \todo{check def. of \textsf{type} in chapter 3}
-  $\Zmc = \{\mathsf{type}_{\ran(b)}^{\Hmc}(d) \mid d \in \Delta^{\Hmc}\}$ is admissible.
+  $\Hmc \models \Bmfb$ and $\Zmc_{\Hmc} = \{\mathsf{type}_{\ran(b)}^{\Hmc}(d) \mid d \in \Delta^{\Hmc}\}$
+  is admissible.
 \end{lemma}
 
 \begin{proof}
   Let us assume that \Bmf is consistent.
   By Lemma~\ref{lem:admissible-and-outerConsistent} we know, if \Bmf is consistent than there exists
   an admissible set \Xmc such that \Bmfb is outer consistent w.r.t~\Xmc. By the definition of outer
-  consistency there exists an \Msig-interpretation \Hmc that models of \Bmfb and weakly respects
-  $(\ran(\bsf), \Xmc)$.  Hence, we have that $\Zmc \subseteq \Xmc$. Since every subset of an
+  consistency there exists an \Msig-interpretation \Hmc that models \Bmfb and weakly respects
+  $(\ran(\bsf), \Xmc)$.  By definition we have that $\Zmc_{\Hmc} \subseteq \Xmc$. Since every subset of an
   admissible set is also admissible, \Zmc is also admissible.
 
-  For the if-direction we assume that $\Hmc \models \Bmfb$ and that \Zmc is admissible.
+  For the `if' direction we assume that $\Hmc \models \Bmfb$ and that \Zmc is admissible.
   If $\Hmc \models \Bmfb$, then \Bmfb is outer consistent w.r.t~\Zmc. Since \Zmc is admissible, we
   know, due to Lemma~\ref{lem:admissible-and-outerConsistent}, that \Bmf is consistent.
 \end{proof}
@@ -252,25 +299,24 @@ Due to Lemma \ref{lem:consistant-and-admissible-types}, we do not need to constr
 first. We can also enumerate all models \Hmc of \Bmfb, and check for each \Hmc if the occurring
 types are admissible. Of course, if there exist one model of \Bmfb, then there exists infinitely
 many. But we only need to check those that are \emph{essentially different}, i.e.\ the set of
-occurring restricted \todo{define ``restricted types in chapter 3''} types differs.
+occurring restricted types differs.
 
 \begin{definition}[Essentially equal interpretations]
   The two \Msig-interpretations $\Hmc_{1}$ and $\Hmc_{2}$ are \emph{essential equal} if $\Zmc_{\Hmc_{1}} =
-  \Zmc_{\Hmc_{2}}$ where $\Zmc_{\Hmc_{1}}$ and $\Zmc_{\Hmc_{2}}$ are defined as
+  \Zmc_{\Hmc_{2}}$ where $\Zmc_{\Hmc_{i}}$, $i\in\{1,2\}$, is defined as
   \begin{align*}
-    \Zmc_{\Hmc_{1}} & \coloneqq \{\mathsf{type}_{\ran(b)}^{\Hmc_{1}}(d) \mid d \in \Delta^{\Hmc_{1}}\}
-               \text{, and} \\
-    \Zmc_{\Hmc_{2}} & \coloneqq \{\mathsf{type}_{\ran(b)}^{\Hmc_{2}}(d) \mid d \in \Delta^{\Hmc_{2}}\}.\qedhere
+    \Zmc_{\Hmc_{i}} & \coloneqq \{\mathsf{type}_{\ran(b)}^{\Hmc_{i}}(d) \mid d \in \Delta^{\Hmc_{i}}\}.\qedhere
   \end{align*}
 
 \end{definition}
 
-Using the results of Lemma \ref{lem:admissibility-without-rigid},
-\ref{lem:admissibiliy-with-rigid} and \ref{lem:consistant-and-admissible-types}, we can construct a simple algorithm, as depicted in
-Algorithm~\ref{alg:1}. Note that on the object level only classical consistency checks are used. On
-meta level, the bare information about consistency is not sufficient, since we also need the
-knowledge about the restricted types occurring in the model. Hence, a DL reasoner that constructs
-a model is necessary for the meta level.
+Using the results of Lemma \ref{lem:admissibility-without-rigid}, \ref{lem:admissibiliy-with-rigid}
+and \ref{lem:consistant-and-admissible-types}, we can construct a simple algorithm, as depicted in
+Algorithm~\ref{alg:1}. We enumerate all essential equal models of \Bmfb and check for each model
+\Hmc whether $\Zmc_{\Hmc}$ is admissible. Note that on the object level only classical consistency
+checks are used. On meta level, the bare information about consistency is not sufficient, since we
+also need the knowledge about the restricted types occurring in the model. Hence, we need a DL reasoner that
+constructs a model and, if consistent, returns the set of occurring restricted types.
 
 
 \IncMargin{1em}
@@ -309,22 +355,29 @@ a model is necessary for the meta level.
   Algorithm~\ref{alg:1} is sound, complete, and terminating.
 \end{lemma}
 \begin{proof}
-  Since \Hmf is finite and checking consistency of \LM-ontologies , Algorithm~\ref{alg:1}
+  The set of essential equal models is finite. Checking whether \Hmc is a model and checking whether
+  $\Omf_{\Zmc_{\Hmc}}$ or $\Omf_{Z_{i}}$ is consistent, is decidable. Thus, Algorithm~\ref{alg:1}
   terminates.
 
-  Assume that \Bmf is consistent.
+  Let us assume that \Bmf is consistent. By Lemma~\ref{lem:consistant-and-admissible-types}, there
+  exists a model~\Hmc of~\Bmfb such that~$\Zmc_{\Hmc}$ is admissible. W.l.o.g., we can assume that
+  $\Hmc\in\Hmf$. 
+  %
+  % Then, there exists a model \J of \Bmf and, hence, there is a model $\Hmc\in\Hmf$ of \Bmfb such
+  % that \Hmc and \Jb are essential equal. By Lemma~\ref{lem:consistant-and-admissible-types},
+  % $\Zmc_{\Hmc}$ is admissible.
+  % 
+  Depending on whether rigid names are present, Algorithm~\ref{alg:1} will successfully check that
+  $\Omf_{Z_{i}}$, for all $1\leq i \leq k$, or $\Omf_{\Zmc_{\Hmc}}$ is consistent, due to
+  Lemma~\ref{lem:admissibility-without-rigid} and Lemma~\ref{lem:admissibiliy-with-rigid}. Hence, it
+  returns \true.
 
-
-  Hence, the algorithm returns \true.
-
-  Now, assume that the algorithm returns \true.
-
-
-
-  Hence, \Bmf is consistent.
+  Let us assume that the algorithm returns \true. Then, there is some $\Hmc\in\Hmf$ such that~$\Omf_{Z_{i}}$,
+  for all $1\leq i \leq k$, or~$\Omf_{\Zmc_{\Hmc}}$ is consistent. By
+  Lemma~\ref{lem:admissibility-without-rigid} or Lemma~\ref{lem:admissibiliy-with-rigid}, we know
+  that $\Zmc_{\Hmc}$ is admissible. Lemma~\ref{lem:consistant-and-admissible-types} yields that \Bmf
+  is consistent.
 \end{proof}
-
-
 
 
 
@@ -906,4 +959,5 @@ No rigid names, so we can look into each world separately.
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
 
-%  LocalWords:  performant axiomatize iff logics clausification inline ABox
+%  LocalWords:  performant axiomatize iff logics clausification inline ABox ontologies workflow DL
+%  LocalWords:  bijection subtasks nominals
