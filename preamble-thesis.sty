@@ -592,9 +592,10 @@
 %     \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
 
 
-% no indentation after end of definitions
+% no indentation after end of definitions and other environments
 \AfterEndEnvironment{definition}{\par\@afterindentfalse\@afterheading}
-\AfterEndEnvironment{proof}{\par\@afterindentfalse\@afterheading}
+\AfterEndEnvironment{proof}     {\par\@afterindentfalse\@afterheading}
+\AfterEndEnvironment{example}   {\par\@afterindentfalse\@afterheading}
 
 
 
@@ -1464,6 +1465,11 @@
   \node[theoremSE] at (X1r|-Y15) {Th.~\ref{thm:shoiqel-in-nexp-rigid-roles}};
 \end{tikzpicture}
 }
+
+
+\newcommand{\rdfsIsDefinedBy}{\texttt{rdfs:isDefinedBy}\xspace}
+\newcommand{\rdfsLabelGlobal}{\texttt{rdfs:label~"objectGlobal"}\xspace}
+\newcommand{\rdfsLabelRigid}{\texttt{rdfs:label~"rigid"}\xspace}
 
 \endinput
 

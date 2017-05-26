@@ -15,13 +15,10 @@ Definition~\ref{def:outer-abstraction}. Hence, \Ob denotes the outer abstraction
 remind the reader that the \emph{restricted type} is the $\ran(\bsf)$-type (see
 Definition~\ref{def:int-respects-D}) of some element and thus a subset of $\ran(b)$.
 
-In this chapter we will present an practical algorithm to check the consistency. Internally it only
-calls standard DL consistency checks. Furthermore, we implemented this algorithm and give details on
-the design of the implementation. 
-\todo{was machen wir noch, optimization}
+In this chapter we will present a practical algorithm to check consistency.  Furthermore, we
+implemented this algorithm and give details on the design of the implementation.  Since internally
+it only calls standard DL consistency checks, we can reuse existing, highly optimized DL reasoners.
 
-We will discuss special
-requirements for these reasoners in Section~\ref{sec:implementing-jconht}. \todo{correct section?}
 
 \section{A Black-Box Approach}
 \label{sec:blackbox-approach}
@@ -970,124 +967,98 @@ tremendously.
 \section{Implementing JConHT}
 \label{sec:implementing-jconht}
 
-The reasoner is called \emph{JConHT} which stands for \emph{J}ava-implemented \emph{Con}text
-description logic reasoner based on \emph{H}ermi\emph{T}.
+We implemented Algorithm~\ref{alg:2} in a reasoner called \emph{JConHT} -- a \emph{J}ava-implemented
+\emph{Con}text description logic reasoner based on \emph{H}ermi\emph{T}. Like HermiT, it is an OWL
+compliant reasoner implementing the \textsf{OWLReasoner} interface of the OWL API.
 
-JConHT is an OWL compliant reasoner for contextualized description logics that is written in Java
-and uses HermiT as internal reasoner.
+Nearly all reasoners use the Web Ontology Language (OWL) in order to represent an ontology.
+However, in general OWL cannot express contextualized knowledge. In~\cite{BoGH-ISWC03}, Bouquet et
+al. introduce C-OWL, an extension of the OWL syntax and semantics to allow for the representation of
+contextual ontologies. But their view differs quite strongly on what a context is from our approach,
+so we cannot use C-OWL. Anyway, HermiT would not support C-OWL.
 
-Similar to
-
-% to avoid tikz - verbatim error
-\clearpage
-
-\subsection{Syntax}
-\label{sec:syntax}
-
-\todo[inline]{http://disi.unitn.it/~bouquet/papers/ISWC2003-COWL.pdf}
-
-as widely used for DL reasoner we also use the web ontology language (OWL) for our reasoner. 
-
-use special OWL annotations.
-
-Use outer abstraction and separately define what abstracted meta concepts mean.
-
-
-We decided to use \verb+rdfs:isDefinedBy+
-
-Let us, once again, consider example~\ref{ex:outer-abstraction}:
+But OWL has other means to enrich an ontology with more information due to \emph{OWL
+  annotations}. Annotations associate information with an ontology, for example the ontology
+creator's name. But also concept, role and individual names or axioms can be annotated. We use the
+outer abstraction of an ontology which is a `normal' DL-ontology and define the connection between
+an abstracted concept name and the corresponding o-axiom via a special OWL annotation. We decided to
+use the predefined OWL annotation property \rdfsIsDefinedBy for that purpose. We simply
+annotate the o-axiom $\alpha$ with the abstracted meta concept name $A_{\oalpha}$.
+%
+Let us again consider Example~\ref{ex:outer-abstraction}:
 \begin{example}\label{ex:outer-abstraction-as-OWL}
-  Let
-  $\Omc \coloneqq (C\sqsubseteq(\oax{A\sqsubseteq\bot}) \land (C\sqcap\oax{A(a)})(c), \emptyset,
-  \emptyset)$ be an \ALCALC ontology. Then \Omc looks in OWL syntax as follows:
+  Let \Omc be the \ALCALC-ontology
+  \begin{align*}
+    \Omc \coloneqq (C\sqsubseteq(\oax{A\sqsubseteq\bot})\ \land\ (C\sqcap\oax{A(a)})(c),\ \emptyset,\ \emptyset).
+  \end{align*}
+Then \Omc looks in OWL 2 functional syntax as follows:
 
-\begin{verbatim}
-SubclassOf(cls:C cls:A_ASubBot)
-ClassAssertion(ObjectIntersectionOf(cls:C cls:A_Aa) ind:c)
-SubclassOf(Annotation(rdfs:isDefinedBy cls:A_ASubBot) cls:A owl:Bottom)
-ClassAssertion(Annotation(rdfs:isDefinedBy cls:A_Aa) cls:A ind:a)
-\end{verbatim}
-
-\vspace{-2.0\baselineskip}  
+\smallskip\noindent
+\verb+SubclassOf(cls:C cls:A_ASubBot)+\\
+\verb+ClassAssertion(ObjectIntersectionOf(cls:C cls:A_Aa) ind:c)+\\
+\verb+SubclassOf(Annotation(rdfs:isDefinedBy cls:A_ASubBot) cls:A owl:Bottom)+\\
+\verb+ClassAssertion(Annotation(rdfs:isDefinedBy cls:A_Aa) cls:A ind:a)+
 \end{example}
 
 Furthermore, in practical applications we often encounter object axioms that must hold independently
 of any context. These so-called \emph{global object axioms} are of the form
-$\top \sqsubseteq \oalpha$. Using the above approach would introduce a new abstracted \todo{is that
-  defined somewhere?} meta concept for each such axiom and, thus, unnecessarily bloat the OWL
-ontology. Instead we decided to handle another OWL annotation with a special meaning:
-\verb+rdfs:label "global"+. Consider a light variation of example~\ref{ex:outer-abstraction-as-OWL}:
+$\top \sqsubseteq \oalpha$. Using the above approach would introduce a new abstracted meta concept
+for each such axiom and, thus, unnecessarily bloat the OWL ontology. Instead we decided to handle
+another OWL annotation with a special meaning: \rdfsLabelGlobal.
+%
+At last, we need to specify which concept and role names are rigid. Since only the ontology as whole
+or single axioms can be annotated, we use annotated declaration axioms. Declaration axioms do not
+affect the consequences of an OWL 2 ontology, they simply declare the existence of an entity and
+associate it with an entity type. We again use a special OWL annotation: \rdfsLabelRigid.
+%
+Consider a light variation of example~\ref{ex:outer-abstraction-as-OWL}:
 
 \begin{example}\label{ex:outer-abstraction-as-OWL-w-global}
-  Let $\Omc \coloneqq (\top\sqsubseteq(\oax{A\sqsubseteq\bot}) \land \oax{A(a)}(c), \emptyset, \emptyset)$ be
-  an \ALCALC ontology. Then \Omc looks in OWL syntax as follows:
+  Let \Omc be the \ALCALC-ontology
+  \begin{align*}
+    \Omc \coloneqq (\top\sqsubseteq(\oax{A\sqsubseteq\bot})\ \land\ \oax{A(a)}(c),\ \emptyset,\ \emptyset).
+  \end{align*}
+  with $A\in\OCR$. Then \Omc looks in OWL 2 functional syntax as follows:
 
-\begin{verbatim}
-ClassAssertion(cls:A_Aa ind:c)
-ClassAssertion(Annotation(rdfs:isDefinedBy cls:A_Aa) cls:A ind:a)
-SubclassOf(Annotation(rdfs:label "global") cls:A owl:Bottom)
-\end{verbatim}
-
-\vspace{-2.0\baselineskip}  
+\smallskip\noindent
+\verb+Declaration(Annotation(rdfs:label "rigid") Class (cls:A))+\\
+\verb+ClassAssertion(cls:A_Aa ind:c)+\\
+\verb+ClassAssertion(Annotation(rdfs:isDefinedBy cls:A_Aa) cls:A ind:a)+\\
+\verb+SubclassOf(Annotation(rdfs:label "objectGlobal") cls:A owl:Bottom)+
 \end{example}
 
-\clearpage
+We next present how we implemented our algorithm. 
 
-\section{Section 5.2}
-\label{sec:section-5.2}
-
-
-
-
-
-
-From Lemma \ref{lem:admissible-and-outerConsistent} we know that it is necessary that \Ob is
-consistent. Assuming \Ob is consistent, we still have to find a set of types
-$\Xmc\subseteq\powerset{\ran(\bsf)}$ such that \Xmc is admissible and \Ob is outer consistent
-w.r.t.~\Xmc.
-
-\noindent
-\begin{tikzpicture}
-  %\grid{(-7,0)}{(7,4)}
-  \node[draw] (a) at (0,4) {\Bb consistent?};
-  \node[draw,below left = -8mm and -30mm of a] (b) at (-5,2) {construct \Xmc \ldots set of types};
-  \draw[->] (a) to[swap] node[inner sep=0]{yes, with $\I\models\Bb$} (b);
-  \node[draw,below right = of a] (c) {\textbf{FALSE}};
-  \draw[->] (a) to node[inner sep=0]{no} (c);
-  \node[below of = b] (d) {Is \Xmc admissible?};
-  \draw[->] (b) to (d);
-  \node[below left = of d] (e){\textbf{TRUE}};
-  \draw[->] (d) to[swap] node[inner sep=0]{yes} (e);
-  \node[below right = of d] (f) {backtracking};
-  \draw[->] (d) to node[inner sep=0]{no} (f);
-  \node[below of = f] (g) {find any admissible \Xmc?};
-  \draw[->] (f) to (g);
-  \node[below left = of g] (h){\textbf{TRUE}};
-  \draw[->] (g) to[swap] node[inner sep=0]{yes} (h);
-  \node[below right = of g] (i){\textbf{FALSE}};
-  \draw[->] (g) to node[inner sep=0]{no} (i);
-\end{tikzpicture}
+The first component is the \texttt{ContextOntology} class. It stores the specially formatted input
+OWL ontology as \textsf{rootOntology}. The constructor additionally extracts the outer abstraction,
+i.e.\ all logical OWL axioms in \textsf{rootOntology} that are not annotated with \rdfsIsDefinedBy
+or \rdfsLabelGlobal, and stores the connection of the abstracted concept names and corresponding the
+o-axioms in a hash map.  If necessary, the repletion of the DL-clauses is handled here, too. Since
+we cannot directly add DL-clauses at this stage, we add the axiom $\top\sqsubseteq
+\bsf(\oalpha)\sqcup\bsf(\oax{\alpha^{*}})$, which is then transformed into the according DL-clause.
+%
+The class also provides a method \mbox{\textsf{getMetaOntology()}} to return the outer abstraction.
+A separate method allows to retrieve all global object axioms as a stream of \textsf{OWLAxiom}s.
+%
+If no rigid names are present, the method \textsf{getObjectOntology($X_{1}$)} returns an OWL
+ontology which is an conjunction of all global object axioms, all object axioms corresponding to the
+positively asserted abstracted meta concepts in $X_{1}$ and the weakly negation of all object axioms
+corresponding to the negatively asserted abstracted meta concepts in $X_{1}$. Here, $X_{1}$ is an
+instance of the class \texttt{RestrictedType}, essentially a pair $(\Xpos,\Xneg)$ of sets of
+positively and negatively asserted, abstracted concept names.
+%
+If rigid names are present, \textsf{getObjectOntology($X_{1},\dots,X_{k}$)} returns the overall OWL
+ontology after applying the renaming technique to the the single axioms according to
+Definition~\ref{def:renaming}.  The output of \texttt{getObjectOntology($\cdot$)} is used to check
+admissibility.
 
 
-No rigid names, so we can look into each world separately.
+The class \texttt{ContextReasoner} is a subclass of HermiT's \texttt{Reasoner} class and thereby
+implements the \texttt{OWLReasoner} interface of the OWL API. Compared to HermiT's \texttt{Reasoner}
+it only changes the tableau to be a \texttt{ContextTableau}.
 
 
-
-
-
-\todo[inline]{quite a bit missing here.}
-
-\begin{lemma}
-  Let \Bmf be a consistent BKB over \Nsig, let \I be a model of \Bmf, and let $\alpha$ be an axiom
-  over \Nsig. 
-\end{lemma}
-
-\todo[inline]{the next paragraph comes after a general introduction about the block box approach.}
-
-
-
-
-
+\texttt{ContextTableau}
 
 
 % As every relevant description logic reasoner uses the Web Ontology Language (OWL), we have to adapt
@@ -1146,4 +1117,4 @@ No rigid names, so we can look into each world separately.
 
 %  LocalWords:  performant axiomatize iff logics clausification inline ABox ontologies workflow DL
 %  LocalWords:  bijection subtasks nominals conformant hypertableau DLs Konclude API HermiT ABoxes
-%  LocalWords:  blockable Preprocessing
+%  LocalWords:  blockable Preprocessing OWLReasoner et al ava
