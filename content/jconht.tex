@@ -1027,15 +1027,17 @@ Consider a light variation of example~\ref{ex:outer-abstraction-as-OWL}:
 \verb+SubclassOf(Annotation(rdfs:label "objectGlobal") cls:A owl:Bottom)+
 \end{example}
 
-We next present how we implemented our algorithm. 
+We next present how we implement our algorithm. The main components that we discuss are the
+\texttt{ContextOntology}, \texttt{ContextReasoner} and \texttt{ContextTableau} classes. 
 
-The first component is the \texttt{ContextOntology} class. It stores the specially formatted input
-OWL ontology as \textsf{rootOntology}. The constructor additionally extracts the outer abstraction,
-i.e.\ all logical OWL axioms in \textsf{rootOntology} that are not annotated with \rdfsIsDefinedBy
-or \rdfsLabelGlobal, and stores the connection of the abstracted concept names and corresponding the
+The \texttt{ContextOntology} class stores the specially formatted input OWL ontology as
+\textsf{rootOntology}. The constructor additionally extracts the outer abstraction, i.e.\ all
+logical OWL axioms in \textsf{rootOntology} that are not annotated with \rdfsIsDefinedBy or
+\rdfsLabelGlobal, and stores the connection of the abstracted concept names and corresponding the
 o-axioms in a hash map.  If necessary, the repletion of the DL-clauses is handled here, too. Since
-we cannot directly add DL-clauses at this stage, we add the axiom $\top\sqsubseteq
-\bsf(\oalpha)\sqcup\bsf(\oax{\alpha^{*}})$, which is then transformed into the according DL-clause.
+we cannot directly add DL-clauses at this stage, we add the axiom
+$\top\sqsubseteq \bsf(\oalpha)\sqcup\bsf(\oax{\alpha^{*}})$, which is then transformed into the
+according DL-clause.
 %
 The class also provides a method \mbox{\textsf{getMetaOntology()}} to return the outer abstraction.
 A separate method allows to retrieve all global object axioms as a stream of \textsf{OWLAxiom}s.
@@ -1057,8 +1059,24 @@ The class \texttt{ContextReasoner} is a subclass of HermiT's \texttt{Reasoner} c
 implements the \texttt{OWLReasoner} interface of the OWL API. Compared to HermiT's \texttt{Reasoner}
 it only changes the tableau to be a \texttt{ContextTableau}.
 
+The main parts of our algorithm are implemented in the \texttt{ContextTableau} class which is a
+subclass of HermiT's \texttt{Tableau} class.  In HermiT, the \texttt{runCalculus()} method of
+\texttt{Tableau} runs the hypertableau algorithm trying to build a model of \CA.  Its
+\texttt{ExtensionManager} contains the set of assertions of an ABox that labels a node in a
+derivation. When no derivation rule is applicable and if the \texttt{ExtensionManager} is
+clash-free, it contains a pre-model, i.e. the set of assertions from which through unraveling a
+model of \CA can be constructed, proving the consistency of \CA.  If the \texttt{ExtensionManager}
+contains a clash, backtracking is triggered and the next leaf in the derivation is considered.
 
-\texttt{ContextTableau}
+We override \texttt{runCalculus()} in \texttt{ContextTableau} such that it also returns true if and
+only if the input context ontology is consistent.  Therefore we implement an method
+\texttt{consistentInterpretations()} that returns a stream of models of the meta ontology, i.e.\ the
+outer abstraction of the input ontology.  It internally uses \texttt{Tableau}'s \texttt{runCalculus()}
+to calculate the models. It reads off the pre-model of the \texttt{ExtensionManager} and sets a
+clash afterwards, so that for the next stream element \texttt{Tableau}'s \texttt{runCalculus()}
+calculates the next pre-model.
+
+This stream of pre-models is filtered for admissible 
 
 
 % As every relevant description logic reasoner uses the Web Ontology Language (OWL), we have to adapt
