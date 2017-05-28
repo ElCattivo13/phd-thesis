@@ -17,44 +17,146 @@ To avoid the confusion with the notations, from now on we distinguish between \e
 in \rosirole-based systems and \emph{roles} as used in description logics whenever we feel it is
 necessary. Otherwise, we drop that distinction if it is clear from the context.
 %
-In Section~\ref{sec:sigma-crom} we introduce a syntactical variant of the \emph{Compartment Role
-  Object Model (CROM)}~\cite{KBG-SLE15}.  Then, after discussing requirements for the logical
-formalism and analyze possible candidates for the translation in
-Section~\ref{sec:requirements-and-CDLs}, we present the actual mapping in
-Section~\ref{sec:representating-role-based-models}. We close this chapter in
-Section~\ref{sec:going-beyond-crom} with possible features of role-based systems that go beyond CROM
-but still can be expressed in an ontology.
+
+In Section~\ref{sec:rosiroles}, we give a short introduction to \rosiroles.  In
+Section~\ref{sec:sigma-crom} we introduce a syntactical variant of the \emph{Compartment Role Object
+  Model (CROM)}~\cite{KBG-SLE15}.  Then, after discussing requirements for the logical formalism and
+analyze possible candidates for the translation in Section~\ref{sec:requirements-and-CDLs}, we
+present the actual mapping in Section~\ref{sec:representating-role-based-models}. We close this
+chapter in Section~\ref{sec:going-beyond-crom} with possible features of role-based systems that go
+beyond CROM but still can be expressed in an ontology.
 
 
+
+\section{Ontological Foundation of Roles}
+\label{sec:rosiroles}
+
+The word \emph{Role} originated from the French word \emph{\Rosirole} which referred to a form of
+rolled parchment on which were written the lines an actor had to memorise.  Since then, a role is a
+function assumed or part played by a person or thing in a certain situation.
+
+Roles have been introduced in computer science already in 1977 by Bachman et al. He defined a role
+as a behaviour pattern which may be assumed by entities of different kinds. Since an entity can
+concurrently play several roles, the set of played roles characterise that entity.
+
+Guarino approaches roles form an ontological point of view. He, among others, developed
+\emph{OntoClean}~\cite{GuW-HoO09}, a methodology for analysing ontologies. He considers several
+domain-independent \emph{metaproperties}, i.e.\ properties which describe \emph{classes}. Here, a
+class is merely a set of domain elements in a possible world and a class can belong to a
+\emph{metapredicate} such as \emph{Role}.
+%
+One metaproperty that is important for roles is \emph{rigidity}. A class is \emph{rigid} if all
+entities which are instances of that class are necessarily instances of that class in every possible
+world. For example, every instance of Person will always be a person, independent of the context or
+the time. But an instance of Student can cease to be a student.
+%
+Another metaproperty is \emph{dependence}.  A class is dependent if each instance of it implies the
+existence of some other entity. The class Student can only have instances if there are also
+instances of Teacher.
+%
+We here omit further metaproperties and their implications for metapredicates since they are not
+relevant in our setting and refer the interested reader
+to~\cite{GuW-EKAW00,GuW00,GuW-CM00,WeG-DKE01}.
+
+Now, the metapredicate \emph{Role} implies non-rigidity and dependence. Thus, a class which is a
+role such as Student must not be rigid but dependent. The dependence for roles can be argued in two
+directions. First one can say that each role needs its co-role, e.g.\ a student depends on a teacher
+or an orchestra musician depends on a conductor. On the other hand, a role always depends on a
+context, e.g.\ a student only exists in a school or university and an orchestra musician only exists
+in an orchestra.  Anyhow, an instance of a role depends on the existence of another entity.
+
+\begin{table}[t]
+  \caption{Classifying features for roles}
+  \small
+  \centering
+  \begin{tabularx}{0.8\linewidth}{rX} 
+    \toprule
+    1.  & Roles have properties and behaviour.\\
+    2.  & Roles depend on relationships.\\
+    3.  & Objects may play different roles simultaneously.\\
+    4.  & Objects may play the same role (type) several times.\\
+    5.  & Objects may acquire and abandon roles dynamically.\\
+    6.  & The sequence of role acquisition and removal may be restricted.\\
+    7.  & Unrelated objects can play the same role.\\
+    8.  & Roles can play roles.\\
+    9.  & Roles can be transferred between objects.\\
+    10. & The state of an object can be role-specific.\\
+    11. & Features of an object can be role-specific.\\
+    12. & Roles restrict access.\\
+    13. & Different roles may share structure and behavior.\\
+    14. & An object and its roles share identity.\\
+    15. & An object and its roles have different identities.\\
+    \midrule
+    16. & Relationships between roles can be constrained.\\
+    17. & There may be constraints between relationships.\\
+    18. & Roles can be grouped and constrained together.\\
+    19. & Roles depend on Compartments.\\
+    20. & Compartments have properties and behaviors.\\
+    21. & A Role can be part of several Compartments.\\
+    22. & Compartments may play roles like objects.\\
+    23. & Compartments may play roles which are part of themselves.\\
+    24. & Compartments can contain other compartments.\\
+    25. & Different compartments may share structure and behavior.\\
+    26. & Compartments have their own identity.\\
+    \bottomrule
+  \end{tabularx}
+  \label{tab:role-features}
+\end{table}
+
+
+Besides the analysis of Guarino, Steimann~\cite{Stei-DKE00} introduces 15 features, depicted in
+Table~\ref{tab:role-features}, to classify roles. These features are completed by Kühn et al.\
+in~\cite{KuLG-SLE14} by an additional 11 features since Steimann neglected any features concerning
+role constraints or the contextual nature of roles.  These features show how diverse roles can be
+seen, and that there is not one definition what a role is. Based on these features, Kühn et
+al.~\cite{KuLG-SLE14} proposed a so-called \emph{feature model} to classify role-based modelling
+languages, i.e.\ several features organised in a tree shape from which a domain expert can select
+the features he needs. These features include, for example, whether role constraints such as role
+implication exist or whether the same role can be played several times by an entity.
+
+The \emph{Compartment Role Object Model}~\cite{KBG-SLE15}, which we focus on in this thesis, is one
+instance of this feature model.
 
 \section{A Formal Role-Based Modeling Language}
 \label{sec:sigma-crom}
 
-
 In this section we will present a syntactical variant of the \emph{Compartment Role Object Model}
-defined in \cite{KBG-SLE15}. This variant is simply introduced for easier
+defined in \cite{KBG-SLE15}. It is semantically equivalent and simply introduced for easier
 explanation of the mapping to description logics.
 
 \subsection{Type and Instance Level}
 \label{sec:type-instance-level}
 
-In CROM, we can model role-based systems via different kinds of concepts: \emph{natural types},
+In CROM, we can model role-based systems via different kinds of predicates: \emph{natural types},
 \emph{\rosirole types}, \emph{compartment types} and \emph{relationship types}. These differ in the
-three ontological properties \emph{rigidity}, \emph{foundedness} and \emph{identity}.
+the above mentioned metaproperties rigidity and dependence.
+\begin{itemize}
+\item Natural types, e.g.\ \textsf{Person} or \textsf{Table}, are rigid and independent. Instances
+  of natural types, called \emph{naturals}, are instances of that type until they cease to exist. A
+  table is always a table, independent of its function.
+\item \Rosirole types, e.g.\ \textsf{Student}, \textsf{DiningTable} or \textsf{WorkDesk}, are
+  non-rigid and dependent. Instances of \rosirole types, called \emph{\rosiroles}, may be played by
+  some entity in some context but not in another. But there always must be a context in which that
+  \rosirole is played.  A table might be used as dining table in the context of a family
+  celebration, i.e.\ the table plays the role of a dining table, whereas the same table usually is
+  used as work desk.
+\item Compartment types, e.g.\ \textsf{University} or \textsf{FamilyCelebration}, are rigid and
+  dependent. Intuitively, compartment types are objectified contexts. As long as an instance of a
+  compartment type, called \emph{compartment}, exists it is of that type. But unlike naturals a
+  compartment depends on other entities, i.e.\ the \rosiroles that are played within that
+  compartment.
+\item Relationship types, e.g.\ \textsf{supervise}, are non-rigid and dependent. But in contrast to
+  \rosirole types, which is an unary predicate, relationship types are binary predicates. Hence, an
+  instance of a relationship type depends on the existence of the two entities that are
+  interrelated.  An instance of \emph{supervise} needs a professor who supervises and a student who
+  is supervised.
+\end{itemize}
 
-\Rosirole types are rigid, non-founded and have
-%
-\todo{alles noch zu sehr abhängig von Section 2.2}
-
-
-
-
-% Instances of these
-% types are called \emph{naturals}, \emph{\rosiroles}, \emph{compartments} and \emph{relationships},
-% respectively. Naturals denote non-founded and context-independent objects
-
-
-
+Besides these different types, we can restrict which entities are allowed to play which \rosiroles
+by a \fills-relation which assigns each rigid type, i.e.\ natural types and compartment types, the
+set of \rosirole types, so that an instance of the rigid type can only play \rosiroles of \rosirole
+types the rigid types fills. For example, besides tables also picnic blankets could play the \rosirole
+of a dining table. Only persons can play the role an NFL player in the context
 
 \begin{definition}[Compartment Role Object Model]\label{def:scrom}
   Let \NT, \RT, \CT and \RST be finite and mutually disjoint sets of Natural Types, Role
@@ -501,22 +603,27 @@ level. Here, we introduce o-concepts for natural types and \rosirole types and a
 Here, we made a first design decision on how to express playing a \rosirole within a
 compartment. There are two possibilities, depicted in Figure~\ref{fig:two-ways-to-play-roles}, which
 we actually already showed in Example~\ref{ex:nfl-with-contexts}. On the one hand, we can introduce
-an o-concept \rt and elements playing an \rt-\rosirole are in the extension of \rt (like Mike
-McCarthy playing the \rosirole of a coach). Here, an object $o$ and a \rosirole $r$ with
+an o-concept $\mathsf{Coach}\in\RT$ and elements playing a $\mathsf{Coach}$-\rosirole are in the
+extension of \rt (such as Mike McCarthy playing the \rosirole of a coach in the left side of
+Figure~\ref{fig:two-ways-to-play-roles}). Here, an object $o$ and a \rosirole $r$ with
 $(o,\cdot,r)\in\plays$ would be mapped to a single element $d$ in the object interpretation for that
-compartment. On the other hand, we can introduce the o-concept \rt as well, but additionally an
-object role \plays and elements playing an \rt-\rosirole have a \plays-successor that is in the extension
-of \rt (like Aaron Rodgers playing the \rosirole of a quarterback).  This is closer to the semantics
-of \SCROI{s} but introduces new object domain elements for each \rosirole that is played.  Still, we
-chose the latter variant since later on we need to count the number of \rosiroles to assure
-occurrence and cardinality constraints. In DLs this can be done via qualified number restrictions.
+compartment. This variant is close to the ontological nature of \rosiroles where an entity is in the
+extension of a \rosirole, seen as unary predicate, if this entity plays that \rosirole. On the other
+hand, we can introduce the o-concept $\mathsf{Coach}$ as well but disjoint from $\mathsf{Person}$
+and we additionally introduce an object role \plays and elements playing an
+$\mathsf{Coach}$-\rosirole have a \plays-successor that is in the extension of $\mathsf{Coach}$
+(such as Mike playing the \rosirole of a coach in the left side of
+Figure~\ref{fig:two-ways-to-play-roles}).  This is closer to the semantics of \SCROI{s} but
+introduces new object domain elements for each \rosirole that is played.  Still, we chose the latter
+variant since later on we need to count the number of \rosiroles to assure occurrence and
+cardinality constraints. In DLs this can be done via qualified number restrictions.
 
 \begin{figure}
   \centering
   \begin{tikzpicture}
     \node[node,label={[align=left]270:\textit{MikeMcCarthy},\\ $\mathsf{Coach}$}] (mmc) at (-2,0){};
-    \node[node,label={[align=left]270:\textit{AaronRodgers}}] (ar) at (2,0){};
-    \node[node,label={[align=right]south:$\mathsf{Quarterback}$}] (qb) at (5,0){};
+    \node[node,label={[align=left]270:\textit{MikeMcCarthy}}] (ar) at (2,0){};
+    \node[node,label={[align=right]south:$\mathsf{Coach}$}] (qb) at (5,0){};
     \draw[edge] (ar) to[bend left=10] node{\plays} (qb);
     \draw[thin] (0,-1.5) to (0,1);
   \end{tikzpicture}
@@ -1072,4 +1179,5 @@ be any \rst at all in that particular compartment.
 %%% End:
 
 %  LocalWords:  logics Kühn irreflexivity assertional satisfiability iff cardinalities CROM UML de
-%  LocalWords:  facto ontologies DL nominals intra irreflexive GCI
+%  LocalWords:  facto ontologies DL nominals intra irreflexive GCI OntoClean metaproperties Bachman
+%  LocalWords:  metaproperty unary
