@@ -1,28 +1,18 @@
-\chapter{The Contextualized Description Logic \texorpdfstring{\LMLO}{LM[LO]}}
-\label{cha:context-dls}
 
-In this chapter, we present a novel family of contextualized description logics. Our approach is
-similar to temporal description logics as investigated in~\cite{LuWZ-TIME08} in which a temporal
-logic for the time dimension and a description logic for the object dimension are combined in order
-to express information valid at a certain time. We combine two description logics: one DL \LM for
-the context or meta dimension for knowledge \emph{about} contexts and one DL \LO for the object
-dimension for knowledge \emph{within} contexts.
+\section{Syntax and Semantics of Contextualised Description Logics}
+\label{sec:syn-seman-cdl}
+
+Our approach for contextualised description logics is similar to temporal description logics as
+investigated in~\cite{LuWZ-TIME08} in which a temporal logic for the time dimension and a
+description logic for the object dimension are combined in order to express information valid at a
+certain time. We combine two, possibly different, description logics: one DL \LM for the
+\emph{context} or \emph{meta dimension} for knowledge \emph{about} contexts and one DL \LO for the
+\emph{object dimension} for knowledge \emph{within} contexts.
 %
 Considering the semantics, \LMLO can also be seen as a restricted variant of the context description
 logic proposed by Klarman et al.~\cite{KG16}.
 
-This chapter is structured as follows. After defining the syntax and semantics in
-Section~\ref{sec:syn-seman-cdl}, we analyze the computational complexity of the consistency problem
-in Section~\ref{sec:complexity-consis-problem}. Particular consideration is needed in the case of
-\EL which is discussed in Section~\ref{sec:case-el}. Next, we show that introducing another more
-expressive concept constructor directly leads to undecidability in
-Section~\ref{sec:adding-cont-concepts}. 
-
-
-\section{Syntax and Semantics of Contextualized Description Logics}
-\label{sec:syn-seman-cdl}
-
-The contextualized DL \LMLO is a two-dimensional and two-sorted description logic. Syntactically, we
+The contextualised DL \LMLO is a two-dimensional and two-sorted description logic. Syntactically, we
 start with a description logic \LM for the meta level to describe the relational structure between
 contexts. We now add one meta concept constructor that allows to refer to the inner structure of
 each context. More precisely, we allow an \LO-axiom to constitute a meta concept which denotes the
@@ -148,7 +138,7 @@ Section~\ref{sec:description-logics}.
     \sqcap \oax{\mathsf{Coach}(\text{\textit{MikeMcCarthy}})},
   \end{align*}
   describing the context of an NFL team that is not in the AFC, has someone playing quarterback and
-  has Mike McCarthy as coach.  The contextualized ontology $\Omc'$ could look like the following:
+  has Mike McCarthy as coach.  The contextualised ontology $\Omc'$ could look like the following:
   \begin{gather*}
     (\mathsf{NFC} \sqcap
     \oax{(\exists\plays.\top)(\text{\textit{AaronRodgers}})})(\text{\textit{GreenBayPackers}})
@@ -294,7 +284,7 @@ constant domains.
 \section{Complexity of the Consistency Problem}
 \label{sec:complexity-consis-problem}
 
-After we introduced the syntax and semantics of our contextualized description logics, in this
+After we introduced the syntax and semantics of our contextualised description logics, in this
 section we will investigate the computational complexity of the consistency problem.  Therefore, we
 consider three different settings dependent on whether rigid concepts and rigid roles are admitted.
 In the first setting no rigid names are allowed at all.  In the second setting rigid concepts are
@@ -973,7 +963,7 @@ negation. Furthermore, this would miss any practical motivation. Then the consis
 This restriction, however, does not yield a better complexity in the cases of \ELLO, where \LO is
 between \ALC and \SHOQ.
 
-\subsection{The Contextualized Description Logics \texorpdfstring{\LMEL}{LM[EL]}}
+\subsection{The Contextualised Description Logics \texorpdfstring{\LMEL}{LM[EL]}}
 \label{sec:dlinner-el}
 
 In this section, we consider \LMEL where \LM is between \ALC
@@ -1002,7 +992,7 @@ rigid names.
 
 \noindent
 For the cases of rigid names, the lower bounds of \NExpTime are obtained by a
-careful reduction of the satisfiability problem in the temporalized DL
+careful reduction of the satisfiability problem in the temporalised DL
 \EL-LTL~\cite{BoTh-IJCAI15,BoTh-LTCS-15-07}, which is a fragment of \ALC-LTL introduced
 in~\cite{BaGL-KR08,BaGL-ToCL12}.
 %
@@ -1252,7 +1242,7 @@ Summming up the results of this section, we obtain the following corollary.
   \end{itemize}
 \end{corollary}
 
-\subsection{The Contextualized Description Logics \texorpdfstring{\ELLO}{EL[LO]}}
+\subsection{The Contextualised Description Logics \texorpdfstring{\ELLO}{EL[LO]}}
 \label{sec:dlouter-el}
 
 In this section, we consider \ELLO where \LO is between \ALC and \SHOQ.
@@ -1293,7 +1283,7 @@ For the case of rigid role names, we have lower bounds of \TwoExpTime.
   i.e.~$\ORR\ne\emptyset$.
   %
   In~\cite{BaGL-KR08,BaGL-ToCL12}, a reduction was provided to show \TwoExpTime-hardness for the
-  temporalized DL \ALC-LTL in the presence of rigid roles.
+  temporalised DL \ALC-LTL in the presence of rigid roles.
   %
   Here, we mimic the properties of the time dimension that are important for the reduction using a
   role name $t\in\MR$.
@@ -1368,7 +1358,7 @@ only.
   with rigid concepts, i.e.~$\OCR\ne\emptyset$ and $\ORR=\emptyset$.
   %
   In~\cite{BaGL-KR08,BaGL-ToCL12}, a reduction was provided to show \NExpTime-hardness for the
-  temporalized DL \ALC-LTL in the presence of rigid concepts.
+  temporalised DL \ALC-LTL in the presence of rigid concepts.
   %
   As in the proof of Theorem~\ref{thm:elalc-2exp-hard-rigid-roles}, we mimic the properties of the
   time dimension that are important for the reduction using a role name $t\in\MR$.
@@ -1460,48 +1450,6 @@ only.
 % \end{corollary}
 
 
-\section{Adding Contextualized Concepts}
-\label{sec:adding-cont-concepts}
-
-\input{content/adding-contextualized-concepts}
-
-
-\cleardoublepage
-
-
-% \section{Consistency of Boolean \texorpdfstring{\SHOIQ}{SHOIQ} knowledge bases}
-% \label{sec:consistency-shoiq-bkb}
-
-% \begin{definition}[Concept Type]
-  
-% \end{definition}
-
-% \begin{definition}[Role Type]
-  
-% \end{definition}
-
-% \begin{definition}[Model candidate]
-  
-% \end{definition}
-
-% \begin{definition}[Quasimodel]
-  
-% \end{definition}
-
-% \begin{lemma}
-%   Let \Bmf be a \SHOIQ-BKB. weakly respects iff quasimodel exists.
-% \end{lemma}
-
-% \begin{theorem}\label{thm:shoiq-bkb-consistency-nexptime}
-%   Let \Bmf be a \SHOIQ-BKB, let $\Umc \subseteq \NC$ and let $\Ymc\subseteq\powerset{\Umc}$. Then
-%   deciding whether there exists a model of \Bmf that weakly respects $(\Umc,\Ymc)$ can be
-%   non-deterministically done in time exponential in the size of \Bmf and linear in the size of \Ymc.
-% \end{theorem}
-
-% \begin{corollary}
-%   Let \Bmf be a \SHOIQ-BKB. Then, consistency of \Bmf can be non-deterministically decided in time
-%   exponential in the size of \Bmf.
-% \end{corollary}
 
 %%% Local Variables:
 %%% mode: latex
@@ -1509,5 +1457,5 @@ only.
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
 
-%  LocalWords:  Löwenheim Skolem Logics logics iff temporalized Quasimodel quasimodel BKB Klarman
+%  LocalWords:  Löwenheim Skolem Logics logics iff temporalised Quasimodel quasimodel BKB Klarman
 %  LocalWords:  DL et al GreenBayPackers AaronRodgers DLs bijections equisatisfiable satisfiability

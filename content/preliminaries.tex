@@ -1,18 +1,21 @@
-\chapter{Preliminaries}
-\label{cha:preliminiaries}
+\chapter{The Contextualised Description Logic \texorpdfstring{\LMLO}{LM[LO]}}
+\label{cha:context-dls}
 
-In this chapter, we present some basic notions which we use throughout this thesis. We first
-introduce \emph{description logics (DLs)} as logical formalism that we use to reason on complex
-domain models. In Section~\ref{sec:rosiroles}, we give an ontological overview of the notion of a
-\emph{\rosiroles}.
+\LMLO
+In this chapter, after introducing \emph{description logics (DLs)} as a well-established logical
+formalism for knowledge representation, we present a novel family of contextualised description
+logics which we use to reason on complex domain models. Firstly we present some basic notions of DLs
+which we use throughout this thesis in Section~\ref{sec:preliminaries}.
 %
-Specific definitions, such as the \emph{restricted type} of an element, are given in the respective
-chapters.
+After defining the syntax and semantics of contextualised DLs in Section~\ref{sec:syn-seman-cdl}, we
+analyze the computational complexity of the consistency problem in
+Section~\ref{sec:complexity-consis-problem}. Particular consideration is needed in the case of \EL
+which is discussed in Section~\ref{sec:case-el}. At last, we show that introducing another more
+expressive concept constructor directly leads to undecidability in
+Section~\ref{sec:adding-cont-concepts}.
 
-
-
-\section{Description Logics}
-\label{sec:description-logics}
+\section{Preliminaries}
+\label{sec:preliminaries}
 
 Description logics are a family of knowledge representation formalisms. As already outlined in the
 introduction, DLs allow to represent application domains in a well-structured way. In this section,
@@ -312,91 +315,20 @@ respectively. While for BKBs the complexity class stays the same, this is much l
 in \ExpTime for \SHOQ~\cite{Lip-PhD14} and it remains in \NExpTime for \SHOIQ as a consequence of
 Theorem~2 in \cite{Pra-JLLI05}.
 
-For \EL-ontologies, the consistency problem is trivial since no contradictions can be expressed and, thus,
-every \EL-ontology is consistent. On the other hand, we do not consider \EL-BKBs as it seems very unnatural to
-admit axiom negation while denying concept negation at the same time.
+For \EL-ontologies, the consistency problem is trivial since no contradictions can be expressed and,
+thus, every \EL-ontology is consistent. On the other hand, we do not consider \EL-BKBs as it seems
+very unnatural to admit axiom negation while denying concept negation at the same time.
 
-%\clearpage
-
-\section{Roles}
-\label{sec:rosiroles}
-
-The word \emph{Role} originated from the French word \emph{\Rosirole} which referred to a form of
-rolled parchment on which were written the lines an actor had to memorize.
-Since then, a role is a function assumed or part played by a person or thing in a certain situation.
-The concept of roles is also quite popular in computer science. 
-
-Charles Bachman introduced roles to the field of data modelling in 1977 \cite{BaD-VLDB77}. 
+\input{content/contextdls}
 
 
- 3 Sätze über Bachmans
-Rollen
+\section{Adding Contextualised Concepts}
+\label{sec:adding-cont-concepts}
 
-Steimann picked up 15 features to classify roles. He neglected some
-
-
+\input{content/adding-contextualized-concepts}
 
 
-
-In this section 
-
-Bachman
-
-rigid
-
-foundedness
-
-identity
-
-\todo{cite features}
-
-\begin{table}[ht]
-  \caption{Classifying features for roles}
-  \small
-  \centering
-  \begin{tabularx}{0.8\linewidth}{rX} 
-    \toprule
-    1.  & Roles have properties and behaviour.\\
-    2.  & Roles depend on relationships.\\
-    3.  & Objects may play different roles simultaneously.\\
-    4.  & Objects may play the same role (type) several times.\\
-    5.  & Objects may acquire and abandon roles dynamically.\\
-    6.  & The sequence of role acquisition and removal may be restricted.\\
-    7.  & Unrelated objects can play the same role.\\
-    8.  & Roles can play roles.\\
-    9.  & Roles can be transferred between objects.\\
-    10. & The state of an object can be role-specific.\\
-    11. & Features of an object can be role-specific.\\
-    12. & Roles restrict access.\\
-    13. & Different roles may share structure and behavior.\\
-    14. & An object and its roles share identity.\\
-    15. & An object and its roles have different identities.\\
-    \midrule
-    16. & Relationships between roles can be constrained.\\
-    17. & There may be constraints between relationships.\\
-    18. & Roles can be grouped and constrained together.\\
-    19. & Roles depend on Compartments.\\
-    20. & Compartments have properties and behaviors.\\
-    21. & A Role can be part of several Compartments.\\
-    22. & Compartments may play roles like objects.\\
-    23. & Compartments may play roles which are part of themselves.\\
-    24. & Compartments can contain other compartments.\\
-    25. & Different compartments may share structure and behavior.\\
-    26. & Compartments have their own identity.\\
-    \bottomrule
-  \end{tabularx}
-  \label{tab:role-features}
-\end{table}
-
-Guarino converged to roles form an ontological point of view. He defined metaproperties in
-
-rigid
-
-Identity
-
-
-
-We will come back to these definitions in Chapter
+\cleardoublepage
 
 %%% Local Variables:
 %%% mode: latex

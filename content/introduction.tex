@@ -14,23 +14,18 @@ are not even stated explicitly.
 Furthermore, software must be easily maintainable and, when necessary, changes on the system should be realized
 without much down time which, for example, in a smart factory is very costly. 
 
-% To sum up, current software systems long-lasting, high complexity, easy to maintain.
-
-
-
-% \bulletItem{Aufzählung, Beispiele}. Requirements
-% users impose on these ... \bulletItem{long-lasting (legacy systems in COBOL, especially in banking
-%   systems), easy to maintain, but high complexity, (self-)adapting}
-
-
-
-
 \section{Role-Based Systems}
 \label{sec:intro-role-based-systems}
 
 In order to achieve all these goals, the concept of \emph{roles} is very promising. First introduced
 by Bachman~\cite{BaD-VLDB77}, roles appeared over the last decades in several fields of computer
-science\todo{citations}. The relational or context-dependent properties and behaviour of objects is
+science. Most prominent is \emph{role-based access
+  control}~\cite{FeKC-RBAC03,AlFe-ECS11,SaCF-IEEE96} albeit it is only a special application for
+roles with a narrow scope. Roles are also introduced, for example, in data
+modelling~\cite{Ha-ORM2006}, conceptual modelling~\cite{Stei-DKE00,Gui-PHD05,Stei-AO07} and
+programming languages~\cite{BaBT-SAC06,Herr-AO07,BaGE-ECOOP07}.
+
+The relational or context-dependent properties and behaviour of objects is
 transferred into the roles that object plays in a certain context. These paradigm also supports
 Dijkstra's separation of concerns~\cite{Dij-SelWrCom82} which simplifies development and maintenance
 of such systems.  Due to the use of roles, \emph{role-based systems} can cleaner and more structured
@@ -38,7 +33,7 @@ model application domains since ontologically different entities are modelled by
 
 Consider, for example, the concepts of $\mathsf{Person}$ and $\mathsf{Customer}$. With an
 object-oriented approach of inheritance as a specialization relation, we could model
-$\mathsf{Customer}$ as a subclass of $\mathsf{Person}$, as obviously not every person is a customer.
+$\mathsf{Customer}$ as a subclass of $\mathsf{Person}$, as not every person is a customer.
 On the other hand, if we restrict our domain to a business context and add the concept of a
 $\mathsf{Company}$, the inheritance relation would flip and we also have $\mathsf{Company}$ as
 subclass of $\mathsf{Customer}$.  This conflict can be resolved when we realize that
@@ -262,7 +257,9 @@ highly depends on how roles and other predicates are translated.
 
 On the one hand we can and will prove the semantic correctness of our translation from role-based
 models into an \LMLO ontology. On the other hand, for practical use there must exist some
-implementation of the mapping. We based our implementation on the reference implementation for CROM\todo{cite}, which in turn can be used by FRaMED\todo{cite}, a graphical editor allowing the
+implementation of the mapping. We based our implementation on the reference implementation for
+CROM\footnote{\url{https://github.com/Eden-06/CROM}}, which in turn can be used by
+FRaMED\footnote{\url{https://github.com/leondart/FRaMED}}, a graphical editor allowing the
 specification of role-based models. At the end, our implemented mapping produces a specially
 formatted OWL ontology which leads to the last open part in the overall workflow.
 
@@ -297,38 +294,34 @@ are possible.
 
 In the following, we give a short outline how the thesis is structured.
 
-In Chapter~\ref{cha:preliminiaries} we present in the first section the basic definitions of
+In Chapter~\ref{cha:context-dls}, we present in the first section the basic definitions of
 description logics which we will use throughout the thesis. We define the syntax and semantics of
 concepts, axioms and knowledge bases and state specific DLs together with the respective
 complexities of the consistency problem.
 %
-In the second section, we give an ontological overview of the notion of a role and define properties
-that are important to distinguish roles from other predicates.
-
-In Chapter~\ref{cha:context-dls} we introduce the contextualized description logic \LMLO. We again
-start with the definition of the syntax and semantics. For the complexity analysis of the
-consistency problem we first look into the upper bounds. We consider the case of the lightweight
-description logic \EL in a separate section, which at the same time are the lower bounds of the
-complexity for more expressive contextualized DLs. For the complexity analysis we consider three
-different settings which result in different complexity results. In the first setting we do not
-allow any rigid names at all. 
-% This is complexity-wise the simplest setting and we can show that the
-% complexity of the consistency problem can be retained. 
-In the second setting, we assume the presence
-of rigid concepts but forbid any rigid roles whereas in the last and complexity-wise hardest setting we allow both
-rigid concepts and rigid names. 
+We then introduce the contextualized description logic \LMLO. We again start with the definition of
+the syntax and semantics. For the complexity analysis of the consistency problem we first look into
+the upper bounds. We consider the case of the lightweight description logic \EL in a separate
+section, which at the same time are the lower bounds of the complexity for more expressive
+contextualized DLs. For the complexity analysis we consider three different settings which result in
+different complexity results. In the first setting we do not allow any rigid names at all.  In the
+second setting, we assume the presence of rigid concepts but forbid any rigid roles whereas in the
+last and complexity-wise hardest setting we allow both rigid concepts and rigid names.
 %
 At last we introduce an extension of \LMLO and show that the consistency problem becomes undecidable
 in the presence of rigid roles.
 
-In
-Chapter~\ref{cha:mapping} we present the mapping from role-based models into \LMLO-ontologies.
-Therefore we introduce a syntactical variant of the Compartment Role Object Model and explain in
-detail how the different assumptions of a CROM are translated. 
-We conclude that chapter with some thoughts on how to express constraints for role-based models that
-go beyond CROM.
+In Chapter~\ref{cha:mapping}, we present the mapping from role-based models into
+\LMLO-ontologies. We start with an ontological overview of the notion of a role.  We then introduce
+a syntactical variant of the Compartment Role Object Model and explain in detail how the different
+assumptions of a CROM are translated.  We conclude that chapter with some thoughts on how to express
+constraints for role-based models that go beyond CROM.
 
-Finally, in Chapter~\ref{cha:jconht} we present our reasoner for \LMLO.\todo{first finish Ch 5}
+Finally, in Chapter~\ref{cha:jconht}, we present our reasoner for \LMLO. To implement a decision
+procedure for the consistency problem, we have to adapt some ideas of Chapter~\ref{cha:context-dls}
+which are discussed in Section~\ref{sec:blackbox-approach}. Section~\ref{sec:using-hypertableau}
+covers the analysis of the contextualised hypertableau algorithm. We finish that chapter with some
+notes on the implementation and an evaluation of our implementation.
 
 
 % \clearpage
