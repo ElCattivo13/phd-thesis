@@ -13,7 +13,7 @@ necessary.
 In this chapter we will present a mapping from such role-based models into contextualized DLs in
 order to automate this step.
 %
-To avoid the confusion with the notations, from now on we distinguish between \emph{\rosiroles} as
+To avoid the confusion with the notations, from now on we differentiate \emph{\rosiroles} as
 in \rosirole-based systems and \emph{roles} as used in description logics whenever we feel it is
 necessary. Otherwise, we drop that distinction if it is clear from the context.
 %
@@ -26,7 +26,7 @@ present the actual mapping in Section~\ref{sec:representating-role-based-models}
 chapter in Section~\ref{sec:going-beyond-crom} with possible features of role-based systems that go
 beyond CROM but still can be expressed in an ontology.
 
-
+differentiate
 
 \section{Ontological Foundation of Roles}
 \label{sec:rosiroles}
@@ -121,13 +121,13 @@ instance of this feature model.
 \label{sec:sigma-crom}
 
 In this section we will present a syntactical variant of the \emph{Compartment Role Object Model}
-defined in \cite{KBG-SLE15}. It is semantically equivalent and simply introduced for easier
-explanation of the mapping to description logics.
+published in~\cite{KBG-SLE15}. This variant is semantically equivalent to~\cite{KBG-SLE15} and we
+simply introduce it here for easier explanation of the mapping to description logics.
 
 \subsection{Type and Instance Level}
 \label{sec:type-instance-level}
 
-In CROM, we can model role-based systems via different kinds of predicates: \emph{natural types},
+In CROM, we can model \rosirole-based systems via different kinds of predicates: \emph{natural types},
 \emph{\rosirole types}, \emph{compartment types} and \emph{relationship types}. These differ in the
 the above mentioned metaproperties rigidity and dependence.
 \begin{itemize}
@@ -146,7 +146,7 @@ the above mentioned metaproperties rigidity and dependence.
   compartment depends on other entities, i.e.\ the \rosiroles that are played within that
   compartment.
 \item Relationship types, e.g.\ \textsf{supervise}, are non-rigid and dependent. But in contrast to
-  \rosirole types, which is an unary predicate, relationship types are binary predicates. Hence, an
+  \rosirole types, which are unary predicates, relationship types are binary predicates. Hence, an
   instance of a relationship type depends on the existence of the two entities that are
   interrelated.  An instance of \emph{supervise} needs a professor who supervises and a student who
   is supervised.
@@ -155,8 +155,17 @@ the above mentioned metaproperties rigidity and dependence.
 Besides these different types, we can restrict which entities are allowed to play which \rosiroles
 by a \fills-relation which assigns each rigid type, i.e.\ natural types and compartment types, the
 set of \rosirole types, so that an instance of the rigid type can only play \rosiroles of \rosirole
-types the rigid types fills. For example, besides tables also picnic blankets could play the \rosirole
-of a dining table. Only persons can play the role an NFL player in the context
+types the rigid types fills. For example, besides tables also picnic blankets could play the
+\rosirole of a dining table in some contexts. But not only natural types can play \rosiroles. For
+example, persons can play the \rosirole of an NFL player in the context of an NFL team, e.g.\ Aaron
+Rodgers is the quarterback in the context of the Green Bay Packers. The Green Bay Packers themselves
+as compartment can now play the \rosirole of a Super Bowl contender in the context of Super Bowl~XLV.
+
+In a CROM, a \rosirole type is also explicitly assigned to a single compartment type, in which it
+can be played. This is implemented through \parts. Last, to each relationship type a pair of
+\rosirole types is assigned, which are the domain and the range of the relation. Here it is asserted
+that both \rosirole types are part of the same compartment type and that not the same \rosirole type
+is the domain and the range.
 
 \begin{definition}[Compartment Role Object Model]\label{def:scrom}
   Let \NT, \RT, \CT and \RST be finite and mutually disjoint sets of Natural Types, Role
@@ -165,7 +174,7 @@ of a dining table. Only persons can play the role an NFL player in the context
   A \emph{Compartment Role Object Model \Mmc over $\Sigma$ ($\Sigma$-CROM)} is a tuple \MM where
   \begin{enumerate}
   \item $\fills\subseteq(\NT\cup\CT)\times\RT$ is a right-total binary relation,
-  \item $\parts:\CT\to\Pmf$ is a bijection where \Pmf is an arbitrary but fixed partition of
+  \item $\parts:\CT\to\Pmf$ is a bijection where \Pmf is an arbitrary but fixed partition of the set
     \RT, and
   \item $\rel:\RST\to\Smc$ is a bijection where $\Smc\subseteq\bigcup_{P\in\Pmf}P\times P$ is an
     irreflexive binary relation. \qedhere
@@ -186,19 +195,91 @@ In the rest of this thesis, we use the following phrases:
 \item \emph{\rt[1] is the domain of \rst ($\dom(\rst)$) and \rt[2] is the range of \rst
     ($\ran(\rst)$)} if $(\rt[1],\rt[2])\in\rel(\rst)$.
 \end{itemize}
-To show that our definition satisfies Equations~(1) to~(5) of~\cite{KBG-SLE15}, we exploit the
-different assumptions made in the definition.  Since \fills is a right-total relation, for each role
-type there must exist a natural type or compartment type that fills it.  As each element of \Pmf is
-a non-empty subset of \RT, the range of \parts does not contain the empty set.  Since \Pmf is a
-partition each role type participates in exactly one compartment type.  Due to the irreflexivity of
-\Smc there exists no $\rst \in \RST$ and $\rt \in \RT$ such that $\rel(\rst) =
-(\rt,\rt)$. Furthermore, since \Smc is a subset of $\bigcup_{P\in\Pmf}P\times P$, the pair of role
-types in the range of \rel always participate in the same compartment type. Hence, a \SCROM is
-always well-formed.
 
-Note here, that reasoning about role-based models does not include checking \emph{well-formed\-ness}
-as defined in Definition 1 of~\cite{KBG-SLE15}, since that is a pure syntactical check.  Next, we
-introduce instances based on role-based models.
+% To show that our definition satisfies Equations~(1) to~(5) of~\cite{KBG-SLE15}, we exploit the
+% different assumptions made in the definition.  Since \fills is a right-total relation, for each role
+% type there must exist a natural type or compartment type that fills it.  As each element of \Pmf is
+% a non-empty subset of \RT, the range of \parts does not contain the empty set.  Since \Pmf is a
+% partition each role type participates in exactly one compartment type.  Due to the irreflexivity of
+% \Smc there exists no $\rst \in \RST$ and $\rt \in \RT$ such that $\rel(\rst) =
+% (\rt,\rt)$. Furthermore, since \Smc is a subset of $\bigcup_{P\in\Pmf}P\times P$, the pair of role
+% types in the range of \rel always participate in the same compartment type. 
+%
+% Hence, a \SCROM is always well-formed.
+
+Note here, that the above definition of \SCROM always ensures \emph{well-formedness} as defined in
+Definition~1 of~\cite{KBG-SLE15}. This is unproblematic since reasoning about role-based models does
+not include checking well-formedness as this is a pure syntactical check.
+
+We will now start to introduce an example which we will use throughout this chapter to explain some
+interesting aspects. 
+
+\begin{example}\label{ex:bank-crom}
+  We consider a banking application. In the context of a bank we have consultants and customers
+  where either persons or companies can be customers of a bank, but only persons can be
+  consultants. A customer can own savings or checking accounts. These \rosiroles can be attained by
+  any physical entity which is an account. Accounts can, moreover, be the source or the target in
+  the context of an transaction. Transactions in turn can have the function of a money transfer in
+  the context of a bank and customers can issue such money transfers.
+
+  Hence, we have the following signature
+  $\Sigma_{\mathsf{Bank}} = (\NT{}_{\mathsf{,Bank}}, \RT{}_{\mathsf{,Bank}}, \CT{}_{\mathsf{,Bank}},
+  \RST{}_{\mathsf{,Bank}})$ with
+  \begin{align*}
+    \NT{}_{\mathsf{,Bank}} & \coloneqq \{\mathsf{Person}, \mathsf{Company}, \mathsf{Account}\}, \\
+    \RT{}_{\mathsf{,Bank}} & \coloneqq \{\mathsf{Consultant}, \mathsf{Customer},
+                             \mathsf{CheckingAccount}, \mathsf{SavingsAccount},
+                             \mathsf{MoneyTransfer}, \\
+                         & \phantom{{} \coloneqq \{} \mathsf{Source},
+                             \mathsf{Target}\}, \\ 
+    \CT{}_{\mathsf{,Bank}} & \coloneqq \{\mathsf{Bank}, \mathsf{Transaction}\}, \text{ and} \\
+    \RST{}_{\mathsf{,Bank}}& \coloneqq \{\mathsf{advises}, \mathsf{own\_ca}, \mathsf{own\_sa},
+                             \mathsf{issues}, \mathsf{trans}\}.
+  \end{align*}
+  Furthermore, \fills, \parts, and \rel are defined as follows:
+  \begin{align*}
+    \fills & \coloneqq \{(\mathsf{Person}, \mathsf{Consultant}),
+                         (\mathsf{Person}, \mathsf{Customer}),
+                         (\mathsf{Company}, \mathsf{Customer}),\\
+           & \phantom{{} \coloneqq \{}
+                         (\mathsf{Account}, \mathsf{SavingsAccount}),
+                         (\mathsf{Account}, \mathsf{CheckingAccount}),\\
+           & \phantom{{} \coloneqq \{} 
+                         (\mathsf{Account}, \mathsf{Source}),
+                         (\mathsf{Account}, \mathsf{Target}),
+                         (\mathsf{Transaction}, \mathsf{MoneyTransfer})
+             \} \\
+    \parts(\mathsf{Bank}) & \coloneqq \{\mathsf{Consultant}, \mathsf{Customer},
+                             \mathsf{CheckingAccount}, \mathsf{SavingsAccount},\\
+           & \phantom{{} \coloneqq \{} \mathsf{MoneyTransfer}\}\\
+    \parts(\mathsf{Transaction}) & \coloneqq \{\mathsf{Source},  \mathsf{Target}\}\\
+    \rel(\mathsf{advises}) & \coloneqq (\mathsf{Consultant}, \mathsf{Customer}) \\
+    \rel(\mathsf{own\_ca}) & \coloneqq (\mathsf{Customer}, \mathsf{CheckingAccount}) \\
+    \rel(\mathsf{own\_sa}) & \coloneqq (\mathsf{Customer}, \mathsf{SavingsAccount}) \\
+    \rel(\mathsf{issues}) & \coloneqq (\mathsf{Customer}, \mathsf{MoneyTransfer}) \\
+    \rel(\mathsf{trans}) & \coloneqq (\mathsf{Source}, \mathsf{Target})
+  \end{align*}
+   
+
+
+  Figure~\ref{fig:bank} depicts the whole example in graphical notation including some constraints
+  which we will introduce in the next sections.
+\end{example}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{Bank-full-constraints-2}
+  \caption{Graphical notation of a CROM for an banking application}
+  \label{fig:bank}
+\end{figure}
+
+In our definitions, we omit to precisely define the graphical notation as they are not relevant for
+reasoning on CROMs and refer to~\cite{KBG-SLE15}.
+
+Next, we introduce instances of role-based models. An instance is based on a non-empty domain,
+where each element is of exactly one type, i.e.\ a natural type, a \rosirole type or a compartment
+type. Objects playing \rosirole in a compartment are collected in a ternary relation \plays and the
+relation of two \rosiroles via a relationship type in a compartment is stored in \links.
 
 
 \begin{definition}[Compartment Role Object Instance, Satisfiability]\label{def:scroi}
@@ -206,22 +287,29 @@ introduce instances based on role-based models.
   \emph{Compartment Role Object Instance \I over $\Sigma$ (\SCROI)} is a tuple
   $\I=(\Gamma^{\I},\type,\plays,\links)$, where
   \begin{itemize}
-  \item $\Gamma^{\I}$ is a non-empty domain,
-  \item $\type:\Gamma^{\I}\to\NT\cup\RT\cup\CT$ is a total function,
-  \item $\plays \subseteq \Osf\times\Csf\times\Rsf$ is a ternary relation, and
-  \item $\links: (\RST\times\Csf) \to \powerset{\Rsf\times\Rsf}$ is a total function
+  \item $\Gamma^{\I}$ is a non-empty domain, and
+  \item $\type:\Gamma^{\I}\to\NT\cup\RT\cup\CT$ is a total function.
   \end{itemize}
-  with 
+  Based on the \type-function, we can partition the domain into the set \Nsf of \emph{naturals},
+  i.e.\ all instances of any natural type, the set \Rsf of \emph{\rosiroles}, i.e.\ all instances of
+  any \rosirole type, and the set \Csf of \emph{compartments}, i.e.\ all instances of any
+  compartment type. Furthermore, the set \Osf of \emph{objects} denote all domain elements that are
+  eligible to play a \rosirole, i.e.\ all naturals and compartments.
   \begin{align*}
-    \Nsf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \NT\} \text{ (\emph{naturals})}, \\
-    \Rsf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \RT\} \text{ (\emph{roles})}, \\
-    \Csf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \CT\} \text{ (\emph{compartments}) and} \\
-    \Osf & \coloneqq \Nsf \cup \Csf \text{ (\emph{objects})}.
+    \Nsf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \NT\} \\
+    \Rsf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \RT\} \\
+    \Csf & \coloneqq \{d \in \Gamma^{\I} \mid \type(d) \in \CT\} \\
+    \Osf & \coloneqq \Nsf \cup \Csf
   \end{align*}
-  % being the sets of \emph{naturals}, \emph{roles}, \emph{compartments} and
-  % \emph{objects}, respectively. 
+  %
+  Now, \plays and \links are defined as follows:
+  \begin{itemize}
+  \item $\plays \subseteq \Osf\times\Csf\times\Rsf$ is a ternary relation, and
+  \item $\links: (\RST\times\Csf) \to \powerset{\Rsf\times\Rsf}$ is a total function.
+  \end{itemize}
+  %
   Furthermore, %
-  the set $T^{\I}$ of all elements of type $T$, %
+  the set $T^{\I}$ of all elements of type $T\in(\NT\cup\RT\cup\CT)$, %
   the set \Osf[\I,c] of all objects playing a role in $c$, %
   the set \Osf[\I,c,\rt] of all objects playing an \rt-role in $c$, and %
   the set \Rsf[\I,c] of all roles played in $c$ %
@@ -278,16 +366,16 @@ $\type(r) = \rt \in \RT$ and $\type(c) = \ct \in \CT$.  Furthermore, \emph{$o$ p
 $o$ is the \emph{player} of $r$ if $(o,c,r) \in \plays$, and \emph{$r_{1}$ is linked to $r_{2}$ via
   $\rst$ in $c$} if $(r_{1}, r_{2}) \in \links(\rst, c)$.
 
-Again, it is easy to verify that our definition of a \SCROI satisfying a \SCROM is equivalent to the
-definition of~\cite{KBG-SLE15}.
-Since the \plays-relation respects the \fills- and the \parts-relation, if $o$ plays an \rt-role in
-a \ct-compartment, then the type of $o$ must fill \rt and \rt must participate in \ct. If $o$ plays
-$r_{1}$ and $r_{2}$ in $c$ then $r_{1}$ and $r_{2}$ must have different types, because each object
-can only play one role of each type in the same compartment. Moreover, for each role there exists
-exactly one object that plays it and one compartment where it is played in. In contrast to the
-formalisation in~\cite{KBG-SLE15} we omit $\varepsilon$-roles, but roles that are linked via a
-relationship type are both played in the same compartment and must be instances of the correct types
-since \links respects \rel.  Thus, equations (6) to (11) of~\cite{KBG-SLE15} are satisfied.
+% Again, it is easy to verify that our definition of a \SCROI satisfying a \SCROM is equivalent to the
+% definition of~\cite{KBG-SLE15}.
+% Since the \plays-relation respects the \fills- and the \parts-relation, if $o$ plays an \rt-role in
+% a \ct-compartment, then the type of $o$ must fill \rt and \rt must participate in \ct. If $o$ plays
+% $r_{1}$ and $r_{2}$ in $c$ then $r_{1}$ and $r_{2}$ must have different types, because each object
+% can only play one role of each type in the same compartment. Moreover, for each role there exists
+% exactly one object that plays it and one compartment where it is played in. In contrast to the
+% formalisation in~\cite{KBG-SLE15} we omit $\varepsilon$-roles, but roles that are linked via a
+% relationship type are both played in the same compartment and must be instances of the correct types
+% since \links respects \rel.  Thus, equations (6) to (11) of~\cite{KBG-SLE15} are satisfied.
 
 Before we investigate how the information about a \SCROM can be encoded in a description logic
 ontology, we have to discuss the main reasoning tasks for role-based models. The arguably most
@@ -299,7 +387,7 @@ Instead, given a \SCROM{} \Mmc, it is much more interesting whether there exists
 compliant with \Mmc.  Additionally we often want to know for a specific \SCROM{} \Mmc whether there
 exists a compliant \SCROI that fulfills certain assertions, e.g.\ that a role of a certain type is
 played.  To express these assertional knowledge, we introduce a so-called \SCROA, a set of
-assertions which should also be satisfied by an \SCROI.
+assertions which should additionally be satisfied by an \SCROI.
 
 \begin{definition}[$\Sigma$-Compartment Role Object Assertions] \label{def:scroa} Let
   $\Sigma = (\NT, \RT, \CT, \RST)$ be a vocabulary and let \INDC and \IND be two non-empty, disjoint
@@ -466,14 +554,14 @@ themselves.
       ((k,\ell),A) \in \occur(\ct) \textImplies  \ct^{\I} \subseteq \left\{c \in \Csf \mmid k \leq \sum\nolimits_{o\in\Osf[\I,c]}
       A^{\I,c,o} \leq \ell \right\}
     \end{align*}
-  \item All top-level role groups must be satisfied, i.e.\ if an object $o$ plays an \rt-role and
-    \rt is an atom of a top-level role group A, then $o$ must fulfill $A$:
+  \item All top-level \rosirole groups must be satisfied, i.e.\ if an object $o$ plays an \rt-role and
+    \rt is an atom of a top-level \rosirole group A, then $o$ must fulfill $A$:
     \begin{align*}
       & (o,c,r) \in \plays \text{, } r \in \rt^{\I} \text{ and } \rt \in \atom(A) \textImplies
       A^{\I,c,o} = 1\text{,} \\
       & \hspace{8cm} \text{for all $o \in \Osf$, $A \in \RG*$}.
     \end{align*}
-  \item All cardinality constraints are respected, i.e.\ every role that is played in a compartment
+  \item All cardinality constraints are respected, i.e.\ every \rosirole that is played in a compartment
     $c$ and whose type is either the domain or the range of a relationship type \rst with
     $\card(\rst) = (i..j, k..\ell)$ must have at least $k$ and at most $\ell$ \rst-successors in $c$ or at
     least $i$ and at most $j$ \rst-predecessors in $c$, respectively:
@@ -508,10 +596,51 @@ themselves.
 \end{definition}
 
 The definition of satisfying a constraint model in~\cite{KBG-SLE15} is, neglecting
-$\varepsilon$-roles, exactly reflected in the above definition.
+$\varepsilon$-roles, exactly reflected in the above definition. With constraints being formally
+introduced, we can complete the CROM for the banking application of Example~\ref{ex:bank-crom} and Figure~\ref{fig:bank}.
+
+\begin{example}
+  We first define the complex \rosirole groups that occur in our example. The \rosirole group
+  $\mathsf{Participants}$ in the context of an transaction ensures that a single account cannot be
+  both the source and the target of an transaction. The \rosirole group $\mathsf{BankAccounts}$
+  states the same for savings and checking accounts in the context of a bank. A single account
+  cannot attain both \rosiroles simultaneously. 
+  \begin{align*}
+    \mathsf{Participants} & \coloneqq (\{\mathsf{Source}, \mathsf{Target}\},1,1)\\
+    \mathsf{BankAccounts} & \coloneqq (\{\mathsf{SavingsAccount}, \mathsf{CheckingAccount}\},1,1)
+  \end{align*}
+  We next analyse the occurrence constraints. In our example a bank can only exists if it contains
+  at least on consultant and one bank account. A transaction has exactly one source or
+  target\footnote{Note here, that this small modelling error is made on purpose. We will discuss its
+    logical implications later. Actually a transaction has exactly one source \emph{and} one target,
+    and, hence, exactly two participants.}.
+  \begin{align*}
+    \occur(\mathsf{Bank}) & \coloneqq \{(1..\infty, \mathsf{Consultant}), (1..\infty, \mathsf{BankAccounts})\}\\
+    \occur(\mathsf{Transaction}) & \coloneqq \{(1..1,\mathsf{Participants})\}
+  \end{align*}
+  For the appearing cardinality constraints we assume the following in the context of a bank. A
+  consultant must advise at least one customer but not every customer necessarily needs a
+  consultant. A customer does not need to have any bank account, but every bank account needs to
+  have an owner. A checking account has exactly one owner, a savings account could have several. A
+  money transfer is issued by exactly one customer and each customer issues at least one money
+  transfer. In the context of a transaction, there is a one-to-one connection between source and
+  target. 
+  \begin{align*}
+    \card(\mathsf{advises}) & \coloneqq (0..\infty,1..\infty)\\
+    \card(\mathsf{own\_ca}) & \coloneqq (1..1,0..\infty)\\
+    \card(\mathsf{own\_sa}) & \coloneqq (1..\infty,0..\infty)\\
+    \card(\mathsf{issues}) & \coloneqq (1..1,1..\infty)\\
+    \card(\mathsf{trans}) & \coloneqq (1..1,1..1)
+  \end{align*}
+  The intra-relationship type constraints are empty since we do not have such constraints in our
+  example. 
+\end{example}
+
+
+
 
 At last we combine all parts of the role-based system into one \emph{constrained
-  $\Sigma$-compartment Object Role Model}
+  $\Sigma$-compartment Object Role Model}.
 
 \begin{definition}[Constrained $\Sigma$-Compartment Role Object Model, Satisfiability Problem]
   \label{def:constrained-sigma-crom}
