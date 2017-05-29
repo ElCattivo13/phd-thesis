@@ -1471,6 +1471,17 @@
 \newcommand{\rdfsLabelGlobal}{\texttt{rdfs:label~"objectGlobal"}\xspace}
 \newcommand{\rdfsLabelRigid}{\texttt{rdfs:label~"rigid"}\xspace}
 
+
+% bank example
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1\endcsname{\@math{\mathsf{#1}}}}
+\docsvlist{Bank, BankAccounts, Customer, CheckingAccount, SavingsAccount, Participants, Source,
+  Target, Transaction, issues, MoneyTransfer}
+
+\newcommand{\ownca}{\@math{\mathsf{own\_ca}}}
+\newcommand{\ownsa}{\@math{\mathsf{own\_sa}}}
+\newcommand{\transBank}{\@math{\mathsf{trans}}}
+
 \endinput
 
 %%% Local Variables:
