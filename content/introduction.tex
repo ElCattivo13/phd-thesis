@@ -2,14 +2,14 @@
 \chapter{Introduction}
 \label{ch:introduction}
 
-Nowadays, we are surrounded by software systems literally everywhere. With regard to current
-developments there will be even more in the future. Not only the amount of systems increases, but also the
+Nowadays, we are literally everywhere surrounded by software systems. Current developments indicate
+there will be even more in the future.  Not only the amount of systems increases, but also the
 requirements and expectations users impose on current software steadily rise. Modern software
 systems should cope with very complex scenarios. This includes the ability of context-awareness and
 self-adaptability. For example, a robot in a smart factory should recognize when a human coworker
 approaches and switches to a different, human-friendly working mode accordingly. Similarly, software
 in autonomous cars or an the area of smart homes needs to adapt to various situations of which some
-are not even stated explicitly. 
+are not even stated explicitly.
 %
 Furthermore, software must be easily maintainable and, when necessary, changes on the system should be realized
 without much down time which, for example, in a smart factory is very costly. 
@@ -20,16 +20,16 @@ without much down time which, for example, in a smart factory is very costly.
 In order to achieve all these goals, the concept of \emph{roles} is very promising. First introduced
 by Bachman~\cite{BaD-VLDB77}, roles appeared over the last decades in several fields of computer
 science. Most prominent is \emph{role-based access
-  control}~\cite{FeKC-RBAC03,AlFe-ECS11,SaCF-IEEE96} albeit it is only a special application for
+  control}~\cite{FeKC-RBAC03,AlFe-ECS11,SaCF-IEEE96}, albeit it is only a special application for
 roles with a narrow scope. Roles are also introduced, for example, in data
 modelling~\cite{Ha-ORM2006}, conceptual modelling~\cite{Stei-DKE00,Gui-PHD05,Stei-AO07} and
 programming languages~\cite{BaBT-SAC06,Herr-AO07,BaGE-ECOOP07}.
 
-The relational or context-dependent properties and behaviour of objects is
-transferred into the roles that object plays in a certain context. These paradigm also supports
-Dijkstra's separation of concerns~\cite{Dij-SelWrCom82} which simplifies development and maintenance
-of such systems.  Due to the use of roles, \emph{role-based systems} can cleaner and more structured
-model application domains since ontologically different entities are modelled by different concepts.
+The relational or context-dependent properties and behaviour of objects are transferred into the
+roles that object plays in a certain context. These paradigm also supports Dijkstra's separation of
+concerns~\cite{Dij-SelWrCom82} which simplifies development and maintenance of such systems.  Due to
+the use of roles, \emph{role-based systems} can model application domains cleaner and more
+structured, since ontologically different entities are modelled by different concepts.
 
 Consider, for example, the concepts of $\mathsf{Person}$ and $\mathsf{Customer}$. With an
 object-oriented approach of inheritance as a specialization relation, we could model
@@ -39,7 +39,7 @@ $\mathsf{Company}$, the inheritance relation would flip and we also have $\maths
 subclass of $\mathsf{Customer}$.  This conflict can be resolved when we realize that
 $\mathsf{Person}$ and $\mathsf{Company}$ are context-independent basic concepts, so-called
 \emph{natural types} and $\mathsf{Customer}$ is actually a role a person or company can play in a
-business context. Here, it becomes also apparent, that the concept of a \emph{context} is closely
+business context. Here, it becomes also apparent that the concept of a \emph{context} is closely
 related to a role.
 
 While role-based modelling provides the means to handle and model complex and context-dependent
@@ -57,7 +57,7 @@ Description Logics (DLs) \cite{DLhandbook-07} are a well-known formalism for kno
 representation. They possess formal semantics and allow to define a variety of reasoning problems.
 
 The basic building blocks in description logics are so-called \emph{concept names} and \emph{role
-  names}. Concept names denote sets of domain elements. For example the concept names
+  names}. Concept names denote sets of domain elements. For example, the concept names
 $\mathsf{Person}$ or $\mathsf{Bank}$ denote the sets of all persons or banks in a domain. Relational
 structures are represented by so-called DL \emph{role names}, which are essentially binary relations
 on the the domain. The term ``role'' originates from the early knowledge representation system
@@ -66,16 +66,16 @@ it reflects the relational property of a role. A person which is related to a ba
 $\mathsf{customer}$ could be seen as someone playing the role of a customer in the context of a
 bank. Besides that, DL roles are merely binary relations. With the help of \emph{concept} and
 \emph{role constructors}, complex concepts and roles can be defined.  Which constructors are allowed
-depends on the specific DL. Complex concepts can be used as descriptions  or to
-classify domain elements, e.g.\ the complex concept
+depends on the specific DL. Complex concepts can be used as descriptions and to classify domain
+elements, e.g.\ the complex concept
 \begin{align}
   \label{eq:1-1}
   \mathsf{NFL\_Player} \sqcap \mathsf{Healthy} \sqcap \exists.\mathsf{wins}(\mathsf{NFL\_Game})
 \end{align}
 describes the set of all healthy NFL players who win NFL games.
 
-With the help of concepts we can express our knowledge about a domain through \emph{DL
-  axioms}. General knowledge is phrased via \emph{general concept inclusions (GCIs)} which state
+With the help of concepts, we can express our knowledge about a domain through \emph{DL
+  axioms}. General knowledge is phrased via \emph{general concept inclusions (GCIs)}, which state
 that one concept is a sub-concept of another. For example the GCI
 \begin{align}
   \label{eq:1-2}
@@ -83,7 +83,7 @@ that one concept is a sub-concept of another. For example the GCI
   \exists.\mathsf{wins}(\mathsf{NFL\_Game}) \sqsubseteq \mathsf{Happy\_NFL\_Player}
 \end{align}
 states that a healthy NFL player who wins NFL games is a happy NFL player. Conversely, it does not say
-anything whether every happy NFL player is healthy or wins games. Facts about a domain can be
+anything on whether every happy NFL player is healthy or wins games. Facts about a domain can be
 expressed via \emph{concept} and \emph{role assertions}.  To express facts, we also introduce
 \emph{individual names} which denote single domain elements. As an example consider the following axioms:
 \begin{gather}
@@ -129,9 +129,9 @@ entailed by~\eqref{eq:1-2} to~\eqref{eq:1-5}:
 \noindent
 Figure~\ref{fig:dl-example-intro} depicts an interpretation which is a model of axioms~\eqref{eq:1-2} to~\eqref{eq:1-6}.
 
-However, classical DLs lack expressive power to formalize furthermore that some individuals satisfy
-certain concepts and relate to other individuals depending on a specific context which is needed to
-reason on role-based systems. 
+However, classical DLs lack expressive power to formalize that some individuals satisfy certain
+concepts and relate to other individuals depending on a \emph{specific context} which is needed to
+reason on role-based systems.
 
 \section{Contextualized Description Logics}
 \label{sec:intro-contextualized-description-logics}
@@ -156,13 +156,13 @@ context DLs the meta logic can refer to the internal structure of each context, 
 That means that information is viewed in a top-down manner, i.e.~information of different contexts
 is strictly capsuled and can only be accessed from the meta level.  Hence, we cannot
 express, for instance, that everybody who is employed by Siemens has a certain property in the
-context of private life.  Interestingly, reasoning in \LMLO stays decidable with
+context of private life.  We show that reasoning in \LMLO stays decidable with
 such a restriction, even in the presence of rigid roles.
 %
-In some sense this restriction is similar to what was done in~\cite{BaGL-KR08,BaGL-ToCL12,Lip-PhD14}
+In some sense this restriction is similar to what is done in~\cite{BaGL-KR08,BaGL-ToCL12,Lip-PhD14}
 to obtain a decidable temporalized DL with rigid roles.  
 
-For providing better intuition on how our formalism works, we examine the above mentioned example a bit
+To provide a better intuition on how our formalism works, we examine the above mentioned example a bit
 further.  Consider the following axioms:
 \begin{align}
   \top & \sqsubseteq \oax{\exists\mathsf{worksFor}.\{\text{\textit{Siemens}}\} \sqsubseteq \exists\mathsf{hasAccessRights}.\{\text{\textit{Siemens}}\}}\label{eq:1-7} \\
@@ -235,27 +235,27 @@ the $\mathsf{worksFor}$ relation only exists in work contexts.
 \label{sec:zweite-section}
 
 Besides the capability of context description logics to formalize role-based models, it is rather
-hard for domain analysts who in general are not experts in the area of DLs to grasp the precise
-semantics of the ontology and define the contextual ontology in a way that all entities and
+hard for domain analysts---who in general are not experts in the area of DLs---to grasp the precise
+semantics of the ontology, and to define the contextual ontology in a way that all entities and
 constraints appearing in the role-based model are mapped correctly. Therefore, it would be ideal to
-have a mapping algorithm from role-based models into context DL knowledge bases.  In this thesis, we
+have an algorithm that translates role-based models into context DL knowledge bases.  In this thesis, we
 present exactly such a mapping.
 
 First of all, we have to decide how to represent role-based models. Here, we focus on two essential
 properties of the modelling language. It is very important that the role-based model is already
-equipped with a formal semantics. Otherwise, we cannot ensure that the intended meaning of some
-model is correctly translated into the ontology. Furthermore, the modelling language needs the
-expressive power to actually grasp all concepts needed in the role-based model.
+equipped with a formal semantics. Otherwise, we cannot ensure that the intended meaning of every
+model is correctly translated into the ontology. Furthermore, the modelling language needs to be
+expressive enough to express all concepts needed in the role-based model.
 %
 The \emph{Compartment Role Object Model (CROM)}\cite{KuLG-SLE14,KBG-SLE15} emerged to be a potent
 candidate that meets exactly the above mentioned requirements.
 
-Next, there is some freedom on how to express roles and role-playing in an ontology. Besides
-arguments about the ontological nature of roles like identity or rigidity, practical reasons are
-also important. Whether some constraints of a role-based model can be expressed in an ontology
+Next, there is some freedom on how to express roles and role-playing in an ontology. While it is
+important to consider the ontological nature of roles such as identity or rigidity, we also have to
+consider practical reasons. Whether some constraints of a role-based model can be expressed in an ontology
 highly depends on how roles and other predicates are translated.
 
-On the one hand we can and will prove the semantic correctness of our translation from role-based
+On the one hand, we can and will prove the semantic correctness of our translation from role-based
 models into an \LMLO ontology. On the other hand, for practical use there must exist some
 implementation of the mapping. We based our implementation on the reference implementation for
 CROM\footnote{\url{https://github.com/Eden-06/CROM}}, which in turn can be used by
@@ -274,7 +274,7 @@ Usually DL reasoners use the Web Ontology Language (OWL) as language for the inp
 general does not have the syntactical means to express contextualized DL axioms. However, OWL gives
 the possibility to annotate axioms which we use to encode \LMLO-axioms.
 
-Although the reasoning tasks in DLs have a high complexity, Dls have been successfully introduced as
+Although the reasoning tasks in DLs have a high complexity, DLs have been successfully introduced as
 a formalism for knowledge representation. One reason for the success of DLs is the availability of
 highly optimized reasoners which makes drawing logical inferences feasible. A black-box approach for
 deciding consistency of an \LMLO-ontology could benefit from these optimized reasoners. The main
@@ -300,27 +300,27 @@ concepts, axioms and knowledge bases and state specific DLs together with the re
 complexities of the consistency problem.
 %
 We then introduce the contextualized description logic \LMLO. We again start with the definition of
-the syntax and semantics. For the complexity analysis of the consistency problem we first look into
+the syntax and semantics. For the complexity analysis of the consistency problem, we first look into
 the upper bounds. We consider the case of the lightweight description logic \EL in a separate
-section, which at the same time are the lower bounds of the complexity for more expressive
-contextualized DLs. For the complexity analysis we consider three different settings which result in
-different complexity results. In the first setting we do not allow any rigid names at all.  In the
-second setting, we assume the presence of rigid concepts but forbid any rigid roles whereas in the
-last and complexity-wise hardest setting we allow both rigid concepts and rigid names.
+section, which at the same time gives the lower bounds of the complexity for more expressive
+contextualized DLs. For the complexity analysis, we consider three different settings which result in
+different complexity results. In the first setting, we do not allow any rigid names.  In the
+second setting, we assume the presence of rigid concepts, but forbid any rigid roles. In the
+last and complexity-wise hardest setting, we allow both rigid concepts and rigid names.
 %
-At last we introduce an extension of \LMLO and show that the consistency problem becomes undecidable
+At last, we introduce an extension of \LMLO, and show that the consistency problem becomes undecidable
 in the presence of rigid roles.
 
 In Chapter~\ref{cha:mapping}, we present the mapping from role-based models into
 \LMLO-ontologies. We start with an ontological overview of the notion of a role.  We then introduce
 a syntactical variant of the Compartment Role Object Model and explain in detail how the different
-assumptions of a CROM are translated.  We conclude that chapter with some thoughts on how to express
+assumptions of a CROM are translated.  We conclude the chapter with some thoughts on how to express
 constraints for role-based models that go beyond CROM.
 
 Finally, in Chapter~\ref{cha:jconht}, we present our reasoner for \LMLO. To implement a decision
-procedure for the consistency problem, we have to adapt some ideas of Chapter~\ref{cha:context-dls}
+procedure for the consistency problem, we have to adapt some ideas of Chapter~\ref{cha:context-dls},
 which are discussed in Section~\ref{sec:blackbox-approach}. Section~\ref{sec:using-hypertableau}
-covers the analysis of the contextualised hypertableau algorithm. We finish that chapter with some
+covers the analysis of the contextualised hypertableau algorithm. We finish the chapter with some
 notes on the implementation and an evaluation of our implementation.
 
 
