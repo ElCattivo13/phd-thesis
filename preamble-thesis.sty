@@ -104,7 +104,10 @@
   \usetikzlibrary{shapes}
   \usetikzlibrary{shadows}
   \usetikzlibrary{backgrounds}
-
+\RequirePackage{pgfplots}
+  \usepgfplotslibrary{statistics}
+  \usepgfplotslibrary{external}
+  \usetikzlibrary{plotmarks}
 
 \RequirePackage{booktabs}
 \RequirePackage{multirow}
@@ -125,7 +128,7 @@
 \RequirePackage{tabularx}
 \RequirePackage{authblk}
 \RequirePackage{diagbox}
-\RequirePackage{subcaption}
+%\RequirePackage{subcaption}
 \RequirePackage{titling} % for \thetitle, \thedate, ... used in footer
 \RequirePackage{layout} % for the amazing \layout-macro
 \RequirePackage{ifdraft}
@@ -175,6 +178,9 @@
 %     \@todonotes@drawLineToRightMargin%
 % }%
 % }
+
+\RequirePackage{nicefrac}
+\RequirePackage[subrefformat=parens,labelformat=parens,font=normalsize,labelfont=sf,textfont=sf]{subfig}
 
 
 %\RequirePackage{textcomp} % Euro-Zeichen etc.
@@ -678,6 +684,22 @@
   \tikz[remember picture,overlay]\coordinate[#1](#2);%
 }
 
+%% PGFPlot settings
+
+%\tikzsetexternalprefix{figures/}
+%\tikzexternalize
+\pgfplotsset{compat=1.12}
+
+\pgfplotsset{
+  tick label style={
+    font=\footnotesize,
+  },
+  x tick label style={
+    %rotate=30
+  }
+}
+%\tikzset{external/force remake}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% used macros                                                                          %%
@@ -940,7 +962,7 @@
 
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname M#1\endcsname{\@math{\mathsf{M_{#1}}}}}
-\docsvlist{C,R,I,A,V}
+\docsvlist{C,R,I,A,V,O}
 
 
 %%% interpretations %%%
@@ -1342,6 +1364,9 @@
 \@ifpackageloaded{printlen}{
 \newcommand{\printseps}{\noindent\parbox[t]{10cm}{%
     topsep: \printlength{\topsep}\\
+    leftmargin: \printlength{\leftmargin}\\
+    labelsep: \printlength{\labelsep}\\
+    labelwidth: \printlength{\labelwidth}\\
     parskip: \printlength{\parskip}\\
     partopsep: \printlength{\partopsep}\\
     parsep: \printlength{\parsep}\\
@@ -1481,6 +1506,26 @@
 \newcommand{\ownca}{\@math{\mathsf{own\_ca}}}
 \newcommand{\ownsa}{\@math{\mathsf{own\_sa}}}
 \newcommand{\transBank}{\@math{\mathsf{trans}}}
+
+
+
+
+%% Calculate mean value with pgfplots
+% https://tex.stackexchange.com/a/268942/123973
+\newcommand\GetMean[2]{
+  \pgfplotstableread{#1}\tableA
+  \pgfplotstableset{
+    create on use/new/.style={
+    create col/expr={\pgfmathaccuma + \thisrow{#2}}},
+  }
+  \pgfplotstablegetrowsof{\tableA}
+  \pgfmathsetmacro{\NumRows}{\pgfplotsretval}
+  \pgfplotstablegetelem{\numexpr\NumRows-1\relax}{new}\of{#1} 
+  \pgfmathsetmacro{\Sum}{\pgfplotsretval}
+  \pgfmathsetmacro{\Mean}{\Sum/\NumRows}
+}
+
+
 
 \endinput
 

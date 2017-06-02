@@ -308,20 +308,34 @@ different complexity results. In the first setting, we do not allow any rigid na
 second setting, we assume the presence of rigid concepts, but forbid any rigid roles. In the
 last and complexity-wise hardest setting, we allow both rigid concepts and rigid names.
 %
-At last, we introduce an extension of \LMLO, and show that the consistency problem becomes undecidable
-in the presence of rigid roles.
+At last, we introduce an extension of \LMLO, and show that the consistency problem becomes
+undecidable in the presence of rigid roles. The main results of this chapter, namely the complexity
+results excluding the description logic \SHOIQ, have already been published:
+\begin{itemize}
+\item \fullcite{BoLi-FroCoS15}
+\item \fullcite{BoLi-DL15}
+\item \fullcite{BoLi-LTCS-15-04}
+\end{itemize}
+
 
 In Chapter~\ref{cha:mapping}, we present the mapping from role-based models into
 \LMLO-ontologies. We start with an ontological overview of the notion of a role.  We then introduce
 a syntactical variant of the Compartment Role Object Model and explain in detail how the different
 assumptions of a CROM are translated.  We conclude the chapter with some thoughts on how to express
-constraints for role-based models that go beyond CROM.
+constraints for role-based models that go beyond CROM. The mapping algorithm is still to be
+published, the formal role-based modelling language CROM has been published:
+\begin{itemize}
+\item \fullcite{KBG-SLE15}
+\end{itemize}
 
-Finally, in Chapter~\ref{cha:jconht}, we present our reasoner for \LMLO. To implement a decision
+
+Finally, in Chapter~\ref{cha:jconht}, we present JConHT, our reasoner for \LMLO. To implement a decision
 procedure for the consistency problem, we have to adapt some ideas of Chapter~\ref{cha:context-dls},
 which are discussed in Section~\ref{sec:blackbox-approach}. Section~\ref{sec:using-hypertableau}
 covers the analysis of the contextualised hypertableau algorithm. We finish the chapter with some
-notes on the implementation and an evaluation of our implementation.
+notes on the implementation and an evaluation of our implementation. Both the contextualised
+hypertableau algorithm and a system description
+of JConHT are not yet published.
 
 
 % \clearpage

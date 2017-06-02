@@ -1,5 +1,5 @@
 
-\section{Syntax and Semantics of Contextualised Description Logics}
+\section{Syntax and Semantics of the Contextualised Description Logic \texorpdfstring{\LMLO}{LM[LO]}}
 \label{sec:syn-seman-cdl}
 
 Our approach for contextualised description logics is similar to temporal description logics as
@@ -14,7 +14,7 @@ logic proposed by Klarman et al.~\cite{KG16}.
 
 The contextualised DL \LMLO is a two-dimensional and two-sorted description logic. Syntactically, we
 start with a description logic \LM for the meta level to describe the relational structure between
-contexts. We now add one meta concept constructor that allows to refer to the inner structure of
+contexts. We add one meta concept constructor that allows to refer to the inner structure of
 each context. More precisely, we allow an \LO-axiom to constitute a meta concept which denotes the
 set of contexts in which that axiom holds.
 
@@ -50,8 +50,7 @@ respectively, the set of \emph{meta concept}, \emph{role} and \emph{individual n
   \item nothing else is a Boolean m-axiom formula.
   \end{itemize}
     %
-  Finally, a \emph{Boolean \LMLO-knowledge base (\LMLO-BKB)} is a triple $\Bmf=(\B,\RO,\RM)$ where
-  \RO is an \LO-RBox over~\Osig, \RM an \LM-RBox over~\Msig, and \B is a Boolean m-axiom formula. An
+  Finally, a \emph{Boolean \LMLO-knowledge base (\LMLO-BKB)} is a triple $\Bmf=(\B,\RO,\RM)$, where~\RO is an~\LO-RBox over~\Osig, \RM an \LM-RBox over~\Msig, and~\B is a Boolean m-axiom formula. An
   \emph{\LMLO-ontology} is an \LMLO-BKB, where only axiom conjunction and no axiom negation is
   allowed in the Boolean m-axiom formula.
 \end{definition}
@@ -60,7 +59,7 @@ respectively, the set of \emph{meta concept}, \emph{role} and \emph{individual n
 Essentially, m-GCIs and meta concept assertions are \LM-GCIs over \Msig and \LM-concept assertions
 over \Msig in which additionally referring m-concepts are admitted.
 %
-For the same reasons as mentioned in section \ref{sec:description-logics}, role inclusions
+For the same reasons as mentioned in Section~\ref{sec:preliminaries}, role inclusions
 over~\Osig and transitivity axioms over~\Osig are not allowed to constitute m-concepts.  However, we
 fix an RBox~\RO over~\Osig that contains such o-axioms and holds in \emph{all} contexts.  The same
 applies to role inclusions over~\Msig and transitivity axioms over~\Msig, which are only allowed to
@@ -72,13 +71,13 @@ Boolean m-axiom formulas.
 The semantics of \LMLO is defined by the notion of \emph{nested interpretations}.  These consist of
 \Osig-interpretations for the specific contexts and an \Msig-interpretation for the relational
 structure between them.  We assume that all contexts speak about the same non-empty domain
-(\emph{constant domain assumption}). We show later, that this is no real restriction.
+(\emph{constant domain assumption}). We show later that this is no real restriction.
 
 As argued earlier, sometimes it is desired that concepts or roles in the object logic are
 interpreted the same in all contexts. Therefore we introduce \emph{rigid names}. Let
 $\OCR\subseteq\OC$ be the set of \emph{rigid object concept names} and $\ORR\subseteq\OR$ be the set
 of \emph{rigid object role names}.  Often, we refer to \OCR and \ORR simply as \emph{rigid concepts}
-and \emph{rigid roles} as there is no such notion on the meta level.  We set
+and \emph{rigid roles}, as there is no such notion on the meta level.  We set
 $\OCF\coloneqq\OC\setminus\OCR$ and $\ORF\coloneqq\OR\setminus\ORR$ and call these concept names and
 role names \emph{flexible}.  Moreover, following the argument for the UNA, we assume that the
 identity of an individual is context-independent and, thus, individual names of the object logic are
@@ -87,10 +86,10 @@ always interpreted the same in all contexts (\emph{rigid individual assumption})
 \begin{definition}[Nested interpretation]\label{def:nested-interpretation}
   A \emph{nested interpretation} is a tuple
   $\J=(\Cbb,\cdot^{\J},$ $\Delta^{\J}{\kern-0.2em},(\cdot^{\I_c})_{c\in\Cbb})$, where \Cbb is a
-  non-empty set (called \emph{contexts}) and $(\Cbb,\cdot^\J)$ is an \Msig-interpretation.
+  non-empty set (called set of \emph{contexts}) and $(\Cbb,\cdot^\J)$ is an \Msig-inter\-pre\-ta\-tion.
   %
   Moreover, for every $c\in\Cbb$, $\I_c\coloneqq(\Delta^{\J},\cdot^{\I_c})$ is an
-  \Osig-interpretation such that we have for all $c,c'\in\Cbb$ that $x^{\I_{c}}=x^{\I_{c'}}$ for
+  \Osig-interpretation such that for all $c,c'\in\Cbb$, we have that $x^{\I_{c}}=x^{\I_{c'}}$ for
   every $x\in\OI\cup\OCR\cup\ORR$.
 \end{definition}
 
@@ -127,7 +126,7 @@ We are now ready to define the semantics of \LMLO.
 
 \noindent
 With these notions, we can refine the examples of
-Section~\ref{sec:description-logics}. 
+Section~\ref{sec:preliminaries}. 
 
 \begin{example}\label{ex:nfl-with-contexts}
   Considering again Example~\ref{ex:concept-nfl} and Example~\ref{ex:bkb-nfl}, we recognize that
@@ -158,7 +157,7 @@ Section~\ref{sec:description-logics}.
   \begin{gather*}
     \oax{\mathsf{NFL\_Player}(\text{\textit{AaronRodgers}})}(\text{\textit{GreenBayPackers}}).
   \end{gather*}
-  A nested interpretation \J, such that Green Bay Packers are in the extension of $C'$ and \J is a
+  A nested interpretation \J, such that Green Bay Packers are in the extension of $C'$, and \J is a
   model of $\Omc'$, is depicted in Figure~\ref{fig:example-nfl-contexts}. Note here that after
   introducing ``Junior Football Clinic'' as another context it would not be clear anymore in which
   context Aaron Rodgers actually plays quarterback if modelled with standard DLs.
@@ -202,23 +201,22 @@ Section~\ref{sec:description-logics}.
   \label{fig:example-nfl-contexts}
 \end{figure}
 
-\noindent
 To argue that the constant domain assumption is no serious restriction, we show that consistency
-with varying domains can be polynomially reduced to consistency with constant domains. Here, we can adapt
-the ideas of \cite{GKW+-03} and \cite{LuWZ-TIME08}. Let \Bmf be an \LMLO-BKB and let $\J_{v}$ denote a nested
-interpretation with varying domains, i.e.\
-$\J_{v} = (\Cbb,\cdot^{\J},(\Delta^{\I_{c}})_{c\in\Cbb},(\cdot^{\I_c})_{c\in\Cbb})$ where
-$(\Delta^{\I_{c}})_{c\in\Cbb}$ is a set of, possibly overlapping, object domains. We introduce a
-fresh object concept name $E$ that expresses the existence of an element in an object
-domain. W.l.o.g.\ we assume that all o-GCIs are of the form $\top \sqsubseteq C$. We obtain $C_{E}$
-from the o-concept $C$ by replacing every o-subconcept $\exists r.D$ with $\exists r.(D \sqcap
-E)$ and every o-subconcept $\atleast{n}{r}{D}$ with $\atleast{n}{r}{(D \sqcap E)}$. We
-obtain $\Bmf_{E}$ from \Bmf by replacing  every occurrence of an o-axiom $\alpha$ in \Bmf with
-$\alpha_{E}$, where $\alpha_{E}$ is defined as follows:
+with varying domains can be polynomially reduced to consistency with constant domains. Here, we can
+adapt the ideas of \cite{GKW+-03} and \cite{LuWZ-TIME08}. Let~\Bmf be an \LMLO-BKB and let~$\J_{v}$
+denote a nested interpretation with varying domains, i.e.\
+$\J_{v} = (\Cbb,\cdot^{\J},(\Delta^{\I_{c}})_{c\in\Cbb},(\cdot^{\I_c})_{c\in\Cbb})$,
+where~$(\Delta^{\I_{c}})_{c\in\Cbb}$ is a set of, possibly overlapping, object domains. We introduce
+a fresh object concept name~$E$ that expresses the existence of an element in an object
+domain. W.l.o.g.\ we assume that all o-GCIs are of the form~$\top \sqsubseteq C$. We obtain~$C_{E}$
+from the o-concept~$C$ by replacing every o-subconcept~$\exists r.D$ with~$\exists r.(D \sqcap E)$
+and every o-subconcept~$\atleast{n}{r}{D}$ with~$\atleast{n}{r}{(D \sqcap E)}$. We obtain~$\Bmf_{E}$
+from~\Bmf by replacing every occurrence of an o-axiom~$\alpha$ in~\Bmf with~$\alpha_{E}$,
+where~$\alpha_{E}$ is defined as follows:
 \begin{align*}
   \alpha_{E} \coloneqq
   \begin{cases}
-    E \sqsubseteq (C_{E} \sqcap E) & \text{ if $\alpha = \top \sqsubseteq C$,} \\
+    E \sqsubseteq C_{E} & \text{ if $\alpha = \top \sqsubseteq C$,} \\
     (C_{E}\sqcap E)(a) & \text{ if $\alpha = C(a)$, and} \\
     \alpha & \text{otherwise.}
   \end{cases}
@@ -281,25 +279,25 @@ $\Bmf_{E}$ is consistent w.r.t.\ constant domains and checking consistency of \B
 domains can be done by considering $\Bmf_{E}$.  Thus, for the rest of the thesis, we concentrate on
 constant domains.
 
-\section{Complexity of the Consistency Problem}
+\section{Complexity of the Consistency Problem in \texorpdfstring{\LMLO}{LM[LO]}}
 \label{sec:complexity-consis-problem}
 
 After we introduced the syntax and semantics of our contextualised description logics, in this
-section we will investigate the computational complexity of the consistency problem.  Therefore, we
+section, we investigate the computational complexity of the consistency problem.  Therefore, we
 consider three different settings dependent on whether rigid concepts and rigid roles are admitted.
-In the first setting no rigid names are allowed at all.  In the second setting rigid concepts are
-allowed, but no rigid roles.  The third setting then allows rigid roles. There, it is not necessary
+In Setting~(i) no rigid names are allowed at all.  In Setting~(ii) rigid concepts are
+allowed, but no rigid roles.  Setting~(iii) then allows rigid roles. There, it is not necessary
 to distinguish whether rigid concepts are admitted or not, since rigid concepts can be emulated via
-rigid roles. One could simply replace the rigid concept $A$ by $\exists r_{A}.\top$ where $r_{A}$ is
-a rigid role which does not occur in the knowledge base before.
+rigid roles. For this, one simply replaces the rigid concept~$A$ by~$\exists r_{A}.\top$ where~$r_{A}$ is
+a rigid role which does not occur in the original knowledge base.
 
 Our results for the complexity of the consistency problem are listed in
 Table~\ref{tab:compl-results-no-rigid-names}. Here, it is worth noting that if no rigid names are
-admitted the complexity class does not increase compared to the consistency problem for the
+admitted, the complexity class does not increase compared to the consistency problem for the
 classical DL, i.e.\ for any \LMLO up to \SHOQSHOQ the consistency problem is \ExpTime-complete, if
 \SHOIQ is involved, it is \NExpTime-complete. Furthermore, in the presence of rigid roles we can
-retain decidability.  This separates our approach from the semantically similar context DL
-introduced by Klarman et al.~\cite{KG-JELIA10,KG16} where the consistency problem becomes
+retain decidability.  This distinguishes our approach from the semantically similar context DL
+introduced by Klarman et al.~\cite{KG-JELIA10,KG16}, where the consistency problem becomes
 undecidable when rigid roles occur in the ontology.
 
 Since the lower bounds already hold for the case of \EL, we handle them in Section~\ref{sec:case-el}.
@@ -309,7 +307,7 @@ similar to what was done for \ALC-LTL in~\cite{BaGL-KR08,BaGL-ToCL12} (and
 \SHOQ-LTL in~\cite{Lip-PhD14}) and reduce the consistency problem to two separate
 decision problems.
 
-For the first problem, we consider the so-called \emph{outer abstraction}, which is the \LM-BKB
+For the first decision problem, we consider the so-called \emph{outer abstraction}, which is the \LM-BKB
 over~\Msig obtained by replacing each referring m-concept of the form \oalpha
 occurring in~\B by a fresh concept name such that there is a 1--1 relationship between them.
 
@@ -322,7 +320,7 @@ occurring in~\B by a fresh concept name such that there is a 1--1 relationship b
   \item The \LM-concept $C^{\bsf}$ over \Msig is obtained from the m-concept~$C$ by replacing every occurrence of
     \oalpha by $\bsf(\oalpha)$.
   \item The Boolean \LM-axiom formula~\Bb over \Msig is obtained from~\B by replacing every
-    m-concept $C$ occurring in~\B with~$C^{\bsf}$.  We call the \LM-BKB $\Bmfb=(\Bb,\RM)$ the
+    m-concept~$C$ occurring in~\B with~$C^{\bsf}$.  We call the \LM-BKB $\Bmfb=(\Bb,\RM)$ the
     \emph{outer abstraction of~\Bmf}.
         \item Given \JJ, its \emph{outer abstraction} is the
             \Msig-interpretation $\Jb=(\Cbb,\cdot^{\Jb})$ where
@@ -336,8 +334,7 @@ occurring in~\B by a fresh concept name such that there is a 1--1 relationship b
     \end{enumerate}
 \end{definition}
 
-\noindent
-For simplicity, for $\Bmf'=(\B',\RO,\RM)$ where $\B'$ is a subformula of~\B, we
+For simplicity, for $\Bmf'=(\B',\RO,\RM)$, where $\B'$ is a subformula of~\B, we
 denote by $(\Bmf')^\bsf$ the outer abstraction of~$\Bmf'$ that is obtained by
 restricting \bsf to the m-concepts occurring in~$\B'$.
 %
@@ -446,7 +443,6 @@ The following lemma makes the relationship between \Bmf and its outer abstractio
   have $\J\models\Bmf$ iff $\Jb\models\Bmfb$.
 \end{proof}
 
-\noindent
 Note that this lemma yields that consistency of~\Bmf implies consistency of~\Bmfb.  Thus, the
 consistency of~\Bmfb is a necessary condition for the consistency of~\Bmf.  However, it is not
 sufficient since the converse does not hold as the following example shows.
@@ -462,7 +458,6 @@ sufficient since the converse does not hold as the following example shows.
   both $A\sqsubseteq\bot$ and $A(a)$, which is not possible.
 \end{example}
 
-\noindent
 The above example illustrates that there exist implicit restrictions on the interpretation of the
 meta level as certain combinations of concept names in $\ran(\bsf)$ are not allowed.  Therefore, we
 need to ensure that these are not treated independently.  For expressing such a restriction on the
@@ -472,11 +467,12 @@ bottom concept).
 
 \begin{definition}[\Umc-type, \mbox{\Nsig-interpretation (weakly) respects $(\Umc,\Ymc)$}]
   \label{def:int-respects-D}
-  Let \II be an \Nsig-interpretation, let $\Umc\subseteq\NC$ and let $\Ymc\subseteq\powerset{\Umc}$.
+  Let \II be an \Nsig-interpretation, let $\Umc\subseteq\NC$ and let $\Ymc\subseteq\powerset{\Umc}$,
+  where $\powerset{S}$ denotes the power set of $S$.
   %
   The \emph{\Umc-type of $d\in\Delta^{\I}$ in \I} is defined as
   $\mathsf{type}_{\Umc}^{\I}(d) \coloneqq \{A \in \Umc \mid d \in A^{\I}\}$.  The interpretation \I
-  \emph{respects} $(\Umc,\Ymc)$ if $\Zmc = \Ymc$ where
+  \emph{respects} $(\Umc,\Ymc)$ if $\Zmc = \Ymc$, where
   \begin{align*}
     \Zmc & \coloneqq\{Y\subseteq\Umc\mid\text{there is some $d\in\Delta^\I$ with
            $\mathsf{type}_{\Umc}^{\I}(d) = Y$}\}
@@ -485,9 +481,8 @@ bottom concept).
     It \emph{weakly respects} $(\Umc,\Ymc)$ if $\Zmc \subseteq \Ymc$.
 \end{definition}
 
-\noindent
-For $\Umc = \ran(\bsf)$, the \Umc-type of a context, i.e.\ an element $c\in\Cbb$ in a nested
-interpretation, is the set of all abstracted concept names which $c$ is an instance of. In other
+For $\Umc = \ran(\bsf)$, the \Umc-type of a context~$c$, i.e.\ an element $c\in\Cbb$ in a nested
+interpretation, is the set of all abstracted concept names of which $c$ is an instance. In other
 words, it describes all o-axioms which hold in that context. The $\ran(\bsf)$-type of $c$ is also
 called its \emph{restricted type}.
 %
@@ -510,7 +505,6 @@ set of abstracted concept names is admissible in the following sense.
   \vspace{-1.7\baselineskip}
 \end{definition}
 
-\noindent
 Note that any subset $\Xmc'\subseteq\Xmc$ is admissible if \Xmc is admissible.
 %
 Intuitively, the sets $X_i$ in an admissible set \Xmc consist of referring meta concepts such that
@@ -528,9 +522,8 @@ admissible set.
     consistent w.r.t.~\Xmc} if there exists a model of~\Bmfb that weakly respects~$(\ran(\bsf),\Xmc)$.
 \end{definition}
 
-\noindent
 The next two lemmas show that the consistency problem in \LMLO can be decided by checking whether
-there is an admissible set~\Xmc and the outer abstraction of the given \LMLO-BKB is outer consistent
+there is an admissible set~\Xmc such that outer abstraction of the given \LMLO-BKB is outer consistent
 w.r.t.~\Xmc.
 
 \begin{lemma}\label{lem:model-equivalent-to-admissible}
@@ -549,8 +542,8 @@ w.r.t.~\Xmc.
     %
   Moreover, since \bsf is a bijection between referring meta concepts of the form \oalpha occurring
   in~\Bmf and abstracted concept names of~\MC, we have that $\ran(\bsf)$ is finite, and thus also
-  the set $\Xmc \coloneqq \{X_{d}\mid d \in \Delta^{\Hmc} \} \subseteq \powerset{\ran(\bsf)}$ is
-  finite.  Let $\Xmc = \{Y_1, \dots, Y_k\}$.  Since $\Cbb = \Delta^{\Hmc}$, there exists an index
+  that the set $\Xmc \coloneqq \{X_{d}\mid d \in \Delta^{\Hmc} \} \subseteq \powerset{\ran(\bsf)}$
+  is finite.  Let $\Xmc = \{Y_1, \dots, Y_k\}$.  Since $\Cbb = \Delta^{\Hmc}$, there exists an index
   function $\nu\colon\Cbb\to\{1,\dots,k\}$ such that $X_{c} = Y_{\nu(c)}$ for every $c\in\Cbb$, i.e.
   \begin{align*}
     Y_{\nu(c)} & = \bigl\{\bsf(\oalpha)\mid\text{\oalpha occurs in~\Bmf and $c\in\bsf(\oalpha)^\Hmc$}\bigr\} \\
@@ -627,15 +620,11 @@ consistency check into two subtasks.
   now yields consistency of~\Bmf.
 \end{proof}
 
-
-\noindent
 Before we can analyse the complexity of the consistency problem in \LMLO, we need to state two
 complexity results for the consistency problem of \SHOQ-BKBs and \SHOIQ-BKBs. For the former we
 follow the idea of~\cite{Lip-PhD14}.
 %
 The latter is an adaptation of a proof of~\cite{Pra-JLLI05}.
-
-
 
 \begin{lemma}\label{lem:shoq-outer-consisteny-exptime}
   Deciding whether a \SHOQ-BKB \Bmfb is outer consistent w.r.t.~\Xmc can be done in time exponential
@@ -651,16 +640,18 @@ The latter is an adaptation of a proof of~\cite{Pra-JLLI05}.
   \emph{weakly} respecting $(\ran(\bsf),\Xmc)$.
   %
   Condition~(i) in Definition~3.25 of~\cite{Lip-PhD14} states that for every $X\in\Xmc$ there must
-  exist a concept type that, restricted to $\ran(\bsf)$, coincides with $X$. \todo{gibt es beim
-    quasi model zu jedem concept type min 1 element mit diesem typ?} Hence, dropping Condition~(i)
-  yields that the quasimodel weakly respects $(\ran(\bsf),\Xmc)$.  Then, the proof of Lemma~3.26
-  of~\cite{Lip-PhD14} can be adapted such that our claim follows.  This is done by dropping the
-  check whether Condition~(i) is satisfied in Step~4 of the algorithm of~\cite{Lip-PhD14}.
+  exist a concept type that, restricted to $\ran(\bsf)$, coincides with $X$.
+  %
+  %\todo{gibt es beim quasi model zu jedem concept type min 1 element mit diesem typ?}
+  %
+  Hence, dropping Condition~(i) yields that the quasimodel weakly respects $(\ran(\bsf),\Xmc)$.
+  Then, the proof of Lemma~3.26 of~\cite{Lip-PhD14} can be adapted such that our claim follows.
+  This is done by dropping the check whether Condition~(i) is satisfied in Step~4 of the algorithm
+  of~\cite{Lip-PhD14}.
 
   The only condition for which \Xmc is relevant, is Condition~(h) which is checked in
   Step~2. Clearly, this check can be done in time linear in the size of~\Xmc.
 \end{proof}
-
 
 
 \begin{lemma}\label{lem:shoiq-outer-consisteny-nexptime}
@@ -668,12 +659,11 @@ The latter is an adaptation of a proof of~\cite{Pra-JLLI05}.
   done in time exponential in the size of~\Bmfb and linear in size of~\Xmc.
 \end{lemma}
 \begin{proof}
-
-  Let \Umc be the set $\ran(\bsf)$. 
-  
+  %Let \Umc be the set $\ran(\bsf)$. 
+  %
   In~\cite{Pra-JLLI05}, it is shown the deciding satisfiability of a formula $\varphi$ of the two-variable
   fragment of first-order logic with counting quantifiers $\Cmc^{2}$ can be done non-deterministically in time
-  exponential in the size of $\varphi$. There, Theorem~2 of\cite{Pra-JLLI05} can be adapted is such
+  exponential in the size of $\varphi$. There, Theorem~2 of~\cite{Pra-JLLI05} can be adapted is such
   a way that the set $\Pi$ of 1-types that occur in a model can be restricted.
 
   Since \SHOIQ-BKBs are also $\Cmc^{2}$-formulas and \Xmc is a set of 1-types, the claim follows.
@@ -730,10 +720,10 @@ are allowed.
 \end{theorem}
 \begin{proof}
   Let \Bmf be a \cSHOIQ-BKB and \Bmfb is outer abstraction.  Analogous to the proof of
-  Theorem~\ref{thm:shoqshoq-without-rigid-exptime} we construct the maximal admissible subset~\Xmc
+  Theorem~\ref{thm:shoqshoq-without-rigid-exptime}, we construct the maximal admissible subset~\Xmc
   of $\powerset{\ran(\bsf)}$.  Again, \Bmf is consistent iff \Bmfb is outer consistent w.r.t.~\Xmc.
 
-  In contrast to the proof of Theorem~\ref{thm:shoqshoq-without-rigid-exptime} we can decide
+  In contrast to the proof of Theorem~\ref{thm:shoqshoq-without-rigid-exptime}, we can decide
   consistency of~$\Bmf_{X}$ non-deter\-ministically in time exponential in the size of~$\Bmf_{X}$.  Thus, the set~\Xmc can be constructed
   non-deterministically in time exponential in the size of~\Bmf.  By
   Lemma~\ref{lem:shoiq-outer-consisteny-nexptime}, deciding whether \Bmfb is outer consistent
@@ -742,8 +732,8 @@ are allowed.
   exponential time. 
 \end{proof}
 
-\noindent
-Together with the lower bounds shown in
+As the lower bounds already hold for \LMLO involving \EL, we prove them separately in
+Section~\ref{sec:case-el}.  Anticipating the lower bounds shown in
 Theorems~\ref{thm:alcel-exp-hard-no-rigid},~\ref{thm:elalc-exp-hard-no-rigid},~\ref{thm:shoiqel-lower-no-rigid}
 and~\ref{thm:elshoiq-lower-no-rigid} we obtain \ExpTime-completeness for the consistency problem in
 \LMLO for \LM and \LO being DLs between \EL and \SHOQ, excluding \ELEL, and \NExpTime-completeness
@@ -824,11 +814,11 @@ In this section, we consider the case where rigid role names are present.
   \Bmf, but checking for each \Xmc whether \Bmfb is outer consistent w.r.t.~\Xmc can be done
   non-deterministically in time exponential in the size of \Bmfb and linear in the size of \Xmc.
 
-  To check \Xmc for admissibility we again use the renaming technique
-  of~\cite{BaGL-KR08,BaGL-ToCL12} and by the same arguments as above \Xmc is admissible iff
+  To check \Xmc for admissibility, we again use the renaming technique
+  of~\cite{BaGL-KR08,BaGL-ToCL12}, and by the same arguments as above, \Xmc is admissible iff
   $\Bmf_\Xmc$ is consistent.  Again, $\Bmf_\Xmc$ is of size at most exponential in~\Bmf and can be
   constructed in exponential time, but consistency of~$\Bmf_\Xmc$ can be decided
-  non-deterministically in time exponential in the size of~$\Bmf_\Xmc$ and thus
+  non-deterministically in time exponential in the size of~$\Bmf_\Xmc$, and thus
   non-deterministically in time doubly exponential in the size of \Bmf.
 \end{proof}
 
@@ -858,14 +848,14 @@ allowed.
   
   It remains to check \Xmc for admissibility. Here we follow the ideas
   of~\cite{BaGL-KR08,BaGL-ToCL12,Lip-PhD14}. Instead of checking the consistency of $\Bmf_{\Xmc}$
-  directly which would yield a double-exponential time bound, we reduce it to
-  $k$ separate consistency checks of which each can be decided in time
-  exponential in the size of \Bmc. Therefore, for each individual name $a$ in \Bmf we guess the set
-  of rigid concepts of which $a$ is an instance of.
+  directly, which would yield a double-exponential time bound, we reduce it to~$k$ separate
+  consistency checks each of which can be decided in time exponential in the size of
+  \Bmc. Therefore, for each individual name $a$ in \Bmf we guess the set of rigid concepts of
+  which~$a$ is an instance.
   % 
   More precisely, let $\OCR(\B) \subseteq \OCR$ and $\OI(\B) \subseteq \OI$ be the sets of all rigid
   concept names and individual names occurring in \B, respectively. We non-deterministically guess a
-  set $\Ymc \subseteq \powerset{\OCR(\B)}$ and a mapping $\kappa\colon\OI(\B)\to\Ymc$ which also can
+  set $\Ymc \subseteq \powerset{\OCR(\B)}$ and a mapping $\kappa\colon\OI(\B)\to\Ymc$, which also can
   be done in time exponential in the size of \Bmf.
 
   \begin{claim}
@@ -881,14 +871,14 @@ allowed.
     $\Gmc_{i} = (\Delta^{\Gmc}, \cdot^{\Gmc_{i}})$ such that $\Gmc_{i}$ is a model of
     $(\Bmc_{X_{i}}, \RO)$. Let \Ymc be the set of all \OCR-types in $\Gmc_{i}$, i.e.\
     $\Ymc = \{\smash{\type_{\OCR}^{\Gmc_{i}}(d)} \mid d\in\Delta^{\Gmc_{i}}\}$ and let $\kappa$ map $d$ to
-    its type, i.e.\ $\smash{\kappa(d) = \type_{\OCR}^{\Gmc_{i}}(d)}$. It is easy to see, that $\Gmc_{i}$ is
-    a model of $\widehat{\Bmf}_{X_{i}}$ and by construction $\Gmc_{i}$ respects $(\OCR(\B),\Ymc)$.
+    its type, i.e.\ $\smash{\kappa(d) = \type_{\OCR}^{\Gmc_{i}}(d)}$. It is easy to see that $\Gmc_{i}$ is
+    a model of $\widehat{\Bmf}_{X_{i}}$, and by construction, $\Gmc_{i}$ respects $(\OCR(\B),\Ymc)$.
 
     Now, assume that there exist \Osig-interpretations
     $\Gmc_{1} = (\Delta^{\Gmc_{1}}, \cdot^{\Gmc_{1}})$, \dots,
     $\Gmc_{k} = (\Delta^{\Gmc_{k}}, \cdot^{\Gmc_{k}})$ s.t.\ $\Gmc_{i}\models\widehat{\Bmf}_{X_{i}}$
     and $\Gmc_{i}$ respects $(\OCR(\B),\Ymc)$, for all $1 \leq i \leq k$.  By the same arguments as
-    in the proof of Theorem~\ref{thm:shoqshoq-without-rigid-exptime} we can assume w.l.o.g.\ that
+    in the proof of Theorem~\ref{thm:shoqshoq-without-rigid-exptime}, we can assume w.l.o.g.\ that
     all models have a countably infinite domain. Since a disjoint union of $\Gmc_{i}$ with itself is
     again a model of $\widehat{\Bmf}_{X_{i}}$, we can also assume that for each $Y\in\Ymc$ there are
     infinitely many elements $d$ in ${C_{Y}}^{\Gmc_{i}}$ where
@@ -915,7 +905,7 @@ allowed.
   constructed in time exponential in the size of \B. We can check if
   $\smash{\widehat{\Bmf}_{X_{i}}}$ has a model that respects $(\OCR(\B),\Ymc)$ in time exponential
   in the size of $\smash{\widehat{\Bmf}_{X_{i}}}$ \cite{Lip-PhD14}, and thus in time exponential in
-  the size of \Bmf.
+  the size of~\Bmf.
 \end{proof}
 
 \noindent
@@ -945,20 +935,21 @@ Summing up the results, we obtain the following corollary.
   \end{itemize}
 \end{corollary}
 
-\section{The Case of \texorpdfstring{\EL}{EL}}
+\section{Contextualised Description Logics Involving \texorpdfstring{\EL}{EL}}
 \label{sec:case-el} 
 
 In this section, we give some complexity results for context DLs
-\LMLO where \LM or \LO is \EL.
+\LMLO where~\LM or~\LO is~\EL.
 %
 In Section~\ref{sec:dlinner-el}, we consider \LMEL where \LM is between \ALC and \SHOIQ.  Then, in
 Section~\ref{sec:dlouter-el}, we consider the remaining context DLs \ELLO where \LO is between \ALC
 and \SHOIQ.
 
-For \EL as \LO, instead of considering \ELLO-BKBs, we allow only \emph{conjunctions} of m-axioms. It
-seems unnatural to allow axiom negation for a logic which does not have concept
-negation. Furthermore, this would miss any practical motivation. Then the consistency problem becomes trivial in the case of \ELEL since all
-\ELEL-BKBs are consistent, as \EL lacks to express contradictions.
+For \EL as \LM, instead of considering \ELLO-BKBs, we allow only \ELLO-ontologies, i.e.\
+\emph{conjunctions} of m-axioms. It seems unnatural to allow axiom negation for a logic which does
+not have concept negation. Furthermore, this would miss any practical motivation. For
+\ELEL-ontologies the consistency problem becomes trivial since all \ELEL-ontologies are consistent,
+as \EL lacks to express contradictions.
 %
 This restriction, however, does not yield a better complexity in the cases of \ELLO, where \LO is
 between \ALC and \SHOQ.
@@ -1052,7 +1043,7 @@ We are now ready to define the semantics of \Lmc-LTL.
 
 \noindent
 In~\cite{BoTh-IJCAI15,BoTh-LTCS-15-07}, it is shown that the satisfiability problem in \EL-LTL is
-\NExpTime-hard as soon as rigid concept names are available.  We reduce the satisfiability problem
+\NExpTime-hard as soon as rigid concept names are present.  We reduce the satisfiability problem
 in \EL-LTL to the consistency problem in \ALCEL to obtain the lower bounds of \NExpTime, where we
 use the fact that the lower bounds of~\cite{BoTh-IJCAI15,BoTh-LTCS-15-07} already hold for a
 syntactically restricted fragment of \EL-LTL.
@@ -1308,9 +1299,9 @@ For the case of rigid role names, we have lower bounds of \TwoExpTime.
   This captures all except for two conjuncts of the \ALC-LTL-formula of the reduction
   of~\cite{BaGL-KR08,BaGL-ToCL12}.  There, a $k$-bit binary counter using concept names
   $A_0',\dots,A_{k-1}'$ was attached to the individual name $a$, which is incremented along the
-  temporal dimension.  We can express something similar in \ELALC, but instead of incrementing the
+  temporal dimension.  We can express something similar in \ELALC. Instead of incrementing the
   counter values along a sequence of $t$-successors, we have to go backwards since \EL does allow
-  for branching but does not allow for values restrictions, i.e.~we cannot make sure that all
+  for branching but does not allow for value restrictions, i.e.~we cannot make sure that all
   $t$-successors behave the same.  More precisely, if the counter value~$n$ is attached to~$a$ in
   context~$c$, the value $n+1$ (modulo $2^k-1$) must be attached to~$a$ in \emph{all} of $c$'s
   $t$-predecessors.
@@ -1339,8 +1330,9 @@ For the case of rigid role names, we have lower bounds of \TwoExpTime.
   decrement the counter along the $t$-chain (modulo $2^k-1$), every value between $0$ and $2^k-1$
   is reached.
   
-  The conjunction of all the \ELALC-BKBs above yields an \ELALC-BKB~\B that is consistent iff $w$
-  is accepted by~$M$.
+  The conjunction of all the \ELALC-BKBs above yields an \ELALC-BKB~\B that is consistent iff the
+  given word~$w$
+  is accepted by the machine~$M$.
 \end{proof}
 
 \noindent
@@ -1405,7 +1397,7 @@ only.
   $2^{2n+1}$ is reached.
 
   In~\cite{BaGL-KR08,BaGL-ToCL12}, an \ALC-LTL-formula is used to express that the value of the
-  counter in shared by all domain elements belonging to the current (temporal) world.  This is
+  counter is shared by all domain elements belonging to the current (temporal) world.  This is
   expressed using a disjunction, which we can simulate as follows:
   \begin{gather*}
     \bigwedge_{0\le i\le 2n+1} \Bigl(\oax{Z_i(a)}\sqsubseteq\oax{\top\sqsubseteq Z_i}\ \land\
@@ -1418,7 +1410,8 @@ only.
     \top\sqsubseteq\oax{(\exists r.N)(a)}
   \end{gather*}
   %
-  It is only left to express the following \ALC-LTL-formula of~\cite{BaGL-KR08,BaGL-ToCL12}:
+  It is only left to express the following \ALC-LTL-formula of~\cite{BaGL-KR08,BaGL-ToCL12} that
+  states that every world gets one domino type:
   \begin{gather*}
     \Box\Bigl(\bigvee_{d\in D} (\top\sqsubseteq d')\Bigr)
   \end{gather*}
@@ -1459,3 +1452,4 @@ only.
 
 %  LocalWords:  Löwenheim Skolem Logics logics iff temporalised Quasimodel quasimodel BKB Klarman
 %  LocalWords:  DL et al GreenBayPackers AaronRodgers DLs bijections equisatisfiable satisfiability
+%  LocalWords:  ontologies

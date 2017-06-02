@@ -1,0 +1,80 @@
+\documentclass{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[british]{babel}
+\usepackage{csquotes}
+
+\usepackage[
+  backend       = biber,
+  style         = alphabetic,
+  abbreviate    = false,
+  minalphanames = 3,
+  maxnames      = 99,
+  maxitems      = 99
+]{biblatex}
+
+\patchcmd{\bibsetup}{\interlinepenalty=5000}{\interlinepenalty=10000}{}{}
+
+\renewcommand*{\finalnamedelim}{%
+    \ifnumgreater{\value{liststop}}{2}{\addcomma}{}%
+    \addspace\bibstring{and}\space}
+\renewcommand{\labelnamepunct}{\addcolon\space}
+\renewcommand{\intitlepunct}{\addspace}
+\DeclareFieldFormat[article]{volume}{\textbf{#1}}
+\DeclareFieldFormat[article]{number}{(#1)}
+\DeclareFieldFormat[report]{title}{\mkbibquote{#1}}
+\renewbibmacro*{event+venue+date}{%
+    \printfield{eventtitle}%
+    \ifboolexpr{%
+        test {\iffieldundef{venue}}
+        and
+        test {\iffieldundef{eventyear}}
+    }
+    {}
+    {\setunit{\addcomma\space}%
+        \printfield{venue}%
+        \setunit*{\addcomma\space}%
+        \printeventdate}%
+    \newunit}
+\renewbibmacro*{issue+date}{%
+    \setunit{\addcomma\space}%
+        \iffieldundef{issue}
+            {\usebibmacro{date}}
+            {\printfield{issue}%
+                \setunit*{\addspace}%
+                \usebibmacro{date}}%
+    \newunit}
+\renewbibmacro*{volume+number+eid}{%
+    \printfield{volume}%
+    \printfield{number}%
+    \setunit{\addcomma\space}%
+    \printfield{eid}%
+    \addcolon}
+
+\addbibresource{../references.bib}
+
+\title{Publication List}
+\author{}
+\date{4th June 2017}
+
+\begin{document}
+\maketitle
+
+\thispagestyle{empty}
+
+\begin{enumerate}
+\item \fullcite{BoLi-FroCoS15}
+\item \fullcite{BoLi-DL15}
+\item \fullcite{BoLi-LTCS-15-04}
+\item \fullcite{KBG-SLE15}
+\end{enumerate}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% reftex-default-bibliography: ("../references.bib")
+%%% End:

@@ -3,9 +3,9 @@ In this section we discuss a possible extension to our contextualized descriptio
 with a little comparison to temporal description logics. Both DL-LTL-structures and nested DL
 interpretations use a \emph{possible worlds semantics}. Single time points or contexts are
 represented in a meta dimension and for each such a meta element, or possible world, there exists
-one DL interpretation on object level. Important for both the expressivity and the complexity of
+one DL interpretation on the object level. Important for both the expressivity and the complexity of
 reasoning problems is how these two dimensions can interact. Syntactically, it is a question where
-these \emph{meta} operators, i.e.\ temporal or contextual, are allowed.
+these \emph{meta} operators, i.e.\ temporal or contextual, can be used.
 
 \begin{table}
   \caption{Classification of different two-dimensional temporal and contextual description logics
@@ -14,7 +14,7 @@ these \emph{meta} operators, i.e.\ temporal or contextual, are allowed.
   \begin{tabular}{lM{0.1\linewidth}M{0.25\linewidth}M{0.17\linewidth}N}
     \toprule
     \multicolumn{2}{c}{\multirow{2}{5cm}[-1ex]{\centering Temporal or contextual operators}}
-    & \multicolumn{2}{c}{in front of axioms}\\
+    & \multicolumn{2}{c}{in front of/around axioms}\\
     & & yes & no &\\[10pt]
     \midrule
     & yes & temporal $\text{LTL}_{\ALC}$, \klarALC, \LMLOplus & $\text{LTL}_{\ALC}$, \hspace{2cm}$\emptyset$ &\\[15pt]
@@ -27,29 +27,37 @@ these \emph{meta} operators, i.e.\ temporal or contextual, are allowed.
   \label{tab:classification-tdl-cdl}
 \end{table}
 
-Table~\ref{tab:classification-tdl-cdl} gives an overview over some two-dimensional DLs. By all
-means, this is not complete and is used to illustrate some common properties about the complexity of
-the consistency problem. Note first, that neither having meta operators in front of axioms nor
-inside concepts subsumes each other. Meta operators in front of axioms can handle general knowledge
-that holds in some or all worlds.  On the other hand meta operators inside object concepts allow to
-access the extension of concepts in other worlds.
+Table~\ref{tab:classification-tdl-cdl} gives an overview over some two-dimensional DLs. This is not
+a complete overview, but it illustrates some common properties about the complexity of the
+consistency problem. Note first that neither having meta operators in front of axioms nor having
+meta operators inside concepts is strictly more expressive than the other. Meta operators in front
+of axioms can handle general knowledge that holds in some or all worlds.  On the other hand, meta
+operators inside object concepts allow to access the extension of concepts in other worlds.
 %
 We illustrate this by an example taken from \cite{LuWZ-TIME08}.
 \begin{gather*}
   \Diamond\Box(\mathsf{European\_country} \sqsubseteq \mathsf{EU\_country})\\
   \mathsf{Independent\_country} \sqsubseteq \Box\mathsf{Independent\_country}
 \end{gather*}
-The first temporalized GCI states that eventually, i.e.\ at some time point $t$ in future, all European
-countries will be EU members forever, i.e.\ in every time point after $t$. The second axiom says that the
-extension of the concept $\mathsf{Independent\_country}$ does not decrease.
+The first temporalised GCI states that eventually, i.e.\ at some time point $t$ in future, all
+European countries will forever be EU members, i.e.\ in every time point after $t$. The second axiom
+says that the extension of the concept $\mathsf{Independent\_country}$ does not decrease.
 
-The first setting that we want to focus on is the presence of rigid roles.  If meta operators are
-allowed within object concepts, the consistency problem becomes undecidable. This holds for all
-logics in the first row of Table~\ref{tab:classification-tdl-cdl}. Below, we prove it for \LMLOplus
-below. If meta operators are only allowed in front of axioms, we may retain decidability but still
-at the cost that the consistency problem is exponentially harder.
+In \LMLO, we only have the contextual operator $\oax{\cdot}$ around axioms. We can express that
+certain axioms must hold in some worlds, but we cannot access the extension of a concept from
+another world, i.e.~we cannot express the set of domain elements which belong to some concept in
+another context.  The idea is to overcome this lack of expressive power by introducing a new
+contextual operator inside object concepts.
+
+Before extending \LMLO, we analyse some general behaviour of two-dimensional DLs.  The first common
+property that we want to focus on is the computational complexity if rigid roles are present.
+If meta operators are allowed within object concepts, the consistency problem becomes
+undecidable. This holds for all logics in the first row of
+Table~\ref{tab:classification-tdl-cdl}. We prove this negative result for \LMLOplus below. If meta operators
+are only allowed in front of axioms, we may retain decidability, but at the cost that the
+consistency problem is one exponential harder.
 %
-Secondly, if no rigid names are allowed, the complexity of the consistency problem increases for
+If no rigid names are allowed, the complexity of the consistency problem increases for
 logics with meta operators both in front of axioms and in object concepts: from ExpTime-completeness for \ALC
 to \ExpSpace-completeness for temporal $\text{LTL}_{\ALC}$ TBoxes and to \TwoExpTime-completeness
 for \klarALC knowledge bases. If only one kind of meta operators is allowed, the complexity
@@ -62,7 +70,7 @@ simulated. In $\text{LTL}_{\ALC}$, this can be done by adding $C\sqsubseteq\Box 
 $\lnot C\sqsubseteq\Box\lnot C$ to the TBox.  We show below how rigid concepts can be simulated in
 \LMLOplus.
 %
-The contextualized description logic \LMLOplus is an extension of \LMLO where we additionally allow
+The contextualized description logic \LMLOplus is an extension of \LMLO in which we additionally allow
 contextualized object concepts. Therefore, we update the definition of o-concepts from
 Def. \ref{def:syntax-lmlo}.  
 
@@ -81,7 +89,6 @@ $\ocont{C}[r]{D}$ as follows: $(\ocont{C}[r]{D})^{\I_{c}} \coloneqq \{d \in \Del
 some $c'\in\Cbb$ s.t.\ $(c,c')\in r^{\J}$ and $d \in D^{\I_{c'}}$}\}$.
 \end{definition}
 
-\noindent
 Following customs of modal logic, we use $\ocont*{C}[r]{D}$ as an abbreviation for
 $\lnot\ocont{C}[r]{(\lnot D)}$. Intuitively, in a context $c$ the concept $\ocont{C}[r]{D}$ denotes
 the set of all object domain elements that belong to the concept $D$ in some other context $c'$
@@ -121,7 +128,7 @@ the same complexity.
   Table~\ref{tab:syntax-klarALC} shows in the upper part the two special constructors for object
   concepts available in \klarALC. The middle part provides the syntax and semantics of \emph{object
     formulas} which in turn constitute the \emph{object ontology axioms}, shown in lower part. The
-  rightmost column states the mapping $\tau$ which translates terms from \klarALC to
+  rightmost column defines the mapping $\tau$ which translates terms from \klarALC to
   \ALCALCplus. The following example shows how an object ontology axiom is mapped.
   \begin{align*}
     \mathbf{C}:\langle \mathbf{C} \rangle_{\mathbf{r}}(\langle \mathbf{C}\rangle_{\mathbf{r}}D
@@ -131,7 +138,7 @@ the same complexity.
   \end{align*}
 
   \begin{table}[t]    
-    \caption{Syntax and semantics of \klarALC, mapping into \ALCALCplus}
+    \caption{Syntax and semantics of \klarALC, and the mapping $\tau$ to \ALCALCplus}
     \centering
     \begin{tabularx}{0.96\linewidth}{ll@{ iff }X@{}l}
       \toprule
@@ -188,14 +195,13 @@ the same complexity.
 
   An \klarALC ontology $\Kmc = (\Cmc, \Omc)$ consists of a context ontology \Cmc, which is in fact a
   standard \ALC ontology, and of an object ontology. Given \Kmc, let us define the \ALCALC ontology
-  $\Bmc_{\Kmc} \coloneqq \Cmc \land \tau(\Omc)$. It is easy to verify, that a nested interpretation
+  $\Bmc_{\Kmc} \coloneqq \Cmc \land \tau(\Omc)$. It is easy to verify that a nested interpretation
   \J is a model of \Kmc if and only if it is a model of $\Bmc_{\Kmc}$.
 
-  Conversely, for an \ALCALC ontology \Bmc, we take the outer abstraction \Bb as context ontology and for each
-  \oalpha in \Bmc, we add $(\mathbf{A_{\oalpha}} : \alpha)$ and $(\lnot\mathbf{A_{\oalpha}} :
-  \lnot\alpha)$ to the object ontology $\Omc_{\Bmc}$. Again, it is easy (and tedious) to show that
-  \J models \Bmc iff \J models $\Kmc_{\Bmc} = (\Bb,\Omc_{\Bmc})$.
-  
+  Conversely, for an \ALCALC ontology \Bmc, we take the outer abstraction \Bb as context ontology
+  and for each \oalpha in \Bmc, we add $(\mathbf{A_{\oalpha}} : \alpha)$ and
+  $(\lnot\mathbf{A_{\oalpha}} : \lnot\alpha)$ to the object ontology~$\Omc_{\Bmc}$. Again, it is
+  easy to show that~\J models~\Bmc iff~\J models $\Kmc_{\Bmc} = (\Bb,\Omc_{\Bmc})$.
 \end{proof}
 
 
@@ -208,7 +214,7 @@ problem becomes undecidable.
 \end{theorem}
 
 \begin{proof}
-  Similar to the idea of \cite{LuWZ-TIME08} we proof the claim by reduction of a well-known
+  Similar to the idea of \cite{LuWZ-TIME08}, we proof the claim by reduction of a well-known
   undecidable problem, namely the \emph{domino problem} \cite{Ber-66}: given a triple
   $\Dmc = (D, H, V)$ with a set of domino types $D=\{d_{1}, \dots, d_{n}\}$, a horizontal
   compatibility relation $H \subseteq D \times D$ and a vertical compatibility relation
@@ -219,7 +225,8 @@ problem becomes undecidable.
 
   We encode this problem in \ELALCplus with a single rigid role $v\in\ORR$. Let $\Bmc_{\Dmc}$ be the
   conjunction of the following meta axioms. Each context represents a \emph{column} of the
-  grid. Using a meta role $h \in \MR$ and a rigid object role $v \in \ORR$ we build the grid:
+  grid. Using a meta role $h \in \MR$ and a rigid object role $v \in \ORR$, we ensure the existence
+  of a grid:
   \begin{align*}
     \top & \sqsubseteq \exists h.\top \tag{$\alpha_{1}$}\\
     \top & \sqsubseteq \oax{\top \sqsubseteq \exists v.\top} \tag{$\alpha_{2}$}
@@ -231,7 +238,7 @@ problem becomes undecidable.
            \sqcap \bigsqcap_{1 \leq i < j \leq n} \lnot(A_{i} \sqcap A_{j})}.
            \tag{$\alpha_{3}$}
   \end{align*}
-  To enforce the compatibility relations, we have
+  To enforce the compatibility relations, we use
   \begin{align*}
     \top & \sqsubseteq \bigsqcap_{i=1}^{n} 
            \oax{A_{i} \sqsubseteq \forall v.(\bigsqcup_{(d_{i},d_{j})\in V} A_{j})}, \text{ and} \tag{$\alpha_{4}$}\\
@@ -272,13 +279,13 @@ problem becomes undecidable.
     some $c \in \Cbb$. Such paths exists, because $\J\models\alpha_{1}$, $\J\models\alpha_{2}$ and
     $v$ is a rigid role. We define the nested interpretation
     $\J_{\Psf} \coloneqq (\{c_{i} \mid i \geq 0\}, \cdot^{\J_{\Psf}}, \{o_{i} \mid i \geq 0\},
-    (\cdot^{\I_{\Psf,c_{i}}})_{i \geq 0})$ where $\cdot^{\J_{\Psf}}$ is the restriction of
-    $\cdot^{\J}$ to the domain ${c_{i} \mid i \geq 0}$ and $\cdot^{\I_{\Psf,c_{i}}}$ is the restriction of
+    (\cdot^{\I_{\Psf,c_{i}}})_{i \geq 0})$, where $\cdot^{\J_{\Psf}}$ is the restriction of
+    $\cdot^{\J}$ to the domain ${c_{i} \mid i \geq 0}$, and $\cdot^{\I_{\Psf,c_{i}}}$ is the restriction of
     $\cdot^{\I_{c_{i}}}$ to the domain ${o_{i} \mid i \geq 0}$.
 
     By construction, $\J_{\Psf}$ is a model of $\alpha_{1}$ and $\alpha_{2}$. Since $\alpha_{3}$ to
     $\alpha_{5}$ do not contain any existential or at-least restrictions, the restriction of the
-    meta and the object domain does preserve the entailment relation and
+    meta and the object domain preserves the entailment relation, and
     $\J_{\Psf}\models\Bmc_{\Dmc}$. We define the tiling $\mathsf{t}$ as follows:
     \begin{align*}
       t(x,y) = d_{i} \quad\text{ if $o_{y} \in A_{i}^{\I_{\Psf,c_{x}}}$}.
@@ -297,15 +304,14 @@ problem becomes undecidable.
   Thus, deciding whether $\Bmc_{\Dmc}$ is consistent is undecidable.
 \end{proof}
 
-% Besides the negative result about rigid roles, it is still unclear how \LMLOplus behaves in the case
-% when only rigid concepts are allowed. But based on the necessity to express rigid roles when
-% modelling RoSIs \todo{reference to section 2.2} as discussed in Section \ref{sec:rosiroles}, we did
-% not look into this setting any further and it is left open as future work when appropriate use cases
-% emerge.
+In Section~\ref{sec:complexity-consis-problem}, we discussed three different settings depending on
+whether rigid concept and role names are admitted. We already obtained the complexity results for
+\LMLOplus for Setting~(i), i.e.~no rigid names are allowed, and for Setting~(iii), i.e.~rigid roles
+are allowed.  In LMLOplus, however, a Setting~(ii) that allows rigid concept names but no rigid
+roles, coincides with Setting~(i), since rigid concepts can be easily simulated.
 
-\noindent
 To simulate rigid concepts in \LMLOplus, let \BB be an \LMLOplus ontology. We first have to
-simulate an universal role $u$ on meta level. We can assume w.l.o.g.\
+simulate a universal role $u$ on the meta level. We can assume w.l.o.g.\
 that $u\in\MR$ does not occur in \Bmf. We obtain $\Bmf_{u}$ from \Bmf by adding the following axioms
 to \Bmf:
 \begin{itemize}
@@ -317,13 +323,13 @@ to \Bmf:
 Note that $\Bmf_{u}$ is of size polynomial in the size of \Bmf and that we need at least \ALCHI as
 \LM to simulate the universal role.
 %
-If there exists an unnamed context in a model of \Bmf, i.e.\ $c\in\Cbb$ such that there is no
-$a\in\MI$ occurring in \Bmf with $a^{\J}=c$, which is not connected to any named context by some
-path, we can always remove that unnamed context from the interpretation and still have a model.
-Hence, we can assume that every model of $\Bmc_{u}$ is connected and that every context can be
+Assume there exists an unnamed context in a model of \Bmf, i.e.~$c\in\Cbb$ such that there is
+no~$a\in\MI$ occurring in~\Bmf with~$a^{\J}=c$, and $c$ is not connected to any named context by some
+path. Then, we can always remove that unnamed context from the interpretation and still have a model.
+Hence, we can assume that every model of~$\Bmf_{u}$ is connected and that every context can be
 reached by any other context via a path of $u$-edges.
 %
-Here, we restrict \Bmf to \LMLOplus-ontologies, since in a \LMLOplus-BKB a negated meta GCI can
+Here, we restrict~\Bmf to~\LMLOplus-ontologies, since in an \LMLOplus-BKB, a negated meta GCI can
 enforce the existence of an unnamed context that is not necessarily connected to the rest of the model.
 
 
@@ -336,6 +342,9 @@ following two axioms:
 Due to these axioms, the extension of $A$ in a context $c$ are exactly these elements which are in
 $A$ in every context $c'$ that is related to $c$ via $u$. Thus, the extension of $A$ is equal in
 every context, i.e.\ $A$ is rigid.
+
+Hence, the complexity of the consistency problem in \LMLOplus is independent of whether rigid
+concepts are allowed or not.
 
 
 %%% Local Variables:
