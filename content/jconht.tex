@@ -16,7 +16,7 @@ Definition~\ref{def:int-respects-D}) of some element and thus a subset of $\ran(
 
 In this chapter, we present a practical algorithm to check consistency.  Furthermore, we implemented
 this algorithm and give details on the design of the implementation.  Since internally, this
-algorithm only calls standard DL consistency checks, we can reuse existing, highly optimized DL
+algorithm only calls standard DL consistency checks, we can reuse existing, highly optimised DL
 reasoners.
 
 \section{A Black-Box Approach}
@@ -388,7 +388,7 @@ three major approaches used in OWL reasoners: consequence-, model construction- 
 rewriting-based. \emph{Consequence-based} approaches are classically employed for the entailment
 problem in lightweight DLs such as \EL, while \emph{rewriting} approaches are usually used for
 specific reasoning tasks, such as for query answering. \emph{Model construction-based} approaches
-are utilized for expressive DLs, i.e.\ any extension of \ALC, and try to build a model based on the
+are utilised for expressive DLs, i.e.\ any extension of \ALC, and try to build a model based on the
 knowledge base to check consistency. These include tableau and hypertableau techniques. Since we
 also need the information about the restricted types of a model, we are looking for a model
 construction-based reasoner.
@@ -476,12 +476,12 @@ ontology is consistent. But in contrast to other tableau calculi, it operates on
 \end{table}
 
 In the hypertableau algorithm, a few preprocessing steps are necessary, namely \emph{elimination of
-  transitivity axioms}, \emph{normalization} and \emph{clausification}. The clausification
-translates a normalized DL ontology $\Omf = (\Omc, \Rmc)$ without transitivity axioms into a pair
+  transitivity axioms}, \emph{normalisation} and \emph{clausification}. The clausification
+translates a normalised DL ontology $\Omf = (\Omc, \Rmc)$ without transitivity axioms into a pair
 \CA, where \Cmc is a set of DL-clauses and \A is an ABox, and \Omf and \CA are equisatisfiable.
 Here, we omit further details of the preprocessing steps, but emphasise that the preprocessing not
 only preserves satisfiability, but also satisfiability w.r.t.~essential equality.  Let \Kmc be the
-input ontology and \CA the clausification after normalization. There exists a model \I of \Kmc iff
+input ontology and \CA the clausification after normalisation. There exists a model \I of \Kmc iff
 the exists a model \Hmc of \CA such that \I and \Hmc are essentially equal. Hence, it is sufficient
 to consider the clausification of the outer abstraction of an \LMLO ontology.
 
@@ -767,7 +767,7 @@ shows.
     \Bmfbex & = \big(\lnot C(s) \quad\land\quad 
               A_{\oax{\lnot A(a)}} \sqsubseteq C \quad\land\quad
               \lnot C \sqsubseteq A_{\oax{A\sqsubseteq\bot}} ,\quad \emptyset\big)\\
-    \intertext{is the outer abstraction of \Bmfex. The normalization and clausification of \Bmfbex yields \CAex with}
+    \intertext{is the outer abstraction of \Bmfex. The normalisation and clausification of \Bmfbex yields \CAex with}
     \Cex & = \{A_{\oax{\lnot A(a)}}(x) \to C(x), \quad \top\to C(x) \lor
            A_{\oax{A\sqsubseteq\bot}}(x)\},\\
     \Aex & = \{\lnot C(s)\}.\\
@@ -839,7 +839,7 @@ Algorithm~\ref{alg:2} is sound and complete.
   \BlankLine
   %
   Preprocessing (results in \CA):\;
-  1. Elimination of transitivity axioms, normalization, clausification\;
+  1. Elimination of transitivity axioms, normalisation, clausification\;
   2. Repletion of DL-clauses\;
   %
   \BlankLine
@@ -915,7 +915,7 @@ We implemented Algorithm~\ref{alg:2} in a reasoner called \emph{JConHT} -- a \em
 compliant reasoner implementing the \textsf{OWLReasoner} interface of the OWL API.
 
 Nearly all reasoners use the Web Ontology Language (OWL) in order to represent an ontology.
-However, in general OWL cannot express contextualized knowledge. In~\cite{BoGH-ISWC03}, Bouquet et
+However, in general OWL cannot express contextualised knowledge. In~\cite{BoGH-ISWC03}, Bouquet et
 al. introduce C-OWL, an extension of the OWL syntax and semantics to allow for the representation of
 contextual ontologies. But their view differs significantly from our approach in what a context is.
 Therefore, we cannot use C-OWL.

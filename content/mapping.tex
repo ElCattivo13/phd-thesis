@@ -3,14 +3,14 @@
 \label{cha:mapping}
 
 In the last chapter we introduced a family of description logics which are capable of expressing
-contextual knowledge. This provides the needed expressiveness to be able to reason on role-based
-models. But due to the rather elaborate semantics both of role-based models and of contextualized
+contextualised knowledge. This provides the needed expressiveness to be able to reason on role-based
+models. But due to the rather elaborate semantics both of role-based models and of contextualised
 description logics it will be tedious and error-prone to construct the DL ontology which exactly
 captures a role-based model. Hence, an automated mapping from role-based models into DL would be
 desirable. Therefore, a formal representation of role-based systems with a well-defined semantics is
 necessary.
 
-In this chapter we will present a mapping from such role-based models into contextualized DLs in
+In this chapter we will present a mapping from such role-based models into contextualised DLs in
 order to automate this step.
 %
 To avoid the confusion with the notations, from now on we differentiate \emph{\rosiroles} as
@@ -441,11 +441,11 @@ can be divided into four groups.
 
 \emph{Role constraints} are the first category of constraints which state, for example, that roles
 mutually exclude each other or playing one role implies playing another role. More general these
-constraints are formalized with so-called \emph{role groups}. These consist of a set of role types
+constraints are formalised with so-called \emph{role groups}. These consist of a set of role types
 (or again role groups), a lower and an upper bound. An object fulfills a role group if it plays at
 least the lower and at most the upper bound of roles from the set of role types.
 
-\begin{definition}[Syntax of Role Groups]\label{def:syntax-role-groups}
+\begin{definition}[Syntax of role groups]\label{def:syntax-role-groups}
   Let \RT be a set of role types. The set of \emph{role groups over \RT} is the smallest such that
   \begin{itemize}
   \item if $\rt \in \RT$, then \rt is an (\emph{atomic}) role group, and
@@ -467,8 +467,8 @@ The semantics of a role group are based on a \SCROI and are locally evaluated fo
 element and each compartment.  The interpretation function $\cdot^{\I,c,o}$ calculates recursively
 whether an object fulfills the role group.
 
-\begin{definition}[Semantics of Role Groups]\label{def:semantics-role-groups}
-  Given a \SCROI{} \I, the semantics of a role group $A$ is defined for an object $o \in \Osf$ in
+\begin{definition}[Semantics of role groups]\label{def:semantics-role-groups}
+  Given a \SCROI{} \I, the semantics of a role group~$A$ is defined for an object $o \in \Osf$ in
   $c \in \Csf$ as follows:
   \begin{align*}
     A^{\I,c,o} & \coloneqq 
@@ -529,7 +529,7 @@ $\mathsf{Child}$ is transitive assures the existence of a respective link betwee
 a grandchild. Note here, that the transitivity is evaluated over the players and not the roles
 themselves.
 
-\begin{definition}[Constraint Set]
+\begin{definition}[Constraint set]
   Let $\Sigma = (\NT, \RT, \CT, \RST)$ be a vocabulary, let \RG be the set of role groups over \RT
   and let $\Card \coloneqq \nat \times \natinf$ be the set of cardinalities.  Then, a
   \emph{$\Sigma$-Compartment Role Object Constraint Set (\SCROC) \Cmc} is a tuple $\CC$ where
@@ -677,7 +677,7 @@ Therefore, we focus on role-based models that are based on CROM since it has bot
 formal semantics and the means to formulate the necessary concepts accordingly.
 
 The only drawback might be the expressive restrictions of ``classical'' description logics as
-explained in the introduction. Standard DLs cannot formalize contextual knowledge in a proper way
+explained in the introduction. Standard DLs cannot formalise contextual knowledge in a proper way
 which is crucial for role-based systems.  In the recent years many different approaches and
 extensions of DLs have been proposed~\cite{BoGH-ISWC03, BoGH-WS04, BeAF-ADVIS06, BaVS-ModOnt09, BaKP-JWS12,
   CePe-IJCAR14, CePe-JAR17}.  However, many were tailored to different goals, for example to support
@@ -693,11 +693,11 @@ approaches seem not appropriate to model CROMs.
 A far more promising formalism is the description logic of context \klarALC~\cite{KG-JELIA10, KG16}
 mentioned in Section~\ref{sec:adding-cont-concepts}. Klarman et al.\ follow the ideas of McCarthy's
 formalization of contexts~\cite{McC-ACM87,McC-IJCAI93} where contexts are formal objects, that have
-properties and can be described, and that are organized in a relational structure.  This results in
+properties and can be described, and that are organised in a relational structure.  This results in
 a very expressive, two-dimensional description logic with strong interactions between the object and
 the context level allowing to express information within a context that is valid in some other
 context.  While transcending object knowledge through contexts is very important in the general
-application of contextualized knowledge, it is complexity-wise very costly, especially in the
+application of contextualised knowledge, it is complexity-wise very costly, especially in the
 presence of rigid roles where the consistency problem becomes undecidable.
 
 By restricting that interaction to a top-down view of contexts, we can retain decidability. From the
@@ -715,7 +715,7 @@ We will now present how a CROM can be represented in \LMLO.
 \section{Representing Role-Based Models}
 \label{sec:representating-role-based-models}
 
-We would like to emphasize here once again that checking well-formedness of a \SCROM{}~\Mmc and
+We would like to emphasise here once again that checking well-formedness of a \SCROM{}~\Mmc and
 compliance of a constraint set with \Mmc is not considered here, because these are purely
 syntactical checks and no reasoning is necessary. Furthermore, checking whether a given \SCROI
 satisfies \Mmc is also not the considered task as it rather belongs to the area of model checking
@@ -758,7 +758,7 @@ cardinality constraints. In~DLs, this can be done via qualified number restricti
     \draw[edge] (ar) to[bend left=10] node{\plays} (qb);
     \draw[thin] (0,-1.5) to (0,1);
   \end{tikzpicture}
-  \caption{Possibilities to formalize objects playing \rosiroles.}
+  \caption{Possibilities to formalise objects playing \rosiroles.}
   \label{fig:two-ways-to-play-roles}
 \end{figure}
 
@@ -779,7 +779,7 @@ Relationship types are intuitively modelled as object roles. Here, it might be m
 between the played \rosiroles instead of the players. But due to the one-to-one correspondence
 between players and played \rosiroles, we can also construct the relationship types between the
 players. In doing so, we can avoid the use of role value maps, which would cause the consistency
-problem to become undecidable \cite{Sch89}, to formalize intra relationship type constraints. Even so, we
+problem to become undecidable \cite{Sch89}, to formalise intra relationship type constraints. Even so, we
 can only support such constraints that are expressible in the underlying DL.
 
 \Rosirole groups are handled like \rosiroles with an additional axiom stating that ``playing'' a
@@ -791,7 +791,7 @@ For the occurrence constraints we introduce a fresh individual name \occurCounte
 \counts and enforce that each played role or fulfilled role group is connected to this
 counter. Thereby we can use qualified number restrictions to encode the occurrence constraints.
 %
-For cardinality constraints, we also utilize number restrictions.
+For cardinality constraints, we also utilise number restrictions.
 
 % Ontologically, natural types would be captured as rigid concepts and their attributes, if present, as
 % rigid roles, since that information does not change contexts-dependently. In our setting, rigidity
@@ -872,7 +872,7 @@ instance of a \rosirole group or the individual \occurCounter.
            \sqcap \atmost{1}{\plays^{-}}{\top}}\label{eq:role-is-played-exactly-once}
   \end{align}
 
-\item We formalize a general domain and range restriction for \plays. Only naturals or
+\item We formalise a general domain and range restriction for \plays. Only naturals or
   o-compartments can play something, and only \rosiroles or instances of \rosirole groups can be
   played.
   \begin{align}
@@ -921,7 +921,7 @@ instance of a \rosirole group or the individual \occurCounter.
 % \end{align}
 
 % \noindent
-% We formalize a general domain and range restriction for \plays. Only naturals or o-compart\-ments
+% We formalise a general domain and range restriction for \plays. Only naturals or o-compart\-ments
 % can play something, and only \rosiroles or instances of \rosirole groups can be played.
 % \begin{align}
 %   \top & \sqsubseteq \oax{ \exists\plays.\top \sqsubseteq \Ant}\label{eq:plays-domain} \\
@@ -1485,7 +1485,7 @@ domain analyst would be interested in:
   \SCROI{} \I based this partial knowledge?
 \end{enumerate}
 
-To answer all these questions, we utilize \SCROA{s} as introduced earlier. For~(Q1), we add the meta
+To answer all these questions, we utilise \SCROA{s} as introduced earlier. For~(Q1), we add the meta
 type assertion
 \begin{gather*}
   \ct(a) 
@@ -1562,7 +1562,7 @@ whether a \rosirole type can be played several times by one object in the same c
 
 % \todo[inline]{natural type inheritance - what is important in this setting}
 
-% In the last sections we showed how contextualized description logics can represent \rosirole-based models
+% In the last sections we showed how contextualised description logics can represent \rosirole-based models
 
 % \subsection{Further Features}
 % \label{sec:further-constraints}

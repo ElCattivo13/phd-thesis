@@ -1,5 +1,5 @@
 
-In this section we discuss a possible extension to our contextualized description logic.  We start
+In this section we discuss a possible extension to our contextualised description logic.  We start
 with a little comparison to temporal description logics. Both DL-LTL-structures and nested DL
 interpretations use a \emph{possible worlds semantics}. Single time points or contexts are
 represented in a meta dimension and for each such a meta element, or possible world, there exists
@@ -70,8 +70,8 @@ simulated. In $\text{LTL}_{\ALC}$, this can be done by adding $C\sqsubseteq\Box 
 $\lnot C\sqsubseteq\Box\lnot C$ to the TBox.  We show below how rigid concepts can be simulated in
 \LMLOplus.
 %
-The contextualized description logic \LMLOplus is an extension of \LMLO in which we additionally allow
-contextualized object concepts. Therefore, we update the definition of o-concepts from
+The contextualised description logic \LMLOplus is an extension of \LMLO in which we additionally allow
+contextualised object concepts. Therefore, we update the definition of o-concepts from
 Def. \ref{def:syntax-lmlo}.  
 
 \begin{definition}[Object concepts of \LMLOplus]
@@ -101,17 +101,17 @@ other context. This is somehow similar to $\Next C$ in $\text{LTL}_{\ALC}$, whic
 elements that are in $C$ \emph{in the next time point}.
 \begin{example}\label{ex:alcalc-plus}
   Going back to Example~\ref{ex:nfl-with-contexts}, the following meta concept assertion states that someone who
-  plays quarterback for the Green Bay Packers must work as coach in a junior training camp that is organized by
+  plays quarterback for the Green Bay Packers must work as coach in a junior training camp that is organised by
   Green Bay:
   \begin{align*}
     & \oax{\exists\plays.\mathsf{Quarterback} \sqsubseteq
-    \ocont{\mathsf{JuniorFootballClinic}}[\mathsf{organizes}]{\mathsf{Coach}}}(\text{\textit{GreenBayPackers}}).
+    \ocont{\mathsf{JuniorFootballClinic}}[\mathsf{organises}]{\mathsf{Coach}}}(\text{\textit{GreenBayPackers}}).
   \end{align*}
   Note here, that Green Bay Packers and the junior training camp are two different contexts and that
   this cannot be expressed in \LMLO.
 \end{example}
 
-The contextualized description logic \ALCALCplus without rigid names is a syntactical variant of
+The contextualised description logic \ALCALCplus without rigid names is a syntactical variant of
 \klarALC~\cite{KG-JELIA10,KG16}. Consequently, the consistency problem in \ALCALCplus has
 the same complexity.
 
@@ -333,7 +333,7 @@ Here, we restrict~\Bmf to~\LMLOplus-ontologies, since in an \LMLOplus-BKB, a neg
 enforce the existence of an unnamed context that is not necessarily connected to the rest of the model.
 
 
-With the help of $u$ and contextualized concepts, we can express that $A\in\OC$ is rigid by the
+With the help of $u$ and contextualised concepts, we can express that $A\in\OC$ is rigid by the
 following two axioms:
 \begin{align*}
   \top & \sqsubseteq \oax{A \sqsubseteq \ocont*{\top}[u]{A}} \\
@@ -353,4 +353,4 @@ concepts are allowed or not.
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
 
-%  LocalWords:  logics DL LTL expressivity temporalized ontologies
+%  LocalWords:  logics DL LTL expressivity temporalised ontologies
