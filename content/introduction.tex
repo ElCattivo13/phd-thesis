@@ -3,7 +3,7 @@
 \label{ch:introduction}
 
 Nowadays, we are literally everywhere surrounded by software systems. Current developments indicate
-there will be even more in the future.  Not only the amount of systems increases, but also the
+a continuing growth in the future.  Not only the amount of systems increases, but also the
 requirements and expectations users impose on current software steadily rise. Modern software
 systems should cope with very complex scenarios. This includes the ability of context-awareness and
 self-adaptability. For example, a robot in a smart factory should recognize when a human co-worker
@@ -31,14 +31,14 @@ concerns~\cite{Dij-SelWrCom82} which simplifies development and maintenance of s
 the use of roles, \emph{role-based systems} can model application domains cleaner and more
 structured, since ontologically different entities are modelled by different concepts.
 
-Consider, for example, the concepts of $\mathsf{Person}$ and $\mathsf{Customer}$. With an
+Let us consider, for example, the concepts of $\mathsf{Person}$ and $\mathsf{Customer}$. With an
 object-oriented approach of inheritance as a specialization relation, we could model
 $\mathsf{Customer}$ as a subclass of $\mathsf{Person}$, as not every person is a customer.
 On the other hand, if we restrict our domain to a business context and add the concept of a
 $\mathsf{Company}$, the inheritance relation would flip and we also have $\mathsf{Company}$ as
-subclass of $\mathsf{Customer}$.  This conflict can be resolved when we realise that
-$\mathsf{Person}$ and $\mathsf{Company}$ are context-independent basic concepts, so-called
-\emph{natural types} and $\mathsf{Customer}$ is a role a person or company can play in a
+subclass of $\mathsf{Customer}$.  This conflict can be resolved by recognising
+$\mathsf{Person}$ and $\mathsf{Company}$ as context-independent basic concepts, so-called
+\emph{natural types} and $\mathsf{Customer}$ as a role a person or company can play in a
 business context. Here, it becomes also apparent that the concept of a \emph{context} is closely
 related to a role.
 
@@ -118,7 +118,7 @@ entailed by~\eqref{eq:1-2} to~\eqref{eq:1-5}:
   \begin{tikzpicture}
     \node[node, label={[align=right]180:\textsf{AaronRodgers},\\ $\mathsf{Healthy}$,\\
       $\mathsf{NFL\_Player}$,\\$\mathsf{Happy\_NFL\_Player}$}] (ar) at(-2,0) {}; 
-    \node[node, label={[align=left]0:\textsf{SuberBowlXLV},\\ $\mathsf{NFL\_Game}$}] (sb45) at (2,0)
+    \node[node, label={[align=left]0:\textsf{SuperBowlXLV},\\ $\mathsf{NFL\_Game}$}] (sb45) at (2,0)
     {};
     \draw[edge] (ar) to[bend left=10] node{$\mathsf{wins}$} (sb45);
   \end{tikzpicture}
@@ -136,18 +136,17 @@ reason on role-based systems.
 \section{Contextualised Description Logics}
 \label{sec:intro-contextualised-description-logics}
 
-To overcome that deficiency in expressiveness of classical DLs, often
-two-dimensional DLs are employed~\cite{KG-JELIA10,KLGu-DL-11,KlGu-AAAI11,KG16}. The approach is to
-have one DL \LM as the \emph{meta logic} to represent the contexts and their relationships to each
-other. This logic is combined with the \emph{object logic} \LO that captures the relational
-structure within each context.
+To overcome that deficiency in expressiveness of classical DLs, often two-dimensional DLs are
+employed~\cite{KG-JELIA10,KLGu-DL-11,KlGu-AAAI11,KG16}. This approach uses one DL \LM as the
+\emph{meta logic} to represent the contexts and their relationships to each other, and combines it
+with the \emph{object logic} \LO that captures the relational structure within each context.
 %
 Moreover, while some pieces of information depend on the context, other pieces of information are
 shared throughout all contexts.  For instance, the name of a person typically stays the same
-independent of the actual context.  To be able to express that, some concepts and roles are designated
-to be \emph{rigid}, i.e.~they are required to be interpreted the same in all contexts.
-Unfortunately, if rigid roles are admitted, reasoning in the above mentioned two-dimensional DLs of
-context turns out to be undecidable; see~\cite{KG-JELIA10}.
+independent of the actual context.  Expressing this context-independent information requires that
+some concepts and roles are designated to be \emph{rigid}, i.e.~they are required to be interpreted
+the same in all contexts.  Unfortunately, if rigid roles are admitted, reasoning in the above
+mentioned two-dimensional DLs of context turns out to be undecidable; see~\cite{KG-JELIA10}.
 
 We propose and investigate a family of two-dimensional context DLs \LMLO that
 meets the above requirements, but is a restricted form of the ones defined in~\cite{KG-JELIA10} in
@@ -155,7 +154,7 @@ the sense that we limit the interaction of \LM and \LO.  More precisely, in our 
 context DLs the meta logic can refer to the internal structure of each context, but not vice versa.
 That means that information is viewed in a top-down manner, i.e.~information of different contexts
 is strictly capsuled and can only be accessed from the meta level.  Hence, we cannot
-express, for instance, that everybody who is employed by Siemens has a certain property in the
+express, for instance, that everybody who is employed by a company has a certain property in the
 context of private life.  We show that reasoning in \LMLO stays decidable with
 such a restriction, even in the presence of rigid roles.
 %
@@ -260,8 +259,9 @@ models into an \LMLO ontology. On the other hand, for practical use there must e
 implementation of the mapping. We based our implementation on the reference implementation for
 CROM\footnote{\url{https://github.com/Eden-06/CROM}}, which in turn can be used by
 FRaMED\footnote{\url{https://github.com/leondart/FRaMED}}, a graphical editor allowing the
-specification of role-based models. At the end, our implemented mapping produces a specially
-formatted OWL ontology which leads to the last open part in the overall workflow.
+specification of role-based models. In the end, our implemented mapping produces an ontology which
+is specially formatted in the Web Ontology Language (OWL).  This leads to the last open part in the
+overall workflow.
 
 \section{A Reasoner for Contextualised Description Logics}
 \label{sec:intro-reasoner}
@@ -270,9 +270,9 @@ A contextualised DL capable of formalizing role-based models and an automated ma
 role-based models into an ontology still helps only very little in practice, if there es no DL reasoner
 available which can process such ontologies. 
 %
-Usually DL reasoners use the Web Ontology Language (OWL) as language for the input ontology. But OWL in
-general does not have the syntactical means to express contextualised DL axioms. However, OWL gives
-the possibility to annotate axioms which we use to encode \LMLO-axioms.
+Usually DL reasoners use OWL as language for the input ontology. But OWL in general does not
+have the syntactical means to express contextualised DL axioms. However, OWL enables us to annotate
+axioms which we use to encode \LMLO-axioms.
 
 Although the reasoning tasks in DLs have a high complexity, DLs have been successfully introduced as
 a formalism for knowledge representation. One reason for the success of DLs is the availability of
@@ -294,15 +294,15 @@ are possible.
 
 In the following, we give a short outline how the thesis is structured.
 
-In Chapter~\ref{cha:context-dls}, we present in the first section the basic definitions of
+In the first section of Chapter~\ref{cha:context-dls}, we present the basic definitions of
 description logics which we will use throughout the thesis. We define the syntax and semantics of
 concepts, axioms and knowledge bases and state specific DLs together with the respective
 complexities of the consistency problem.
 %
 We then introduce the contextualised description logic \LMLO. We again start with the definition of
-the syntax and semantics. For the complexity analysis of the consistency problem, we first look into
-the upper bounds. We consider the case of the lightweight description logic \EL in a separate
-section, which at the same time gives the lower bounds of the complexity for more expressive
+the syntax and semantics. For the complexity analysis of the consistency problem, the upper bounds
+are investigated first. We consider the case of the lightweight description logic \EL in a separate
+section, which at the same time yields the lower bounds of the complexity for more expressive
 contextualised DLs. For the complexity analysis, we consider three different settings which result in
 different complexity results. In the first setting, we do not allow any rigid names.  In the
 second setting, we assume the presence of rigid concepts, but forbid any rigid roles. In the
