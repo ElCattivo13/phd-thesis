@@ -5,18 +5,18 @@
 \section{Major Contributions}
 \label{sec:major-contributions}
 
-In this thesis, we presented an overall workflow to reason on role-based models. Proper formalization
-of contexts is crucial for role-based systems, but logical formalisms able to express these, easily
-tend to become undecidable.  We introduced a novel family of description logics that is capable of
-expressing contextual knowledge, even in the presence of rigid roles, i.e.\ relational knowledge
-that is context-independent.  For these contextual description, logics we did a thorough analysis on
-the complexity of the consistency problem, for which we investigated different settings depending on
-whether rigid role names or rigid concept names are admitted. We showed that for the least
-expressive setting, in which no rigid names are allowed, the complexity class of the consistency
-problem does not increase compared to the non-contextual version of that DL, namely the consistency
-problem is \ExpTime-complete up to \SHOQSHOQ and \NExpTime-complete for \SHOIQSHOIQ. On the other
-hand, allowing rigid roles, which often causes undecidability in other approaches, only increases
-the complexity by one exponential.
+In this thesis, we presented an overall workflow to reason on role-based models. Proper
+formalization of contexts is crucial for role-based systems, but logical formalisms able to express
+these, easily tend to become undecidable.  We introduced a novel family of description logics that
+is capable of expressing contextual knowledge, even in the presence of rigid roles, i.e.\ relational
+knowledge that is context-independent.  For these contextualised description logics we did a
+thorough analysis on the complexity of the consistency problem, for which we investigated different
+settings depending on whether rigid role names or rigid concept names are admitted. We showed that
+for the least expressive setting, in which no rigid names are allowed, the complexity class of the
+consistency problem does not increase compared to the non-contextual version of that DL, namely the
+consistency problem is \ExpTime-complete up to \SHOQSHOQ and \NExpTime-complete for \SHOIQSHOIQ. On
+the other hand, allowing rigid roles, which often causes undecidability in other approaches, only
+increases the complexity by one exponential.
 %
 We also looked into a broad variety of description logics
 ranging from the lightweight DL \EL up to the very expressive DL \SHOIQ and, hence, obtained a
@@ -29,7 +29,7 @@ implementation. We proved that the formal semantics of the role-based model is p
 by the mapping and introduced further constraints that go beyond the current capabilities of CROM.
 
 Finally, we implemented a reasoner for our contextual description logics that is based on the highly
-optimized existing DL reasoner HermiT~\cite{GHM-JAR14}.  During our analysis of the complexity of
+optimised existing DL reasoner HermiT~\cite{GHM-JAR14}.  During our analysis of the complexity of
 the consistency problem, we showed that deciding consistency could be split up into two
 subtasks. This idea was also used in our implementation.  We further refined these subproblems, so
 they could be processed by HermiT.  Due to the special form of the context ontology derived from
@@ -46,7 +46,7 @@ reasoning about context-based domain models, but we also observe several linking
 research. When investigating \LMLO, we mainly focused on the consistency problem, which was central
 for our goal. Besides that, query answering with context DLs would be an interesting direction for
 further investigations. Recently, there has been a lot of work in the area of temporal query
-answering. As our approach shares a similar setting, we are sure that there is plenty motivation,
+answering. As our approach shares a similar setting, we are sure that there is plenty of motivation,
 applications and methods available to analyse contextual query answering. Furthermore, there is
 current work on role-based databases~\cite{JaKV-ADBIS16}, i.e. database systems that are based on a
 conceptual, role-based data model to natively represent complex data. Due to the close connection of
@@ -58,23 +58,23 @@ added contextual concepts to \LMLO which results in undecidability in the presen
 roles. Quite certain, there are other, probably more restrictive, means to further extend the
 expressive power of the logic and stay decidable.
 
-Another extension to \LMLO could be in the area of temporal logics. The combinations of DLs with
+Another extension to \LMLO could be towards temporal logics. The combinations of DLs with
 temporal logics, point-based or interval, are well understood. As both temporal and contextual DLs
 adopt a possible worlds semantics, it seems natural to also combine temporal logics with contextual
 DLs. On a more abstract level, it might be even possible to analyse common properties of these
 combinations and deduce an abstract combination of DLs with itself or with other logics. Then
 temporal DLs or contextual DLs could be an instance of that abstract combination.
 
-The mapping for role-based models we presented is based on the \emph{Compartment Role Object Model
-  (CROM)}. Since CROM might be extended in the future, for example by new kinds of constraints,
-there is always some future work to analyse these upcoming features and investigate whether they can
-also be represented by a contextual DL ontology.  Besides that, an investigation where contextual
+The presented mapping for role-based models is based on the \emph{Compartment Role Object Model
+  (CROM)}. As CROM might be extended in the future, for example by new kinds of constraints,
+there is always some future work to analyse these upcoming features and to investigate whether they can
+also be represented by a contextualised DL ontology.  Besides that, an investigation where contextual
 DLs can be used except for CROM will help to detect any missing expressiveness of \LMLO if existent.
 
 The last starting point for future work would be the reasoner. While we used a black box approach,
 combined or integrated (tableaux) algorithms for deciding consistency are conceivable. A different
 optimisation would be an even more goal-oriented reasoner, which behaves especially well for
-contextual ontologies produced from CROM models. Since, for example, validation of role groups is
+contextual ontologies produced from CROM models. Since, for example, the validation of role groups is
 rather of combinatorial nature which is quite hard for DL reasoners, it might be useful to use SAT
 solvers internally to improve overall performance.
 
