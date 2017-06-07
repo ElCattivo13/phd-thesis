@@ -485,7 +485,13 @@ input ontology and \CA the clausification after normalization. There exists a mo
 the exists a model \Hmc of \CA such that \I and \Hmc are essentially equal. Hence, it is sufficient
 to consider the clausification of the outer abstraction of an \LMLO ontology.
 
-Next, we define the Hypertableau Algorithm.
+As typical for tableau algorithms, the hypertableau calculus uses a blocking strategy to ensure
+termination. Intuitively, in the construction of a model, a blocked individual is replaced by its
+blocker. Thus, infinite models can be constructed. Here, it is important for us, that the blocked
+individual and its blocker have the same restricted type. This holds for all blocking strategies
+used in the hypertableau algorithm. For the sake of conciseness, we omit the specific blocking
+strategy in our definition of the hypertableau algorithm and refer to~\cite{MoSH-JAIR09} for a
+complete definition.
 
 \begin{definition}[Hypertableau Algorithm~\cite{MoSH-JAIR09}]
   Given a set of named individual \MI, the set of \emph{root individuals \MO} is the smallest set
@@ -592,10 +598,7 @@ Next, we define the Hypertableau Algorithm.
   \end{tabularx}
 \end{table}
 
-As typical for tableau algorithms, the hypertableau calculus uses a blocking
-strategy to ensure termination. Intuitively, in the construction of a model, a blocked individual is
-replaced by its blocker. Thus, infinite models can be constructed. Here, it is important for us, that the blocked individual and its blocker have the same restricted
-type. This holds for all blocking strategies used in the hypertableau algorithm.
+
 
 Through the rest of this section let \CA be the clausification of the outer abstraction
 $\Omf^{\bsf}$. Hence, \A is an \LM-ABox over \Msig.
@@ -997,10 +1000,11 @@ three scenarios:
                    legend style = {font=\footnotesize, legend pos = outer north east}]
         \addplot[mark=square*]   table [x=n, y=RST0-42, col sep=comma] {./data/ScenarioI.csv};
         \addplot[mark=triangle*] table [x=n, y=RSThalf-42, col sep=comma] {./data/ScenarioI.csv};
+        \addplot[mark=*] table [x=n, y=RST1-42, col sep=comma] {./data/ScenarioI.csv};
         \addplot[only marks, mark=square]   table [x=n, y=RST0-127, col sep=comma] {./data/ScenarioI.csv};
-        \addplot[only marks, mark=triangle] table [x=n, y=RSThalf-127, col sep=comma]
-        {./data/ScenarioI.csv};
-        \legend{$\rst0$,$\rst0.5$,$\rst0^{*}$,$\rst0.5^{*}$}
+        \addplot[only marks, mark=triangle] table [x=n, y=RSThalf-127, col sep=comma] {./data/ScenarioI.csv};
+        \addplot[only marks, mark=o]   table [x=n, y=RST1-127, col sep=comma] {./data/ScenarioI.csv};
+        \legend{$\rst0$,$\rst0.5$,$\rst1$,$\rst0^{*}$,$\rst0.5^{*}$,$\rst1^{*}$}
         % 
         \node[anchor = north east, font=\scriptsize, yshift=1mm] at (yticklabel* cs:1) {$t$ in $s$};
         \node[anchor = north east, font=\scriptsize, yshift=-6mm] at (xticklabel* cs:1) {$n$};
@@ -1019,10 +1023,11 @@ three scenarios:
                    legend style = {font=\footnotesize, legend pos = outer north east}]
         \addplot[mark=square*]   table [x=n, y=RG0-42, col sep=comma] {./data/ScenarioII.csv};
         \addplot[mark=triangle*] table [x=n, y=Rghalf-42, col sep=comma] {./data/ScenarioII.csv};
+        \addplot[mark=*]   table [x=n, y=RG1-42, col sep=comma] {./data/ScenarioII.csv};
         \addplot[only marks, mark=square]   table [x=n, y=RG0-127, col sep=comma] {./data/ScenarioII.csv};
-        \addplot[only marks, mark=triangle] table [x=n, y=Rghalf-127, col sep=comma]
-        {./data/ScenarioII.csv};
-        \legend{$\rg0$,$\rg0.5$,$\rg0^{*}$,$\rg0.5^{*}$}
+        \addplot[only marks, mark=triangle] table [x=n, y=Rghalf-127, col sep=comma] {./data/ScenarioII.csv};
+        \addplot[only marks, mark=o] table [x=n, y=RG1-127, col sep=comma] {./data/ScenarioII.csv};
+        \legend{$\rg0$,$\rg0.5$,$\rg1$,$\rg0^{*}$,$\rg0.5^{*}$,$\rg1^{*}$}
         % 
         \node[anchor = north east, font=\scriptsize, yshift=1mm] at (yticklabel* cs:1) {$t$ in $s$};
         \node[anchor = north east, font=\scriptsize, yshift=-6mm] at (xticklabel* cs:1) {$n$};
