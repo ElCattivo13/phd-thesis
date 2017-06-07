@@ -1,0 +1,27 @@
+Nowadays, we are literally everywhere surrounded by software systems. These should cope with very
+complex scenarios including the ability of context-awareness and self-adaptability. The concept of
+roles provide the means to model such complex, context-dependent systems. In role-based systems, the
+relational and context-dependent properties of objects are transferred into the roles that the
+object plays in a certain context. However, even if the domain can be expressed in a well-structured
+and modular way, role-based models can still be hard to comprehend due to the sophisticated
+semantics of roles, contexts and different constraints. Hence, unintended implications or
+inconsistencies may be overlooked. A feasible logical formalism is required here. In this setting
+Description Logics (DLs) fit very well as a starting point for further considerations since as a
+decidable fragment of first-order logic they have both an underlying formal semantics and decidable
+reasoning problems. DLs are a well-understood family of knowledge representation formalisms which
+allow to represent application domains in a well-structured way by DL-concepts, i.e. unary
+predicates, and DL-roles, i.e. binary predicates. However, classical DLs lack expressive power to
+formalise contextual knowledge which is crucial for formalising role-based systems.
+
+We investigate a novel family of contextualised description logics that is capable of expressing
+contextual knowledge, even in the presence of rigid DL-roles, i.e. relational knowledge that is
+context-independent. For these contextualised description logics we thoroughly analyse the
+complexity of the consistency problem.  Furthermore, we present a mapping algorithm that allows for
+an automated translation from a formal role-based model, namely a Compartment Role Object Model
+(CROM), into a contextualised DL ontology. We prove the semantical correctness and provide ideas how
+features extending CROM can be expressed in our contextualised DLs. As final step for a completely
+automated analysis of role-based models, we investigate an practical reasoning algorithm and
+implemented the first reasoner that can process contextual ontologies.
+
+
+%  LocalWords:  semantical DLs CROM ontologies DL unary
