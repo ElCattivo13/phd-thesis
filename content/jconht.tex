@@ -1130,10 +1130,14 @@ $\rst0.5$, every model has $\nicefrac{n}{2}$ relationship types and in $\rst1$ t
 relationship types. Intuitively, the more relationship types and, hence, cardinality constraints a
 model contains, the harder it is to reason about. If only few constraints appear in the model, it is
 probable that the first branch of the derivation tree in the hypertableau algorithm already yields a
-consistent interpretation and no backtracking is needed. For larger $n$, it also happens that the
-reasoner 
-
-
+consistent interpretation and no backtracking is needed. With more constraints, backtracking is
+needed more often, which increases the computation time significantly.
+%
+Interestingly, there is not much difference between $\rst0.5$ and $\rst1$. So, once relationship
+types are introduced, it is not relevant how many of them are defined. Furthermore, once
+out-of-memory exceptions appear, the reasoning time of the more difficult models is distorted since
+they would have needed more time if more resources would have been available. This explains the
+decline of $\rst0.5$ for higher $n$.
 
 
 The results for Scenario~(II), shown in Figure~\ref{fig:results-B}, are similar to
