@@ -1,0 +1,355 @@
+
+\chapter{Introduction}
+\label{ch:introduction}
+
+Nowadays, we are literally everywhere surrounded by software systems. Current developments indicate
+a continuing growth in the future.  Not only the amount of systems increases, but also the
+requirements and expectations users impose on current software steadily rise. Modern software
+systems should cope with very complex scenarios. This includes the ability of context-awareness and
+self-adaptability. For example, a robot in a smart factory should recognize when a human co-worker
+approaches and switch to a different, human-friendly working mode accordingly. Similarly, software
+in autonomous cars or in the area of smart homes needs to adapt to various situations of which some
+are not even stated explicitly.
+%
+Furthermore, software must be easily maintainable and, when necessary, changes on the system should be realised
+without much down time which, for example, in a smart factory is very costly. 
+
+\section{Role-Based Systems}
+\label{sec:intro-role-based-systems}
+
+In order to achieve all these goals, the concept of \emph{roles} is very promising. First introduced
+by Bachman~\cite{BaD-VLDB77}, roles appeared over the last decades in several fields of computer
+science. Most prominent is the \emph{role-based access
+  control}~\cite{FeKC-RBAC03,AlFe-ECS11,SaCF-IEEE96}, albeit it is only a special application for
+roles with a narrow scope. Roles are also introduced, for example, in data
+modelling~\cite{Ha-ORM2006}, conceptual modelling~\cite{Stei-DKE00,Gui-PHD05,Stei-AO07} and
+programming languages~\cite{BaBT-SAC06,Herr-AO07,BaGE-ECOOP07}.
+
+The relational or context-dependent properties and behaviour of objects are transferred into the
+roles that object plays in a certain context. This paradigm also supports Dijkstra's separation of
+concerns~\cite{Dij-SelWrCom82} which simplifies development and maintenance of such systems.  Due to
+the use of roles, \emph{role-based systems} can model application domains cleaner and more
+structured, since ontologically different entities are modelled by different concepts.
+
+Let us consider, for example, the concepts of $\mathsf{Person}$ and $\mathsf{Customer}$. With an
+object-oriented approach of inheritance as a specialization relation, we could model
+$\mathsf{Customer}$ as a subclass of $\mathsf{Person}$, as not every person is a customer.
+On the other hand, if we restrict our domain to a business context and add the concept of a
+$\mathsf{Company}$, the inheritance relation would flip and we also have $\mathsf{Company}$ as
+subclass of $\mathsf{Customer}$.  This conflict can be resolved by recognising
+$\mathsf{Person}$ and $\mathsf{Company}$ as context-independent basic concepts, so-called
+\emph{natural types} and $\mathsf{Customer}$ as a role a person or company can play in a
+business context. Here, it becomes also apparent that the concept of a \emph{context} is closely
+related to a role.
+
+While role-based modelling provides the means to handle and model complex and context-dependent
+domains in a well-structured and modular way, the process can still be tedious, hard and
+error-prone. Due to the sophisticated semantics of roles, contexts and many different kinds of
+constraints, unintended implications or even inconsistencies can easily be hidden within such a
+model. Since it is nearly impossible to uncover all inferences, it becomes imperative for domain
+analysts to reason on role-based models to find such implicit knowledge.  Here, a feasible logical
+formalism is needed.
+
+\section{Description Logics}
+\label{sec:intro-description-logics}
+
+Description Logics (DLs) \cite{DLhandbook-07} are a well-known formalism for knowledge
+representation. They possess formal semantics and allow to define a variety of reasoning problems.
+
+The basic building blocks in description logics are so-called \emph{concept names} and \emph{role
+  names}. Concept names denote sets of domain elements. For example, the concept names
+$\mathsf{Person}$ or $\mathsf{Bank}$ denote the sets of all persons or banks in a domain. Relational
+structures are represented by so-called DL \emph{role names}, which are essentially binary relations
+on the domain. The term ``role'' originates from the early knowledge representation system
+KL-ONE~\cite{WoS-CMA133} and has only little in common with roles of role-based systems except that
+it reflects the relational property of a role. A person which is related to a bank via a DL role
+$\mathsf{customer}$ could be seen as someone playing the role of a customer in the context of a
+bank. Besides that, DL roles are merely binary relations. With the help of \emph{concept} and
+\emph{role constructors}, complex concepts and roles can be defined.  Which constructors are allowed
+depends on the specific DL. Complex concepts can be used as descriptions and to classify domain
+elements, e.g.\ the complex concept
+\begin{align}
+  \label{eq:1-1}
+  \mathsf{NFL\_Player} \sqcap \mathsf{Healthy} \sqcap \exists.\mathsf{wins}(\mathsf{NFL\_Game})
+\end{align}
+describes the set of all healthy NFL players who win NFL games.
+
+With the help of concepts, we can express our knowledge about a domain through \emph{DL
+  axioms}. General knowledge is phrased via \emph{general concept inclusions (GCIs)}, which state
+that one concept is a sub-concept of another. For example the GCI
+\begin{align}
+  \label{eq:1-2}
+  \mathsf{NFL\_Player} \sqcap \mathsf{Healthy} \sqcap
+  \exists.\mathsf{wins}(\mathsf{NFL\_Game}) \sqsubseteq \mathsf{Happy\_NFL\_Player}
+\end{align}
+states that a healthy NFL player who wins NFL games is a happy NFL player. Conversely, it does not say
+anything on whether every happy NFL player is healthy or wins games. Facts about a domain can be
+expressed via \emph{concept} and \emph{role assertions}.  To express facts, we also introduce
+\emph{individual names} which denote single domain elements. As an example consider the following axioms:
+\begin{gather}
+  (\mathsf{NFL\_Player} \sqcap \mathsf{Healthy})(\text{\textit{AaronRodgers}})\label{eq:1-3}\\
+  \mathsf{NFL\_Game}(\text{\textit{SuperBowlXLV}}),\label{eq:1-4}\\
+  \mathsf{\mathsf{wins}}(\text{\textit{AaronRodgers}},\text{\textit{SuperBowlXLV}})\label{eq:1-5}
+\end{gather}
+The first two concept assertions~\eqref{eq:1-3} and~\eqref{eq:1-4} state that Aaron Rodgers is a healthy NFL player and that Super Bowl~XLV is
+an NFL game, while~\eqref{eq:1-5} expresses that he won Super Bowl~XLV. So he is also a happy
+NFL player, even if not stated explicitly.  A \emph{DL knowledge base} is a set of such axioms.
+
+The semantics of DLs are defined in a model-theoretic way and capture exactly the above mentioned
+intentions.  An interpretation~\I consists of a domain and an interpretation function~$\cdot^{\I}$
+which maps concept, role and individual names, respectively, to subsets, binary relations and elements of the
+domain.  From there, it is exactly defined how complex concepts must be
+interpreted. For example, $(A\sqcap B)^{\I}$ is the intersection of $A^{\I}$ and $B^{\I}$.  The
+concept name $\mathsf{NFL\_Player}$ itself has no meaning and an interpretation must make sure that
+$\mathsf{NFL\_Player}^{\I}$ actually is the set of all NFL players.
+
+Now, the most interesting reasoning problems are the \emph{consistency problem} and the \emph{entailment
+problem}. A knowledge base is consistent if there exists some interpretation that \emph{models} the
+knowledge base, i.e.\ an interpretation that fulfils all the axioms. An axiom is \emph{entailed} by
+a knowledge base if every model of the knowledge base also models that axiom. For example, the following axiom is
+entailed by~\eqref{eq:1-2} to~\eqref{eq:1-5}:
+\begin{gather}
+  \mathsf{Happy\_NFL\_Player}(\text{\textit{AaronRodgers}}).\label{eq:1-6}
+\end{gather}
+
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \node[node, label={[align=right]180:\textsf{AaronRodgers},\\ $\mathsf{Healthy}$,\\
+      $\mathsf{NFL\_Player}$,\\$\mathsf{Happy\_NFL\_Player}$}] (ar) at(-2,0) {}; 
+    \node[node, label={[align=left]0:\textsf{SuperBowlXLV},\\ $\mathsf{NFL\_Game}$}] (sb45) at (2,0)
+    {};
+    \draw[edge] (ar) to[bend left=10] node{$\mathsf{wins}$} (sb45);
+  \end{tikzpicture}
+  \caption{Interpretation that models axioms~\eqref{eq:1-2} to~\eqref{eq:1-6}.}
+  \label{fig:dl-example-intro}
+\end{figure}
+
+\noindent
+Figure~\ref{fig:dl-example-intro} depicts an interpretation which is a model of axioms~\eqref{eq:1-2} to~\eqref{eq:1-6}.
+
+However, classical DLs lack expressive power to formalise that some individuals satisfy certain
+concepts and relate to other individuals depending on a \emph{specific context} which is needed to
+reason on role-based systems.
+
+\section{Contextualised Description Logics}
+\label{sec:intro-contextualised-description-logics}
+
+To overcome that deficiency in expressiveness of classical DLs, often two-dimensional DLs are
+employed~\cite{KG-JELIA10,KLGu-DL-11,KlGu-AAAI11,KG16}. This approach uses one DL \LM as the
+\emph{meta logic} to represent the contexts and their relationships to each other, and combines it
+with the \emph{object logic} \LO that captures the relational structure within each context.
+%
+Moreover, while some pieces of information depend on the context, other pieces of information are
+shared throughout all contexts.  For instance, the name of a person typically stays the same
+independent of the actual context.  Expressing this context-independent information requires that
+some concepts and roles are designated to be \emph{rigid}, i.e.~they are required to be interpreted
+the same in all contexts.  Unfortunately, if rigid roles are admitted, reasoning in the above
+mentioned two-dimensional DLs of context turns out to be undecidable; see~\cite{KG-JELIA10}.
+
+We propose and investigate a family of two-dimensional context DLs \LMLO that
+meets the above requirements, but is a restricted form of the ones defined in~\cite{KG-JELIA10} in
+the sense that we limit the interaction of \LM and \LO.  More precisely, in our family of
+context DLs the meta logic can refer to the internal structure of each context, but not vice versa.
+That means that information is viewed in a top-down manner, i.e.~information of different contexts
+is strictly capsuled and can only be accessed from the meta level.  Hence, we cannot
+express, for instance, that everybody who is employed by a company has a certain property in the
+context of private life.  We show that reasoning in \LMLO stays decidable with
+such a restriction, even in the presence of rigid roles.
+%
+In some sense this restriction is similar to what is done in~\cite{BaGL-KR08,BaGL-ToCL12,Lip-PhD14}
+to obtain a decidable temporalised DL with rigid roles.  
+
+To provide a better intuition on how our formalism works, we examine the above mentioned example a bit
+further.  Consider the following axioms:
+\begin{align}
+  \top & \sqsubseteq \oax{\exists\mathsf{worksFor}.\{\text{\textit{Siemens}}\} \sqsubseteq \exists\mathsf{hasAccessRights}.\{\text{\textit{Siemens}}\}}\label{eq:1-7} \\
+  \mathsf{Work} & \sqsubseteq \oax{\mathsf{worksFor}(\text{\textit{Bob}},\text{\textit{Siemens}})} \label{eq:1-8}\\
+  \oax{(\exists\mathsf{worksFor}.\top)(\text{\textit{Bob}})}\
+  & \sqsubseteq\ \exists\mathsf{related}.(\mathsf{Private} \sqcap \oax{\mathsf{HasMoney}(\text{\textit{Bob}})})\label{eq:1-9} \\
+  \top\
+  & \sqsubseteq\ \oax{\exists\mathsf{isCustomerOf}.\top \sqsubseteq\mathsf{HasMoney}} \label{eq:1-10}\\
+  \mathsf{Private}\
+  & \sqsubseteq\ \oax{\mathsf{isCustomerOf}(\text{\textit{Bob}},\text{\textit{Siemens}})}\label{eq:1-11}\\
+  \mathsf{Private} \sqcap \mathsf{Work}\
+  & \sqsubseteq\ \bot\label{eq:1-12}\\
+  \lnot \mathsf{Work}\
+  & \sqsubseteq\ \oax{\exists\mathsf{worksFor}.\top\sqsubseteq\bot}\label{eq:1-13}
+\end{align}
+%
+The first axiom states that in all contexts somebody who
+works for Siemens also has access rights to certain data.  The second axiom
+states that Bob is an employee of Siemens in any work context.  Furthermore,
+Axioms~\eqref{eq:1-9} and~\eqref{eq:1-10} say intuitively that if Bob has a job, he will earn money,
+which he can spend as a customer.  Axiom~\eqref{eq:1-11} formalises that Bob is a customer
+of Siemens in any private context.  Moreover, Axiom~\eqref{eq:1-12} ensures that the private
+contexts are disjoint from the work contexts.  Finally, Axiom~\eqref{eq:1-13} states that
+the $\mathsf{worksFor}$ relation only exists in work contexts.
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[auto]
+    %\draw[thin,gray] (0,-2) grid (15,3);
+    \node[rectangle,
+          draw,
+          rounded corners= 5mm, 
+          %minimum height = 4cm, 
+          %minimum width = 6cm,
+          label={120:$\mathsf{Work}$}] (a) at (3.5,0){
+            \begin{tikzpicture}
+              \node[node,label={[align=right]180:\textit{Bob},\\ $\mathsf{Person}$}] (bob) at (0,3){};
+              \node[node,label={60:$\mathsf{SSN}$}] (ssn) at (3.7,3){};
+              \draw[edge] (bob) to[bend left=10] node{$\mathsf{hasSSN}$} (ssn);
+              \node[node,label={[align=right]180:\textit{Siemens},\\ $\mathsf{Company}$}] (siem) at (1,0.5){};
+              \draw[edge] (bob) to[bend right=15] node[mylabel,swap]{$\mathsf{worksFor}$} (siem);
+              \draw[edge] (bob) to[bend left=15] node[mylabel]{$\mathsf{hasAccessRights}$} (siem);
+              \node[node,label={[align=right]north east:$\mathsf{Person}$}] (ceo) at (3.2,0.5){};
+              \draw[edge] (siem) to[bend left=10] node{$\mathsf{hasCEO}$} (ceo);
+              \node at (1.8,0.2){$\ddots$};
+            \end{tikzpicture}
+          };
+    \node[rectangle,
+          draw,
+          rounded corners= 5mm,
+          %minimum height = 4cm,
+          %minimum width = 6cm,
+          label={120:$\mathsf{Private}$}] (b) at (11.0,0){
+            \begin{tikzpicture}
+              \node[node,label={[align=right]180:\textit{Bob},\\ $\mathsf{Person}$,\\ $\mathsf{HasMoney}$}] (bob) at (0,3){};
+              \node[node,label={60:$\mathsf{SSN}$}] (ssn) at (3,3){};
+              \draw[edge] (bob) to[bend left=10] node{$\mathsf{hasSSN}$} (ssn);
+            \node[node,label={[align=right]180:\textit{Siemens},\\ $\mathsf{Company}$}] (siem) at (1,0.5){};
+              \draw[edge] (bob) to[bend left=15] node[mylabel]{$\mathsf{isCustomerOf}$} (siem);
+              \node[node,label={[align=right]north east:$\mathsf{Person}$}] (ceo) at (2.5,0.5){};
+            \end{tikzpicture}
+          };
+    \draw[edge] (a.east) to[bend left] node{$\mathsf{related}$} (b.west);
+  \end{tikzpicture}
+  \caption{Nested interpretation that models of Axioms \eqref{eq:1-7}--~\eqref{eq:1-13}}
+  \label{fig:example-interpretation}
+\end{figure}
+
+\section{An Ontology Generator}
+\label{sec:zweite-section}
+
+Besides the capability of context description logics to formalise role-based models, it is rather
+hard for domain analysts---who in general are not experts in DLs---to grasp the precise
+semantics of the ontology, and to define the contextualised ontology in a way that all entities and
+constraints appearing in the role-based model are mapped correctly. Therefore, it would be ideal to
+have an algorithm that translates role-based models into context DL knowledge bases.  In this thesis, we
+present exactly such a mapping.
+
+First of all, we have to decide how to represent role-based models. Here, we focus on two essential
+properties of the modelling language. It is very important that the role-based model is already
+equipped with a formal semantics. Otherwise, we cannot ensure that the intended meaning of every
+model is correctly translated into the ontology. Furthermore, the modelling language needs to be
+expressive enough to express all concepts needed in the role-based model.
+%
+The \emph{Compartment Role Object Model (CROM)}\cite{KuLG-SLE14,KBG-SLE15} emerged to be a potent
+candidate that meets exactly the above mentioned requirements.
+
+Next, there is some freedom on how to express roles and role-playing in an ontology. While it is
+important to consider the ontological nature of roles such as identity or rigidity, we also have to
+consider practical reasons. Whether some constraints of a role-based model can be expressed in an ontology
+highly depends on how roles and other predicates are translated.
+
+On the one hand, we can and will prove the semantical correctness of our translation from role-based
+models into an \LMLO ontology. On the other hand, for practical use there must exist some
+implementation of the mapping. We based our implementation on the reference implementation for
+CROM\footnote{\url{https://github.com/Eden-06/CROM}}, which in turn can be used by
+FRaMED\footnote{\url{https://github.com/leondart/FRaMED}}, a graphical editor allowing the
+specification of role-based models. In the end, our implemented mapping produces an ontology which
+is specially formatted in the Web Ontology Language (OWL).  This leads to the last open part in the
+overall workflow.
+
+\section{A Reasoner for Contextualised Description Logics}
+\label{sec:intro-reasoner}
+
+A contextualised DL capable of formalizing role-based models and an automated mapping from
+role-based models into an ontology still helps only very little in practice, if there es no DL reasoner
+available which can process such ontologies. 
+%
+Usually DL reasoners use OWL as language for the input ontology. But OWL in general does not
+have the syntactical means to express contextualised DL axioms. However, OWL enables us to annotate
+axioms which we use to encode \LMLO-axioms.
+
+Although the reasoning tasks in DLs have a high complexity, DLs have been successfully introduced as
+a formalism for knowledge representation. One reason for the success of DLs is the availability of
+highly optimised reasoners which makes drawing logical inferences feasible. A black-box approach for
+deciding consistency of an \LMLO-ontology could benefit from these optimised reasoners. The main
+idea is to divide the consistency problem into separate subproblems each of which can be processed
+by a standard DL reasoner.
+%
+Taking into account the special form of the axioms of the generated ontologies further optimizations
+are possible.
+
+
+% In total, with the work presented in this thesis, it is possible for a domain analyst modelling a
+% domain of interest as a role-based model in CROM, to automatically check for inconsistencies of
+% unintended implications.
+
+\section{Outline of the Thesis}
+\label{sec:outline-thesis}
+
+In the following, we give a short outline how the thesis is structured.
+
+In the first section of Chapter~\ref{cha:context-dls}, we present the basic definitions of
+description logics which we will use throughout the thesis. We define the syntax and semantics of
+concepts, axioms and knowledge bases and state specific DLs together with the respective
+complexities of the consistency problem.
+%
+We then introduce the contextualised description logic \LMLO. We again start with the definition of
+the syntax and semantics. For the complexity analysis of the consistency problem, the upper bounds
+are investigated first. We consider the case of the lightweight description logic \EL in a separate
+section, which at the same time yields the lower bounds of the complexity for more expressive
+contextualised DLs. For the complexity analysis, we consider three different settings which result in
+different complexity results. In the first setting, we do not allow any rigid names.  In the
+second setting, we assume the presence of rigid concepts, but forbid any rigid roles. In the
+last and complexity-wise hardest setting, we allow both rigid concepts and rigid names.
+%
+At last, we introduce an extension of \LMLO, and show that the consistency problem becomes
+undecidable in the presence of rigid roles. The main results of this chapter, namely the complexity
+results excluding the description logic \SHOIQ, have already been published:
+\begin{itemize}
+\item \fullcite{BoLi-FroCoS15}
+\item \fullcite{BoLi-DL15}
+\item \fullcite{BoLi-LTCS-15-04}
+\end{itemize}
+
+
+In Chapter~\ref{cha:mapping}, we present the mapping from role-based models into
+\LMLO-ontologies. We start with an ontological overview of the notion of a role.  We then introduce
+a syntactical variant of the Compartment Role Object Model and explain in detail how the different
+assumptions of a CROM are translated.  We conclude the chapter with some thoughts on how to express
+constraints for role-based models that go beyond CROM. The mapping algorithm is still to be
+published, the formal role-based modelling language CROM has been published:
+\begin{itemize}
+\item \fullcite{KBG-SLE15}
+\end{itemize}
+
+
+Finally, in Chapter~\ref{cha:jconht}, we present JConHT, our reasoner for \LMLO. To implement a decision
+procedure for the consistency problem, we have to adapt some ideas of Chapter~\ref{cha:context-dls},
+which are discussed in Section~\ref{sec:blackbox-approach}. Section~\ref{sec:using-hypertableau}
+covers the analysis of the contextualised hypertableau algorithm. We finish the chapter with some
+notes on the implementation and an evaluation of our implementation. Both the contextualised
+hypertableau algorithm and a system description
+of JConHT are not yet published.
+
+
+% \clearpage
+
+% \section{General ToDos}
+% \label{sec:todos}
+
+% \input{content/todos}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../thesis"
+%%% reftex-default-bibliography: ("../references.bib")
+%%% End:
+
+%  LocalWords:  logics Bachman XLV DLs CROM ontologies DL FRaMED workflow Dls subproblems

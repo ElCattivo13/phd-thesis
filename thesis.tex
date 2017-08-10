@@ -1,0 +1,56 @@
+
+\documentclass[final]{scrbook}
+
+\usepackage[
+  bibresource=references.bib,
+  bibstyle=alphabetic,
+]{preamble-thesis}
+
+% \includeonly{
+%   % frontmatter,
+%   % content/introduction,
+%   % content/preliminaries,
+%   % content/mapping,
+%   content/jconht,
+%   % content/conclusions,
+%   % backmatter
+% }
+
+\title{Context Reasoning for Role-Based Models}
+\author{Stephan Böhme}
+\degree{Doktoringenieur (Dr.-Ing.)}
+
+\defensedate{DD.\ Monat 2017}
+
+\supervisor{Prof.\ Dr.-Ing.\ Franz Baader}
+\secondsupervisor{Dr.\ Jeff Z. Pan}
+\secondsupervisoruniversity{University of Aberdeen}
+
+\handedin{im Juni 2017}
+
+\begin{document}
+
+\frontmatter
+\include{frontmatter}
+
+\mainmatter
+\include{content/introduction}
+%\mathversion{prelim}
+\include{content/preliminaries}
+%\mathversion{normal}
+\include{content/mapping}
+\include{content/jconht}
+\include{content/conclusions}
+
+\backmatter
+\include{backmatter}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% reftex-default-bibliography: ("references.bib")
+%%% End:
+
+%  LocalWords:  contextdls jconht

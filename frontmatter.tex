@@ -1,0 +1,68 @@
+\pagestyle{empty}
+
+\begin{titlepage}
+    \begin{center}
+        \setstretch{2}
+        \textbf{\textsf{\huge \thetitle}}
+        \\
+        \setstretch{1}
+        \bigskip\bigskip\bigskip
+
+        \selectlanguage{ngerman}
+
+        \Large
+        \textbf{Dissertation}\\
+        \bigskip\bigskip
+
+        zur Erlangung des akademischen Grades\\
+        \thedegree\\
+        \bigskip\bigskip
+
+        vorgelegt an der\\
+        Technischen Universität Dresden\\
+        Fakultät Informatik\\
+        \bigskip\bigskip
+
+        eingereicht von\\
+        Dipl.-Math.\ Stephan Böhme\\
+        geboren am 23.\ April 1987 in Dreden\\
+        \bigskip\bigskip
+
+        %verteidigt am \thedefensedate\\
+        \vfill
+
+        Gutachter:\\
+        \thesupervisor\\
+        Technische Universität Dresden\\[1ex]
+        \thesecondsupervisor\\
+        \selectlanguage{british}
+        \thesecondsupervisoruniversity
+        \selectlanguage{ngerman}
+
+        \bigskip\bigskip
+
+        Dresden, \thehandedin
+        \selectlanguage{british}
+    \end{center}
+
+    \ifdraft{
+    \begin{tikzpicture}[remember picture,overlay]
+      \node [rotate=60,scale=15,text opacity=0.2] at (current page.center) {\textsf{Draft}};
+    \end{tikzpicture}
+    }{}
+\end{titlepage}
+
+\cleardoubleemptypage
+
+\pagestyle{scrheadings}
+
+%\listoftodos
+%\listoftables
+
+\tableofcontents
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "thesis"
+%%% End:
