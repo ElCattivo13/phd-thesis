@@ -1,0 +1,231 @@
+% Package tudcdcolors.sty 
+%
+% all colors of the TU Dresden corporate design as predefined colors
+%
+% Author: Stephan Boehme
+% Last Update: 2015/11/27
+%
+% Usage: \usepackage[options]{tudcdcolors}
+%   possible options are:
+%     [rgb]: define all TUDCD colors in rgb color mode
+%     [cmyk]: define all TUDCD colors in cmyk color mode
+%
+% Careful: CMYK colors are actually different colors
+%
+% Also defines usable names for TUD colors such as TUDblue, TUDlightblue, TUDorange, TUDgreen
+%
+
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{TUDCDrosi/tudcdcolors}[2013/12/06 TU Dresden Corporate Design Color Definitons]
+
+\RequirePackage{kvoptions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Declaration of options                                                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SetupKeyvalOptions{family=tudcd,prefix=tudcd@}
+
+\DeclareBoolOption[true]{rgb}
+\DeclareComplementaryOption{cmyk}{rgb}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Processing options                                                                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ProcessKeyvalOptions*
+
+\RequirePackage{xcolor}
+
+\iftudcd@rgb
+  % RGB is an additive color model, used in computer displays
+  % 
+  % -> use these colors when doing a presentation
+  \definecolor{testfarbe}{RGB}{255,0,0}
+  \PackageInfo{tudcdcolors}{RGB mode is used.}
+
+  % HKS 41_K Hausfarbe
+  \definecolor{hks_41_k_100}{RGB}{11,42,81}
+  \definecolor{hks_41_k_90}{RGB}{29,53,91}
+  \definecolor{hks_41_k_80}{RGB}{47,64,103}
+  \definecolor{hks_41_k_70}{RGB}{63,79,116}
+  \definecolor{hks_41_k_60}{RGB}{81,93,128}
+  \definecolor{hks_41_k_50}{RGB}{99,108,142}
+  \definecolor{hks_41_k_40}{RGB}{119,127,158}
+  \definecolor{hks_41_k_30}{RGB}{139,148,177}
+  \definecolor{hks_41_k_20}{RGB}{168,175,199}
+  \definecolor{hks_41_k_10}{RGB}{205,212,226}
+
+  % HKS 44_K Auszeichnungsfarbe 1.Kategorie
+  \definecolor{hks_44_k_100}{RGB}{0,89,163}
+  \definecolor{hks_44_k_90}{RGB}{26,100,170}
+  \definecolor{hks_44_k_80}{RGB}{52,111,178}
+  \definecolor{hks_44_k_70}{RGB}{76,122,185}
+  \definecolor{hks_44_k_60}{RGB}{97,133,192}
+  \definecolor{hks_44_k_50}{RGB}{115,146,201}
+  \definecolor{hks_44_k_40}{RGB}{135,161,210}
+  \definecolor{hks_44_k_30}{RGB}{156,177,219}
+  \definecolor{hks_44_k_20}{RGB}{184,198,230}
+  \definecolor{hks_44_k_10}{RGB}{216,224,242}
+
+  % HKS 36_K Auszeichnungsfarbe 2.Kategorie
+  \definecolor{hks_36_k_100}{RGB}{81,41,127}
+  \definecolor{hks_36_k_90}{RGB}{93,60,137}
+  \definecolor{hks_36_k_80}{RGB}{105,76,147}
+  \definecolor{hks_36_k_70}{RGB}{117,92,157}
+  \definecolor{hks_36_k_60}{RGB}{130,108,167}
+  \definecolor{hks_36_k_50}{RGB}{144,124,178}
+  \definecolor{hks_36_k_40}{RGB}{159,141,190}
+  \definecolor{hks_36_k_30}{RGB}{177,161,203}
+  \definecolor{hks_36_k_20}{RGB}{197,185,218}
+  \definecolor{hks_36_k_10}{RGB}{226,218,236}
+
+  % HKS 33_K Auszeichnungsfarbe 2.Kategorie
+  \definecolor{hks_33_k_100}{RGB}{129,26,120}
+  \definecolor{hks_33_k_90}{RGB}{138,51,131}
+  \definecolor{hks_33_k_80}{RGB}{146,72,142}
+  \definecolor{hks_33_k_70}{RGB}{156,90,152}
+  \definecolor{hks_33_k_60}{RGB}{165,107,163}
+  \definecolor{hks_33_k_50}{RGB}{176,124,174}
+  \definecolor{hks_33_k_40}{RGB}{187,142,187}
+  \definecolor{hks_33_k_30}{RGB}{200,162,200}
+  \definecolor{hks_33_k_20}{RGB}{227,187,220}
+  \definecolor{hks_33_k_10}{RGB}{244,224,232}
+
+  % HKS 57_K Auszeichnungsfarbe 2.Kategorie
+  \definecolor{hks_57_k_100}{RGB}{0,122,71}
+  \definecolor{hks_57_k_90}{RGB}{0,130,82}
+  \definecolor{hks_57_k_80}{RGB}{9,138,92}
+  \definecolor{hks_57_k_70}{RGB}{25,147,103}
+  \definecolor{hks_57_k_60}{RGB}{62,157,114}
+  \definecolor{hks_57_k_50}{RGB}{91,168,124}
+  \definecolor{hks_57_k_40}{RGB}{118,181,138}
+  \definecolor{hks_57_k_30}{RGB}{143,195,152}
+  \definecolor{hks_57_k_20}{RGB}{176,212,172}
+  \definecolor{hks_57_k_10}{RGB}{211,231,197}
+
+  % HKS 65_K Auszeichnungsfarbe 2.Kategorie
+  \definecolor{hks_65_k_100}{RGB}{34,173,54}
+  \definecolor{hks_65_k_90}{RGB}{67,178,76}
+  \definecolor{hks_65_k_80}{RGB}{89,184,95}
+  \definecolor{hks_65_k_70}{RGB}{109,191,111}
+  \definecolor{hks_65_k_60}{RGB}{126,198,127}
+  \definecolor{hks_65_k_50}{RGB}{141,204,143}
+  \definecolor{hks_65_k_40}{RGB}{162,213,160}
+  \definecolor{hks_65_k_30}{RGB}{180,220,178}
+  \definecolor{hks_65_k_20}{RGB}{204,231,200}
+  \definecolor{hks_65_k_10}{RGB}{227,242,225}
+
+  % HKS 07_K Verwendung als Ausnahmefarbe
+  \definecolor{hks_07_k_100}{RGB}{232,123,20}
+  \definecolor{hks_07_k_90}{RGB}{235,139,56}
+  \definecolor{hks_07_k_80}{RGB}{239,156,81}
+  \definecolor{hks_07_k_70}{RGB}{241,168,97}
+  \definecolor{hks_07_k_60}{RGB}{243,180,113}
+  \definecolor{hks_07_k_50}{RGB}{245,193,128}
+  \definecolor{hks_07_k_40}{RGB}{247,210,147}
+  \definecolor{hks_07_k_30}{RGB}{249,221,164}
+  \definecolor{hks_07_k_20}{RGB}{251,233,190}
+  \definecolor{hks_07_k_10}{RGB}{253,242,209}
+
+\else
+  % CMYK is a subtractive color model, used in printing
+  % 
+  % -> use these colors when printing something
+  \definecolor{testfarbe}{cmyk}{1.00,1.00,0,0}
+  \PackageInfo{tudcdcolors}{CMYK mode is used.}
+
+  % HKS 41_K Hausfarbe
+  \definecolor{hks_41_k_100}{cmyk}{1.00,0.70,0.10,0.50}
+  \definecolor{hks_41_k_90}{cmyk}{0.90,0.63,0.9,0.45}
+  \definecolor{hks_41_k_80}{cmyk}{0.80,0.56,0.8,0.40}
+  \definecolor{hks_41_k_70}{cmyk}{0.70,0.49,0.7,0.35}
+  \definecolor{hks_41_k_60}{cmyk}{0.60,0.42,0.6,0.30}
+  \definecolor{hks_41_k_50}{cmyk}{0.50,0.35,0.5,0.25}
+  \definecolor{hks_41_k_40}{cmyk}{0.40,0.28,0.4,0.20}
+  \definecolor{hks_41_k_30}{cmyk}{0.30,0.21,0.3,0.15}
+  \definecolor{hks_41_k_20}{cmyk}{0.20,0.14,0.2,0.10}
+  \definecolor{hks_41_k_10}{cmyk}{0.10,0.7,0.1,0.5}
+
+  % HKS 44_K Auszeichnungsfarbe 1.Kategorie
+  \definecolor{hks_44_k_100}{cmyk}{1.00,0.50,0,0}
+  \definecolor{hks_44_k_90}{cmyk}{0.90,0.45,0,0}
+  \definecolor{hks_44_k_80}{cmyk}{0.80,0.40,0,0}
+  \definecolor{hks_44_k_70}{cmyk}{0.70,0.35,0,0}
+  \definecolor{hks_44_k_60}{cmyk}{0.60,0.30,0,0}
+  \definecolor{hks_44_k_50}{cmyk}{0.50,0.25,0,0}
+  \definecolor{hks_44_k_40}{cmyk}{0.40,0.20,0,0}
+  \definecolor{hks_44_k_30}{cmyk}{0.30,0.15,0,0}
+  \definecolor{hks_44_k_20}{cmyk}{0.20,0.10,0,0}
+  \definecolor{hks_44_k_10}{cmyk}{0.10,0.05,0,0}
+
+  % HKS 36_K Auszeichnungsfarbe 2.Kategorie
+  \definecolor{hks_36_k_100}{cmyk}{0.8,0.9,0,0}
+  \definecolor{hks_36_k_90}{cmyk}{0.72,0.81,0,0}
+  \definecolor{hks_36_k_80}{cmyk}{0.64,0.72,0,0}
+  \definecolor{hks_36_k_70}{cmyk}{0.56,0.63,0,0}
+  \definecolor{hks_36_k_60}{cmyk}{0.48,0.54,0,0}
+  \definecolor{hks_36_k_50}{cmyk}{0.4,0.45,0,0}
+  \definecolor{hks_36_k_40}{cmyk}{0.32,0.36,0,0}
+  \definecolor{hks_36_k_30}{cmyk}{0.24,0.27,0,0}
+  \definecolor{hks_36_k_20}{cmyk}{0.16,0.18,0,0}
+  \definecolor{hks_36_k_10}{cmyk}{0.08,0.9,0,0}
+
+  % HKS 33_K Auszeichnungsfarbe 2.Kategorie
+  \definecolor{hks_33_k_100}{cmyk}{0.50,1.00,0,0}
+  \definecolor{hks_33_k_90}{cmyk}{0.45,0.90,0,0}
+  \definecolor{hks_33_k_80}{cmyk}{0.40,0.80,0,0}
+  \definecolor{hks_33_k_70}{cmyk}{0.35,0.70,0,0}
+  \definecolor{hks_33_k_60}{cmyk}{0.30,0.60,0,0}
+  \definecolor{hks_33_k_50}{cmyk}{0.25,0.50,0,0}
+  \definecolor{hks_33_k_40}{cmyk}{0.20,0.40,0,0}
+  \definecolor{hks_33_k_30}{cmyk}{0.15,0.30,0,0}
+  \definecolor{hks_33_k_20}{cmyk}{0.10,0.20,0,0}
+  \definecolor{hks_33_k_10}{cmyk}{0.05,0.10,0,0}
+
+  % HKS 57_K Auszeichnungsfarbe 2.Kategorie
+  \definecolor{hks_57_k_100}{cmyk}{1.00,0,0.90,0.20}
+  \definecolor{hks_57_k_90}{cmyk}{0.90,0,0.81,0.18}
+  \definecolor{hks_57_k_80}{cmyk}{0.80,0,0.72,0.16}
+  \definecolor{hks_57_k_70}{cmyk}{0.70,0,0.63,0.14}
+  \definecolor{hks_57_k_60}{cmyk}{0.60,0,0.54,0.12}
+  \definecolor{hks_57_k_50}{cmyk}{0.50,0,0.45,0.10}
+  \definecolor{hks_57_k_40}{cmyk}{0.40,0,0.36,0.08}
+  \definecolor{hks_57_k_30}{cmyk}{0.30,0,0.27,0.06}
+  \definecolor{hks_57_k_20}{cmyk}{0.20,0,0.18,0.04}
+  \definecolor{hks_57_k_10}{cmyk}{0.10,0,0.09,0.02}
+
+  % HKS 65_K Auszeichnungsfarbe 2.Kategorie
+  \definecolor{hks_65_k_100}{cmyk}{0.65,0,1.00,0}
+  \definecolor{hks_65_k_90}{cmyk}{0.59,0,0.90,0}
+  \definecolor{hks_65_k_80}{cmyk}{0.52,0,0.80,0}
+  \definecolor{hks_65_k_70}{cmyk}{0.45,0,0.70,0}
+  \definecolor{hks_65_k_60}{cmyk}{0.39,0,0.60,0}
+  \definecolor{hks_65_k_50}{cmyk}{0.33,0,0.50,0}
+  \definecolor{hks_65_k_40}{cmyk}{0.26,0,0.40,0}
+  \definecolor{hks_65_k_30}{cmyk}{0.20,0,0.30,0}
+  \definecolor{hks_65_k_20}{cmyk}{0.13,0,0.20,0}
+  \definecolor{hks_65_k_10}{cmyk}{0.07,0,0.10,0}
+
+  % HKS 07_K Verwendung als Ausnahmefarbe
+  \definecolor{hks_07_k_100}{cmyk}{0,0.60,1.00,0}
+  \definecolor{hks_07_k_90}{cmyk}{0,0.54,0.90,0}
+  \definecolor{hks_07_k_80}{cmyk}{0,0.48,0.80,0}
+  \definecolor{hks_07_k_70}{cmyk}{0,0.42,0.70,0}
+  \definecolor{hks_07_k_60}{cmyk}{0,0.36,0.60,0}
+  \definecolor{hks_07_k_50}{cmyk}{0,0.30,0.50,0}
+  \definecolor{hks_07_k_40}{cmyk}{0,0.24,0.40,0}
+  \definecolor{hks_07_k_30}{cmyk}{0,0.18,0.30,0}
+  \definecolor{hks_07_k_20}{cmyk}{0,0.12,0.20,0}
+  \definecolor{hks_07_k_10}{cmyk}{0,0.06,0.10,0}
+\fi
+
+\colorlet{TUDblue}{hks_41_k_100}
+\colorlet{TUDlightblue}{hks_44_k_100}
+\colorlet{TUDorange}{hks_07_k_100}
+\colorlet{TUDgreen}{hks_57_k_100}
+\colorlet{TUDlightgreen}{hks_65_k_100}
+\colorlet{TUDviolet}{hks_36_k_100}
+\colorlet{TUDpink}{hks_33_k_100}
+
+
+\endinput

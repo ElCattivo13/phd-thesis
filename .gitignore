@@ -16,8 +16,11 @@
 thesis.pdf
 thesis.synctex.gz(busy)
 auto/*
+*/auto/*
+*/*/auto/*
 /documents/kurzfassung.pdf
-/documents/auto/kurzfassung.el
 /content/.#adding-contextualized-concepts.tex
 /content/#adding-contextualized-concepts.tex#
-/documents/auto/preamble-summary.el
+*.snm
+*.nav
+/verteidigung/verteidigung.pdf

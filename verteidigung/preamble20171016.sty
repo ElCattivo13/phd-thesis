@@ -1,0 +1,1231 @@
+% preamble20160607.sty
+%
+% author: Stephan Böhme
+%
+% collection of all packages, macros, etc to compile example.tex in the context-example git repository
+%
+% use: \usepackage[option1,option2=value2,...]{preamble20160607}
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{preamble20171016}[2017/01/04]
+
+\RequirePackage{kvoptions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Declaration of options                                                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SetupKeyvalOptions{family=pre,prefix=pre@}
+
+\DeclareBoolOption[true]{etoolbox}
+\DeclareBoolOption[false]{koma}
+\DeclareBoolOption[false]{oldtikz}
+\DeclareBoolOption[false]{ownenv}
+\DeclareBoolOption[false]{beamer}
+\DeclareBoolOption[false]{poster}
+\DeclareBoolOption[true]{mathscr}
+\DeclareBoolOption[true]{biblatex}
+\DeclareBoolOption[false]{coloredconcepts}
+\DeclareBoolOption[true]{ltablex}
+
+\DeclareStringOption[english]{language}
+\DeclareStringOption[0.0em]{defindent}
+\DeclareStringOption[ams]{ocontsyntax}
+\DeclareStringOption[alphabetic]{bibstyle}
+\DeclareStringOption{bibresource}
+\DeclareStringOption[iota]{pagestyle}
+\DeclareStringOption[11]{DIV}
+\DeclareStringOption[none]{hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Processing options                                                                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ProcessKeyvalOptions*
+
+% needed later for string comparison
+\long\def\isequal#1#2{\pdf@strcmp{#1}{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% used packages                                                                        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+
+\ifpre@koma
+  \RequirePackage[
+       automark, % Kapitelangaben in Kopfzeile automatisch erstellen
+       headsepline, % Trennlinie unter Kopfzeile
+       plainheadsepline,
+       ilines % Trennlinie linksbuendig ausrichten
+   ]{scrpage2}
+   \RequirePackage{scrhack}
+\fi
+
+\ifpre@etoolbox
+  \RequirePackage{etoolbox}
+\fi
+
+\RequirePackage{xparse}
+%\RequirePackage{ifdraft}
+
+% Anpassung an Landessprache
+\RequirePackage[\pre@language]{babel}  
+
+\RequirePackage{amsmath}
+\RequirePackage{amsfonts}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm} 
+\RequirePackage{thmtools}
+\RequirePackage{mathtools} 
+
+\RequirePackage{textcomp} % Euro-Zeichen etc.
+\RequirePackage{wasysym}
+\RequirePackage{upgreek}
+\RequirePackage{marvosym}
+\RequirePackage{mathdots} % fuer \iddots
+\RequirePackage{stmaryrd} % needed for \llbracket
+\RequirePackage{pifont}   % for \cmark and \xmark
+\ifpre@mathscr
+  \RequirePackage{mathrsfs} % for \mathscr{A}
+\fi
+
+\RequirePackage{dsfont}
+
+\RequirePackage{bbm}
+
+\RequirePackage{url}
+\RequirePackage{filecontents}
+
+\ifpre@biblatex
+  \ifpre@beamer
+    \RequirePackage[style=\pre@bibstyle,backend=biber]{biblatex}
+    \setbeamertemplate{bibliography item}[text]
+    \renewcommand*{\bibfont}{\scriptsize}
+  \else
+    \ifpre@poster
+      \RequirePackage[style=\pre@bibstyle,backend=biber]{biblatex}
+    \else
+      \RequirePackage[style=\pre@bibstyle,backend=biber,maxnames=99,minalphanames=3,maxitems=99,]{biblatex}
+    \fi
+  \fi
+  \addbibresource{\pre@bibresource}
+  \newcommand{\thebibresource}{\pre@bibresource}
+\fi
+
+
+\RequirePackage{xspace}
+\RequirePackage{calc}
+
+
+\RequirePackage[math]{blindtext}
+\RequirePackage{marginnote}
+\RequirePackage{tabularx}
+
+\RequirePackage{tikz}
+\usetikzlibrary{matrix}
+\usetikzlibrary{automata}
+\usetikzlibrary{positioning}
+\usetikzlibrary{decorations}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{through}
+\usetikzlibrary{shadows}
+\usetikzlibrary{mindmap,trees}
+\ifpre@oldtikz
+  \usetikzlibrary{arrows} % deprecated, see pgfmanual_v3.00.pdf, page 183
+\else
+  \usetikzlibrary{arrows.meta} % only available since TikZ v3.00
+\fi
+\usetikzlibrary{calc}
+\usetikzlibrary{trees}
+\usetikzlibrary{shapes}
+\usetikzlibrary{shadows}
+\usetikzlibrary{backgrounds}
+\ifpre@beamer\else\RequirePackage{enumitem}\fi
+\ifpre@beamer\else\RequirePackage{authblk}\fi
+\RequirePackage[\pre@language]{todonotes} % provides the commands \todo[inline]{}, \missingfigure \listoftodos,
+
+\RequirePackage{csquotes}
+
+\RequirePackage{graphicx}
+\graphicspath{{../figures/}}
+
+%% The titling package provides the commands \thedate, \theauthor and
+%% \thetitle for later use, e.g. in the footer
+\ifpre@beamer\else\RequirePackage{titling}\fi
+
+\ifpre@beamer
+  \RequirePackage[rgb]{TUDCDrosi/tudcdcolors}
+\fi
+\ifpre@poster
+  \RequirePackage[rgb]{TUDCDrosi/tudcdcolors}
+  %\RequirePackage[cmyk]{TUDCDrosi/tudcdcolors} %somehow not working
+\fi
+
+\RequirePackage{diagbox}
+\ifpre@beamer\else\RequirePackage{subcaption}\fi
+\RequirePackage{booktabs}
+\RequirePackage{multirow}
+
+\ifpre@ltablex
+  % http://tex.stackexchange.com/questions/115177/nested-tabularx-doesnt-work-with-ltablex
+  %
+  % DOES NOT WORK WITH NESTING
+  %
+  \let\tx@\TX@endtabularx
+  \def\restoretx{\let\TX@endtabularx\tx@}
+  \RequirePackage{ltablex}
+  \keepXColumns
+\fi
+
+\RequirePackage{layout} % for the amazing \layout-macro
+
+\RequirePackage{silence}
+\ifpre@beamer
+  \WarningFilter{biblatex}{Patching footnotes failed}
+\fi
+
+
+\ifdefstring{\pre@hyperref}{none}{
+  \RequirePackage{hyperref}
+}{
+  \RequirePackage[\pre@hyperref]{hyperref}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% page style                                                                           %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifpre@koma
+  \KOMAoptions{parskip=half-,
+               fontsize=10pt,
+               BCOR=0mm,
+               DIV=\pre@DIV}
+  \recalctypearea
+
+  \title{**NO TITLE SET**}
+  \date{**NO DATE SET**}
+  \ifdefstring{\pre@pagestyle}{iota}{
+    \pagestyle{scrheadings}
+    \lohead[\iotasun]{\iotasun}
+    \cohead{}
+    \rohead{}
+    \lofoot{\thetitle, \thedate}
+    \cofoot[]{}
+    \rofoot[\pagemark]{\pagemark}
+  }{}
+  \ifdefstring{\pre@pagestyle}{empty}{
+    \pagestyle{empty}
+  }{}
+  \ifdefstring{\pre@pagestyle}{iota-min}{
+    \pagestyle{scrheadings}
+    \lohead[\iotasun]{\iotasun}
+    \cohead{}
+    \rohead{}
+    \lofoot{}
+    \cofoot{}
+    \rofoot{}
+  }{}
+\fi
+
+%% Spacing within itemize (using enumitem)
+\ifpre@beamer\else
+  \setlist[itemize,1]{topsep=-0.5\baselineskip+6pt,itemsep=0pt,parsep=3pt}
+\fi
+\setlength{\topsep}{1ex plus0.5ex minus0.5ex}
+
+\AtBeginDocument{%
+  \abovedisplayskip=0.5\baselineskip
+  \abovedisplayshortskip=1pt plus 1pt
+  \belowdisplayskip=0.5\baselineskip
+  \belowdisplayshortskip=3pt plus 1pt minus 1pt
+}
+
+\binoppenalty=\maxdimen
+\relpenalty=\maxdimen
+
+%% change page margins locally, see
+%% http://www.tex.ac.uk/cgi-bin/texfaq2html?label=chngmargonfly
+%%
+%% DOES NOT UPDATE \textwidth
+\newenvironment{changemargin}[2]{%
+  \begin{list}{}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\leftmargin}{#1}%
+    \setlength{\rightmargin}{#2}%
+    \setlength{\listparindent}{\parindent}%
+    \setlength{\itemindent}{\parindent}%
+    \setlength{\parsep}{\parskip}%
+  }%
+  \item[]}{\end{list}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% new environments                                                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifpre@ownenv
+  %self-defined environments
+
+  % definition of several lengths
+  \newlength{\@defindent}
+  \newlength{\@defstyleabovespace}
+  \newlength{\@defstylebelowspace}
+  \newlength{\@whitespacelength}
+
+  \setlength{\@defindent}{\pre@defindent}
+  \setlength{\@defstyleabovespace}{6pt}
+  \setlength{\@defstylebelowspace}{0pt}
+
+  \setlength{\@whitespacelength}{\widthof{ }}
+
+  \declaretheoremstyle[
+    spaceabove = \@defstyleabovespace,
+    spacebelow = \@defstylebelowspace,%
+    headfont   = \normalfont\bfseries,%
+    bodyfont   = \normalfont\itshape]{thmstyle}
+  \declaretheoremstyle[
+    spaceabove = \@defstyleabovespace,
+    spacebelow = \@defstylebelowspace,
+    headfont   = \normalfont\bfseries,
+    headindent = -\@defindent,
+    headpunct  = {},
+    postheadspace = \newline,
+    notefont   = \normalfont\itshape,
+    notebraces = {\textnormal{[}}{\textnormal{]}},
+    bodyfont   = \addtolength{\@totalleftmargin}{\@defindent}
+                 \addtolength{\linewidth}{-\@defindent}
+                 \parshape 1 \@defindent \linewidth,
+    ]{defstyle}
+  \declaretheoremstyle[
+    spaceabove = \@defstyleabovespace,
+    spacebelow = \@defstylebelowspace,
+    headfont   = \normalfont\bfseries,
+    headindent = -\@defindent,
+    notefont   = \normalfont\itshape,
+    notebraces = {\textnormal{[}}{\textnormal{]}},
+    bodyfont   = \addtolength{\@totalleftmargin}{\@defindent}
+                 \addtolength{\linewidth}{-\@defindent}
+                 \parshape 1 \@defindent \linewidth,
+    ]{exstyle}
+  \declaretheoremstyle[
+    spaceabove = \@defstyleabovespace,
+    spacebelow = \@defstylebelowspace,
+    headfont   = \normalfont\bfseries,
+    bodyfont   = \normalfont,
+    headpunct  = {},
+    postheadspace = \newline,
+    notefont   = \normalfont\itshape,
+    notebraces = {}{},
+    headformat = \NAME\ \NUMBER :\NOTE
+    ]{algstyle}
+  \declaretheoremstyle[
+    spaceabove = \@defstyleabovespace,
+    spacebelow = \@defstylebelowspace,
+    headfont   = \normalfont\bfseries,
+    headindent = -\@defindent,
+    headpunct  = {:},
+    notefont   = \normalfont\itshape,
+    notebraces = {\textnormal{(}}{\textnormal{)}},
+    bodyfont   = \addtolength{\@totalleftmargin}{\@defindent}
+                 \addtolength{\linewidth}{-\@defindent}
+                 \parshape 1 \@defindent \linewidth,
+    ]{bemstyle}
+  \declaretheoremstyle[
+    spaceabove = \@defstyleabovespace,
+    spacebelow = 0pt,%\defstylebelowspace,
+    headindent = -\@defindent,
+    headpunct  = {:},
+    notefont   = \normalfont\bfseries,
+    notebraces = {}{},
+    bodyfont   = \addtolength{\@totalleftmargin}{\@defindent}
+                 \addtolength{\linewidth}{-\@defindent}
+                 \parshape 1 \@defindent \linewidth,
+    headformat = \hspace{-\@whitespacelength}\NOTE
+    ]{blockstyle}
+
+  % Konfiguration von amsmath mit thmtools
+  \ifdefstring{\XKV@documentclass}{scrreprt.cls}{ %% documentclass ist scrreprt
+    \declaretheorem[style=thmstyle, title=Theorem, numberwithin=chapter]{thm}
+  }{ %% documentclass ist nicht scrreprt
+    \declaretheorem[style=thmstyle, title=Theorem]{thm}
+  }
+  \declaretheorem[style=thmstyle, title=Proposition, sibling=thm]{prop}
+  \declaretheorem[style=thmstyle, title=Lemma      , sibling=thm]{lem}
+  \declaretheorem[style=thmstyle, title=Corollary  , sibling=thm]{cor}
+  \declaretheorem[style=thmstyle, title=Conjecture , sibling=thm]{conj}
+  \declaretheorem[style=defstyle, title=Definition , sibling=thm, qed=$\diamond$]{defi}
+  \declaretheorem[style=defstyle, title=Definition , numbered=no, qed=$\diamond$]{defi*}
+  \declaretheorem[style=bemstyle, title=Remark     , numbered=no]{rem}
+  \declaretheorem[style=algstyle, title=Algorithm  , sibling=thm, qed=$\diagup$]{alg}
+  \declaretheorem[style=algstyle, title=Algorithm  , numbered=no, qed=$\diagup$]{alg*}
+  \declaretheorem[style=bemstyle, title=Note       , numbered=no]{note}
+  \ifdefstring{\XKV@documentclass}{beamer.cls}{
+    % example and block are already defined 
+  }{
+    \declaretheorem[style=exstyle   , title=Example, sibling=thm, qed=$\vartriangle$]{example}
+    \declaretheorem[style=exstyle   , title=Example, numbered=no, qed=$\vartriangle$]{example*}
+    \declaretheorem[style=blockstyle, title={t}    , numbered=no]{block}
+  }
+
+  \newcommand{\noproof}{\qed}
+  \newenvironment{claim}[1]{\par\noindent\underline{\textit{Claim}:}\space#1}{}
+  \newenvironment{claimproof}[1]{\par\noindent\underline{\textit{Proof}:}\space#1}{\leavevmode\unskip\penalty9999
+    \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
+
+
+\else
+  %predefined environments
+  \theoremstyle{plain}
+  \newtheorem{thm}{Theorem}
+  \newtheorem{lem}[thm]{Lemma}
+  \newtheorem{cor}[thm]{Corollary}
+  \newtheorem{conj}[thm]{Conjecture}
+  \newtheorem*{claim}{Claim}
+  \theoremstyle{definition}
+  \newtheorem{defi}[thm]{Definition}
+  \newtheorem{ex}[thm]{Example}
+  % \newenvironment{claim}[1]{\par\noindent\underline{\textit{Claim}:}\space#1}{}
+  \newenvironment{claimproof}[1]{\par\noindent \textit{Proof}:\space#1}{\leavevmode\unskip\penalty9999
+    \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% beamer specific macros                                                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\@ifclassloaded{beamer}{%
+  % beamer
+  %
+  \setbeamerfont{footnote}{size=\tiny}
+  % \AtBeginDocument{%
+  %   \setbeamertemplate{itemize items}[triangle]
+  % }
+  %
+  \setbeamercolor{alerted text}{fg=hks_07_k_100}
+  %\setbeamercolor{ALERTed text}{fg=hks_57_k_100} %dunkelgrün
+  \setbeamercolor{ALERTed text}{fg=hks_65_k_100} %hellgrün
+  %\setbeamercolor{ALERTed text}{fg=hks_44_k_100} %blau
+  \colorlet{alertcolor}{hks_07_k_100}
+  \colorlet{Alertcolor}{hks_65_k_100}
+  \hyphenpenalty=10000
+  %
+  \newenvironment{nomargin}
+    {\begin{changemargin}{-0.15\paperheight}{-0.15\paperheight}}
+    {\end{changemargin}}
+  %
+  %
+  \newenvironment{ALERTenv}{\begin{altenv}%
+    {\usebeamertemplate{alerted text begin}\usebeamercolor[fg]{ALERTed text}\usebeamerfont{alerted text}}
+    {\usebeamertemplate{alerted text end}}{\color{.}}{}}{\end{altenv}}
+  \newcommand<>{\Alert}[1]{\begin{ALERTenv}#2\relax#1\end{ALERTenv}}
+  %
+  %
+  % Outline for presentation when using sections
+  % http://tex.stackexchange.com/questions/26712/how-to-make-outline-frame-in-beamer
+  \AtBeginSection[]{
+    \begin{frame}<beamer>
+      \frametitle{Outline}% for section \thesection}
+      \tableofcontents[currentsection]
+    \end{frame}
+  }
+  \newcommand{\outline}{
+    \begin{frame}<beamer>
+      \frametitle{Outline}% for section \thesection}
+      \tableofcontents
+    \end{frame}
+  }
+  %
+  %
+  \setlength{\parskip}{8pt plus 4pt minus 4pt}
+  %
+  \AtBeginDocument{
+    \setlength{\abovedisplayskip}{6pt} % Legt den Abstand zwischen einem Text und einer nachfolgenden
+                                        % abgesetzten Formel fest, wenn die letzte Zeile des Textes
+                                        % relativ lang ist.
+    \setlength{\abovedisplayshortskip}{0pt} % Legt den Abstand zwischen einem Text und einer
+                                            % nachfolgenden abgesetzten Formel fest, wenn die letzte
+                                            % Zeile des Textes relativ kurz ist.  
+                                            %
+                                            % klappt nicht bei amsmath
+    \setlength{\belowdisplayskip}{6pt} % Legt den Abstand zwischen einer abgesetzten Formel und einem
+                                       % nachfolgenden Text fest, wenn die Formel relativ lang ist.  
+    \setlength{\jot}{4pt} % Definiert einen Zusatzabstand, der innerhalb eines eqnarray zusätzlich zum
+                          % normalen Zeilenabstand zwischen die Zeilen eingefügt wird.
+    %
+    \addtocounter{framenumber}{-1}
+    \maketitle
+  }
+  %
+  %
+  \newcommand{\plus}{\hspace{1.5em}\llap{\textcolor{TUDlightgreen}{\textbf{+}} }}
+  \newcommand{\minus}{\hspace{1.5em}\llap{\textcolor{TUDorange}{\textbf{--}} }}
+}{%
+  %no beamer
+  %
+  \colorlet{alertcolor}{red}
+  \NewDocumentCommand{\alert}{O{alertcolor}m}{\textcolor{#1}{#2}}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% poster specific macros                                                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\@ifclassloaded{researchfestivalposter}{%
+%
+% #1 = (no star -> with title | star -> without title)
+% #2 = top color
+% #3 = bottom color
+% #4 = box width
+% #5 = title
+% #6 = content
+%
+% \block[red][white]{\linewidth}{Title}{\blindtext}
+% \block*{30cm}{}{\blinditemize}
+\newlength{\poster@blockwidth}
+\NewDocumentCommand{\block}{sO{tudlightblue30}O{tudlightblue10}mm+m}{%
+  \setlength{\poster@blockwidth}{#4}%
+  \begin{tikzpicture}[baseline=-\baselineskip,anchor=north]%
+  \node[%draw,%
+        rectangle,%
+        rounded corners=18pt,%
+        top color=#2,%
+        bottom color=#3,%
+        drop shadow={opacity=.2},%
+        inner sep=1cm] (b)%
+    {\begin{minipage}{\poster@blockwidth-2cm}%
+        \IfBooleanTF{#1}{}{%
+        \begin{center}%
+          \textcolor{hks_41_k_100}{\huge\textbf{#5}}%
+        \end{center}}%
+        #6%
+     \end{minipage}};%
+  \end{tikzpicture}%
+}%
+
+
+\newcommand{\calcblockheight}[2][\blockheight]{%
+  \ifx#1\undefined%
+    \newlength{#1}%
+  \else%
+  \fi%
+  \setlength{#1}{\heightof{#2}+\depthof{#2}}%
+}
+
+\newlength{\poster@blockheighta}
+\newlength{\poster@blockheightb}
+\newcommand{\calcdiff}[3][\blockdiff]{%
+  \ifx#1\undefined%
+    \newlength{#1}%
+  \else%
+  \fi%
+  \calcblockheight[\poster@blockheighta]{#2}%
+  \calcblockheight[\poster@blockheightb]{#3}%
+  \setlength{#1}{\poster@blockheighta-\poster@blockheightb}%
+}
+
+\newcommand{\tikzsmall}{\fontsize{30}{32}\selectfont}
+
+%
+%\setitemize{labelindent=.3em,labelsep=.5em,leftmargin=*}
+\setlist[itemize]{itemsep=5ex}
+%
+\colorlet{alertcolor}   {tudorange}
+\colorlet{Alertcolor}   {tudlightgreen}
+
+\renewcommand*{\llbracket}{\raisebox{0.1ex}{\ensuremath{[\kern-0.25ex[}}}
+\renewcommand*{\rrbracket}{\raisebox{0.1ex}{\ensuremath{]\kern-0.25ex]}}}
+}{%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LTCS title page style                                                                %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newfont{\LTCSbsfHuge}{ecsx1000 scaled 2074}
+\newfont{\LTCSbsfLarge}{ecsx1000 scaled 1150}
+\newfont{\LTCSbsf}{ecss10 scaled 1000}
+
+\newcommand{\@ltcsauthor}{\textcolor{red}{\textbf{?????}}}
+\newcommand{\@ltcspubtext}{This is an extended version of the article in:}
+\newcommand{\@ltcspubwhere}{}
+\newcommand{\@ltcsnumber}{\textcolor{red}{\textbf{?????}}}
+
+\newlength{\@tudwidth}
+\newlength{\@tcswidth}
+\setlength{\@tudwidth}{4.3cm}
+\setlength{\@tcswidth}{1\textwidth}
+\addtolength{\@tcswidth}{-1\@tudwidth}
+
+
+% \setlength{\parskip}{.1in}
+% \setlength{\parindent}{0in}
+% \setlength{\oddsidemargin}{0.71cm}
+% \setlength{\voffset}{-.5in}%\setlength{\hoffset}{-.35in}
+% \setlength{\textwidth}{14.5cm} \setlength{\textheight}{22.5cm}
+
+
+\define@key{LTCS}{number}{\renewcommand{\@ltcsnumber}{#1}}
+\define@key{LTCS}{author}{\renewcommand{\@ltcsauthor}{#1}}
+\define@key{LTCS}{where}{\renewcommand{\@ltcspubwhere}{\@ltcspubtext{} #1}}
+
+
+\NewDocumentCommand{\LTCStitle}{m}{
+  \setkeys{LTCS}{#1}
+  \changefontsizes{12pt}
+  \thispagestyle{empty}
+  \addtocounter{page}{-1}
+  \newgeometry{textwidth=14.5cm,textheight=22.5cm,top=38mm}
+  %
+  {\LTCSbsfLarge
+    \begin{tabularx}{\linewidth}[t]{@{}Xr@{}}
+      \parbox{42mm}{%\includegraphics[width=40.5mm,draft=false]{TU_Logo_SW}
+        } &
+      \begin{minipage}[c]{\widthof{Institute for Theoretical Computer Science}}
+        \begin{tabular}[t]{@{}l@{}}
+          Technische Universität Dresden\\
+          Institute for Theoretical Computer Science\\
+          Chair for Automata Theory
+        \end{tabular}
+      \end{minipage} \\
+    \end{tabularx}}
+  %
+  \vfill
+  \begin{center}
+    {\LTCSbsfHuge LTCS-Report}
+    \vfill
+    {\Large\bfseries\@title\par}
+    \vfill
+    {\large
+      \begin{tabular}[t]{c}%
+        \@ltcsauthor%
+      \end{tabular} \par}%
+    \vfill
+    {\large LTCS-Report \@ltcsnumber \par} 
+    \vskip 1em
+    {\@ltcspubwhere}
+  \end{center}
+  %
+  \vfill
+  \noindent
+    \makebox[0cm][l]{\makebox[1\textwidth]{\raisebox{0cm}[0cm][0cm]{\fboxsep4mm%
+    \fbox{\rule{1\textwidth}{0cm}%
+    \rule{0cm}{1\textheight}}}}}%
+    \makebox[0cm][l]{\makebox[1\textwidth]{\raisebox{0cm}[0cm][0cm]{\fboxsep3mm%
+    \fbox{\rule{1\textwidth}{0cm}%
+    \rule{0cm}{1\textheight}}}}}%
+  %
+  {\scriptsize\LTCSbsf
+    \begin{tabularx}{\linewidth}[b]{@{}Xr@{}}
+      Postal Address: & http://lat.inf.tu-dresden.de\\
+      Lehrstuhl für Automatentheorie & \\
+      Institut für Theoretische Informatik & Visiting Address:\\
+      TU Dresden & Nöthnitzer Str. 46\\
+      01062 Dresden & Dresden\\
+    \end{tabularx}}
+  \newpage
+  \changefontsizes{10pt}
+  \restoregeometry
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% tikzset                                                                              %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% macro to check for loaded TikZ libraries
+\def\IfTikzLibraryLoaded#1{%
+  \ifcsname tikz@library@#1@loaded\endcsname
+    \expandafter\@firstoftwo
+  \else
+    \expandafter\@secondoftwo
+  \fi
+}
+
+
+\tikzset{
+  every picture/.style={auto,remember picture},
+  every label/.style={minimum width=0pt,minimum height=0pt},
+  every node/.style={minimum width=0pt,minimum height=0pt},
+  node/.style 2 args={circle, draw, fill=#2!50,inner sep=0pt, minimum width=#1,minimum height=0pt},
+  node/.default={4pt}{black},
+  domain/.style n args={3}{rectangle, draw, rounded corners=2mm, inner sep=#3,minimum width=#1,minimum
+    height=#2},
+  domain/.default={0cm}{0cm}{1pt},
+  is/.style={inner sep=#1},
+  is/.default={1pt},
+  edge/.style={shorten <=1pt, shorten >=1pt},
+  coord/.style={anchor=base,inner sep=0pt},
+  brace/.style={decorate,decoration={brace,amplitude=4pt},thick},
+  wavy/.style={decorate,decoration,decoration={coil,aspect=0,amplitude=1.5pt,post length=2.1pt}},
+  nominwidth/.style={minimum width=0pt},
+  nominheight/.style={minimum height=0pt},
+  nominsize/.style={nominheight,nominwidth},
+  mylabel/.style={nominsize,rounded corners=0pt},
+  nominwidth/.style={minimum width=0pt},
+  outline/.style 2 args={circle,draw=#1,fill=#1,align=center,minimum size=#2,text=white},
+  outline edge/.style 2 args={circle connection bar switch color=from (#1) to (#2)}
+  %,
+}
+\@ifclassloaded{researchfestivalposter}{%
+  \tikzset{
+  node/.style 2 args={circle, draw, line width=1pt, fill=#2!50,inner sep=0pt, minimum
+    width=#1,minimum height=0pt},
+  node/.default={5mm}{black},
+  edge/.style={shorten <=5pt, shorten >=5pt},
+  mylabel/.add style={}{inner sep=6pt,node font={\fontsize{30}{32}\selectfont}},
+  every picture/.add style={}{line width=2.4pt},
+  ultra thin/.style={line width=0.6pt},
+  very thin/.style={line width=1.2pt},
+  thin/.style={line width=2.4pt},
+  semithick/.style={line width=3.6pt},
+  thick/.style={line width=4.8pt},
+  very thick/.style={line width=7.2pt},
+  ultra thick/.style={line width=9.6pt},
+  every label/.style={mylabel},
+  syntax/.style={rectangle, rounded corners=0pt, draw, very thin, inner sep=3mm}
+  }
+}{%
+}
+
+\IfTikzLibraryLoaded{arrows}{
+  \tikzset{edge/.add style={}{-latex'}}
+}{}
+
+\IfTikzLibraryLoaded{arrows.meta}{
+  \tikzset{
+    >/.tip={Straight Barb[angle=45:1pt 3]},
+    ocont/.style={semithick,solid,black,->},
+    edge/.add style={}{-{Latex[width=1pt 3 0]}}
+  }
+}{
+  \tikzset{
+    ocont/.style={thick,solid,black,-latex'},
+  }
+}
+
+
+\NewDocumentCommand{\grid}{smm}{%
+  \draw[\IfBooleanTF{#1}{white}{gray},thin] #2 grid #3;
+}
+
+\NewDocumentCommand{\pagegrid}{O{1cm}O{5mm}O{1cm}}{
+  \begin{tikzpicture}[remember picture,overlay,shift={(current page.center)}]
+    \draw[black!25,ultra thin,step=#1] (current page.south west) grid (current page.north east);
+    \draw[black!5, ultra thin, step=#2] (current page.south west) grid (current page.north east);
+    \foreach \p in {north,south,west,east,north west, north east, south west, south east}{
+      \node[draw=black!50,circle,minimum size=#3] at (current page.\p) {};
+    }
+  \end{tikzpicture}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% used macros                                                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% mathcolor - textcolor for mathmode so it does not destroy the spaces
+%%% from http://tex.stackexchange.com/questions/21598/how-to-color-math-symbols
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+
+
+
+%%% ensureboldmath macro %%%
+\newcommand{\@printfamily}{\protect\f@family{}}
+\newcommand{\@printseries}{\protect\f@series{}}
+\newcommand{\@printshape}{\protect\f@shape{}}
+\newcommand{\@printsize}{\protect\f@size{}}
+\newcommand{\@printfont}{\@printfamily,\@printseries,\@printshape,\@printsize}
+\newcommand{\@printfontlong}{\curr@fontshape}
+\newcommand{\ensureboldmath}[1]{%
+  {%
+    %\@printfont % for debugging
+    \ifdefstring{\protect\f@series}{bx}{%
+      \ensuremath{\boldsymbol{#1}}%
+    }{%
+      \ifdefstring{\f@series}{bx}{%
+        \ensuremath{\boldsymbol{#1}}%
+      }{%
+        \ensuremath{#1}%
+      }%
+    }%
+  }%
+}%
+\newcommand{\@math}[1]{\ensureboldmath{#1}\xspace}
+
+
+%%% Use varmathbb from txfonts without using the package %%%
+% http://tex.stackexchange.com/questions/70368/body-text-affected-in-using-txfonts-package
+\DeclareSymbolFont{lettersA}{U}{txmia}{m}{it}
+\SetSymbolFont{lettersA}{bold}{U}{txmia}{bx}{it}
+\DeclareFontSubstitution{U}{txmia}{m}{it}
+\DeclareMathSymbol{\m@thbbch@rA}{\mathord}{lettersA}{129}
+\DeclareMathSymbol{\m@thbbch@rB}{\mathord}{lettersA}{130}
+\DeclareMathSymbol{\m@thbbch@rC}{\mathord}{lettersA}{131}
+\DeclareMathSymbol{\m@thbbch@rD}{\mathord}{lettersA}{132}
+\DeclareMathSymbol{\m@thbbch@rE}{\mathord}{lettersA}{133}
+\DeclareMathSymbol{\m@thbbch@rF}{\mathord}{lettersA}{134}
+\DeclareMathSymbol{\m@thbbch@rG}{\mathord}{lettersA}{135}
+\DeclareMathSymbol{\m@thbbch@rH}{\mathord}{lettersA}{136}
+\DeclareMathSymbol{\m@thbbch@rI}{\mathord}{lettersA}{137}
+\DeclareMathSymbol{\m@thbbch@rJ}{\mathord}{lettersA}{138}
+\DeclareMathSymbol{\m@thbbch@rK}{\mathord}{lettersA}{139}
+\DeclareMathSymbol{\m@thbbch@rL}{\mathord}{lettersA}{140}
+\DeclareMathSymbol{\m@thbbch@rM}{\mathord}{lettersA}{141}
+\DeclareMathSymbol{\m@thbbch@rN}{\mathord}{lettersA}{142}
+\DeclareMathSymbol{\m@thbbch@rO}{\mathord}{lettersA}{143}
+\DeclareMathSymbol{\m@thbbch@rP}{\mathord}{lettersA}{144}
+\DeclareMathSymbol{\m@thbbch@rQ}{\mathord}{lettersA}{145}
+\DeclareMathSymbol{\m@thbbch@rR}{\mathord}{lettersA}{146}
+\DeclareMathSymbol{\m@thbbch@rS}{\mathord}{lettersA}{147}
+\DeclareMathSymbol{\m@thbbch@rT}{\mathord}{lettersA}{148}
+\DeclareMathSymbol{\m@thbbch@rU}{\mathord}{lettersA}{149}
+\DeclareMathSymbol{\m@thbbch@rV}{\mathord}{lettersA}{150}
+\DeclareMathSymbol{\m@thbbch@rW}{\mathord}{lettersA}{151}
+\DeclareMathSymbol{\m@thbbch@rX}{\mathord}{lettersA}{152}
+\DeclareMathSymbol{\m@thbbch@rY}{\mathord}{lettersA}{153}
+\DeclareMathSymbol{\m@thbbch@rZ}{\mathord}{lettersA}{154}
+\ExplSyntaxOn
+\NewDocumentCommand{\varmathbb}{m}
+{
+  \tl_map_inline:nn { #1 } { \use:c { m@thbbch@r##1 } }
+}
+\ExplSyntaxOff
+
+
+%%% Letters in mathcal,mathfrak,mathscr,mathds %%%
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1mc\endcsname{\@math{\mathcal{#1}}}} 
+\docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1mf\endcsname{\@math{\mathfrak{#1}}}} 
+\docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,%
+           a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}
+
+\ifpre@mathscr
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1ms\endcsname{\@math{\mathscr{#1}}}} 
+\docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+\fi
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1sf\endcsname{\@math{\mathsf{#1}}}} 
+\docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1ds\endcsname{\@math{\mathds{#1}}}} 
+\docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1bb\endcsname{\@math{\varmathbb{#1}}}} 
+\docsvlist{A,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+\renewcommand{\Bbb}{\@math{\varmathbb{B}}}
+
+%%% Numbers %%%
+\newcommand{\nat}{\@math{\varmathbb{N}}}
+\newcommand{\natwz}{\@math{\varmathbb{N}_0}}
+\newcommand{\integ}{\@math{\varmathbb{Z}}}
+\newcommand{\rat}{\@math{\varmathbb{Q}}}
+\newcommand{\real}{\@math{\varmathbb{R}}}
+
+
+
+%%% DL Names %%%
+\newcommand{\EL}{\@math{\mathcal{E{\kern-.12em}L}}}
+\newcommand{\ELbot}{\@math{\smash{\mathcal{E{\kern-.12em}L}^\bot}}}
+\newcommand{\ELObot}{\@math{\smash{\mathcal{E{\kern-.12em}LO}^\bot}}}
+\newcommand{\FLzero}{\@math{\mathcal{F{\kern-.18em}L}_0}}
+
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1\endcsname{\@math{\mathcal{#1}}}}
+\docsvlist{ALC,ALCO,ALCI,ALCOI,ALCQ,ALCN,ALCNI,ALCHO,ALCIQ,ALCOIQ,ALCHOIQ,SHQ,SHOQ,SHIQ,SHOIQ,SROIQ}
+
+\newcommand{\ALCD}[1]{\@math{\mathcal{ALC(#1)}}}
+\newcommand{\ALCOD}[1]{\@math{\mathcal{ALCO(#1)}}}
+\newcommand{\ALCID}[1]{\@math{\mathcal{ALCI(#1)}}}
+\newcommand{\ALCQD}[1]{\@math{\mathcal{ALCQ(#1)}}}
+\newcommand{\ALCND}[1]{\@math{\mathcal{ALCN(#1)}}}
+\newcommand{\DLlite}{{\fontfamily{cmr}\fontseries{m}\fontshape{it}\selectfont DL{-}Lite}\xspace}
+
+
+%%% modal and temporal logics %%%
+\newcommand{\ML}{\@math{\mathcal{ML}}}
+\newcommand{\modalK}{\@math{\mathbf{K}}}
+\newcommand{\modalKn}{\@math{\mathbf{K_{n}}}}
+\newcommand{\modalKm}{\@math{\mathbf{K_{m}}}}
+\newcommand{\MLALC}{\@math{\mathcal{ML}_{\mathcal{ALC}}}}
+\newcommand{\LTL}{\@math{\mathrm{LTL}}}
+\newcommand{\CTL}{\@math{\mathrm{CTL}}}
+\newcommand{\HS}{\@math{\mathcal{HS}}}
+
+
+%%% Context DL names %%%
+\newcommand{\con}[2]{\ensureboldmath{#1}\textnormal{\ensuremath{\llbracket}}\ensureboldmath{#2}\ensuremath{\rrbracket}\xspace}
+\newcommand{\ALCALC}{\con{\ALC}{\ALC}}
+\newcommand{\ALCOALC}{\con{\ALCO}{\ALC}}
+\newcommand{\SHOQSHOQ}{\con{\SHOQ}{\SHOQ}}
+\newcommand{\SHOIQSHOIQ}{\con{\SHOIQ}{\SHOIQ}}
+\newcommand{\SHIQSHIQ}{\con{\SHIQ}{\SHIQ}}
+\newcommand{\ELALC}{\con{\EL}{\ALC}}
+\newcommand{\ALCEL}{\con{\ALC}{\EL}}
+\newcommand{\DLouter}{\@math{\mathcal{L}_{M}}}
+\newcommand{\DLinner}{\@math{\mathcal{L}_{O}}}
+\newcommand{\LM}{\@math{\mathcal{L}_{M}}}
+\newcommand{\LO}{\@math{\mathcal{L}_{O}}}
+\newcommand{\LMLO}{\con{\DLouter}{\DLinner}}
+\newcommand{\klarALC}{\@math{\ALC_{\!\ALC}}}
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname c#1\endcsname{\con{\csname #1\endcsname}{\csname #1\endcsname}}}
+\docsvlist{ALC,ALCO,ALCI,ALCOI,ALCQ,ALCN,ALCNI,ALCHO,ALCIQ,ALCOIQ,ALCHOIQ,SHQ,SHOQ,SHIQ,SHOIQ,SROIQ}
+
+
+%%% temporal DL names %%%
+\newcommand{\ALCLTL}{\@math{\mathcal{\ALC}\text{-}{\LTL}}} % Marcel's and not the evil one!
+
+
+%%% sets of concept names, role names, individual names %%%
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1sig\endcsname{\@math{\mathsf{#1}}}}
+\docsvlist{N,O,M}
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname N#1\endcsname{\@math{\mathsf{N_{#1}}}}}
+\docsvlist{C,R,I,A,V}
+\newcommand{\NCR}{\ensuremath{\mathsf{N_{Crig}}}}
+\newcommand{\NRR}{\ensuremath{\mathsf{N_{Rrig}}}}
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname O#1\endcsname{\@math{\mathsf{O_{#1}}}}}
+\docsvlist{C,R,I,A,V}
+\newcommand{\OCR}{\ensuremath{\mathsf{O_{Crig}}}}
+\newcommand{\OCF}{\ensuremath{\mathsf{O_{Cflex}}}}
+\newcommand{\ORR}{\ensuremath{\mathsf{O_{Rrig}}}\xspace}
+\newcommand{\ORF}{\ensuremath{\mathsf{O_{Rflex}}}\xspace}
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname M#1\endcsname{\@math{\mathsf{M_{#1}}}}}
+\docsvlist{C,R,I,A,V}
+
+
+%%% interpretations %%%
+\newcommand{\I}{\Imc}
+\newcommand{\IA}{\@math{\I_{\A}}}
+\newcommand{\J}{\Jmc}
+\newcommand{\G}{\Gmc}
+\newcommand{\II}{\@math{\I=(\Delta^{\I},\cdot^{\I})}}
+\newcommand{\HH}{\@math{\Hmc=(\Gamma,\cdot^{\Hmc})}}
+\newcommand{\C}{\@math{\mathbbm{C}}}
+\newcommand{\JJ}{\@math{\J=(\C,\cdot^{\J},\Delta^{\J},(\cdot^{\I_c})_{c\in\C})}}
+
+\newcommand{\KK}{\@math{\Kmc=(\T,\A,\RM,\RO)}}
+
+%%% mathcal letters (short macro) %%%
+\newcommand{\D}{\Dmc}
+\newcommand{\T}{\Tmc}
+\newcommand{\U}{\Umc}
+\newcommand{\A}{\Amc}
+\newcommand{\M}{\Mmc}
+\newcommand{\B}{\Bmc}
+\newcommand{\W}{\Wmc}
+\newcommand{\X}{\Xmc}
+\newcommand{\Y}{\Ymc}
+
+
+%%% Role Boxes, temporal operators and outer abstractions %%%
+\newcommand{\RO}{\@math{\Rmc_{\Osig}}}
+\newcommand{\RM}{\@math{\Rmc_{\Msig}}}
+\newcommand{\Next}{\@math{\mathsf{X}}}
+\DeclareMathOperator{\until}{\mathsf{U}}
+\newcommand{\Bb}{\@math{\Bmc^{\bsf}}}
+\newcommand{\BB}{\@math{\Bmf=(\B,\RO,\RM)}}
+\newcommand{\Bmfb}{\@math{\Bmf^{\bsf}}}
+\newcommand{\BBb}{\@math{\Bmf^{\bsf}=(\Bb,\RM)}}
+\newcommand{\Jb}{\@math{\J^{\bsf}}}
+\newcommand{\bsf}{\@math{\mathsf{b}}}
+\newcommand{\ran}{\@math{\mathsf{ran}}}
+\newcommand{\dom}{\@math{\mathsf{dom}}}
+\newcommand{\im}{\@math{\mathsf{Im}}}
+
+\newcommand*{\oOnt}[1]{\@math{\Omc_{\!#1}}}
+\newcommand{\nnf}[1]{\mathsf{nnf}(#1)}
+\newcommand{\negnnf}{\mathord{\sim}}
+
+
+%%% concept constructors for ALC and ALCQ %%%
+\newcommand{\atleast}[3]{\ensuremath{{\geqslant_{#1}}#2.#3}\xspace}
+\newcommand{\atmost}[3]{\ensuremath{{\leqslant_{#1}}#2.#3}\xspace}
+\let\origexists\exists
+\renewcommand{\exists}{\origexists\,}
+
+%%% inequality relation for individuals if UNA is not assumed
+\DeclareMathOperator{\unaineq}{\smash{\mathord{\neq}\mathllap{\raisebox{1.2ex}{.}\hspace{0.3em}}}}
+
+%%% concept constructors for ALC[[ALC]] %%%
+\newcommand{\oGCI}[1]{\llbracket #1\rrbracket}
+\newcommand{\oax}[1]{\ensuremath{\mathord{\left\llbracket\obj{#1}\right\rrbracket}}}
+\newcommand{\oaxl}[1]{\ensuremath{\left\llbracket #1\right.}\xspace}
+\newcommand{\oaxr}[1]{\ensuremath{\left. #1\right\rrbracket}\xspace}
+\newcommand{\oalpha}{\ensuremath{\llbracket\alpha\rrbracket}\xspace}
+
+%%% o-context constructors for unrestricted ALC[[ALC]] %%%
+\NewDocumentCommand{\ocont}{mm}{(#1{\uparrow}#2)}
+\ifdefstring{\pre@ocontsyntax}{ams}{
+  \RenewDocumentCommand{\ocont}{mm}{#1{\uparrow^{#2}}}
+}{}
+\ifdefstring{\pre@ocontsyntax}{tikz}{
+  \newlength{\@uparrowheight}
+  \setlength{\@uparrowheight}{\heightof{A}}
+  \NewDocumentCommand{\tikz@uparrow}{}{\tikz[baseline=-0.0ex,x=1pt,y=1pt,transform canvas={scale=0.8*\heightof{A}/\@uparrowheight}]{
+      %\draw[ocont] (0,0) -- (0,1.1*\heightof{A});
+      \draw[ocont] (0,0) -- (0,10);
+    }}
+  \RenewDocumentCommand{\ocont}{mm}{#1\,{\tikz@uparrow}\,{}^{#2}}
+}{}
+\ifdefstring{\pre@ocontsyntax}{klar}{
+  \RenewDocumentCommand{\ocont}{smO{}m}{
+    % #1 (star)      : false -> exists, true -> for all
+    % #2 (mandatory) : o-concept
+    % #3 (optional)  : m-role
+    % #4 (mandatory) : m-concept
+    \IfBooleanTF{#1}
+      {[\mathbf{#4}]_{\mathbf{#3}} #2}
+      {\langle\mathbf{#4}\rangle_{\mathbf{#3}} #2}
+  }
+}{}
+\ifdefstring{\pre@ocontsyntax}{modal}{
+  \RenewDocumentCommand{\ocont}{smO{}m}{
+    % #1 (star)      : false -> exists, true -> for all
+    % #2 (mandatory) : o-concept
+    % #3 (optional)  : m-role
+    % #4 (mandatory) : m-concept
+    \IfBooleanTF{#1}
+      {(\Box_{#3}#4) #2}
+      {(\Diamond_{#3}#4) #2}
+  }
+}{}
+
+%%% Syntax highlighting for meta ans object concepts
+\newcommand{\obj}[1]{***ERROR***}
+\newcommand{\meta}[1]{***ERROR***}
+
+\newcommand{\MetaSyntaxHighlightOn}{%
+  \renewcommand{\obj}[1]{\mathcolor{blue}{##1}}%
+  \renewcommand{\meta}[1]{\mathcolor{red}{##1}}%
+}
+\newcommand{\MetaSyntaxHighlightOff}{%
+  \renewcommand{\obj}[1]{##1}
+  \renewcommand{\meta}[1]{##1}
+}
+
+\ifpre@coloredconcepts
+  \MetaSyntaxHighlightOn
+\else
+  \MetaSyntaxHighlightOff
+\fi
+
+%%% Hypertableau macros %%%
+\newcommand{\pruneABox}[2]{\@math{\mathsf{prune_{#1}(#2)}}}
+\newcommand{\prune}[2]{\pruneABox{#1}{#2}}
+\newcommand{\mergeABox}[2]{\@math{\mathsf{merge_{#1}(#2)}}}
+\newcommand{\CA}{\@math{(\Cmc,\A)}}
+\newcommand{\Ind}[1]{\@math{\mathsf{Ind}(#1)}}
+\NewDocumentCommand{\tail}{sm}{\@math{\mathsf{tail}\IfBooleanTF{#1}{'}{}(#2)}}
+\NewDocumentCommand{\ar}{m}{\@math{\mathsf{ar}(#1)}}
+\NewDocumentCommand{\trans}{m}{\@math{\mathsf{trans}(#1)}}
+\newcommand{\Ob}{\@math{\Omc^{\bsf}}}
+\newcommand{\Tb}{\@math{\Tmc^{\bsf}}}
+\newcommand{\Ab}{\@math{\Amc^{\bsf}}}
+\newcommand{\HTinput}{\@math{(\CM,\AM,\CO,\AO)}}
+\newcommand{\concat}{{\mskip2mu\mid\mskip2mu}}
+\newcommand{\JA}{\@math{\J_{\Ads}}}
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1M\endcsname{\@math{\csname #1mc\endcsname_{\Msig}}}}
+\docsvlist{C,I,A,T}
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1O\endcsname{\@math{\csname #1mc\endcsname_{\Osig}}}}
+\docsvlist{C,I,A}
+\newcommand{\muM}{\@math{\mu_{\Msig}}}
+\newcommand{\muO}{\@math{\mu_{\Osig}}}
+\newcommand{\lhs}{\@math{\mathsf{lhs}}}
+\newcommand{\rhs}{\@math{\mathsf{rhs}}}
+
+
+
+%%% Complexity classes %%%
+\newcommand{\@compclasshelp}[2][]{\textsc{#1#2}\xspace}
+\newcommand{\cclass}{\@compclasshelp{C}}
+\newcommand{\PTime}{\@compclasshelp{P}}
+\newcommand{\NP}{\@compclasshelp{NP}}
+\newcommand{\coNP}{\@compclasshelp[co]{NP}}
+\newcommand{\ExpTime}{\@compclasshelp{Exp}}
+\newcommand{\ExpTIME}{\@compclasshelp{ExpTime}}
+\newcommand{\EXPTime}{\@compclasshelp{ExpTime}}
+\newcommand{\TwoExpTime}{\@compclasshelp{2Exp}}
+\newcommand{\TwoEXPTime}{\@compclasshelp{2ExpTime}}
+\newcommand{\NExpTime}{\@compclasshelp{NExp}}
+\newcommand{\TwoNExpTime}{\@compclasshelp{2NExp}}
+\newcommand{\TwoNEXPTime}{\@compclasshelp{2NExpTime}}
+\newcommand{\PSpace}{\@compclasshelp{PSpace}}
+\newcommand{\NPSpace}{\@compclasshelp{NPSpace}}
+\newcommand{\ExpSpace}{\@compclasshelp{ExpSpace}}
+\newcommand{\TwoExpSpace}{\@compclasshelp{2ExpSpace}}
+\newcommand{\NExpSpace}{\@compclasshelp{NExpSpace}}
+\newcommand{\TwoNExpSpace}{\@compclasshelp{2NExpSpace}}
+
+
+% \let\origblindtext\blindtext
+% \RenewDocumentCommand{\blindtext}{o}{
+% \textcolor{gray}{\IfNoValueTF{#1}{\origblindtext}{\origblindtext[#1]}}
+% }
+%   \let\origblindlist\blindlist
+%   \RenewDocumentCommand{\blindlist}{mo}{
+%   \textcolor{gray}{\IfNoValueTF{#2}{\origblindlist{#1}}{\origblindlist{#1}[#2]}}
+% }
+
+
+%%% miscellaneous math macros %%%
+\renewcommand{\emptyset}{\varnothing}
+\newcommand{\powerset}[1]{
+  \ifmmode
+    \mathcal{P}(#1)
+  \else
+    \PackageError{contemp-preamble}{%
+      The command \protect\powerset\space is only
+      available in math mode
+    }{}
+  \fi
+}
+\newcommand{\restr}[2]{
+  \ifmmode
+    \left.#1\right|_{#2}
+  \else
+    \PackageError{contemp-preamble}{%
+      The command \protect\restr\space is only
+      available in math mode%
+    }{}
+  \fi
+}
+
+
+%%% miscellaneous text macros %%%
+\newcommand{\comment}[1]{{\MetaSyntaxHighlightOff\color{lightgray} #1}\MetaSyntaxHighlightOn}
+\newcommand{\unsure}[1]{{\color{lorange} #1}}
+\newcommand{\suth}{\mbox{s.\,t.\ }}
+
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+%%% RoSI macros %%%
+\newcommand{\rosirole}{r\^ole\xspace}
+\newcommand{\Rosirole}{R\^ole\xspace}
+\newcommand{\rosiroles}{r\^oles\xspace}
+\newcommand{\Rosiroles}{R\^oles\xspace}
+\newcommand{\RBS}{\Rosirole-Based Systems\xspace}
+
+
+%%% CROM macros %%%
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname A#1\endcsname{\@math{A_{\mathsf{\MakeUppercase{#1}}}}}}
+\docsvlist{nt,rt,ct,rg}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1\endcsname{\@math{\mathsf{#1}}}}
+\docsvlist{fills,parts,rel,type,plays,links,rolec,card,intra,counts,atom}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1ass\endcsname{\@math{\mathsf{#1\_assert}}}}
+\docsvlist{play,link}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1ds\endcsname{\@math{\mathds{#1}}}}
+\docsvlist{NT,RT}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1sf\endcsname{\@math{\mathsf{#1}}}}
+\docsvlist{NT,RT,CT,RST,Card,RG,IND}
+
+\newcommand{\MM}{\@math{\M=(\Pmc,\Smc,\fills,\parts,\rel)}}
+\newcommand{\CC}{\@math{\Cmc=(\rolec,\card,\intra)}}
+
+% \newcommand*{\Reps}{\@math{\Rsf^{\varepsilon}}}
+% \newcommand{\SCROM}{\@math{\Sigma}-CROM}
+% \newcommand{\SCROI}{\@math{\Sigma}-CROI}
+% \newcommand{\SCROA}{\@math{\Sigma}-CROA}
+% \newcommand{\SCROC}{\@math{\Sigma}-CROC}
+% \newcommand{\SCCROM}{\@math{\Sigma}-CCROM}
+
+%%% ToDo macros %%%
+\newcommand{\ayt}[1]{\todo[color=red,inline]{(ayt) #1}}
+\newcommand{\stb}[1]{\todo[inline,color=yellow]{(sb) #1}}
+\newcommand{\tk}[1]{\todo[inline,color=green]{(tk) #1}}
+
+
+%%% To avoid ``invalid PDF token''
+\newcommand{\texpdf}[1]{\texorpdfstring{\csname #1\endcsname}{#1}}
+%% \texpdf{ALC} yields 'ALC' as PDF token and '\ALC' in the document
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% tabular related macros and fixes                                                   %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                                                                         %
+%%% columntypes based on tabularx %%%                                                    %
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}                                       %
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}                                        %
+\newcolumntype{C}{>{\centering\arraybackslash}X}                                         %
+                                                                                         %
+%%% for tabularx def inside a tabularx X column                                          %
+\newcommand{\cellwidth}{\TX@col@width}                                                   %
+                                                                                         %
+%%% When using Y columns, make sure the sum of the arguments is equal to the number of 
+%%% columns. See tabularx documentation, section 4.3
+\newcolumntype{Y}[1]{>{\hsize=#1\hsize}X}
+
+%%% tried to have optional arguments in newcolumntype, but didn't work
+%%% http://tex.stackexchange.com/questions/8000/is-it-possible-to-create-a-newcolumntype-like-macro-accepting-more-than-one-arg
+% \newtoks\mytoks
+% \mytoks\expandafter{\the\NC@list}
+% \newcolumntype{Z}{}
+% \NC@list\expandafter{\the\mytoks \NC@do Z}
+% \renewcommand*{\NC@rewrite@Z}[1][2.0]{%
+%   \@temptokena\expandafter{%
+%     \the\@temptokena 
+%       >{\hsize=#1\hsize}X
+%   }%
+%   \NC@find
+% }
+                                                                                         %
+                                                                                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% unsorted macros come here %%%
+
+% \newcommand*{\follows}{{\tikz[baseline=-0.6ex]{ \draw[-latex'] (0,1ex) |- (2ex,0);}}}
+\ifdefstring{\XKV@documentclass}{beamer.cls}{
+  \newcommand*{\follows}[1][thick]{{\tikz[baseline=-0.6ex]{ \draw[#1,->] (0,1ex) |- (2ex,0);}}\xspace}
+}{
+  \newcommand*{\follows}[1][semithick]{{\tikz[baseline=-0.6ex]{ \draw[#1,->] (0,1ex) |- (2ex,0);}}\xspace}
+}
+\newcommand{\iotasun}{%
+\tikz[overlay,scale=0.6, every node/.style={transform shape}]{%
+  \coordinate (c) at ($(current page.north east)-(1,1)$);%
+  \foreach \w in {0, 30, ..., 330} \draw ($(c)+(\w:4mm)$) -- ($(c)+(\w:7mm)$);%
+  \node[circle,draw,inner sep=2] at (c){\large$\ddot\iota$};}%
+}
+
+%% How to get a \mid binary relation that grows
+% http://tex.stackexchange.com/questions/5502/how-to-get-a-mid-binary-relation-that-grows
+\newcommand{\mmid}{\mathrel{}\middle|\mathrel{}}
+
+
+
+%% to remove vertical space before an itemize inside tabularx
+\newcommand*{\compress}{\@minipagetrue}
+
+
+\endinput

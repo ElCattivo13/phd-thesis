@@ -1,0 +1,459 @@
+%
+% Beamertheme for TU-Dresden Corporate Design
+% Author: Daniel Borchmann
+% Based on tudbeamer, written by Klaus Bergmann
+% Edited to fit design of RoSI Research Group by Stephan Boehme
+
+%% options
+
+\newif\if@useGerman
+\newif\if@useNoGerman
+\DeclareOptionBeamer{nogerman}{\@useNoGermantrue\@useGermanfalse}
+\DeclareOptionBeamer{german}{\@useGermantrue\@useNoGermanfalse}
+
+\newif\if@useHeader\@useHeadertrue
+\DeclareOptionBeamer{noheader}{\@useHeaderfalse}
+
+\newif\if@useNavBar\@useNavBarfalse
+\DeclareOptionBeamer{navbar}{\@useNavBartrue}
+
+\newif\if@usePageNum\@usePageNumfalse
+\DeclareOptionBeamer{pagenum}{\@usePageNumtrue}
+
+\newif\if@useHeavyFont\@useHeavyFontfalse
+\DeclareOptionBeamer{heavyfont}{\@useHeavyFonttrue}
+
+\newif\if@noDIN\@noDINfalse
+\DeclareOptionBeamer{nodin}{\@noDINtrue}
+
+\newif\if@noTotalPages\@noTotalPagesfalse
+\DeclareOptionBeamer{nototalpages}{\@noTotalPagestrue}
+
+\newif\if@sansmath\@sansmathtrue
+\DeclareOptionBeamer{serifmath}{\@sansmathfalse}
+
+\newif\if@useNoFrameTitleSection\@useNoFrameTitleSectionfalse
+\DeclareOptionBeamer{nosectionnum}{\@useNoFrameTitleSectiontrue}
+
+\newcommand*\@einrichtung{}
+\newcommand*\@fachrichtung{}
+\newcommand*\@institut{}
+\newcommand*\@professur{}
+% \newcommand*\@datecity{}
+
+\DeclareOptionBeamer{einrichtung}{\renewcommand*{\@einrichtung}{#1}}
+\DeclareOptionBeamer{fachrichtung}{\renewcommand*{\@fachrichtung}{#1}}
+\DeclareOptionBeamer{institut}{\renewcommand*{\@institut}{#1}}
+\DeclareOptionBeamer{professur}{\renewcommand*{\@professur}{#1}}
+% \DeclareOptionBeamer{datecity}{\renewcommand*{\@datecity}{#1}}
+
+\newcommand*{\datecity}[1]{\renewcommand*{\insertdatecity}{#1}}
+
+\def\today{\number\day.\number\month.\number\year}
+
+%% process options
+
+\ProcessOptionsBeamer
+
+%% optional packages
+
+\RequirePackage{graphicx}
+\RequirePackage{ifthen}
+\RequirePackage{color}
+\RequirePackage[rgb]{tudcdcolors}
+\if@useGerman\RequirePackage{ngerman}\fi
+
+%% font specific definitions
+
+\renewcommand*\encodingdefault{OT1}
+\renewcommand*\familydefault{aun}
+\renewcommand*\bfseries{\fontseries{b}\selectfont}
+\if@useHeavyFont\renewcommand*\seriesdefault{m}\else\renewcommand*\seriesdefault{l}\fi
+\renewcommand*\shapedefault{n}
+\renewcommand*\sfdefault{aun}
+%\renewcommand*{\sffamily}{\not@math@alphabet\sffamily\mathsf\fontfamily{aun}\selectfont}
+%\renewcommand*{\ttfamily}{\fontfamily{\ttdefault}\fontseries{\mddefault}\selectfont}
+\renewcommand*\ttfamily{\not@math@alphabet\ttfamily\mathtt\fontfamily\ttdefault\fontseries\mddefault\selectfont}
+%\DeclareRobustCommand\dindefault{din}
+\newcommand*{\dinfamily}{\fontencoding{OT1}\fontfamily{din}\fontseries{b}\selectfont}
+%\DeclareRobustCommand\dinfamily{\not@math@alphabet\sffamily\mathsf\fontfamily\dindefault\selectfont}
+
+\if@sansmath
+    \DeclareSymbolFont{aunLetters}{T1}{aun}{l}{sl}
+    \SetSymbolFont{aunLetters}{bold}{T1}{aun}{b}{sl}
+    \DeclareSymbolFont{aunOperators}{T1}{aun}{l}{n}
+    \SetSymbolFont{aunOperators}{bold}{T1}{aun}{b}{n}
+    
+    \DeclareMathSymbol{a}{\mathalpha}{aunLetters}{`a}
+    \DeclareMathSymbol{b}{\mathalpha}{aunLetters}{`b}
+    \DeclareMathSymbol{c}{\mathalpha}{aunLetters}{`c}
+    \DeclareMathSymbol{d}{\mathalpha}{aunLetters}{`d}
+    \DeclareMathSymbol{e}{\mathalpha}{aunLetters}{`e}
+    \DeclareMathSymbol{f}{\mathalpha}{aunLetters}{`f}
+    \DeclareMathSymbol{g}{\mathalpha}{aunLetters}{`g}
+    \DeclareMathSymbol{h}{\mathalpha}{aunLetters}{`h}
+    \DeclareMathSymbol{i}{\mathalpha}{aunLetters}{`i}
+    \DeclareMathSymbol{j}{\mathalpha}{aunLetters}{`j}
+    \DeclareMathSymbol{k}{\mathalpha}{aunLetters}{`k}
+    \DeclareMathSymbol{l}{\mathalpha}{aunLetters}{`l}
+    \DeclareMathSymbol{m}{\mathalpha}{aunLetters}{`m}
+    \DeclareMathSymbol{n}{\mathalpha}{aunLetters}{`n}
+    \DeclareMathSymbol{o}{\mathalpha}{aunLetters}{`o}
+    \DeclareMathSymbol{p}{\mathalpha}{aunLetters}{`p}
+    \DeclareMathSymbol{q}{\mathalpha}{aunLetters}{`q}
+    \DeclareMathSymbol{r}{\mathalpha}{aunLetters}{`r}
+    \DeclareMathSymbol{s}{\mathalpha}{aunLetters}{`s}
+    \DeclareMathSymbol{t}{\mathalpha}{aunLetters}{`t}
+    \DeclareMathSymbol{u}{\mathalpha}{aunLetters}{`u}
+    \DeclareMathSymbol{v}{\mathalpha}{aunLetters}{`v}
+    \DeclareMathSymbol{w}{\mathalpha}{aunLetters}{`w}
+    \DeclareMathSymbol{x}{\mathalpha}{aunLetters}{`x}
+    \DeclareMathSymbol{y}{\mathalpha}{aunLetters}{`y}
+    \DeclareMathSymbol{z}{\mathalpha}{aunLetters}{`z}
+    \DeclareMathSymbol{A}{\mathalpha}{aunLetters}{`A}
+    \DeclareMathSymbol{B}{\mathalpha}{aunLetters}{`B}
+    \DeclareMathSymbol{C}{\mathalpha}{aunLetters}{`C}
+    \DeclareMathSymbol{D}{\mathalpha}{aunLetters}{`D}
+    \DeclareMathSymbol{E}{\mathalpha}{aunLetters}{`E}
+    \DeclareMathSymbol{F}{\mathalpha}{aunLetters}{`F}
+    \DeclareMathSymbol{G}{\mathalpha}{aunLetters}{`G}
+    \DeclareMathSymbol{H}{\mathalpha}{aunLetters}{`H}
+    \DeclareMathSymbol{I}{\mathalpha}{aunLetters}{`I}
+    \DeclareMathSymbol{J}{\mathalpha}{aunLetters}{`J}
+    \DeclareMathSymbol{K}{\mathalpha}{aunLetters}{`K}
+    \DeclareMathSymbol{L}{\mathalpha}{aunLetters}{`L}
+    \DeclareMathSymbol{M}{\mathalpha}{aunLetters}{`M}
+    \DeclareMathSymbol{N}{\mathalpha}{aunLetters}{`N}
+    \DeclareMathSymbol{O}{\mathalpha}{aunLetters}{`O}
+    \DeclareMathSymbol{P}{\mathalpha}{aunLetters}{`P}
+    \DeclareMathSymbol{Q}{\mathalpha}{aunLetters}{`Q}
+    \DeclareMathSymbol{R}{\mathalpha}{aunLetters}{`R}
+    \DeclareMathSymbol{S}{\mathalpha}{aunLetters}{`S}
+    \DeclareMathSymbol{T}{\mathalpha}{aunLetters}{`T}
+    \DeclareMathSymbol{U}{\mathalpha}{aunLetters}{`U}
+    \DeclareMathSymbol{V}{\mathalpha}{aunLetters}{`V}
+    \DeclareMathSymbol{W}{\mathalpha}{aunLetters}{`W}
+    \DeclareMathSymbol{X}{\mathalpha}{aunLetters}{`X}
+    \DeclareMathSymbol{Y}{\mathalpha}{aunLetters}{`Y}
+    \DeclareMathSymbol{Z}{\mathalpha}{aunLetters}{`Z}
+
+    \DeclareMathSymbol{,}{\mathpunct}{aunLetters}{`,}
+    \DeclareMathSymbol{.}{\mathord}{aunLetters}{`.}
+    \DeclareMathSymbol{/}{\mathord}{aunLetters}{`/}
+
+    \DeclareMathSymbol{0}\mathalpha{aunOperators}{"30}
+    \DeclareMathSymbol{1}\mathalpha{aunOperators}{"31}
+    \DeclareMathSymbol{2}\mathalpha{aunOperators}{"32}
+    \DeclareMathSymbol{3}\mathalpha{aunOperators}{"33}
+    \DeclareMathSymbol{4}\mathalpha{aunOperators}{"34}
+    \DeclareMathSymbol{5}\mathalpha{aunOperators}{"35}
+    \DeclareMathSymbol{6}\mathalpha{aunOperators}{"36}
+    \DeclareMathSymbol{7}\mathalpha{aunOperators}{"37}
+    \DeclareMathSymbol{8}\mathalpha{aunOperators}{"38}
+    \DeclareMathSymbol{9}\mathalpha{aunOperators}{"39}
+
+    \DeclareSymbolFontAlphabet{\mathsf}{aunOperators}
+    \DeclareSymbolFontAlphabet{\mathnormal}{aunLetters}
+    \DeclareMathAlphabet\mathbf{T1}{aun}{b}{n}
+    \SetMathAlphabet\mathbf{bold}{T1}{aun}{b}{n}
+    \DeclareMathAlphabet\mathit{T1}{aun}{l}{sl}
+    \SetMathAlphabet\mathit{bold}{T1}{aun}{l}{sl}
+    
+    \let\operator@font\sf
+\fi
+\usefonttheme[onlymath]{serif}
+
+%% defining colors
+\definecolor{skyblue}{rgb}{0.80, 0.80, 1.00}
+\definecolor{turquoise}{rgb}{0.00, 0.80, 0.60}
+\definecolor{gray}{gray}{0.59}
+\definecolor{darkgray}{gray}{0.40}
+
+\colorlet{text}{black!30!hks_41_k_100}
+\colorlet{frametitle}{gray}
+\colorlet{framesubtitle}{black}
+\colorlet{accent}{turquoise}
+\colorlet{alink}{skyblue}
+\colorlet{vlink}{lightgray}
+\colorlet{alert}{hks_07_k_100}
+\colorlet{titlebackground}{hks_41_k_100}
+
+\setbeamercolor{normal text}{fg=text}
+\setbeamercolor{structure}{fg=text}
+\setbeamercolor{alerted text}{fg=alert}
+\setbeamercolor{frametitle}{fg=frametitle}
+\setbeamercolor{framesubtitle}{fg=framesubtitle}
+
+%%
+
+\newcommand*{\englishnames}{%
+    \newcommand*{\@slide}{Slide}
+    \newcommand*{\@of}{of}
+}
+
+\newcommand*{\germannames}{%
+    \newcommand*{\@slide}{Folie}
+    \newcommand*{\@of}{von}
+}
+
+%% templates
+
+\if@useNavBar%
+\else%
+  \setbeamertemplate{navigation symbols}{}%
+\fi
+
+%\beamersetleftmargin{13.86mm}
+\beamersetleftmargin{0.15\paperheight}
+%\beamersetrightmargin{9.58mm}
+\beamersetrightmargin{0.15\paperheight}
+
+\newlength{\topmarginnoheader}
+\setlength{\topmarginnoheader}{1mm}
+
+\setbeamerfont{itemize/enumerate subbody}{size=\scriptsize}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\scriptsize}
+\setbeamerfont{title}{size=\LARGE,series=\bfseries,family=\dinfamily}
+\setbeamerfont{subtitle}{series=\mdseries,family=\sffamily}
+\setbeamerfont{frametitle}{size=\normalsize}
+\setbeamerfont{framesubtitle}{family=\sffamily,series=\mdseries}
+
+\beamertemplatedotitem
+\usesubitemizeitemtemplate{--}
+
+%% logo
+
+\def\logo@front{TUDCDrosi/logo_weiss}
+\def\logo@default{TUDCDrosi/logo_blau}
+\ifx\pdfoutput\undefined%
+\else%
+  \ifx\pdfoutput\relax%
+  \else%
+    \ifcase\pdfoutput%
+    \else%
+      \def\logo@front{TUDCDrosi/TU_Logo_SW}%
+      \def\logo@default{TUDCDrosi/TU_Logo_SW}%
+    \fi%
+  \fi%
+\fi
+\def\conceptlogo@front{TUDCDrosi/DDC-weissf}
+\def\rosilogo@front{TUDCDrosi/rosi-inv}
+\def\rosilogo@default{TUDCDrosi/rosi}
+
+%% title page
+
+\renewcommand\maketitle{%
+    %\beamertemplateshadingbackground{darkblue}{darkblue}
+    \setbeamercolor{normal text}{bg=titlebackground}
+    % Kopf-/Fusszeile fuer Titel
+    \setbeamertemplate{headline}{%
+        \vskip6.15mm%
+        \color{white}%
+        \setlength{\arrayrulewidth}{0.3pt}%
+        \begin{tabular*}{\paperwidth}[b]{l@{\extracolsep\fill}}
+          % TUD-Logos
+          \hspace*{3.0mm}%
+          \color{white}%
+          \includegraphics[height=7.81mm,draft=false]{\logo@front}%
+          \hspace*{6.96cm}
+          \includegraphics[height=7.81mm,draft=false]{\rosilogo@front}%
+          \\[1.2mm]\hline
+          \hspace*{11.76mm}%
+          \rule[-0.8mm]{0pt}{2.47mm}%
+          \def\@@dummyComma{}%
+          \rule{0pt}{5.8pt}%
+          \textbf{\@einrichtung }\ifx\@einrichtung\@empty\else\def\@@dummyComma{ }\fi%
+          \ifx\@fachrichtung\@empty%
+          \else%
+            \@@dummyComma\@fachrichtung%
+            \ifx\@institut\@empty\else\def\@@dummyComma{, }\fi%
+            \ifx\@professur\@empty\else\def\@@dummyComma{, }\fi%
+          \fi%
+          \ifx\@institut\@empty\else\@@dummyComma\@institut%
+            \ifx\@professur\@empty\else\def\@@dummyComma{, }\fi%
+          \fi%
+          \ifx\@professur\@empty\else\@@dummyComma\fi%
+          \@professur\\[-1pt]\hline
+        \end{tabular*}\hspace{-\paperwidth}%
+    }%
+    \setbeamertemplate{footline}{%
+        \parbox[t][9.63mm]{\paperwidth}{%  \parbox[t][9.63mm]{\paperwidth}{
+            \vspace*{-13.63mm}%
+            \rule{13.86mm}{0pt}%
+            \small%
+            \color{white}%
+            \insertdatecity%
+            \ifx\insertdatecity%
+              \empty%
+            \else%
+              \ifx\insertdate%
+                \empty%
+              \else%
+                , %
+              \fi%
+            \fi%
+            \insertdate%
+            \hfill%
+            \parbox[b][13mm]{13mm}{
+              \includegraphics[height=13mm,draft=false]{\conceptlogo@front}%
+            }
+        }
+        %\vspace{8mm}
+        %\includegraphics[height=9.63mm]{\conceptlogo@front}%
+    }%
+    \frame{\titlepage}%
+    % Kopf-/Fusszeilen fuer restliche Folien
+    \setbeamertemplates%
+}
+
+\setbeamertemplate{title page}{%
+    \color{white}%
+    \vfill%
+    \usebeamerfont*{title}%
+    \vskip2ex plus1ex minus1ex%
+    \MakeUppercase{\inserttitle}%
+%     \inserttitle%
+    \vfill%
+    \ifx\insertsubtitle\empty%
+    \else%
+      \usebeamerfont*{subtitle}%
+      \insertsubtitle%
+      \vfill%
+    \fi%
+    \normalfont\large%
+    \insertauthor%
+    \vfill%
+    \vfill%
+}
+
+\newcommand\setbeamertemplates{%
+    %\beamertemplateshadingbackground{white}{white}
+    \setbeamercolor{normal text}{bg=white}
+    \if@useHeader%
+        \setbeamertemplate{headline}{%
+            \vskip6.15mm\color{gray}
+            \setlength{\arrayrulewidth}{0.1pt}
+            \begin{tabular*}{\paperwidth}[b]{l@{\extracolsep\fill}}
+                \hspace*{5.0mm}%
+                \color{text}%
+                \includegraphics[height=5.95mm,draft=false]{\logo@default}
+                \hspace*{8.00cm}
+                \includegraphics[height=5.95mm,draft=false]{\rosilogo@default}\\[1mm]\hline
+                \rule[-2.47mm]{0pt}{2.47mm}\\[-2.47mm]\hline
+            \end{tabular*}
+        }
+    \else
+        \setbeamertemplate{headline}{%
+            %\rule{0pt}{14.57mm}
+            \rule{0pt}{\the\topmarginnoheader}
+        }
+    \fi
+
+    \setbeamertemplate{footline}{%
+        \color{gray}%
+        \parbox[t][7.46mm]{\paperwidth}{%
+            \rule{13.86mm}{0pt}%
+            \parbox{28.83mm}{\insertdatecity\ifx\insertdate\empty\else, \insertdate\fi}\rule{1.06mm}{0pt}%
+            \parbox{40.57mm}{\insertshorttitle}%
+            \rule{7.46mm}{0pt}%
+            \if@usePageNum%
+                \let\insertframenumber=\insertpagenumber%
+                \let\inserttotalframenumber=\inserttotalpagenumber%
+            \fi%
+            \parbox{26.66mm}{\raggedleft \insertframenumber\ \if@noTotalPages\relax\else\@of\ \inserttotalframenumber\fi}%
+            \rule{9.58mm}{0pt}%
+        }
+    }
+
+    \setbeamertemplate{frametitle}{%
+        \vskip2.5mm% %changed from 6.5mm (2015/06/03)
+        \color{frametitle}%
+        \if@useNoFrameTitleSection%
+        \else%
+          \frame@title@section%
+        \fi%
+        \insertframetitle\\%
+        \vskip0.3ex%
+        \color{framesubtitle}%
+        \usebeamerfont{framesubtitle}%
+        \insertframesubtitle%
+    }
+
+}
+
+%% frame title
+
+\gdef\frame@title@section{}
+\def\frametitle{\secdef\tud@frametitlea\tud@frametitles}
+\newcommand<>{\tud@frametitlea}{% unstared version
+  \gdef\frame@title@section{\ifnum\c@section>9\else 0\fi\arabic{section}\,\,}%
+  \alt#1{\@dblarg\beamer@@frametitle}{\beamer@gobbleoptional}}
+\newcommand<>{\tud@frametitles}{% stared version
+  \gdef\frame@title@section{}%
+  \alt#1{\@dblarg\beamer@@frametitle}{\beamer@gobbleoptional}}
+
+%% begin-document hook
+
+\AtBeginDocument{%
+    \ifx\@undefined\if@german%
+        \newif\if@german                                    % Nutzung des german-Packages ?
+        \ifx\@undefined\germanTeX\else\@germantrue\fi       % Wenn (n)germanTeX definiert ist,
+        \ifx\@undefined\ngermanTeX\else\@germantrue\fi      % ist das (n)german-Package eingebunden
+        \ifx\@undefined\language\else                       %
+            \ifnum0=\language\@germanfalse\else\fi          % \language=0  =>  english
+        \fi                                                 %
+        \if@useGerman\@germantrue\fi                        % Zur expliziten Nutzung der deutschen Texte (das ngerman-Package wurde automatisch eingebunden)
+        \if@useNoGerman\@germanfalse\fi                     % Zur expliziten Nutzung der englischen Texte (auch bei vorheriger Einbindung des german-Packages)
+        \if@german                                          %
+            \ifx\@undefined\language\else                   %
+                \ifnum2<\language\selectlanguage{german}\fi % deutsch gewuenscht, aber andere Sprache eingestellt ??  =>  deutsch
+                \ifnum2>\language\selectlanguage{german}\fi %
+            \fi                                             %
+            \germannames                                    %
+            \def\today{\number\day.\number\month.\number\year}  % Datum im Format DD.MM.YYYY
+        \else                                               %
+            \ifx\@undefined\language\else                   %
+                \ifnum0<\language\selectlanguage{english}\fi% englisch gewuenscht, aber andere Sprache eingestellt ??  =>  englisch
+            \fi                                             %
+            \englishnames                                   %
+            \def\today{\number\year/\number\month/\number\day}  % Datum im Format YYYY/MM/DD
+        \fi                                                 %
+    \fi%
+    \setbeamertemplates%
+    \scriptsize
+}%
+
+%% end-document hook
+
+\newcommand*{\insertdatecity}{Dresden}
+\newcommand*{\inserttotalpagenumber}{\textbf{??}}
+
+\AtEndDocument{%
+    \clearpage
+    \beamer@tempcount=\c@page\advance\beamer@tempcount by -1%
+    \if@filesw
+        \immediate\write\@auxout{\string\@writefile{nav}%
+            {\noexpand\headcommand{\noexpand\beamer@partpages{\the\beamer@partstartpage}{\the\beamer@tempcount}}}}%
+        \immediate\write\@auxout{\string\@writefile{nav}%
+            {\noexpand\headcommand{\noexpand\beamer@subsectionpages{\the\beamer@subsectionstartpage}{\the\beamer@tempcount}}}}%
+        \immediate\write\@auxout{\string\@writefile{nav}%
+            {\noexpand\headcommand{\noexpand\beamer@sectionpages{\the\beamer@sectionstartpage}{\the\beamer@tempcount}}}}%
+        \immediate\write\@auxout{\string\@writefile{nav}%
+            {\noexpand\headcommand{\noexpand\beamer@documentpages{\the\beamer@tempcount}}}}
+        \immediate\write\@auxout{\string\@writefile{nav}%
+            {\noexpand\headcommand{\noexpand\def\noexpand\inserttotalframenumber{\the\c@framenumber}}}}
+        \addtocounter{page}{-1}
+        \immediate\write\@auxout{\string\@writefile{nav}%
+            {\noexpand\headcommand{\noexpand\def\noexpand\inserttotalpagenumber{\thepage}}}}
+        \newwrite\tf@nav
+        \immediate\openout\tf@nav\jobname.nav\relax
+        \newwrite\tf@toc
+        \immediate\openout\tf@toc\jobname.toc\relax
+        \newwrite\tf@snm
+        \immediate\openout\tf@snm\jobname.snm\relax
+    \fi%
+}
+
+%%
+
+
