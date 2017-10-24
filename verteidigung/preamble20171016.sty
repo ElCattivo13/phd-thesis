@@ -141,6 +141,9 @@
 \usetikzlibrary{shapes}
 \usetikzlibrary{shadows}
 \usetikzlibrary{backgrounds}
+\usetikzlibrary{shadows.blur}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows.meta}
 \ifpre@beamer\else\RequirePackage{enumitem}\fi
 \ifpre@beamer\else\RequirePackage{authblk}\fi
 \RequirePackage[\pre@language]{todonotes} % provides the commands \todo[inline]{}, \missingfigure \listoftodos,
@@ -149,6 +152,8 @@
 
 \RequirePackage{graphicx}
 \graphicspath{{../figures/}}
+
+\RequirePackage{rosi-syntax-tikz}
 
 %% The titling package provides the commands \thedate, \theauthor and
 %% \thetitle for later use, e.g. in the footer
@@ -166,6 +171,11 @@
 \ifpre@beamer\else\RequirePackage{subcaption}\fi
 \RequirePackage{booktabs}
 \RequirePackage{multirow}
+\RequirePackage{nicefrac} % for \nicefrac
+
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\RequirePackage[caption=false,font=footnotesize]{subfig}
 
 \ifpre@ltablex
   % http://tex.stackexchange.com/questions/115177/nested-tabularx-doesnt-work-with-ltablex
@@ -643,31 +653,41 @@
   \fi
 }
 
+% 41 44 36 33 57 65 07
 
 \tikzset{
   every picture/.style={auto,remember picture},
-  every label/.style={minimum width=0pt,minimum height=0pt},
-  every node/.style={minimum width=0pt,minimum height=0pt},
-  node/.style 2 args={circle, draw, fill=#2!50,inner sep=0pt, minimum width=#1,minimum height=0pt},
-  node/.default={4pt}{black},
-  domain/.style n args={3}{rectangle, draw, rounded corners=2mm, inner sep=#3,minimum width=#1,minimum
-    height=#2},
-  domain/.default={0cm}{0cm}{1pt},
-  is/.style={inner sep=#1},
-  is/.default={1pt},
-  edge/.style={shorten <=1pt, shorten >=1pt},
-  coord/.style={anchor=base,inner sep=0pt},
-  brace/.style={decorate,decoration={brace,amplitude=4pt},thick},
-  wavy/.style={decorate,decoration,decoration={coil,aspect=0,amplitude=1.5pt,post length=2.1pt}},
-  nominwidth/.style={minimum width=0pt},
-  nominheight/.style={minimum height=0pt},
-  nominsize/.style={nominheight,nominwidth},
-  mylabel/.style={nominsize,rounded corners=0pt},
-  nominwidth/.style={minimum width=0pt},
-  outline/.style 2 args={circle,draw=#1,fill=#1,align=center,minimum size=#2,text=white},
-  outline edge/.style 2 args={circle connection bar switch color=from (#1) to (#2)}
-  %,
+  every node/.style    = {anchor=center},
+  every label/.style   = {align=center, label distance = 1mm, rounded corners=15pt},
+  question/.style      = {ellipse, inner sep = 1pt, align=center, fill=hks_44_k_10,},
+  box/.style           = {draw, thin, fill=white,blur shadow={shadow blur steps=5}},
+  edge/.style          = {shorten <=3pt, shorten >=1pt, -{Latex[length=6pt 5 0, width'=0pt 0.5]}},
+  edge2/.style         = {shorten <=2pt, shorten >=2pt, line width=2pt, Round Cap[]-{Stealth[length=4pt 5 0, width'=0pt 0.5]},frametitle},
+  edgelabel/.style     = {above=3mm,font=\small, rounded corners=15pt},
+  node/.style 2 args   = {circle, draw, fill=#2!50,inner sep=0pt, minimum width=#1,minimum height=0pt},
+  node/.default        = {4pt}{black},
+  role/.style          = {shorten <=3pt, shorten >=3pt,-{Latex[length=6pt 5 0, width'=0pt 0.5]},
+                          line width = 2pt,TB1fg},
+  domain/.style n args = {3}{rectangle, draw, rounded corners=2mm, inner sep=#3, minimum width=#1, minimum height=#2},
+  domain/.default      = {0cm}{0cm}{6pt},
+  intlabel/.style      = {font=\footnotesize, label distance=0pt,text=TB1fg},
+  crom/.style          = {draw=TB2fg, fill=TB2bg, star, inner sep=0pt, minimum size=8mm, line width=3pt,
+                          outer sep=0pt, star point ratio = 2},
+  %
+  %
+  coord/.style         = {anchor=base, inner sep=0pt},
+  brace/.style         = {decorate, decoration={brace,amplitude=4pt}, thick},
+  wavy/.style          = {decorate, decoration, decoration={coil,aspect=0,amplitude=1.5pt,post length=2.1pt}},
+  nominwidth/.style    = {minimum width=0pt},
+  nominheight/.style   = {minimum height=0pt},
+  nominsize/.style     = {nominheight, nominwidth},
+  nominwidth/.style    = {minimum width=0pt},
+  outline/.style 2 args = {circle, draw=#1, fill=#1, align=center, minimum size=#2, text=white},
+  outline edge/.style 2 args = {circle connection bar switch color=from (#1) to (#2)},
 }
+
+
+
 \@ifclassloaded{researchfestivalposter}{%
   \tikzset{
   node/.style 2 args={circle, draw, line width=1pt, fill=#2!50,inner sep=0pt, minimum
@@ -1125,7 +1145,7 @@
 \newcommand{\Rosirole}{R\^ole\xspace}
 \newcommand{\rosiroles}{r\^oles\xspace}
 \newcommand{\Rosiroles}{R\^oles\xspace}
-\newcommand{\RBS}{\Rosirole-Based Systems\xspace}
+\newcommand{\RBS}{Role-Based Systems\xspace}
 
 
 %%% CROM macros %%%
@@ -1227,5 +1247,715 @@
 %% to remove vertical space before an itemize inside tabularx
 \newcommand*{\compress}{\@minipagetrue}
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% beamer stuff                                                             %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% 41 44 36 33 57 65 07
+
+%% defining colors
+\definecolor{skyblue}{rgb}{0.80, 0.80, 1.00}
+\definecolor{turquoise}{rgb}{0.00, 0.80, 0.60}
+\definecolor{gray}{gray}{0.59}
+\definecolor{darkgray}{gray}{0.40}
+
+\colorlet{text}{black!30!hks_41_k_100}
+\colorlet{frametitle}{gray}
+\colorlet{framesubtitle}{black}
+\colorlet{accent}{turquoise}
+\colorlet{alink}{skyblue}
+\colorlet{vlink}{lightgray}
+\colorlet{alert}{hks_07_k_100}
+\colorlet{titlebackground}{hks_41_k_100}
+
+\setbeamercolor{normal text}{fg=text}
+\setbeamercolor{structure}{fg=text}
+\setbeamercolor{alerted text}{fg=alert}
+\setbeamercolor{frametitle}{fg=frametitle}
+\setbeamercolor{framesubtitle}{fg=framesubtitle}
+
+
+\setbeamercolor{alerted text}{fg=hks_44_k_100}
+%\setbeamercolor{ALERTed text}{fg=hks_57_k_100} %dunkelgrün
+\setbeamercolor{ALERTed text}{fg=hks_65_k_100} %hellgrün
+%\setbeamercolor{ALERTed text}{fg=hks_44_k_100} %blau
+\colorlet{alertcolor}{hks_44_k_100}
+\colorlet{Alertcolor}{hks_65_k_100}
+
+
+\renewcommand*{\framesubtitle}[1]{\textcolor{frametitle}{\textbf{#1}}}
+\AtBeginDocument{\setbeamertemplate{caption}{\raggedright\insertcaption\par}}
+
+%% logo
+
+\def\logo@front{TUDCDrosi/logo_weiss}
+\def\logo@default{TUDCDrosi/logo_blau}
+\ifx\pdfoutput\undefined%
+\else%
+  \ifx\pdfoutput\relax%
+  \else%
+    \ifcase\pdfoutput%
+    \else%
+      \def\logo@front{TUDCDrosi/TU_Logo_SW}%
+      \def\logo@default{TUDCDrosi/TU_Logo_SW}%
+    \fi%
+  \fi%
+\fi
+\def\conceptlogo@front{TUDCDrosi/DDC-weissf}
+\def\rosilogo@front{TUDCDrosi/rosi-inv}
+\def\rosilogo@default{TUDCDrosi/rosi}
+
+\renewcommand\maketitle{%
+  % \beamertemplateshadingbackground{darkblue}{darkblue}
+  \setbeamercolor{normal text}{bg=titlebackground}
+  % Kopf-/Fusszeile fuer Titel
+  \setbeamertemplate{headline}{%
+    \vskip6.15mm%
+    \color{white}%
+    \setlength{\arrayrulewidth}{0.3pt}%
+    \begin{tabular*}{\paperwidth}[b]{l@{\extracolsep\fill}}
+      % TUD-Logos
+      \hspace*{3.0mm}%
+      \color{white}%
+      \includegraphics[height=7.81mm,draft=false]{\logo@front}%
+      \hspace*{6.96cm}
+      \includegraphics[height=7.81mm,draft=false]{\rosilogo@front}%
+      \\[1.2mm]\hline
+      \hspace*{11.76mm}%
+      \rule[-0.8mm]{0pt}{2.47mm}%
+      \def\@@dummyComma{}%
+      \rule{0pt}{5.8pt}%
+      \textbf{\@einrichtung }\ifx\@einrichtung\@empty\else\def\@@dummyComma{ }\fi%
+      \ifx\@fachrichtung\@empty%
+      \else%
+      \@@dummyComma\@fachrichtung%
+      \ifx\@institut\@empty\else\def\@@dummyComma{, }\fi%
+      \ifx\@professur\@empty\else\def\@@dummyComma{, }\fi%
+      \fi%
+      \ifx\@institut\@empty\else\@@dummyComma\@institut%
+      \ifx\@professur\@empty\else\def\@@dummyComma{, }\fi%
+      \fi%
+      \ifx\@professur\@empty\else\@@dummyComma\fi%
+      \@professur\\[-1pt]\hline
+    \end{tabular*}\hspace{-\paperwidth}%
+  }%
+  \setbeamertemplate{footline}{%
+    \parbox[t][9.63mm]{\paperwidth}{%  \parbox[t][9.63mm]{\paperwidth}{
+      \vspace*{-13.63mm}%
+      \rule{13.86mm}{0pt}%
+      \small%
+      \color{white}%
+      \insertdatecity%
+      \ifx\insertdatecity%
+      \empty%
+      \else%
+      \ifx\insertdate%
+      \empty%
+      \else%
+      , %
+      \fi%
+      \fi%
+      \insertdate%
+      \hfill%
+      \parbox[b][13mm]{13mm}{
+        \includegraphics[height=13mm,draft=false]{\conceptlogo@front}%
+      }
+    }
+    % \vspace{8mm}
+    % \includegraphics[height=9.63mm]{\conceptlogo@front}%
+  }%
+  \frame{\titlepage}%
+  % Kopf-/Fusszeilen fuer restliche Folien
+  \setbeamertemplates%
+}
+
+\setbeamertemplate{title page}{
+  \color{white}%
+  \vfill%
+  \usebeamerfont*{title}%
+  \vskip2ex plus1ex minus1ex%
+  \MakeUppercase{\inserttitle}%
+  % \inserttitle%
+  \vfill%
+  \ifx\insertsubtitle\empty%
+  \else%
+  \usebeamerfont*{subtitle}%
+  \insertsubtitle%
+  \vfill%
+  \fi%
+  \normalfont\large%
+  \insertauthor%
+  \vfill%
+  \vfill%
+}
+
+\newcommand{\beamersmall}{\fontsize{6}{6}\selectfont}
+
+\AtBeginDocument{\renewcommand{\@slide}{}}
+
+\newcommand{\slideMotivation}{%
+\begin{frame}
+%  \vspace*{-2cm}
+  \frametitle*{Motivation}
+  \framesubtitle{What is a Role?}
+  
+  \begin{minipage}{0.45\linewidth}
+   
+    \begin{itemize}
+    \item Modelling concept from OOP introduced by Bachman in 1973
+    \item Classification of roles with 26 \emph{Features} including identity, behaviour,
+      relationships, players, \dots{} and about Contexts and Constraints
+      {\tiny(\cite{KuLG-SLE14,Stei-DKE00})}
+    \end{itemize}
+  \end{minipage}\hfill
+  \begin{minipage}{0.5\linewidth}
+    \begin{tikzpicture}[cls/.style={draw,rectangle,minimum width=2cm,minimum height=5mm}]
+      \only<1-2>{\node[cls] (a) at (0,1.5) {\only<1>{Person}\only<2>{\textit{Customer}}};}
+      \only<3->{\node[cls] (a) at (-1.8,1.5) {Person};}
+      \only<3->{\node[cls] (b) at (1.8,1.5) {Company};}
+      \node[cls] (c) at (-1.8,0) {\only<1,3->{\textit{Customer}}\only<2>{Person}};
+      \node[cls] (d) at (1.8,0) {\only<1,3->{\textit{Supplier}}\only<2>{Company}};
+      \only<1->{\draw (c) -- (a) -- (d);}
+      \only<3->{\draw (c) -- (b) -- (d);}
+    \end{tikzpicture}
+  \end{minipage}
+
+\uncover<4->{
+\framesubtitle{Requirements for modern Software Systems:}
+
+\begin{minipage}{1.0\linewidth}
+  \begin{itemize}
+  \item Adaptability \only<5->{\alert{\qquad $\to$ \smash{Roles} allow for dynamic changes of the
+        system.}}
+  \item High expressiveness \only<5->{\alert{\qquad $\to$ Roles increase separation of
+        concerns.}}
+  \item Longevity \only<5->{\alert{\qquad $\to$ Roles enable updating running applications.}}
+  \end{itemize}
+\end{minipage}
+
+}
+  
+\end{frame}
+}
+
+\newcommand{\slideRoleBasedSystems}{%
+\begin{frame}
+  \frametitle*{\RBS}
+  \vspace*{-2ex}
+  \begin{itemize}
+  \item Software systems that use the notion of roles
+  \item Focus on: Compartment Role Object Model (CROM), {\tiny(\cite{KuLG-SLE14})}
+    \begin{itemize}
+    \item Well-defined semantical foundation {\tiny(\cite{KBG-SLE15})}
+    \end{itemize}
+  \end{itemize}
+  %
+  %\vfill
+  \only<2-4>{
+    \framesubtitle{Key properties of roles:}
+    \begin{itemize}
+    \item Roles depend on the context.
+    \item Contexts, `players' and roles themselves have each their own identity.
+    \item Roles change over time.
+    \end{itemize}
+  }
+  %
+  %\vfill
+  \only<3-4>{
+    \framesubtitle{Problems:}
+    \begin{itemize}
+    \item Large systems/models hard to comprehend
+    \item Modelling errors stay undetected \only<4>{\qquad\alert{$\rightarrow$ Logic-based
+          formalisms}}
+    \end{itemize}
+  }
+
+  \only<5>{
+    \begin{minipage}[t]{0.5\linewidth}
+      \fontsize{6.5}{7}\selectfont
+      \framesubtitle{Key properties of roles:}
+      \begin{itemize}
+      \item Roles depend on the context.
+      \item Contexts, `players' and roles themselves have each their own identity.
+      \item Roles change over time.
+      \end{itemize}
+    \end{minipage}%
+    \begin{minipage}[t]{0.5\linewidth}
+      \fontsize{6.5}{7}\selectfont
+      \framesubtitle{Problems:}
+      \begin{itemize}
+      \item Large systems/models hard to comprehend
+      \item Modelling errors stay undetected
+      \item[\follows] Logic-based formalisms
+      \end{itemize}
+    \end{minipage}
+    \vfill
+    \framesubtitle{Requirements on logical formalism}
+    \begin{itemize}
+    \item Decidable reasoning tasks
+    \item Express contexts, `players' and roles as formal objects
+    \item Model contexts and ternary relation of role-playing
+    \item Ability to handle \emph{rigid}, i.e.\ context-independent, knowledge
+    \end{itemize}
+    
+  }
+  
+  %\vfill
+\end{frame}
+}
+
+\newcommand{\slideWorkflow}{%
+\begin{frame}
+  \frametitle*{\hspace*{-14mm} \rlap{Workflow of Automated Analysis of Role-Based Models}}
+  \vspace*{0mm}
+  
+  \hspace*{-10mm}
+  \begin{tikzpicture}[node distance=2cm]
+    \node[label={[align=center, label distance=0mm]270:Banking\\application}] (bank) at (0,0)
+    {\includegraphics[width=13mm]{bank}};
+    \uncover<2->{
+    \node[label={270:Graphical notation of a CROM\\ and its formal representation},
+    box, inner ysep=0pt, minimum height=1.8cm] (crom) at (2,-3) {
+      \begin{tikzpicture}
+        \node at (0,0) {\includegraphics[width=2.0cm]{Bank-full-constraints}};
+        \node at (2.1,0)  {\includegraphics[width=1.3cm]{formalCROM}};
+        \draw (1.3,-0.7) to (1.3,0.7);
+      \end{tikzpicture}
+    };
+    \draw[edge2, shorten <=-5pt] (bank.330) to[bend left=15]
+      node[right,pos=0.5,align=center]{Graphical\\editor}(crom.125);
+    }
+    %
+    %
+    \uncover<3->{
+    \node[label={[align=center]270:Contextualized\\DL ontology}, box, minimum
+      height=1.0cm] (ontology) at (5.0,0.0) {\includegraphics[width=2.5cm]{ontology}};
+    \draw[edge2] (crom.60) to[bend left=15] node[left=1mm,pos=0.9,align=center]{Automated\\mapping}
+      (ontology.180);
+    }
+    % 
+    %
+    \uncover<4->{
+    \node[blur shadow={shadow blur steps=5}, inner sep=0pt, label={[align=center]270:JConHT
+      Reasoner}] (reasoner) at (7,-3)
+      {\includegraphics[width=2.0cm]{Protege-OWL}};
+    \draw[edge2] (ontology.330) to [bend left=5] node[left,pos=0.85,align=center]{Reasoning}
+      (reasoner.125);
+    }
+    % 
+    %
+    \uncover<5>{
+    \node[question, minimum height = 7mm] (q1) at (8.8,-1.1)
+      {\beamersmall \textbf{Inconsistencies?}};
+    \node[question]                       (q2) at (9.7,-2)
+      {\beamersmall Can specific role\\[-0.6ex] \beamersmall be played?};
+    \node[question]                       (q4) at (10.0,-3)
+      {\beamersmall Partial knowledge\\[-0.6ex] \beamersmall satisfiable?};
+    \node[question]                       (q3) at (9.8,-4)
+      {\beamersmall Are even stronger \\[-0.6ex] \beamersmall constraints entailed?};
+    %
+    \draw[edge] (reasoner) to (q1);
+    \draw[edge] (reasoner) to (q2);
+    \draw[edge] (reasoner) to (q3);
+    \draw[edge] (reasoner) to (q4);
+    }
+  \end{tikzpicture}
+\end{frame}
+}
+
+\newcommand{\slideOutline}[1]{%
+\begin{frame}
+  \frametitle*{\hspace*{-14mm} \rlap{Workflow of Automated Analysis of Role-Based Models}}
+  \vspace*{0mm}
+  
+  \hspace*{-10mm}
+  \begin{tikzpicture}[node distance=2cm]
+    \ifnum #1>0
+    \node[opacity=0.1,label={[opacity=0.1,align=center, label
+      distance=0mm]270:Banking\\application}] (bank) at (0,0) 
+    {\includegraphics[width=13mm]{bank}};
+    \node[opacity=0.1,label={[opacity=0.1]270:Graphical notation of a CROM\\ and its formal representation},
+    box, inner ysep=0pt, minimum height=1.8cm] (crom) at (2,-3) {
+      \begin{tikzpicture}
+        \node at (0,0) {\includegraphics[width=2.0cm]{Bank-full-constraints}};
+        \node at (2.1,0)  {\includegraphics[width=1.3cm]{formalCROM}};
+        \draw (1.3,-0.7) to (1.3,0.7);
+      \end{tikzpicture}
+    };
+    \draw[opacity=0.1,edge2, shorten <=-5pt] (bank.330) to[bend left=15]
+      node[right,pos=0.5,align=center]{Graphical\\editor}(crom.125);
+    \else
+    \node[label={[align=center, label distance=0mm]270:Banking\\application}] (bank) at (0,0)
+    {\includegraphics[width=13mm]{bank}};
+    \node[label={270:Graphical notation of a CROM\\ and its formal representation},
+    box, inner ysep=0pt, minimum height=1.8cm] (crom) at (2,-3) {
+      \begin{tikzpicture}
+        \node at (0,0) {\includegraphics[width=2.0cm]{Bank-full-constraints}};
+        \node at (2.1,0)  {\includegraphics[width=1.3cm]{formalCROM}};
+        \draw (1.3,-0.7) to (1.3,0.7);
+      \end{tikzpicture}
+    };
+    \draw[edge2, shorten <=-5pt] (bank.330) to[bend left=15]
+      node[right,pos=0.5,align=center]{Graphical\\editor}(crom.125);
+    \fi
+    %  
+    %
+    \ifnum #1<2
+    \node[label={[align=center]270:Contextualized\\DL ontology}, box, minimum
+    height=1.0cm] (ontology) at (5.0,0.0) {\includegraphics[width=2.5cm]{ontology}};
+    \else
+    \node[opacity=0.1,label={[opacity=0.1,align=center]270:Contextualized\\DL ontology}, box, minimum
+    height=1.0cm] (ontology) at (5.0,0.0) {\includegraphics[width=2.5cm]{ontology}};
+    \fi
+    %
+    \ifnum #1=2
+    \draw[edge2] (crom.60) to[bend left=15] node[left=1mm,pos=0.9,align=center]{Automated\\mapping}
+    (ontology.180);
+    \else
+    \ifnum #1=0
+    \draw[edge2] (crom.60) to[bend left=15] node[left=1mm,pos=0.9,align=center]{Automated\\mapping}
+    (ontology.180);
+    \else
+    \draw[opacity=0.1,edge2] (crom.60) to[bend left=15] node[left=1mm,pos=0.9,align=center]{Automated\\mapping}
+    (ontology.180);
+    \fi
+    \fi
+    % 
+    %
+    \ifnum #1>0
+    \ifnum #1<3
+    \node[opacity=0.1,blur shadow={shadow blur steps=5}, inner sep=0pt, label={[opacity=0.1,align=center]270:JConHT
+      Reasoner}] (reasoner) at (7,-3)
+      {\includegraphics[width=2.0cm]{Protege-OWL}};
+    \draw[opacity=0.1,edge2] (ontology.330) to [bend left=5] node[left,pos=0.85,align=center]{Reasoning}
+      (reasoner.125);
+    \node[opacity=0.1,question, minimum height = 7mm] (q1) at (8.8,-1.1)
+      {\beamersmall \textbf{Inconsistencies?}};
+    \node[opacity=0.1,question]                       (q2) at (9.7,-2)
+      {\beamersmall Can specific role\\[-0.6ex] \beamersmall be played?};
+    \node[opacity=0.1,question]                       (q4) at (10.0,-3)
+      {\beamersmall Partial knowledge\\[-0.6ex] \beamersmall satisfiable?};
+    \node[opacity=0.1,question]                       (q3) at (9.8,-4)
+      {\beamersmall Are even stronger \\[-0.6ex] \beamersmall constraints entailed?};
+    \draw[opacity=0.1,edge] (reasoner) to (q1);
+    \draw[opacity=0.1,edge] (reasoner) to (q2);
+    \draw[opacity=0.1,edge] (reasoner) to (q3);
+    \draw[opacity=0.1,edge] (reasoner) to (q4);
+    \else
+      \node[blur shadow={shadow blur steps=5}, inner sep=0pt, label={[align=center]270:JConHT
+      Reasoner}] (reasoner) at (7,-3)
+      {\includegraphics[width=2.0cm]{Protege-OWL}};
+    \draw[edge2] (ontology.330) to [bend left=5] node[left,pos=0.85,align=center]{Reasoning}
+    (reasoner.125);
+    \node[question, minimum height = 7mm] (q1) at (8.8,-1.1)
+      {\beamersmall \textbf{Inconsistencies?}};
+    \node[question]                       (q2) at (9.7,-2)
+      {\beamersmall Can specific role\\[-0.6ex] \beamersmall be played?};
+    \node[question]                       (q4) at (10.0,-3)
+      {\beamersmall Partial knowledge\\[-0.6ex] \beamersmall satisfiable?};
+    \node[question]                       (q3) at (9.8,-4)
+      {\beamersmall Are even stronger \\[-0.6ex] \beamersmall constraints entailed?};
+    \draw[edge] (reasoner) to (q1);
+    \draw[edge] (reasoner) to (q2);
+    \draw[edge] (reasoner) to (q3);
+    \draw[edge] (reasoner) to (q4);
+    \fi
+    \else
+    \node[blur shadow={shadow blur steps=5}, inner sep=0pt, label={[align=center]270:JConHT
+      Reasoner}] (reasoner) at (7,-3)
+      {\includegraphics[width=2.0cm]{Protege-OWL}};
+    \draw[edge2] (ontology.330) to [bend left=5] node[left,pos=0.85,align=center]{Reasoning}
+    (reasoner.125);
+    \node[question, minimum height = 7mm] (q1) at (8.8,-1.1)
+      {\beamersmall \textbf{Inconsistencies?}};
+    \node[question]                       (q2) at (9.7,-2)
+      {\beamersmall Can specific role\\[-0.6ex] \beamersmall be played?};
+    \node[question]                       (q4) at (10.0,-3)
+      {\beamersmall Partial knowledge\\[-0.6ex] \beamersmall satisfiable?};
+    \node[question]                       (q3) at (9.8,-4)
+      {\beamersmall Are even stronger \\[-0.6ex] \beamersmall constraints entailed?};
+    \draw[edge] (reasoner) to (q1);
+    \draw[edge] (reasoner) to (q2);
+    \draw[edge] (reasoner) to (q3);
+    \draw[edge] (reasoner) to (q4);
+    \fi
+  \end{tikzpicture}
+\end{frame}
+}
+
+\newcommand{\slideBankTikZ}{%
+\begin{frame}
+  \frametitle*{Running Example -- Banking Application}
+
+  \hspace*{-8mm}
+  \begin{tikzpicture}
+    %\grid{(0,0)}{(10,5)}
+    %
+    \tikzNatural{person}{1,1}{1.5cm}{Person}{name\\profession}{}
+    \tikzNatural{comp}{3,1}{1.5cm}{Company}{}{}
+    \tikzNatural{acc}{8.8,3}{1.5cm}{Account}{}{}
+    %
+    \uncover<2->{
+    \tikzContext{bank}{3.3,4}{0cm}{Bank}{
+      \uncover<3->{
+      \tikzRole{cons}{0.3,3}{1cm}{Consultant}{1..*}
+      \tikzRole{cus}{0.3,1.12}{1cm}{Customer}{0..*}
+      \tikzRole{monTra}{4,3}{1cm}{MoneyTransfer}{0..*}
+      \tikzRoleGroup{rg1}{4,1}{BankAccounts (1..1)}{
+        \tikzRole{ca}{0,0.6}{1cm}{CheckingAccount}{}
+        \tikzRole{sa}{0,0}{1cm}{SavingsAccount}{}
+      }{1..*}
+      }
+    }
+    \tikzContext{transaction}{8.8,5}{0cm}{Transaction}{
+      \uncover<3->{
+      \tikzRoleGroup{rg2}{0,0}{Participants (1..1)}{
+        \tikzRole{source}{0,0}{1cm}{Source}{}
+        \tikzRole{target}{3,0}{1cm}{Target}{}
+      }{1..1}
+      }
+    }
+    }
+    %
+    \uncover<4->{
+    \tikzFillsV{(person)}{(cus)}{0.4}
+    \tikzFillsV{(comp)}{(cus)}{0.4}
+    % \tikzFillsH{(person.180)}{(cons.180)}{-0.2}
+    \tikzFills{(transaction)}{(monTra)}
+    \tikzFills{(acc)}{(rg1)}
+    \tikzFills{(acc)}{(rg2)}
+    \draw[-triangle 60,thick] (person) -| ($(person)!0.5!(cons)+(-1.1,0)$) |- (cons);
+    }
+    % 
+    \uncover<5->{
+    \tikzRST{(source)}{(target)}{1..1}{trans}{1..1}{0.1}{above}{0.9}
+    \tikzRST{($(cons.south)+(-0.5,0)$)}{($(cus.north)+(-0.5,0)$)}{0..*}{advises}{1..*}{0.2}{right}{0.8}
+    \tikzRSTH{(cus.15)}{(monTra)}{1..1}{issues}{1..*}{shorten <=-3pt}
+    \tikzRST{(cus.0)}{(ca)}{1..1}{own\_ca}{0..*}{0.1}{above}{0.8}
+    \tikzRSTH{(cus.345)}{(sa)}{1..*}{own\_sa}{0..*}{shorten <=-3pt}
+    }
+    % 
+    %
+    %
+    \tikzNatural[legendgray]{nt}{8.5,1.7}{1.3cm}{\beamersmall Natural Type}{}{}
+    \tikzContext[legendgray]{ct}{8.5,0.7}{1.0cm}{\beamersmall Compartment Type}{
+      \tikzRole[legendgray]{rt}{0,0}{5mm}{\beamersmall Role Type}{Card}
+    }
+    \tikzRoleGroup[legendgray]{rg}{10.5,0.5}{\beamersmall Rolegroup (m..n)}{
+      \node{\smash{\hphantom{testtestte}}};
+    }{}
+    \coordinate (a) at (9.7,1.7);
+    \coordinate (b) at (10.1,1.7);
+    \draw[legendgray,thin, -triangle 60] (a) -- (b);
+    \node[legendgray] at (10.7,1.7){\beamersmall Fills-Relation};
+    \coordinate (c) at (9.7,1.2);
+    \coordinate (d) at (11.3,1.2);
+    \tikzRST[legendgray]{(c)}{(d)}{CardM}{RST}{CardN}{0.15}{above}{0.85}
+  \end{tikzpicture}
+\end{frame}
+}
+
+
+\newcommand{\slideJConHTEvaluation}{%
+\begin{frame}
+  \frametitle*{JConHT -- Evaluation}
+
+  \only<1>{%
+    \begin{itemize}
+    \item Randomly generated CROM instances
+      \begin{itemize}
+      \item based on parameter $n$
+      \item $n$ natural types, $n$ compartment types, for each compartment type $n$ role types
+      \end{itemize}
+    \item 3 different scenarios
+    \end{itemize}
+  }
+  
+  \only<2->{
+  \vspace*{-5mm}
+  
+  \begin{changemargin}{-30pt}{-20pt}
+  \begin{figure}[t]
+  \centering
+  \pgfmathsetmacro{\SCALE}{1}
+  \pgfmathsetmacro{\WIDTH}{0.42}
+  \pgfmathsetmacro{\HEIGHT}{0.42}
+  \uncover<2->{\subfloat[Variation of $\sharp$ RSTs.]{
+    \begin{tikzpicture}[scale=\SCALE]
+      \begin{axis}[ymode = log, ymin = 1, ymax = 3000,
+                   clip=false,
+                   width=\WIDTH\textwidth,
+                   height=\HEIGHT\textwidth,
+                   xtick = {5,10,15,20,25,30,35,40},
+                   xticklabel style = {yshift=-2mm},
+                   yticklabel style = {xshift=-2.5mm},
+                   legend columns = 3,
+                   legend style = {at={(0.5,-0.2)}, anchor=north}]
+        \addplot[mark=square*]   table [x=n, y=RST0-42,    col sep=comma] {./data/ScenarioI.csv};
+        \addplot[mark=triangle*] table [x=n, y=RSThalf-42, col sep=comma] {./data/ScenarioI.csv};
+        \addplot[mark=*]         table [x=n, y=RST1-42,    col sep=comma] {./data/ScenarioI.csv};
+        \legend{$0$,$\nicefrac{n}{2}$,$n$}
+        % 
+        \node[anchor = north east, yshift=4mm, xshift=5mm] at (yticklabel* cs:1) {$t$ in $s$};
+        \node[anchor = north east, xshift=3mm] at (xticklabel* cs:1) {$n$};
+        %
+        %\node[node] at(5,\Mean) {};
+      \end{axis}
+    \end{tikzpicture}%
+  }}%
+  \hfil%
+  \uncover<3->{\subfloat[Variation of $\sharp$ RGs.]{
+    \begin{tikzpicture}[scale=\SCALE]
+      \begin{axis}[ymode = log, ymin = 1, ymax = 3000,
+                   clip = false, 
+                   width=\WIDTH\textwidth,
+                   height=\HEIGHT\textwidth,
+                   xtick = {5,10,15,20,25,30,35,40},
+                   xticklabel style = {yshift=-2mm},
+                   yticklabel style = {xshift=-2.5mm},
+                   legend columns = 3,
+                   legend style = {at={(0.5,-0.2)}, anchor=north}]
+        \addplot[mark=square*]   table [x=n, y=RG0-42,    col sep=comma] {./data/ScenarioII.csv};
+        \addplot[mark=triangle*] table [x=n, y=Rghalf-42, col sep=comma] {./data/ScenarioII.csv};
+        \addplot[mark=*]         table [x=n, y=RG1-42,    col sep=comma] {./data/ScenarioII.csv};
+        \legend{$0$,$\nicefrac{n}{2}$,$n$}
+        % 
+        \node[anchor = north east, yshift=4mm, xshift=5mm] at (yticklabel* cs:1) {$t$ in $s$};
+        \node[anchor = north east, xshift=3mm] at (xticklabel* cs:1) {$n$};
+      \end{axis}
+    \end{tikzpicture}
+  }}%
+  \hfil%
+  \uncover<4->{\subfloat[Flat vs.\ nested CTs.]{
+    \begin{tikzpicture}[scale=\SCALE]
+      \begin{axis}[ymode = log, ymin = 1, ymax = 3000,
+                   clip = false,
+                   width=\WIDTH\textwidth,
+                   height=\HEIGHT\textwidth,
+                   xtick = {5,10,15,20,25,30,35,40},
+                   xticklabel style = {yshift=-2mm},
+                   yticklabel style = {xshift=-2.5mm},
+                   legend columns = 2,
+                   legend style = {at={(0.5,-0.2)}, anchor=north}]
+        \addplot[mark=square*] table [x=n, y=CT0-42, col sep=comma] {./data/ScenarioIII.csv};
+        \addplot[mark=*]       table [x=n, y=CT1-42, col sep=comma] {./data/ScenarioIII.csv};
+        \legend{$c=\bot$,$c=\top$}
+        % 
+        \node[anchor = north east, yshift=4mm, xshift=5mm] at (yticklabel* cs:1) {$t$ in $s$};
+        \node[anchor = north east, xshift=3mm] at (xticklabel* cs:1) {$n$};
+      \end{axis}
+    \end{tikzpicture}
+  }}
+  %
+  \caption{Average execution times of JConHT for benchmark ontologies.}
+\end{figure}
+\end{changemargin}}
+\end{frame}
+}
+
+
+\newcommand{\slideSyntaxSemanticsDL}{%
+\begin{frame}
+  \frametitle*{\alert<1-3>{Syntax} and \alert<4->{Semantics} of the DL \ALC}
+  Every consultant advises customers who own an checking account.\
+  %Every professor is a person that holds lectures and supervises student.\
+  \Alert{$\textsc{Consultant} \sqsubseteq \exists \mathsf{advises}.(\textsc{Customer} \sqcap \exists
+  \mathsf{own\_ca}.\textsc{CheckingAccount})$}\\[1ex]
+
+  Peter is a consultant.\qquad
+  \Alert{$\textsc{Consultant}(Peter)$}\\[1ex]
+
+  \only<2-3>{ \begin{tabularx}{\linewidth}{@{}l@{ \dots \ }l@{\hspace{1.5cm}}X@{}}
+    \alert{\NC} & concept names & $\textsc{Consultant}$, $\textsc{Customer}$, $\textsc{CheckingAccount}$\\
+    \alert{\NR} & DL role names & $\mathsf{advises}$, $\mathsf{own\_ca}$\\
+    \alert{\NI} & individual names & $Peter$\\
+  \end{tabularx}}
+
+  \only<3>{\vspace{1ex}
+  \begin{tabularx}{\linewidth}{@{}lX@{}}
+    \alert{concept constructors}: & $\Alert{C_{1} \sqcap C_{2}}$, $\Alert{C_{1} \sqcup C_{2}}$, $\Alert{\lnot C_{1}}$,
+    $\Alert{\exists r.C}$, $\Alert{\forall r.C}$\\
+    \alert{set of \ALC concepts}: & smallest set that is closed under \NC and the concept
+    constructors of \ALC\\[1ex]
+    \alert{General concept inclusion (GCI)}: & $\Alert{C \sqsubseteq D}$\\
+    \alert{assertion}: & $\Alert{C(a)}$, $\Alert{r(a,b)}$\\[1ex]
+    \alert{TBox}: & set of GCIs\\
+    \alert{ABox}: & set of assertions
+  \end{tabularx}}
+
+  \uncover<4->{
+  A \alert{DL interpretation \I} has a domain $\Delta^{\I}$ and maps 
+  \begin{itemize}
+  \item concept names $\Alert{A}$ to sets $A^{\I} \subseteq \Delta^{\I}$,
+  \item DL role names $\Alert{r}$ to binary relations $r^{\I} \subseteq \Delta^{\I} \times \Delta^{\I}$, and
+  \item individual names $\Alert{a}$ to elements $a^{\I} \in \Delta^{\I}$.
+  \end{itemize}}
+  \uncover<5->{
+  The \alert{semantics of the constructors} is defined as
+  \begin{itemize}
+  \item $(\Alert{C \sqcap D})^{\I} \coloneqq C^{\I} \cap D^{\I}$,
+  \item $(\Alert{\lnot C})^{\I} \coloneqq \Delta^{\I} \setminus C^{\I}$, and
+  \item $(\Alert{\exists r.C})^{\I} \coloneqq \{d \in \Delta^{\I} \mid \exists e.(d,e) \in r^{\I} \land e \in C^{\I}\}$
+  \end{itemize}}
+  \uncover<6->{
+  Interpretation \I is a \alert{model} of
+  \only<6>{\begin{itemize}
+  \item the GCI $\Alert{C\sqsubseteq D}$ iff $C^{\I} \subseteq D^{\I}$, and
+  \item the TBox \T iff it models all GCIs in \T.
+  \end{itemize}}
+  \only<7->{\begin{itemize}
+  \item the assertion $\Alert{C(a)}$ ($\Alert{r(a,b)}$) iff $a^{\I} \in C^{\I}$ ($(a^{\I},b^{\I}) \in r^{\I}$), and
+  \item the ABox \A iff it models all assertions in \A.
+  \end{itemize}}}
+
+\uncover<8>{\begin{tikzpicture}[overlay]
+    \node[node,label=180:{\tiny $Peter$},label=90:{\tiny \textsc{Consultant}}] (a) at ($(current page.east)+(-2.5,0.2)$) {};
+    \node[node,label=0:{\tiny \textsc{Customer}}] (b) at ($(a)+(0.7,-1.1)$) {};
+    \node[node,label=270:{\tiny \textsc{CheckingAccount}}] (c) at ($(a)+(-0.5,-2.5)$) {};
+    \draw[edge] (a) to node[pos=0.4,right]{\tiny $\mathsf{advises}$} (b);
+    \draw[edge] (b) to node[pos=0.5,left]{\tiny $\mathsf{onw\_ca}$} (c);
+  \end{tikzpicture}}
+
+\end{frame}
+}
+
+\newcommand{\slideThankYou}{%
+\begin{frame}[c]
+  \begin{center}
+    \Large Thank you for your attention!\\[2ex]
+    Any questions?
+  \end{center}
+\end{frame}
+}
+
+\newcommand{\slideReferences}{%
+\begin{frame}[t,allowframebreaks]
+  \frametitle*{References}
+  \printbibliography
+\end{frame}
+}
+
+
+\newcommand{\foo}[1]{%
+  \begin{tikzpicture}
+    \node[\ifnum #1<3 opacity=0.1, \fi node] {#1};
+  \end{tikzpicture}
+  \ifnum #1<2
+    true
+  \else
+    \ifnum #1>4
+      true
+    \else
+      false
+    \fi
+  \fi
+}
+
+\newcommand{\testOpak}[1]{%
+  \ifnum
+}
 
 \endinput
