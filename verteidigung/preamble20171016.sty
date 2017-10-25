@@ -2315,6 +2315,120 @@
 }
 
 
+\newcommand{\slideMappingExample}{%
+\begin{frame}
+  \frametitle*{Example of Mapping}
+
+  \hspace*{-8mm}
+  \begin{tikzpicture}
+    %\grid{(0,0)}{(10,5)}
+    %
+    \tikzNatural{person}{1,1}{1.5cm}{Person}{\beamersmall name\\ age\\[-1ex] profession}{}
+    \tikzNatural{comp}{3,1}{1.5cm}{Company}{}{}
+    \tikzNatural{acc}{8.8,3}{1.5cm}{Account}{}{}
+    %
+    \tikzContext{bank}{3.3,4}{0cm}{Bank}{
+      \tikzRole{cons}{0.3,3}{1cm}{Consultant}{1..*}
+      \tikzRole{cus}{0.3,1.12}{1cm}{Customer}{\only<1-4>{0..*}\only<5>{\textbf{\alert{\footnotesize 1..*}}}}
+      \tikzRole{monTra}{4,3}{1cm}{MoneyTransfer}{0..*}
+      \tikzRoleGroup{rg1}{4,1}{BankAccounts (1..1)}{
+        \tikzRole{ca}{0,0.6}{1cm}{CheckingAccount}{}
+        \tikzRole{sa}{0,0}{1cm}{SavingsAccount}{}
+      }{1..*}
+    }
+    \tikzContext{transaction}{8.8,5}{0cm}{Transaction}{
+      \tikzRoleGroup{rg2}{0,0}{Participants (1..1)}{
+        \tikzRole{source}{0,0}{1cm}{Source}{}
+        \tikzRole{target}{3,0}{1cm}{Target}{}
+      }{1..1}
+    }
+    %
+    \tikzFillsV{(person)}{(cus)}{0.4}
+    \tikzFillsV{(comp)}{(cus)}{0.4}
+    % \tikzFillsH{(person.180)}{(cons.180)}{-0.2}
+    \tikzFills{(transaction)}{(monTra)}
+    \tikzFills{(acc)}{(rg1)}
+    \tikzFills{(acc)}{(rg2)}
+    \draw[-triangle 60,thick] (person) -| ($(person)!0.5!(cons)+(-1.1,0)$) |- (cons);
+    % 
+    \tikzRST{(source)}{(target)}{1..1}{trans}{1..1}{0.1}{above}{0.9}
+    \tikzRST{($(cons.south)+(-0.5,0)$)}{($(cus.north)+(-0.5,0)$)}{0..*}{advises}{1..*}
+      {0.2}{right}{0.8} 
+    \tikzRSTH{(cus.15)}{(monTra)}{1..1}{issues}{1..*}{shorten <=-3pt}
+    \tikzRST{(cus.0)}{(ca)}{1..1}{own\_ca}{0..*}{0.1}{above}{0.8}
+    \tikzRSTH{(cus.345)}{(sa)}{1..*}{own\_sa}{0..*}{shorten <=-3pt}
+    % 
+    %
+    %
+    \tikzNatural[legendgray]{nt}{8.5,1.7}{1.3cm}{\beamersmall Natural Type}{}{}
+    \tikzContext[legendgray]{ct}{8.5,0.7}{1.0cm}{\beamersmall Compartment Type}{
+      \tikzRole[legendgray]{rt}{0,0}{5mm}{\beamersmall Role Type}{Card}
+    }
+    \tikzRoleGroup[legendgray]{rg}{10.5,0.5}{\beamersmall Rolegroup (m..n)}{
+      \node{\smash{\hphantom{testtestte}}};
+    }{}
+    \coordinate (a) at (9.7,1.7);
+    \coordinate (b) at (10.1,1.7);
+    \draw[legendgray,thin, -triangle 60] (a) -- (b);
+    \node[legendgray] at (10.7,1.7){\beamersmall Fills-Relation};
+    \coordinate (c) at (9.7,1.2);
+    \coordinate (d) at (11.3,1.2);
+    \tikzRST[legendgray]{(c)}{(d)}{CardM}{RST}{CardN}{0.15}{above}{0.85}
+  \end{tikzpicture}
+
+  \begin{tikzpicture}[remember picture, overlay]
+    \uncover<2->{
+      \node[fill=white,minimum width=8cm, minimum height=6cm, anchor=north east] (block) at
+      ($(current page.center)+(6,2)$) {
+        $\begin{aligned}
+          \uncover<2->{
+            \meta{\top} & \meta{\sqsubseteq\oax{\textsc{Consultant}\sqcup\textsc{Customer} \sqsubseteq
+                \exact{1}{\mathsf{counting}^{-}}{\{\delta\}}}} \\
+            \meta{\textsc{Bank}} & \meta{ \sqsubseteq
+              \oax{(\atleast{1}{\mathsf{counting}}{\textsc{Consultant}})(\delta)}}\\[1ex] 
+          }
+          \uncover<3->{
+            \meta{\textsc{Bank}} & \meta{\sqsubseteq\oax{\top\sqsubseteq\forall.advises.\textsc{Customer}}}\\
+            \meta{\textsc{Bank}} & \meta{\sqsubseteq
+              \oax{\textsc{Consultant}\sqsubseteq\atleast{1}{\mathsf{advises}}{\top}}}\\
+          }
+          \uncover<5>{
+            &\hspace*{2.5cm}\mathclap{\rule{6cm}{0.5pt}}\\
+            \meta{Bank} & \meta{ \sqsubseteq
+              \oax{(\atleast{1}{\mathsf{counting}}{\textsc{Customer}})(\delta)}}
+          }
+          %
+          \\[20ex]
+          \uncover<1>{blub}
+        \end{aligned}$
+      };
+      \fill[white,path fading=west]
+      ($(block.south west)+(0.05,0)$) rectangle ($(block.north west)+(-1,0)$);}
+  \end{tikzpicture}
+
+  \begin{tikzpicture}[remember picture, overlay]
+    \coordinate (O) at ($(current page.center)+(2,-2.7)$);
+    \uncover<2->{
+      \node[domain,label={[intlabel,text=TB2fg,inner sep=1pt]120:\llap{$c_{1}$, \textsc{Bank}\,}}]
+      (dom) at (O) {%
+        \begin{tikzpicture}
+          \node[node,label={[intlabel]$\delta$}] (delta) at (0,0) {};
+          \node[node,label={[intlabel]270:\textsc{Consultant}}] (consultant) at (-2,-1) {};
+          \draw[edge](delta) to[bend right=5]
+            node[intlabel,anchor=south east,font=\beamersmall]{counting} (consultant);
+          \uncover<4->{
+            \node[node,label={[intlabel]270:\textsc{Customer}}] (customer) at (2,-1) {};
+            \draw[edge] (consultant) to[bend right=5] node[above,intlabel]{advises} (customer);
+            \draw[edge](delta) to[bend left=5]
+              node[intlabel,anchor=south west,font=\beamersmall]{counting} (customer);
+          }
+        \end{tikzpicture}
+      };
+    }
+  \end{tikzpicture}
+\end{frame}
+}
+
 \endinput
 
 %%% TeX-master: verteidigung
