@@ -138,6 +138,7 @@
 \fi
 \usetikzlibrary{calc}
 \usetikzlibrary{trees}
+\usetikzlibrary{fadings}
 \usetikzlibrary{shapes}
 \usetikzlibrary{shadows}
 \usetikzlibrary{backgrounds}
@@ -667,7 +668,7 @@
   node/.style 2 args   = {circle, draw, fill=#2!50,inner sep=0pt, minimum width=#1,minimum height=0pt},
   node/.default        = {4pt}{black},
   role/.style          = {shorten <=3pt, shorten >=1pt,-{Latex[length=6pt 5 0, width'=0pt 0.5]}, TB1fg},
-  domain/.style n args = {3}{rectangle, draw, rounded corners=2mm, inner sep=#3, minimum width=#1, minimum height=#2},
+  domain/.style n args = {3}{rectangle, draw=hks_44_k_90, rounded corners=2mm, inner sep=#3, minimum width=#1, minimum height=#2,fill=hks_65_k_20!50},
   domain/.default      = {0cm}{0cm}{2pt},
   intlabel/.style      = {font=\footnotesize, label distance=0pt,text=TB1fg},
   crom/.style          = {draw=hks_44_k_100, fill=hks_44_k_10, star, inner sep=0pt, minimum
@@ -685,7 +686,7 @@
   outline/.style 2 args = {circle, draw=#1, fill=#1, align=center, minimum size=#2, text=white},
   outline edge/.style 2 args = {circle connection bar switch color=from (#1) to (#2)},
   %
-  contexts/.style arg = {rectangle, draw, rounded corners=2mm, label={#1:test}},
+  contexts/.style      = {rectangle, draw=hks_44_k_90, inner sep=4pt, fill=hks_44_k_10!30, rounded corners=2mm, label={#1:$\Cbb$}},
   contexts/.default     = {90}
 }
 
@@ -983,6 +984,7 @@
 %%% concept constructors for ALC and ALCQ %%%
 \newcommand{\atleast}[3]{\ensuremath{{\geqslant_{#1}}#2.#3}\xspace}
 \newcommand{\atmost}[3]{\ensuremath{{\leqslant_{#1}}#2.#3}\xspace}
+\newcommand{\exact}[3]{\ensuremath{{=_{#1}}#2.#3}\xspace}
 \let\origexists\exists
 \renewcommand{\exists}{\origexists\,}
 
@@ -991,7 +993,10 @@
 
 %%% concept constructors for ALC[[ALC]] %%%
 \newcommand{\oGCI}[1]{\llbracket #1\rrbracket}
-\newcommand{\oax}[1]{\ensuremath{\meta{\mathord{\left\llbracket\obj{#1}\right\rrbracket}}}}
+\NewDocumentCommand{\oax}{sm}{\ensuremath{%
+    \meta{\mathord{\left\llbracket\IfBooleanTF{#1}{#2}{\obj{#2}}\right\rrbracket}}}
+}
+%\newcommand{\oax}[1]{\ensuremath{\meta{\mathord{\left\llbracket\obj{#1}\right\rrbracket}}}}
 \newcommand{\oaxl}[1]{\ensuremath{\left\llbracket #1\right.}\xspace}
 \newcommand{\oaxr}[1]{\ensuremath{\left. #1\right\rrbracket}\xspace}
 \newcommand{\oalpha}{\ensuremath{\llbracket\alpha\rrbracket}\xspace}
@@ -1703,7 +1708,7 @@
   \begin{tikzpicture}
     %\grid{(0,0)}{(10,5)}
     %
-    \tikzNatural{person}{1,1}{1.5cm}{Person}{name\\profession}{}
+    \tikzNatural{person}{1,1}{1.5cm}{Person}{\beamersmall name\\ age\\[-1ex] profession}{}
     \tikzNatural{comp}{3,1}{1.5cm}{Company}{}{}
     \tikzNatural{acc}{8.8,3}{1.5cm}{Account}{}{}
     %
@@ -1891,8 +1896,7 @@
     constructors of \ALC\\[1ex]
     \alert{General concept inclusion (GCI)}: & $\Alert{C \sqsubseteq D}$\\
     \alert{assertion}: & $\Alert{C(a)}$, $\Alert{r(a,b)}$\\[1ex]
-    \alert{TBox}: & set of GCIs\\
-    \alert{ABox}: & set of assertions
+    \alert{\ALC-axiom}: & a GCI or an assertion\\
   \end{tabularx}}
 
   \uncover<4->{
@@ -1915,16 +1919,13 @@
   \item Test
   \item Test
   \end{itemize}}  
-  \only<6>{\begin{itemize}
+  \only<6->{\begin{itemize}
   \item the GCI $\Alert{C\sqsubseteq D}$ iff $C^{\I} \subseteq D^{\I}$, and
-  \item the TBox \T iff it models all GCIs in \T.
+  \item the assertion $\Alert{C(a)}$ ($\Alert{r(a,b)}$) iff $a^{\I} \in C^{\I}$ ($(a^{\I},b^{\I}) \in r^{\I}$).
   \end{itemize}}
-  \only<7->{\begin{itemize}
-  \item the assertion $\Alert{C(a)}$ ($\Alert{r(a,b)}$) iff $a^{\I} \in C^{\I}$ ($(a^{\I},b^{\I}) \in r^{\I}$), and
-  \item the ABox \A iff it models all assertions in \A.
-  \end{itemize}}}
+  }
 
-\uncover<8>{\begin{tikzpicture}[overlay]
+\uncover<7>{\begin{tikzpicture}[overlay]
     \node[node,label=180:{\tiny $Peter$},label=90:{\tiny \textsc{Consultant}}] (a) at ($(current page.east)+(-2.5,0.2)$) {};
     \node[node,label=0:{\tiny \textsc{Customer}}] (b) at ($(a)+(0.7,-1.1)$) {};
     \node[node,label=270:{\tiny \textsc{CheckingAccount}}] (c) at ($(a)+(-0.5,-2.5)$) {};
@@ -1956,38 +1957,39 @@
 
 \newcommand{\TikzIntuition}{
   \begin{tikzpicture}
-    \node[contexts{90}] {abc};
+    \node[contexts=160] {
+      \begin{tikzpicture}
+        \node[TB2fg,domain,label={[intlabel,text=TB2fg,inner sep=1pt]120:\llap{$c_{1}$, \textsc{Bank}\,}}] (bank) {%
+          \begin{tikzpicture}
+            \node[node,label={[intlabel]0:\textsc{Customer}}] (customer) {};
+            \node[node,label={[intlabel]0:\smash[b]{\textsc{SavingsAccount}}}, above = 10mm of customer] (sa) {};
+            \draw[role] (customer) to[bend right=10,pos=0.4] node[right,intlabel,inner sep=1pt]{own\_sa} (sa);
+            \node[node,label={[intlabel]0:\smash[b]{\textsc{MoneyTransfer}}}, below  = 10mm of customer] (mt) {};
+            \draw[role] (customer) to[bend left=10] node[right,intlabel]{issues} (mt);
+            \node[node,label={[intlabel]180:\textsc{Person}}, left = 2cm of customer] (person) {};
+            \draw[role] (person) to[bend left=10] node[above,intlabel]{plays} (customer);
+            \node[node,label={[intlabel,xshift=-4mm]90:$\textsc{Transaction'}$}, left = 2cm of mt] (transaction) {};
+            \draw[role] (transaction) to[bend left=10] node[pos=0.6,above,intlabel]{plays} (mt);
+            \node[node,label={[intlabel]180:\textsc{Account}}, left = 2cm of sa] (account) {};
+            \draw[role] (account) to[bend right=5,pos=0.5] node[above,intlabel]{plays} (sa);
+          \end{tikzpicture}
+        };
+        \node[TB2fg,domain, anchor=center,label={[intlabel,text=TB2fg,xshift=-10mm,inner sep=1pt]90:$c_{2}$, \textsc{Transaction}}, 
+        right = 5mm of bank, yshift=-5mm] (trans) {%
+          \begin{tikzpicture}
+            \node[node,label={[intlabel]90:\textsc{Account}}] (acc1) {};
+            \node[node,label={[intlabel]90:\textsc{Account}},below = 1cm of acc1] (acc2) {};
+            \node[node,label={[intlabel]0:\textsc{Source}},right = 2cm of acc1] (source) {};
+            \node[node,label={[intlabel]0:\textsc{Target}},right = 2cm of acc2] (target) {};
+            \draw[role] (acc1) to[bend left=10] node[below,intlabel]{plays} (source);
+            \draw[role] (acc2) to[bend left=10] node[above,intlabel]{plays} (target);
+            \draw[role] (source) to[bend left=10] node[right,intlabel]{trans} (target);
+          \end{tikzpicture}
+        };
+        \draw[role,draw=TB2fg] (bank.20) -| node[intlabel,text=TB2fg,above]{nested} (trans.60);
+      \end{tikzpicture}
+    };
   \end{tikzpicture}
-\begin{tikzpicture}
-  \node[TB2fg,domain,label={[intlabel,text=TB2fg,inner sep=1pt]120:\llap{$c_{1}$, \textsc{Bank}\,}}] (bank) {%
-    \begin{tikzpicture}
-      \node[node,label={[intlabel]0:\textsc{Customer}}] (customer) {};
-      \node[node,label={[intlabel]0:\smash[b]{\textsc{SavingsAccount}}}, above = 10mm of customer] (sa) {};
-      \draw[role] (customer) to[bend right=10,pos=0.4] node[right,intlabel,inner sep=1pt]{own\_sa} (sa);
-      \node[node,label={[intlabel]0:\smash[b]{\textsc{MoneyTransfer}}}, below  = 10mm of customer] (mt) {};
-      \draw[role] (customer) to[bend left=10] node[right,intlabel]{issues} (mt);
-      \node[node,label={[intlabel]180:\textsc{Person}}, left = 2cm of customer] (person) {};
-      \draw[role] (person) to[bend left=10] node[above,intlabel]{plays} (customer);
-      \node[node,label={[intlabel,xshift=-4mm]90:$\textsc{Transaction'}$}, left = 2cm of mt] (transaction) {};
-      \draw[role] (transaction) to[bend left=10] node[pos=0.6,above,intlabel]{plays} (mt);
-      \node[node,label={[intlabel]180:\textsc{Account}}, left = 2cm of sa] (account) {};
-      \draw[role] (account) to[bend right=5,pos=0.5] node[above,intlabel]{plays} (sa);
-    \end{tikzpicture}
-  };
-  \node[TB2fg,domain, anchor=center,label={[intlabel,text=TB2fg,xshift=-10mm,inner sep=1pt]90:$c_{2}$, \textsc{Transaction}}, 
-  right = 5mm of bank, yshift=-5mm] (trans) {%
-    \begin{tikzpicture}
-      \node[node,label={[intlabel]90:\textsc{Account}}] (acc1) {};
-      \node[node,label={[intlabel]90:\textsc{Account}},below = 1cm of acc1] (acc2) {};
-      \node[node,label={[intlabel]0:\textsc{Source}},right = 2cm of acc1] (source) {};
-      \node[node,label={[intlabel]0:\textsc{Target}},right = 2cm of acc2] (target) {};
-      \draw[role] (acc1) to[bend left=10] node[below,intlabel]{plays} (source);
-      \draw[role] (acc2) to[bend left=10] node[above,intlabel]{plays} (target);
-      \draw[role] (source) to[bend left=10] node[right,intlabel]{trans} (target);
-    \end{tikzpicture}
-  };
-  \draw[role,draw=TB2fg] (bank.20) -| node[intlabel,text=TB2fg,above]{nested} (trans.60);
-\end{tikzpicture}
 }
 
 \newcommand{\slideIntuitionLMLO}{%
@@ -2015,7 +2017,8 @@
       \meta{\textsc{Bank}} & \meta{\sqsubseteq \oax{\exists own\_sa.\top\sqsubseteq\textsc{Customer}}}\\
       \meta{\lnot\oax{(\textsc{Transaction'}\sqcap\exists plays.\top)\sqsubseteq\bot}} & \meta{\sqsubseteq \exists nested.\textsc{Transaction}} 
     \end{align*}
-    \vspace{-2.5mm}
+    \vspace*{-4.5mm}
+    
     \begin{nomargin}
     \begin{figure}[t]
     \centering
@@ -2077,11 +2080,10 @@
       & \uncover<4->{\phbracket$\only<7->{\alert{\mathllap{\J\models\ }}}E\sqsubseteq F$\tikz[baseline]{\node[coord] (c1){\vphantom{b}};}}\\
       & \uncover<4->{\phbracket$\only<7->{\alert{\mathllap{\J\models\ }}}E(c)$}\\[2ex]
     %
-      \only<7>{\LMLO-BKB\hspace{2.5em}\mbox{}}&
-      \uncover<5->{\uncover<5-6>{\llap{Boolean \LMLO knowledge base}}\phbracket$\only<7->{\alert{\mathllap{\J\models\ }}}$\B}%
+      \only<7>{\LMLO ontology\hspace{2.5em}\mbox{}}&
+      \uncover<5->{\uncover<5-6>{\llap{\LMLO ontology}}\phbracket$\only<7->{\alert{\mathllap{\J\models\ }}}$\B}%
       \tikz[baseline]{\node[coord] (c2){\vphantom{b}};}%
-      \uncover<5>{ \dots Boolean combination of m-axioms}\\
-    \multicolumn{2}{c}{\only<5>{(\DLouter = \EL $\Rightarrow$ only conjunction of m-axioms)}}\\
+      \uncover<5>{ \dots conjunction of m-axioms}\\
     \hphantom{Boolean \LMLO knowledge base} &
   \end{tabular}
   }
@@ -2094,12 +2096,14 @@
 \end{frame}
 }
 
-\newcommand{\slideComplexityResults}{%
+\newlength{\diagwidth}
+
+\NewDocumentCommand{\slideComplexityResults}{s}{%
 \begin{frame}
   \frametitle*{Complexity of Consistency Problem}
 
   \begin{changemargin}{-20pt}{-20pt}
-    \renewcommand{\arraystretch}{1.25} \newlength{\diagwidth}
+    \renewcommand{\arraystretch}{1.25}
     \setlength{\diagwidth}{\widthof{\meta{\ALC{}} -- \meta{\SHOQ}}}
     \begin{tabularx}{1.0\textwidth}[t]{c@{ }clC@{\ }C@{\ }C}
       \toprule
@@ -2151,7 +2155,11 @@
     \fill[ExpTime] (X2l|-Y1) -- (X2l|-Y2) -- (X1l|-Y2) -- (X1l|-Y4a) -- (X3r|-Y4a) -- (X3r|-Y1) -- cycle;
     \fill[NExpTime] (X4l|-Y1) -- (X4l|-Y4b) -- (X1l|-Y4b) -- (X1l|-Y5) -- (X4r|-Y5) -- (X4r|-Y1) -- cycle;
     \node[font=\beamersmall] at ($0.5*(X1l|-Y4b)+0.5*(X3r|-Y2)+(0.9,0.2)$) {\ExpTime-complete};
-    \node[align=center,font=\beamersmall] at ($0.5*(X4l|-Y5)+0.5*(X4r|-Y1)+(0.6,0)$) {\NExpTime-\\complete};
+    \IfBooleanTF{#1}{%
+      \node[align=center,font=\beamersmall] at ($0.5*(X4l|-Y5)+0.5*(X4r|-Y1)+(0.5,0)$) {\NExpTime-\\complete};
+    }{%
+      \node[align=center,font=\beamersmall] at ($0.5*(X4l|-Y5)+0.5*(X4r|-Y1)+(0.0,0)$) {\NExpTime-complete};
+    }
     % 
     \coordinate (Y6) at ($(rawY6)-(0,\eps)$);
     \coordinate (Y7) at ($(rawY7)-(0,\eps)$);
@@ -2176,12 +2184,137 @@
     \node[align=center,font=\beamersmall] at ($0.5*(X4l|-Y11)+0.5*(X4r|-Y15)$) {\TwoExpTime-hard\\ and\\
       in \TwoNExpTime};
     %
-    \node[crom,label={[font=\tiny, label distance=6pt,text=hks_44_k_100,rounded corners=0pt, inner
-      sep=0pt]90:CROM}] at 
-    ($0.5*(X4l|-Y5)+0.5*(X4r|-Y1)+(-0.4,0)$) {};
+    \IfBooleanTF{#1}{
+      \node[crom,label={[font=\tiny, label distance=6pt,text=hks_44_k_100,rounded corners=0pt, inner
+        sep=0pt]90:CROM}] at ($0.5*(X4l|-Y5)+0.5*(X4r|-Y1)+(-0.4,0)$) {};
+    }{}
   \end{tikzpicture}
 \end{frame}
 }
 
+\newcommand{\slideUpperBoundsLMLO}{%
+\begin{frame}
+  \frametitle*{Upper Bounds for \LMLO}
+  \setbeamercovered{transparent}
+  Idea: Split consistency problem into two separate decision problems
+  \begin{itemize}
+  \item \alert<1>{\emph{Outer consistency}}\uncover<2->{ with \X}
+  \item \alert<2>{\emph{Admissibility}}\uncover<2->{ of \X}
+  \end{itemize}
+
+  \only<1-2>{
+    \vspace{0mm}
+    \uncover<1>{Check whether meta level is consistent.}\\
+    \uncover<2>{Check whether the induced o-axioms are consistent.}
+    
+    \begin{minipage}[c]{0.49\linewidth}
+      \begin{align*}
+        \B_{ex} & = \meta{C\sqsubseteq \oax{A(a)}}\\
+                & \land \meta{(C\sqcap\oax{A\sqsubseteq\bot})(d)} \\
+                & \land \meta{(\exists r.\oax{A\sqsubseteq\bot})(d)}\\[2ex]
+        \uncover<2>{\X} & \uncover<2>{= \underbrace{\{\emptyset,\{\oax{A(a)}\},
+                          \{\oax{A\sqsubseteq\bot}\}\}}_{\alert{\{\oax{A(a)},\oax{A\sqsubseteq\bot}\}}\notin\X}}
+      \end{align*}
+    \end{minipage}
+    \begin{minipage}[c]{0.49\linewidth}
+      \centering
+      \begin{tikzpicture}
+        \node[contexts=100,minimum width=3.5cm] at (0,0){
+          \begin{tikzpicture}
+            \node[node,label={[nominwidth,inner sep=0pt,align=left]
+              270:\only<1>{\meta{$C$},\\ $\meta{A_{\oax*{A\sqsubseteq\bot}}}$,\\ $\meta{A_{\oax*{A(a)}}}$}%
+                  \only<2>{\meta{$C$},\\ $\meta{\oax{A\sqsubseteq\bot}}$,\\ $\meta{\oax{A(a)}}$}},
+            label={[nominwidth,inner sep=0pt]135:$d$}] (a) at (0,0){};
+            \node[node,label={[nominwidth,inner sep=0pt]
+              270:\only<1>{$\meta{A_{\oax*{A\sqsubseteq\bot}}}$}\only<2>{$\oax{A\sqsubseteq\bot}$}}] (b) at (1.5,0){};
+            \draw[edge](a) to[bend left=15] node[nominwidth,above,mylabel]{$r$} (b);
+          \end{tikzpicture}
+        };
+        \only<1>{\node[text=alertcolor,font=\huge,minimum width=8mm] at (2.5,0) {\cmark};}
+        \only<2>{\node[text=Alertcolor,font=\huge,minimum width=8mm] at (2.5,0) {\xmark};}
+      \end{tikzpicture}
+    \end{minipage}
+  }
+  \only<3>{
+    \begin{lemma}
+      The \LMLO ontology~$\Bmc$ is consistent iff there is a set \Xmc such that
+      \begin{enumerate}
+      \item \Xmc is admissible, and
+      \item the outer abstraction of \Bmc is outer consistent w.r.t.~\Xmc.
+      \end{enumerate}
+    \end{lemma}
+  }
+\end{frame}
+}
+
+
+\newcommand{\slideMapping}{%
+\begin{frame}
+  \frametitle*{Automated Mapping}
+
+  \vspace*{-3mm}
+  
+  \begin{tabularx}{\linewidth}{@{}llX}
+    Objective:                 & \multicolumn{2}{l}{Given a CROM \Mmc, construct an ontology $\Omc_{\Mmc}$ s.t.}\\
+                               & \multicolumn{2}{l}{\quad $\Omc_{\Mmc}$ consistent iff \Mmc satisfiable}\\[1ex]
+    \uncover<2->{General idea: & \textbullet\ Compartment types        & $\rightsquigarrow$ meta concepts\\
+                               & \textbullet\ Natural types            & $\rightsquigarrow$ (rigid) object concepts\\
+                               & \textbullet\ Fields of natural types  & $\rightsquigarrow$ (rigid) object DL roles\\}
+    \uncover<6->{              & \textbullet\ Role Types               & $\rightsquigarrow$ (non-rigid) object concepts\\
+                               & \textbullet\ plays-relation           & $\rightsquigarrow$ (non-rigid) object DL role\\
+                               & \textbullet\ Relationship types       & $\rightsquigarrow$ (non-rigid) object DL roles\\
+                               & \textbullet\ Occurrence constraints   & $\rightsquigarrow$ object
+                                                                         individual $\delta$, DL
+                                                                         role \hspace*{5mm} `counting'\\[1ex]}
+    \uncover<7>{Constraints:   & \textbullet\ without constraints      & $\rightsquigarrow$ \con{\ALC}{\ALCIQ}\\
+                               & \textbullet\ with occurrence constraints & $\rightsquigarrow$ \con{\ALC}{\ALCOIQ} \\
+                               & \textbullet\ full                     & $\rightsquigarrow$ \con{\ALC}{\SHOIQ}\\[1ex]
+                               & \textbullet\ current version of CROM  & $\rightsquigarrow$ no rigid DL roles
+                               needed\\
+                               & \textbullet\ additional constraints based \\
+                               & \quad on fields of natural type &
+                               \multirow{-2}{*}{$\rightsquigarrow$ rigid roles needed!}
+    }
+  \end{tabularx}
+
+  \begin{tikzpicture}[remember picture, overlay]
+    \uncover<3-5>{\node[domain,minimum height=1.9cm,anchor=north west] (dom) at ($(current page.center)+(-2,-1)$) {
+      \begin{tikzpicture}
+        \node[node, label={[nominheight,label distance=0mm,xshift=-3mm,align=left,anchor=south
+          west,rounded corners=0pt]
+          \only<3,5>{\textsc{Person}}%
+          \only<4>{\textsc{Person},\\\textsc{Consultant}}}] (obj) at (0,0) {};
+        \node[node, label={[nominheight,label distance=0mm,font=\beamersmall]180:\textit{Peter}},
+          left = 2cm of obj,yshift=3mm] (name) {};
+        \node[node, label={[nominheight,label distance=0mm,font=\beamersmall]180:\textsc{BankClerk}},
+          left = 2cm of obj,yshift=-5mm] (prof) {};
+        \node[node, label={[nominheight,label distance=0mm,font=\beamersmall]180:35},
+          left = 2cm of obj,yshift=-1mm] (age) {};
+        %
+        \draw[edge] (obj) to[bend right=10] node[pos=0.9,nominheight,font=\beamersmall,
+          anchor=south west]{name} (name);
+        \draw[edge] (obj) to[bend right=10] node[pos=0.9,nominheight,font=\beamersmall,
+          anchor=south west]{age} (age);
+        \draw[edge] (obj) to[bend right=10] node[pos=0.8,nominheight,font=\beamersmall,
+          anchor=175]{profession} (prof);
+        %
+        \only<5>{
+          \node[node,label={[nominheight,label distance=0mm,xshift=-3mm,align=left,anchor=south
+            west,rounded corners=0pt]\textsc{Consultant}}] (role) at (2,0) {};
+          \draw[edge] (obj) to[bend right=15] node[nominsize,below]{plays} (role);
+        }
+      \end{tikzpicture}
+    };}
+  \uncover<3-5>{\draw[thin] ($(dom.west)+(-0.3,-1.7)$) -- ($(dom.west)+(-0.3,1.7)$);}
+  \uncover<3-5>{\tikzNatural{person}{$(dom.west)+(-1.7,-1)$}{1.5cm}{Person}{\beamersmall name\\ age\\[-1ex]
+      profession}{}}
+  \uncover<3-5>{\tikzRole{cons}{$(person)+(0,2)$}{1cm}{Consultant}{}
+    \tikzFills{(person)}{(cons)}}
+  \end{tikzpicture}   
+\end{frame}
+}
+
+
 \endinput
 
+%%% TeX-master: verteidigung
