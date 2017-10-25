@@ -666,13 +666,12 @@
   edgelabel/.style     = {above=3mm,font=\small, rounded corners=15pt},
   node/.style 2 args   = {circle, draw, fill=#2!50,inner sep=0pt, minimum width=#1,minimum height=0pt},
   node/.default        = {4pt}{black},
-  role/.style          = {shorten <=3pt, shorten >=3pt,-{Latex[length=6pt 5 0, width'=0pt 0.5]},
-                          line width = 2pt,TB1fg},
+  role/.style          = {shorten <=3pt, shorten >=1pt,-{Latex[length=6pt 5 0, width'=0pt 0.5]}, TB1fg},
   domain/.style n args = {3}{rectangle, draw, rounded corners=2mm, inner sep=#3, minimum width=#1, minimum height=#2},
-  domain/.default      = {0cm}{0cm}{6pt},
+  domain/.default      = {0cm}{0cm}{2pt},
   intlabel/.style      = {font=\footnotesize, label distance=0pt,text=TB1fg},
-  crom/.style          = {draw=TB2fg, fill=TB2bg, star, inner sep=0pt, minimum size=8mm, line width=3pt,
-                          outer sep=0pt, star point ratio = 2},
+  crom/.style          = {draw=hks_44_k_100, fill=hks_44_k_10, star, inner sep=0pt, minimum
+                          size=0.5mm, line width=3pt, outer sep=0pt, star point ratio = 2}, 
   %
   %
   coord/.style         = {anchor=base, inner sep=0pt},
@@ -681,9 +680,13 @@
   nominwidth/.style    = {minimum width=0pt},
   nominheight/.style   = {minimum height=0pt},
   nominsize/.style     = {nominheight, nominwidth},
+  mylabel/.style       = {nominsize,rounded corners=0pt},
   nominwidth/.style    = {minimum width=0pt},
   outline/.style 2 args = {circle, draw=#1, fill=#1, align=center, minimum size=#2, text=white},
   outline edge/.style 2 args = {circle connection bar switch color=from (#1) to (#2)},
+  %
+  contexts/.style arg = {rectangle, draw, rounded corners=2mm, label={#1:test}},
+  contexts/.default     = {90}
 }
 
 
@@ -888,7 +891,8 @@
 
 
 %%% Context DL names %%%
-\newcommand{\con}[2]{\ensureboldmath{#1}\textnormal{\ensuremath{\llbracket}}\ensureboldmath{#2}\ensuremath{\rrbracket}\xspace}
+\newcommand{\con}[2]{\meta{\ensureboldmath{#1}
+    \textnormal{\ensuremath{\llbracket}}\obj{\ensureboldmath{#2}}\ensuremath{\rrbracket}}\xspace}
 \newcommand{\ALCALC}{\con{\ALC}{\ALC}}
 \newcommand{\ALCOALC}{\con{\ALCO}{\ALC}}
 \newcommand{\SHOQSHOQ}{\con{\SHOQ}{\SHOQ}}
@@ -987,7 +991,7 @@
 
 %%% concept constructors for ALC[[ALC]] %%%
 \newcommand{\oGCI}[1]{\llbracket #1\rrbracket}
-\newcommand{\oax}[1]{\ensuremath{\mathord{\left\llbracket\obj{#1}\right\rrbracket}}}
+\newcommand{\oax}[1]{\ensuremath{\meta{\mathord{\left\llbracket\obj{#1}\right\rrbracket}}}}
 \newcommand{\oaxl}[1]{\ensuremath{\left\llbracket #1\right.}\xspace}
 \newcommand{\oaxr}[1]{\ensuremath{\left. #1\right\rrbracket}\xspace}
 \newcommand{\oalpha}{\ensuremath{\llbracket\alpha\rrbracket}\xspace}
@@ -1034,8 +1038,8 @@
 \newcommand{\meta}[1]{***ERROR***}
 
 \newcommand{\MetaSyntaxHighlightOn}{%
-  \renewcommand{\obj}[1]{\mathcolor{blue}{##1}}%
-  \renewcommand{\meta}[1]{\mathcolor{red}{##1}}%
+  \renewcommand{\obj}[1]{\mathcolor{hks_65_k_100}{##1}}%
+  \renewcommand{\meta}[1]{\mathcolor{hks_44_k_100}{##1}}%
 }
 \newcommand{\MetaSyntaxHighlightOff}{%
   \renewcommand{\obj}[1]{##1}
@@ -1253,6 +1257,11 @@
 %%% beamer stuff                                                             %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newcommand{\tikzmark}[2][]{%
+  \tikz[remember picture,overlay]\coordinate[#1](#2);%
+}
+
+\newcommand{\phbracket}{\ensuremath{\hphantom{\llbracket}}}
 
 % 41 44 36 33 57 65 07
 
@@ -1902,6 +1911,10 @@
   \end{itemize}}
   \uncover<6->{
   Interpretation \I is a \alert{model} of
+  \only<4-5>{\begin{itemize}
+  \item Test
+  \item Test
+  \end{itemize}}  
   \only<6>{\begin{itemize}
   \item the GCI $\Alert{C\sqsubseteq D}$ iff $C^{\I} \subseteq D^{\I}$, and
   \item the TBox \T iff it models all GCIs in \T.
@@ -1938,24 +1951,237 @@
 \end{frame}
 }
 
+\colorlet{TB2fg}{hks_44_k_100}
+\colorlet{TB1fg}{hks_65_k_100}
 
-\newcommand{\foo}[1]{%
+\newcommand{\TikzIntuition}{
   \begin{tikzpicture}
-    \node[\ifnum #1<3 opacity=0.1, \fi node] {#1};
+    \node[contexts{90}] {abc};
   \end{tikzpicture}
-  \ifnum #1<2
-    true
-  \else
-    \ifnum #1>4
-      true
-    \else
-      false
-    \fi
-  \fi
+\begin{tikzpicture}
+  \node[TB2fg,domain,label={[intlabel,text=TB2fg,inner sep=1pt]120:\llap{$c_{1}$, \textsc{Bank}\,}}] (bank) {%
+    \begin{tikzpicture}
+      \node[node,label={[intlabel]0:\textsc{Customer}}] (customer) {};
+      \node[node,label={[intlabel]0:\smash[b]{\textsc{SavingsAccount}}}, above = 10mm of customer] (sa) {};
+      \draw[role] (customer) to[bend right=10,pos=0.4] node[right,intlabel,inner sep=1pt]{own\_sa} (sa);
+      \node[node,label={[intlabel]0:\smash[b]{\textsc{MoneyTransfer}}}, below  = 10mm of customer] (mt) {};
+      \draw[role] (customer) to[bend left=10] node[right,intlabel]{issues} (mt);
+      \node[node,label={[intlabel]180:\textsc{Person}}, left = 2cm of customer] (person) {};
+      \draw[role] (person) to[bend left=10] node[above,intlabel]{plays} (customer);
+      \node[node,label={[intlabel,xshift=-4mm]90:$\textsc{Transaction'}$}, left = 2cm of mt] (transaction) {};
+      \draw[role] (transaction) to[bend left=10] node[pos=0.6,above,intlabel]{plays} (mt);
+      \node[node,label={[intlabel]180:\textsc{Account}}, left = 2cm of sa] (account) {};
+      \draw[role] (account) to[bend right=5,pos=0.5] node[above,intlabel]{plays} (sa);
+    \end{tikzpicture}
+  };
+  \node[TB2fg,domain, anchor=center,label={[intlabel,text=TB2fg,xshift=-10mm,inner sep=1pt]90:$c_{2}$, \textsc{Transaction}}, 
+  right = 5mm of bank, yshift=-5mm] (trans) {%
+    \begin{tikzpicture}
+      \node[node,label={[intlabel]90:\textsc{Account}}] (acc1) {};
+      \node[node,label={[intlabel]90:\textsc{Account}},below = 1cm of acc1] (acc2) {};
+      \node[node,label={[intlabel]0:\textsc{Source}},right = 2cm of acc1] (source) {};
+      \node[node,label={[intlabel]0:\textsc{Target}},right = 2cm of acc2] (target) {};
+      \draw[role] (acc1) to[bend left=10] node[below,intlabel]{plays} (source);
+      \draw[role] (acc2) to[bend left=10] node[above,intlabel]{plays} (target);
+      \draw[role] (source) to[bend left=10] node[right,intlabel]{trans} (target);
+    \end{tikzpicture}
+  };
+  \draw[role,draw=TB2fg] (bank.20) -| node[intlabel,text=TB2fg,above]{nested} (trans.60);
+\end{tikzpicture}
 }
 
-\newcommand{\testOpak}[1]{%
-  \ifnum
+\newcommand{\slideIntuitionLMLO}{%
+\begin{frame}
+  \frametitle*{Intuition of Contextualized DL \LMLO}
+  \only<1>{
+    \begin{itemize}
+      %\setlength{\itemsep}{1.5ex}
+    \item Two-dimensional, two-sorted description logic
+    \item \DLouter to describe knowledge \emph{about} contexts (meta level)
+    \item \DLinner to describe knowledge \emph{within} contexts (object level)
+    \item Contexts $\hat{=}$ possible worlds
+    \item Concepts, axioms of object logic are usual \DLinner concepts, axioms
+    \item Object axioms used as meta concepts
+      \begin{itemize}
+      \item $\underbrace{\oax{C\sqsubseteq D}}_{\mathclap{\text{meta concept}}}$ describes set of
+        worlds where $\underbrace{\obj{C\sqsubseteq D}}_{\mathclap{\text{object axiom}}}$ holds 
+      \end{itemize}
+    \end{itemize}
+  }
+  \only<2-3>{
+    \vspace{-5.5mm}
+    \begin{align*}
+      \meta{\textsc{Bank}} & \meta{\sqsubseteq \oax{\textsc{SavingsAccount}\sqsubseteq\atleast{1}{own\_sa^{-}}{\top}}}\\
+      \meta{\textsc{Bank}} & \meta{\sqsubseteq \oax{\exists own\_sa.\top\sqsubseteq\textsc{Customer}}}\\
+      \meta{\lnot\oax{(\textsc{Transaction'}\sqcap\exists plays.\top)\sqsubseteq\bot}} & \meta{\sqsubseteq \exists nested.\textsc{Transaction}} 
+    \end{align*}
+    \vspace{-2.5mm}
+    \begin{nomargin}
+    \begin{figure}[t]
+    \centering
+    \uncover<3>{\TikzIntuition}
+    \end{figure}
+    \end{nomargin}
+  }
+\end{frame}
+}
+
+\newcommand{\slideSyntaxSemanticsLMLO}{%
+\begin{frame}
+  \frametitle*{\alert<2-5>{Syntax} and \alert<6->{Semantics} of \LMLO}
+  %
+  \vspace{-1ex}
+  
+  {\renewcommand{\arraystretch}{1.1}
+  \begin{tabularx}{\textwidth}{@{}c@{}CC@{}}
+    \only<2-5>{&$\Osig=(\OC,\OR,\OI)$ & $\Msig=(\MC,\MR,\MI)$}%
+    \only<6->{&\multicolumn{2}{@{}l}{\alert<6>{Nested interpretation \smash{\JJ}}}} \\
+    %
+    \only<2-5>{&$\OCR\subseteq\OC$}%
+    \only<6->{&\multicolumn{2}{@{}l}{\qquad\textbullet\ $\smash{(\C,\cdot^{\J})}$ DL interpretation on meta level}}\\
+    %
+    \only<2-5>{&$\ORR\subseteq\OR$}%
+    \only<6->{&\multicolumn{2}{@{}l}{\qquad\textbullet\ $\smash{(\Delta,\cdot^{\I_{c}})}$ DL
+        interpretation on object level for each possible world}}\\
+    %
+    \only<6->{&\multicolumn{2}{@{}l}{\qquad\textbullet\ \smash{$x^{\I_{c}} = x^{\I_{d}}$ for all $c,d\in\C$, $x\in\OCR\cup\ORR\cup\OI$}}}
+  \end{tabularx}}
+  %
+  % 
+
+  \vspace*{-2ex}
+  {\renewcommand{\arraystretch}{1.1}
+  \centering
+  \begin{tabular}{@{}r@{ }l@{}}
+    \uncover<2->{object concept name} &
+      \uncover<2->{\phbracket$A\only<2-5>{\in\OC}\only<6->{\alert<6>{\smash{^{\I_{c}}\subseteq\Delta}}}$}\\
+    \uncover<2-7>{object concept}      & 
+      \uncover<2->{\phbracket$C\only<7->{\alert<7>{\smash{^{\I_{c}}\subseteq\Delta}}}$%
+        \only<2-5>{ (using constructors of \DLinner)}
+        \only<7->{ (acc. to semantics of \DLinner)}}\\[1ex]
+    %
+    \multirow{2}{*}{\only<2>{object axioms}\only<3-7>{\alert<3>{meta concepts}}} 
+      & \only<2>{\phbracket$C\sqsubseteq D$}%
+        \only<3->{$\alert<3>{\oax{C\sqsubseteq D}}\only<7->{\Alert{\smash{^{\J}\coloneqq \{c\in\C\mid\I_{c}\models C\sqsubseteq D\}}}}$}\\[0.3ex]
+      & \only<2>{\phbracket$C(a)$}%
+        \only<3->{$\alert<3>{\oax{C(a)}}\only<7->{\Alert{\smash{^{\J}\coloneqq \{c\in\C\mid\I_{c}\models C(a)\}}}}$}\\[0.3ex]
+    %
+    \uncover<4-7>{meta concept name}   &
+      \uncover<4->{\phbracket$B\only<4-5>{\in\MC}\only<6->{\alert<6>{\smash{^{\J}\subseteq\C}}}$}\\
+    \uncover<4-7>{meta concept}        & 
+      \uncover<4->{\phbracket$E\only<7->{\alert<7>{\smash{^{\J}\subseteq\C}}}$%
+        \only<4-5>{ (using constructors of \DLouter)}
+        \only<7->{ (acc. to semantics of \DLouter)}}\\
+    %
+    \multirow{2}{*}{\uncover<4-7>{meta axioms\only<7>{\hspace{2.5em}}}}
+      & \uncover<4->{\phbracket$\only<7->{\alert{\mathllap{\J\models\ }}}E\sqsubseteq F$\tikz[baseline]{\node[coord] (c1){\vphantom{b}};}}\\
+      & \uncover<4->{\phbracket$\only<7->{\alert{\mathllap{\J\models\ }}}E(c)$}\\[2ex]
+    %
+      \only<7>{\LMLO-BKB\hspace{2.5em}\mbox{}}&
+      \uncover<5->{\uncover<5-6>{\llap{Boolean \LMLO knowledge base}}\phbracket$\only<7->{\alert{\mathllap{\J\models\ }}}$\B}%
+      \tikz[baseline]{\node[coord] (c2){\vphantom{b}};}%
+      \uncover<5>{ \dots Boolean combination of m-axioms}\\
+    \multicolumn{2}{c}{\only<5>{(\DLouter = \EL $\Rightarrow$ only conjunction of m-axioms)}}\\
+    \hphantom{Boolean \LMLO knowledge base} &
+  \end{tabular}
+  }
+  \uncover<7->{\alert{\tikz[overlay]{
+    \coordinate (a) at ($(c1.north)+(0.1,0)$);
+    \coordinate (b) at (c2.south);
+    \coordinate (c) at ($(c2.south)+(1,0)$);
+    \draw[brace] (a) -- node[right,inner sep=6pt,pos=0.475]{standard entailment relation} ($(b)!(a)!(c)$);
+  }}}
+\end{frame}
+}
+
+\newcommand{\slideComplexityResults}{%
+\begin{frame}
+  \frametitle*{Complexity of Consistency Problem}
+
+  \begin{changemargin}{-20pt}{-20pt}
+    \renewcommand{\arraystretch}{1.25} \newlength{\diagwidth}
+    \setlength{\diagwidth}{\widthof{\meta{\ALC{}} -- \meta{\SHOQ}}}
+    \begin{tabularx}{1.0\textwidth}[t]{c@{ }clC@{\ }C@{\ }C}
+      \toprule
+      && \diagbox[width=\diagwidth,height=8mm]{\LM}{\LO}
+      & \tikzmark{X1l} \hfill \obj{\EL}    \hfill \tikzmark{X1r}
+      & \tikzmark{X2l} \hfill \obj{\ALC{}} -- \obj{\SHOQ} \hfill \tikzmark{X3r}
+      & \tikzmark{X4l} \hfill \obj{\SHOIQ} \hfill \tikzmark{X4r}\\
+      \midrule \noalign{\hbox{\tikzmark{rawY1}}}
+      \multirow{3}{*}{\rotatebox[origin=c]{90}{\textbf{no rigid}}} &
+                                                                     \multirow{3}{*}{\rotatebox[origin=c]{90}{\textbf{names}}}
+      & \meta{\EL}    & constant \\ \noalign{\hbox{\tikzmark{rawY2}}}
+      && \meta{\ALC{}} -- \meta{\SHOQ}   &          \\ \noalign{\hbox{\tikzmark{rawY4}}}
+      && \meta{\SHOIQ} &          \\ \noalign{\hbox{\tikzmark{rawY5}}}
+      \midrule \noalign{\hbox{\tikzmark{rawY6}}}
+      \multirow{3}{*}{\rotatebox[origin=c]{90}{\textbf{only rigid}}} &
+                                                                       \multirow{3}{*}{\rotatebox[origin=c]{90}{\textbf{concepts}}}
+      & \meta{\EL}    & constant \\ \noalign{\hbox{\tikzmark{rawY7}}}
+      && \meta{\ALC{}} -- \meta{\SHOQ}   &          \\ \noalign{\hbox{\tikzmark{rawY9}}}
+      && \meta{\SHOIQ} &          \\ \noalign{\hbox{\tikzmark{rawY10}}}
+      \midrule \noalign{\hbox{\tikzmark{rawY11}}}
+      \multirow{3}{*}{\rotatebox[origin=c]{90}{\textbf{with rigid}}} &
+                                                                       \multirow{3}{*}{\rotatebox[origin=c]{90}{\textbf{relations}}} 
+      & \meta{\EL}    & constant \\ \noalign{\hbox{\tikzmark{rawY12}}}
+      && \meta{\ALC{}} -- \meta{\SHOQ}   &          \\ \noalign{\hbox{\tikzmark{rawY14}}}
+      && \meta{\SHOIQ} &          \\ \noalign{\hbox{\tikzmark{rawY15}}}
+      \bottomrule
+    \end{tabularx}
+  \end{changemargin}
+
+  \begin{tikzpicture}[remember picture, overlay,
+    % colors for table of complexity results
+    ExpTime/.style = {black!8},
+    NExpTime/.style = {black!16},
+    2ExpTime/.style = {black!24},
+    N2ExpTime1/.style = {black!32},
+    N2ExpTime2/.style = {black!40},
+    theoremSE/.style = {text=black!80, font=\tiny, inner sep = 2pt, anchor = south east},
+    theoremNW/.style = {text=black!80, font=\tiny, inner sep = 2pt, anchor = north west},]
+    % 
+    
+    \pgfmathsetmacro{\eps}{0.03}
+    % 
+    \coordinate (Y1) at ($(rawY1)-(0,\eps)$);
+    \coordinate (Y2) at ($(rawY2)-(0,\eps)$);
+    %\coordinate (Y3) at ($(rawY3)+(0,0)$);
+    \coordinate (Y4a) at ($(rawY4)+(0,\eps)$);
+    \coordinate (Y4b) at ($(rawY4)-(0,\eps)$);
+    \coordinate (Y5) at ($(rawY5)+(0,\eps)$);
+    \fill[ExpTime] (X2l|-Y1) -- (X2l|-Y2) -- (X1l|-Y2) -- (X1l|-Y4a) -- (X3r|-Y4a) -- (X3r|-Y1) -- cycle;
+    \fill[NExpTime] (X4l|-Y1) -- (X4l|-Y4b) -- (X1l|-Y4b) -- (X1l|-Y5) -- (X4r|-Y5) -- (X4r|-Y1) -- cycle;
+    \node[font=\beamersmall] at ($0.5*(X1l|-Y4b)+0.5*(X3r|-Y2)+(0.9,0.2)$) {\ExpTime-complete};
+    \node[align=center,font=\beamersmall] at ($0.5*(X4l|-Y5)+0.5*(X4r|-Y1)+(0.6,0)$) {\NExpTime-\\complete};
+    % 
+    \coordinate (Y6) at ($(rawY6)-(0,\eps)$);
+    \coordinate (Y7) at ($(rawY7)-(0,\eps)$);
+    %\coordinate (Y8) at ($(rawY8)+(0,0)$);
+    \coordinate (Y10) at ($(rawY10)+(0,\eps)$);
+    \fill[NExpTime] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X3r|-Y10) -- (X3r|-Y6) -- cycle;
+    \fill[N2ExpTime1] (X4l|-Y6) -- (X4l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
+    \node[font=\beamersmall] at ($0.5*(X1l|-Y10)+0.5*(X3r|-Y7)+(0.5,-0.0)$) {\NExpTime-complete};
+    \node[align=center,font=\beamersmall] at ($0.5*(X4l|-Y6)+0.5*(X4r|-Y10)$) {\NExpTime-hard\\ and\\ in \TwoNExpTime};
+    % 
+    \coordinate (Y11) at ($(rawY11)-(0,\eps)$);
+    \coordinate (Y12) at ($(rawY12)-(0,\eps)$);
+    %\coordinate (Y13) at ($(rawY13)+(0,0)$);
+    \coordinate (Y14a) at ($(rawY14)+(0,\eps)$);
+    \coordinate (Y14b) at ($(rawY14)-(0,\eps)$);
+    \coordinate (Y15) at ($(rawY15)+(0,\eps)$);
+    \fill[2ExpTime] (X2l|-Y11) -- (X2l|-Y15) -- (X3r|-Y15) -- (X3r|-Y11) -- cycle;
+    \fill[NExpTime] (X1l|-Y12) -- (X1l|-Y15) -- (X1r|-Y15) -- (X1r|-Y12) -- cycle;
+    \fill[N2ExpTime2] (X4l|-Y11) -- (X4l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
+    \node[align=center,font=\beamersmall] at ($0.5*(X1l|-Y15)+0.5*(X1r|-Y12)$) {\NExpTime-\\complete};
+    \node[align=center,font=\beamersmall] at ($0.5*(X2l|-Y15)+0.5*(X3r|-Y11)$) {\TwoExpTime-\\complete};
+    \node[align=center,font=\beamersmall] at ($0.5*(X4l|-Y11)+0.5*(X4r|-Y15)$) {\TwoExpTime-hard\\ and\\
+      in \TwoNExpTime};
+    %
+    \node[crom,label={[font=\tiny, label distance=6pt,text=hks_44_k_100,rounded corners=0pt, inner
+      sep=0pt]90:CROM}] at 
+    ($0.5*(X4l|-Y5)+0.5*(X4r|-Y1)+(-0.4,0)$) {};
+  \end{tikzpicture}
+\end{frame}
 }
 
 \endinput
+
