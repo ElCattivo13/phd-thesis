@@ -156,6 +156,10 @@
 
 \RequirePackage{rosi-syntax-tikz}
 
+
+\RequirePackage{algorithm2e}
+\RequirePackage{setspace}
+
 %% The titling package provides the commands \thedate, \theauthor and
 %% \thetitle for later use, e.g. in the footer
 \ifpre@beamer\else\RequirePackage{titling}\fi
@@ -979,7 +983,10 @@
 \newcommand*{\oOnt}[1]{\@math{\Omc_{\!#1}}}
 \newcommand{\nnf}[1]{\mathsf{nnf}(#1)}
 \newcommand{\negnnf}{\mathord{\sim}}
+\newcommand{\Ap}{\@math{\A'}}
 
+\newcommand{\true}{\@math{\mathsf{true}}}
+\newcommand{\false}{\@math{\mathsf{false}}}
 
 %%% concept constructors for ALC and ALCQ %%%
 \newcommand{\atleast}[3]{\ensuremath{{\geqslant_{#1}}#2.#3}\xspace}
@@ -1775,20 +1782,33 @@
 
 \newcommand{\slideJConHTEvaluation}{%
 \begin{frame}
-  \frametitle*{JConHT -- Evaluation}
+  \frametitle*{Performance Evaluation}
+  \setbeamercovered{transparent}
 
-  \only<1>{%
+  \only<1-3>{%
     \begin{itemize}
-    \item Randomly generated CROM instances
+    \item<+-> Pseudo-random domain models of increasing complexity:
       \begin{itemize}
       \item based on parameter $n$
       \item $n$ natural types, $n$ compartment types, for each compartment type $n$ role types
       \end{itemize}
-    \item 3 different scenarios
+    \item<+-> 3 different scenarios
+      \begin{enumerate}
+      \item Number of (constrained) relationship types per compartment type
+      \item Number of role groups per compartment type
+      \item Whether or not compartments can play roles.
+      \end{enumerate}
+    \item<+-> Average execution time of JConHT
+      \begin{itemize}
+      \item Translation from CROM models into ontologies neglected
+      \item For each configuration 100 executions
+      \item Average time needed to decide consistency 
+      \end{itemize}
+
     \end{itemize}
   }
   
-  \only<2->{
+  \only<4->{
   \vspace*{-5mm}
   
   \begin{changemargin}{-30pt}{-20pt}
@@ -1821,7 +1841,7 @@
     \end{tikzpicture}%
   }}%
   \hfil%
-  \uncover<3->{\subfloat[Variation of $\sharp$ RGs.]{
+  \uncover<5->{\subfloat[Variation of $\sharp$ RGs.]{
     \begin{tikzpicture}[scale=\SCALE]
       \begin{axis}[ymode = log, ymin = 1, ymax = 3000,
                    clip = false, 
@@ -1843,7 +1863,7 @@
     \end{tikzpicture}
   }}%
   \hfil%
-  \uncover<4->{\subfloat[Flat vs.\ nested CTs.]{
+  \uncover<6->{\subfloat[Flat vs.\ nested CTs.]{
     \begin{tikzpicture}[scale=\SCALE]
       \begin{axis}[ymode = log, ymin = 1, ymax = 3000,
                    clip = false,
@@ -2426,6 +2446,82 @@
       };
     }
   \end{tikzpicture}
+\end{frame}
+}
+
+
+\newcommand{\slideAlgorithm}{%
+\begin{frame}
+  \frametitle*{Algorithm for Checking Consistency}
+
+  \vspace*{-3mm}
+  \IncMargin{1em}
+  \RestyleAlgo{ruled}
+  \setlength{\interspacetitleruled}{0pt}%
+  \setlength{\algotitleheightrule}{0pt}%
+  \begin{algorithm}[H]
+    % \small
+    \SetAlgoVlined
+    \setstretch{0.8}
+    \DontPrintSemicolon
+    \SetKwData{true}{true}
+    \SetKwData{false}{false}
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    % 
+    \Input{\SHOIQSHOIQ-ontology \Omc}\vspace{0.1ex}
+    \Output{\true if \Omc is consistent, \false otherwise}
+    % \BlankLine
+    % 
+    Preprocessing (results in $(\Cmc,\A)$):\;
+    \quad 1. Elimination of transitivity axioms, normalisation, clausification\;
+    \quad 2. Repletion of DL-clauses\;
+    % 
+    % \BlankLine
+    Let $(T,\lambda)$ be any derivation for $(\Cmc,\A)$.\;
+    $\Amf \coloneqq \{ \Ap \mid \text{there exists a leaf node in $(T,\lambda)$ that is labelled with \Ap}\}$\;
+    \For{$\Ap \in \Amf$}{
+      \If{\Ap is clash-free}{
+        \eIf{\Omc contains rigid names}{
+          \If{$\Kmc_{\mathsf{rig}}\coloneqq(\Omc_{\kern-0.3em\Ap}, \RO')$ is consistent}{
+            \vspace{0.0ex}\Return{\true}
+          }
+        }{
+          Let $\{c_{1},\dots,c_{k}\}$ be the individuals occurring in \Ap\;
+          \If{$\Kmc_{i}\coloneqq(\Omc_{c_{i}}, \RO)$ is consistent for all $1 \leq i \leq k$}{
+            \vspace{0.0ex}\Return{\true}
+          }
+        }
+      }
+    }
+    \Return{false}
+    % \caption{Algorithm for checking consistency with hypertableau}
+  \end{algorithm}
+  
+\end{frame}
+}
+
+\newcommand{\slideJConHTIntro}{%
+\begin{frame}
+  \frametitle*{JConHT -- A \SHOIQSHOIQ Reasoner}
+  \setbeamercovered{transparent}
+  
+  \begin{itemize}\itemsep8pt
+  \item<+-> \textbf{J}ava implemented \textbf{Con}textualized description logic reasoner based on
+    \textbf{H}ermi\textbf{T}/\textbf{H}yper\textbf{T}ableau
+  \item<+-> Utilize Lemma about separation of reasoning tasks
+    \begin{enumerate}
+    \item Check consistency of meta level
+    \item Check whether induced object axioms consistent
+    \end{enumerate}
+  \item<+-> Reuse existing, highly optimized reasoners
+    \begin{itemize}
+    \item Model-construction based reasoner necessary
+    \item Implemented in Java
+    \item Good performance on DL Consistency\\[2ex]
+    \item[\follows] HermiT as core reasoner
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 }
 
