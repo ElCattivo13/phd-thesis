@@ -1,6 +1,6 @@
 \RequirePackage{fix-tudscrfonts}
 
-\documentclass[t,nototalpages,useheader=false]{tudbeamer}
+\documentclass[t,nototalpages,useheader=false, draft]{tudbeamer}
 
 \usepackage[beamer,
             ocontsyntax=modal,
@@ -21,41 +21,38 @@
 
 \begin{document}
 
+\mathversion{intro}
 
-% \slideMotivation
-% \slideRoleBasedSystems
-% \slideWorkflow
-% \slideBankTikZ
+\slideMotivation
+\slideRoleBasedSystems
+\slideWorkflow
+\slideBankTikZ
 
-% \slideOutline{1}
-% \slideSyntaxSemanticsDL
-% \slideIntuitionLMLO
-% \slideSyntaxSemanticsLMLO
-% \slideComplexityResults
-% \slideUpperBoundsLMLO
+\mathversion{lmlo}
 
-% \slideOutline{2}
-% \slideMapping
-% \slideComplexityResults*
-% \slideMappingExample
+\slideOutline{1}
+\slideSyntaxSemanticsDL
+\slideIntuitionLMLO
+\slideSyntaxSemanticsLMLO
+\slideComplexityResults
+\slideUpperBoundsLMLO
+
+\mathversion{mapping}
+
+\slideOutline{2}
+\slideMapping
+\slideComplexityResults*
+\slideMappingExample
+
+\mathversion{jconht}
 
 \slideOutline{3}
 \slideJConHTIntro
 \slideAlgorithm
-
-\begin{frame}
-  \frametitle*{Repletion of DL-Clauses}
-
-  Needed to ensure ???
-  
-  \begin{definition}[Repletion]
-  Let \Cmc be a set of DL-clauses. The \alert{\textbf{repletion}} of \Cmc is obtained from \Cmc by adding the
-  DL-clause $\meta{\top \to \oax{\alpha}(x) \lor \oax{\lnot\alpha}(x)}$ for each o-axiom $\oax{\alpha}$
-  occurring in \Cmc.
-\end{definition}
-\end{frame}
-
+\slideRepletion
 \slideJConHTEvaluation
+
+\mathversion{normal}
 
 \slideThankYou
 \slideReferences

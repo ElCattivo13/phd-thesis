@@ -690,7 +690,8 @@
   outline/.style 2 args = {circle, draw=#1, fill=#1, align=center, minimum size=#2, text=white},
   outline edge/.style 2 args = {circle connection bar switch color=from (#1) to (#2)},
   %
-  contexts/.style      = {rectangle, draw=hks_44_k_90, inner sep=4pt, fill=hks_44_k_10!30, rounded corners=2mm, label={#1:$\Cbb$}},
+  contexts/.style      = {rectangle, draw=hks_44_k_90, inner sep=4pt, fill=hks_44_k_10!30, rounded
+    corners=2mm, label={[inner sep=0]#1:$\Cbb$}},
   contexts/.default     = {90}
 }
 
@@ -2524,6 +2525,74 @@
   \end{itemize}
 \end{frame}
 }
+
+\newcommand{\slideRepletion}{%
+\begin{frame}
+  \frametitle*{Repletion of DL-Clauses}
+
+  \vspace{-2ex}
+  \begin{align*}
+    \B_{\mathsf{ex}}   & \coloneqq \meta{\lnot C(s)} &
+    \uncover<2->{\A_{\mathsf{ex}}   & \coloneqq \{\meta{\lnot C(s)}\}} \\
+                     & \land \meta{\oax{\lnot B(a)}\sqsubseteq C} &
+    \uncover<2->{\Cmc_{\mathsf{ex}} & \coloneqq \{\meta{\oax{\lnot B(a)}(x) \to C(x)},}\\ 
+                     & \land \meta{\lnot C\sqsubseteq\oax{B\sqsubseteq\bot}} &
+     \uncover<2->{   & \hphantom{{}\coloneqq \{} \meta{\top\to
+                       C(x)\lor\oax{B\sqsubseteq\bot}(x)}\only<5->{,}\only<1-4>{\}}\\
+    \uncover<5->{& & & \hphantom{{}\coloneqq \{} \meta{\top\to \oax{B\sqsubseteq\bot}(x)\lor\oax{\lnot(B\sqsubseteq\bot)}(x)},\\
+    & & & \hphantom{{}\coloneqq \{} \meta{\top\to \oax{B(a)}(x)\lor\oax{\lnot B(a)}(x)}\}}}
+  \end{align*}
+
+  \vspace*{-5ex}
+
+  \hspace*{-0.05\linewidth}
+  \uncover<3->{\begin{minipage}[b]{0.4\linewidth}
+    \centering
+    \begin{tikzpicture}[label distance=2cm]
+      \node[node,
+        label={[intlabel]90:$\meta{s}$},
+        label={[align=left,anchor=north west,xshift=-3mm]270:$\meta{\lnot C}$,\\
+          $\meta{\oax{B\sqsubseteq\bot}}$\only<6->{,}\\
+          \only<6>{$\oax{B(a)}$}%
+          \only<7->{$\oax{\lnot B(a)}$,}\\
+          \only<7->{$\meta{C}$}}](pre){};
+      \draw[thin] ($(pre)+(0.9,-2)$) -- ($(pre)+(0.9,0.5)$);
+      \node[contexts=115, right = 1.0cm of pre,yshift=-1cm,inner sep=10,anchor=west]{
+        \begin{tikzpicture}
+          \node[domain,minimum width=1.5cm,minimum height = 1cm,label={[intlabel,inner
+            sep=1pt,text=hks_41_k_100]$\meta{s^{\J}}$, $\meta{\lnot C}$}]{
+            \begin{tikzpicture}
+              \node[node,label={[intlabel,nominsize,inner sep=1pt]$a$}](a){};
+              \only<1-5,7>{
+                \node[dashed,draw,right = 9mm of a,nominsize,minimum height=7mm,anchor=east]
+                {$\obj{B^{\I_{s}}}$};
+              }
+              \only<6>{
+                \node[dashed,draw,right = 9mm of a,nominsize,minimum height=7mm,minimum width=11mm,anchor=east]
+                {$\obj{B^{\I_{s}}}$};
+              }
+            \end{tikzpicture}
+          };
+        \end{tikzpicture}
+      };
+    \end{tikzpicture}
+  \end{minipage}}\hfill
+  \begin{minipage}[b]{0.6\linewidth}
+    \uncover<4->{\begin{definition}[Repletion]
+      Let \Cmc be a set of DL-clauses. The \alert{\textbf{repletion}} of \Cmc is obtained from \Cmc by adding the
+      DL-clause $\meta{\top \to \oax{\alpha}(x) \lor \oax{\lnot\alpha}(x)}$ for each o-axiom $\oax{\alpha}$
+      occurring in \Cmc.
+    \end{definition}}
+  \end{minipage}
+\end{frame}
+}
+
+
+\DeclareMathVersion{intro}
+\DeclareMathVersion{lmlo}
+\DeclareMathVersion{mapping}
+\DeclareMathVersion{jconht}
+
 
 \endinput
 
