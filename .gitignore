@@ -13,6 +13,12 @@
 *.tdo
 *.thm
 *.toc
+*.nav
+*.snm
 thesis.pdf
 thesis.synctex.gz(busy)
 auto/*
+/documents/auto/preamble-summary.el
+/documents/auto/kurzfassung.el
+/content/#adding-contextualized-concepts.tex#
+*.el
