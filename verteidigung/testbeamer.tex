@@ -1,0 +1,181 @@
+\RequirePackage{fix-tudscrfonts}
+
+\documentclass[t,final,nototalpages]{tudbeamer}
+
+\usepackage[beamer,
+            ocontsyntax=modal,
+            bibresource=../references.bib,
+            biblatex=true,
+            bibstyle=authoryear]{preamble20170104}
+
+
+%% defining colors
+\definecolor{skyblue}{rgb}{0.80, 0.80, 1.00}
+\definecolor{turquoise}{rgb}{0.00, 0.80, 0.60}
+\definecolor{gray}{gray}{0.59}
+\definecolor{darkgray}{gray}{0.40}
+
+\colorlet{text}{black!30!hks_41_k_100}
+\colorlet{frametitle}{gray}
+\colorlet{framesubtitle}{black}
+\colorlet{accent}{turquoise}
+\colorlet{alink}{skyblue}
+\colorlet{vlink}{lightgray}
+\colorlet{alert}{hks_07_k_100}
+\colorlet{titlebackground}{hks_41_k_100}
+
+\setbeamercolor{normal text}{fg=text}
+\setbeamercolor{structure}{fg=text}
+\setbeamercolor{alerted text}{fg=alert}
+\setbeamercolor{frametitle}{fg=frametitle}
+\setbeamercolor{framesubtitle}{fg=framesubtitle}
+
+
+\renewcommand*{\framesubtitle}[1]{\textcolor{frametitle}{\textbf{#1}}}
+
+\makeatletter
+
+%% logo
+
+\def\logo@front{TUDCDrosi/logo_weiss}
+\def\logo@default{TUDCDrosi/logo_blau}
+\ifx\pdfoutput\undefined%
+\else%
+  \ifx\pdfoutput\relax%
+  \else%
+    \ifcase\pdfoutput%
+    \else%
+      \def\logo@front{TUDCDrosi/TU_Logo_SW}%
+      \def\logo@default{TUDCDrosi/TU_Logo_SW}%
+    \fi%
+  \fi%
+\fi
+\def\conceptlogo@front{TUDCDrosi/DDC-weissf}
+\def\rosilogo@front{TUDCDrosi/rosi-inv}
+\def\rosilogo@default{TUDCDrosi/rosi}
+
+\renewcommand\maketitle{%
+  % \beamertemplateshadingbackground{darkblue}{darkblue}
+  \setbeamercolor{normal text}{bg=titlebackground}
+  % Kopf-/Fusszeile fuer Titel
+  \setbeamertemplate{headline}{%
+    \vskip6.15mm%
+    \color{white}%
+    \setlength{\arrayrulewidth}{0.3pt}%
+    \begin{tabular*}{\paperwidth}[b]{l@{\extracolsep\fill}}
+      % TUD-Logos
+      \hspace*{3.0mm}%
+      \color{white}%
+      \includegraphics[height=7.81mm,draft=false]{\logo@front}%
+      \hspace*{6.96cm}
+      \includegraphics[height=7.81mm,draft=false]{\rosilogo@front}%
+      \\[1.2mm]\hline
+      \hspace*{11.76mm}%
+      \rule[-0.8mm]{0pt}{2.47mm}%
+      \def\@@dummyComma{}%
+      \rule{0pt}{5.8pt}%
+      \textbf{\@einrichtung }\ifx\@einrichtung\@empty\else\def\@@dummyComma{ }\fi%
+      \ifx\@fachrichtung\@empty%
+      \else%
+      \@@dummyComma\@fachrichtung%
+      \ifx\@institut\@empty\else\def\@@dummyComma{, }\fi%
+      \ifx\@professur\@empty\else\def\@@dummyComma{, }\fi%
+      \fi%
+      \ifx\@institut\@empty\else\@@dummyComma\@institut%
+      \ifx\@professur\@empty\else\def\@@dummyComma{, }\fi%
+      \fi%
+      \ifx\@professur\@empty\else\@@dummyComma\fi%
+      \@professur\\[-1pt]\hline
+    \end{tabular*}\hspace{-\paperwidth}%
+  }%
+  \setbeamertemplate{footline}{%
+    \parbox[t][9.63mm]{\paperwidth}{%  \parbox[t][9.63mm]{\paperwidth}{
+      \vspace*{-13.63mm}%
+      \rule{13.86mm}{0pt}%
+      \small%
+      \color{white}%
+      \insertdatecity%
+      \ifx\insertdatecity%
+      \empty%
+      \else%
+      \ifx\insertdate%
+      \empty%
+      \else%
+      , %
+      \fi%
+      \fi%
+      \insertdate%
+      \hfill%
+      \parbox[b][13mm]{13mm}{
+        \includegraphics[height=13mm,draft=false]{\conceptlogo@front}%
+      }
+    }
+    % \vspace{8mm}
+    % \includegraphics[height=9.63mm]{\conceptlogo@front}%
+  }%
+  \frame{\titlepage}%
+  % Kopf-/Fusszeilen fuer restliche Folien
+  \setbeamertemplates%
+}
+
+\setbeamertemplate{title page}{
+  \color{white}%
+  \vfill%
+  \usebeamerfont*{title}%
+  \vskip2ex plus1ex minus1ex%
+  \MakeUppercase{\inserttitle}%
+  % \inserttitle%
+  \vfill%
+  \ifx\insertsubtitle\empty%
+  \else%
+  \usebeamerfont*{subtitle}%
+  \insertsubtitle%
+  \vfill%
+  \fi%
+  \normalfont\large%
+  \insertauthor%
+  \vfill%
+  \vfill%
+}
+% AtBeginDocument{
+%   \renewcommand{\@slide}{TEST}
+% }
+
+\makeatother
+
+
+\einrichtung{Institute of Theoretical Computer Science\ }
+\professur{Chair for Automata Theory}
+
+\title{Context Reasoning for Role-Based Models}
+\author{Stephan Böhme}
+\date{27.10.2017}
+\datecity{Dresden}
+
+\begin{document}
+
+\makeatletter
+\renewcommand{\@slide}{}
+\makeatother
+
+\begin{frame}
+  \frametitle*{Motivation}
+  \framesubtitle{What is a role?}
+ 
+\end{frame}
+
+\begin{frame}
+  \frametitle{Testfolie}
+  \cite{KuLG-SLE14}
+
+  \cite{KBG-SLE15}
+\end{frame}
+
+\end{document}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% reftex-default-bibliography: ("../references.bib")
+%%% End: 

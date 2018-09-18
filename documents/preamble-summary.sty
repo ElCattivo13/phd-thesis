@@ -1,0 +1,1572 @@
+% preamble-thesis.sty
+%
+% author: Stephan Böhme
+% used parts of preamble of PhD thesis of Marcel Lippmann
+%
+% collection of all packages, macros, etc to compile thesis.tex
+%
+% use: \usepackage[option1,option2=value2,...]{preamble-thesis}
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{preamble-summary}[2017/10/11]
+
+\RequirePackage{kvoptions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Declaration of options                                                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\SetupKeyvalOptions{family=pre,prefix=pre@}
+
+\DeclareBoolOption[false]{oldtikz}
+\DeclareBoolOption[false]{ownenv}
+\DeclareBoolOption[false]{coloredconcepts}
+\DeclareBoolOption[false]{ltablex}
+
+\DeclareStringOption[0.0em]{defindent}
+\DeclareStringOption[modal]{ocontsyntax}
+\DeclareStringOption[alphabetic]{bibstyle}
+\DeclareStringOption{bibresource}
+\DeclareStringOption[thesis]{pagestyle}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Processing options                                                                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ProcessKeyvalOptions*
+
+% needed later for string comparison
+\long\def\isequal#1#2{\pdf@strcmp{#1}{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% used packages                                                                        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+
+\RequirePackage{lmodern} % use latin modern as default font
+\RequirePackage[final,babel]{microtype} % character protrusion, font expansion, kerning
+%\RequirePackage{fixltx2e} fixltx2e is not required with releases after 2015
+
+%\RequirePackage[automark,headsepline]{scrpage2} % obsolete
+\RequirePackage[automark,draft=false]{scrlayer-scrpage}
+\RequirePackage{scrhack}
+
+\RequirePackage{xparse}
+
+\RequirePackage{amsmath}
+%\RequirePackage{amsfonts} %using mathdesign instead
+%\RequirePackage{amssymb}
+\RequirePackage{wasysym}
+\RequirePackage{stmaryrd} % needed for \llbracket
+\RequirePackage{pifont}   % for \cmark and \xmark
+
+\RequirePackage{url}
+\RequirePackage{xspace}
+\RequirePackage{verbatim}
+\RequirePackage[final]{graphicx}
+  \graphicspath{{./figures/}}
+
+\RequirePackage{setspace}
+\RequirePackage{etoolbox}
+
+
+\RequirePackage{enumitem}
+
+% Anpassung an Landessprache
+\RequirePackage[main=english,ngerman]{babel}
+% \shorthandon{"}
+% \defineshorthand{"-}{\babelhyphen{soft}}
+% \defineshorthand{"=}{\babelhyphen{hard}}
+% \babelhyphenation{non=de-ter-min-isti-cal-ly}
+
+\RequirePackage[style=british]{csquotes}
+
+\RequirePackage{tikz}
+  \usetikzlibrary{matrix}
+  \usetikzlibrary{automata}
+  \usetikzlibrary{positioning}
+  \usetikzlibrary{decorations}
+  \usetikzlibrary{decorations.pathmorphing}
+  \usetikzlibrary{decorations.pathreplacing}
+  \usetikzlibrary{through}
+  \usetikzlibrary{shadows}
+  \usetikzlibrary{patterns}
+  \usetikzlibrary{mindmap,trees}
+  \ifpre@oldtikz
+    \usetikzlibrary{arrows} % deprecated, see pgfmanual_v3.00.pdf, page 183
+  \else
+    \usetikzlibrary{arrows.meta} % only available since TikZ v3.00
+  \fi
+  \usetikzlibrary{calc}
+  \usetikzlibrary{trees}
+  \usetikzlibrary{shapes}
+  \usetikzlibrary{shadows}
+  \usetikzlibrary{backgrounds}
+\RequirePackage{pgfplots}
+  \usepgfplotslibrary{statistics}
+  \usepgfplotslibrary{external}
+  \usetikzlibrary{plotmarks}
+
+\RequirePackage{booktabs}
+\RequirePackage{multirow}
+% \RequirePackage{caption}[2008/08/24]
+\RequirePackage{caption}
+
+%\RequirePackage{upgreek} brings up LaTeX Error: Too many math alphabets used in version normal.
+%\RequirePackage{marvosym}
+
+%\RequirePackage[amsmath,amsthm,thmmarks]{ntheorem}
+\RequirePackage{amsthm} 
+\RequirePackage{thmtools}
+\RequirePackage{mathtools} 
+\RequirePackage{filecontents}
+\RequirePackage{calc}
+\RequirePackage[math]{blindtext}
+\RequirePackage{marginnote}
+\RequirePackage{tabularx}
+\RequirePackage{authblk}
+\RequirePackage{diagbox}
+%\RequirePackage{subcaption}
+\RequirePackage{titling} % for \thetitle, \thedate, ... used in footer
+\RequirePackage{layout} % for the amazing \layout-macro
+\RequirePackage{ifdraft}
+\RequirePackage[ddmmyyyy]{datetime}
+  \renewcommand{\dateseparator}{.}
+\RequirePackage{printlen}
+\RequirePackage{algorithm2e}
+\RequirePackage{soul}
+
+
+%% the silence package to suppress unwanted warnings
+% Remember: silence does not fix anything!
+\RequirePackage{silence}
+% http://tex.stackexchange.com/questions/23977/what-does-the-warning-about-moved-marginpar-mean
+\WarningFilter{latex}{Marginpar on page}
+
+
+\ifpre@ltablex
+  % http://tex.stackexchange.com/questions/115177/nested-tabularx-doesnt-work-with-ltablex
+  %
+  % DOES NOT WORK WITH NESTING
+  %
+  \let\tx@\TX@endtabularx
+  \def\restoretx{\let\TX@endtabularx\tx@}
+  \RequirePackage{ltablex}
+  \keepXColumns
+\fi
+
+\RequirePackage[
+  english,
+  colorinlistoftodos,
+  textsize=scriptsize,
+]{todonotes} % provides the commands \todo[inline]{}, \missingfigure \listoftodos,
+
+% %% to make todo work inside align
+% %% http://tex.stackexchange.com/a/132451/123973
+% \RequirePackage{marginnote}
+% \renewcommand{\@todonotes@drawMarginNoteWithLine}{%
+% \begin{tikzpicture}[remember picture, overlay, baseline=-0.75ex]%
+%     \node [coordinate] (inText) {};%
+% \end{tikzpicture}%
+% \marginnote[{% Draw note in left margin
+%     \@todonotes@drawMarginNote%
+%     \@todonotes@drawLineToLeftMargin%
+% }]{% Draw note in right margin
+%     \@todonotes@drawMarginNote%
+%     \@todonotes@drawLineToRightMargin%
+% }%
+% }
+
+\RequirePackage{nicefrac}
+\RequirePackage[subrefformat=parens,labelformat=parens,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+
+
+%\RequirePackage{textcomp} % Euro-Zeichen etc.
+%\RequirePackage{mathdots} % fuer \iddots
+\RequirePackage{mathrsfs} % for \mathscr{A} (math script font)
+%\RequirePackage{dsfont} % for \mathds{A} (math double stroke font) % produces Too many math alphabets used in version normal.
+\RequirePackage[scale=.9]{tgheros}
+\RequirePackage[bitstream-charter]{mathdesign}
+
+\RequirePackage[
+  final,
+  pdftex,
+  %pdfa,
+  unicode=true,
+  pdftoolbar=true,
+  bookmarks=true,
+  bookmarksopen=true,
+  bookmarksnumbered=false,
+  bookmarksopenlevel=1,
+  hyperfootnotes=false,
+  pdfdisplaydoctitle,
+  pdfpagelabels=true,
+  plainpages=false,
+  hidelinks,
+]{hyperref}
+\title{**NO TITLE SET**}
+\date{**NO DATE SET**}
+\author{**NO AUTHOR SET**}
+\AtEndPreamble{
+  \hypersetup{
+    pdftitle=\theauthor: \thetitle,
+    pdfauthor=\theauthor,
+    pdfsubject=\thetitle,
+    pdfkeywords=\thetitle
+  }
+}
+
+\RequirePackage[
+  backend=biber,
+  style=\pre@bibstyle,
+  sorting=nyt,
+  autocite=inline,
+  backref=true,
+  abbreviate=false,
+  minalphanames=3,
+  maxnames=99,
+  maxitems=99
+]{biblatex}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% font settings                                                                        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% https://tex.stackexchange.com/a/155208/123973
+% to avoid 'Too many math alphabets used in version normal.'
+\DeclareMathVersion{prelim}
+
+\DeclareFontFamily{OMS}{lmsy}{} %\skewchar\font48}
+\DeclareFontShape{OMS}{lmsy}{m}{n}{%
+    <-5.5>    s*[.925] lmsy5
+    <5.5-6.5> s*[.925] lmsy6
+    <6.5-7.5> s*[.925] lmsy7
+    <7.5-8.5> s*[.925] lmsy8
+    <8.5-9.5> s*[.925] lmsy9
+    <9.5->    s*[.925] lmsy10
+    }{}
+\DeclareFontShape{OMS}{lmsy}{b}{n}{%
+    <-6>  s*[.925] lmbsy5
+    <6-8> s*[.925] lmbsy7
+    <8->  s*[.925] lmbsy10
+    }{}
+\SetMathAlphabet{\mathcal}{normal}{OMS}{lmsy}{m}{n}
+\SetMathAlphabet{\mathcal}{prelim}{OMS}{lmsy}{m}{n}
+\SetMathAlphabet{\mathcal}{bold}{OMS}{lmsy}{b}{n}
+
+
+%% surpress warning for missing bold wasy symbols
+%% https://groups.google.com/forum/#!topic/de.comp.text.tex/3zf_GJmPkkc
+\wasyfamily
+\DeclareFontShape{U}{wasy}{b}{n}{%
+    <-10> ssub* wasy/m/n 
+    <10-> wasyb10
+  }{}
+
+%% similar for stmaryrd
+%% http://tex.stackexchange.com/questions/106714/stmaryrd-and-boldsymbol-avoid-warnings
+\SetSymbolFont{stmry}{bold}{U}{stmry}{m}{n}
+
+%% avoid font warning for italic textbullet (itemize inside definition)
+%% http://tex.stackexchange.com/questions/155604/itemize-under-sf-produce-a-font-warning
+\renewcommand{\textbullet}{\ensuremath{\bullet}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% bib settings                                                                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\patchcmd{\bibsetup}{\interlinepenalty=5000}{\interlinepenalty=10000}{}{}
+
+\renewcommand*{\finalnamedelim}{%
+    \ifnumgreater{\value{liststop}}{2}{\addcomma}{}%
+    \addspace\bibstring{and}\space}
+\renewcommand{\labelnamepunct}{\addcolon\space}
+\renewcommand{\intitlepunct}{\addspace}
+\DeclareFieldFormat[article]{volume}{\textbf{#1}}
+\DeclareFieldFormat[article]{number}{(#1)}
+\DeclareFieldFormat[report]{title}{\mkbibquote{#1}}
+\renewbibmacro*{event+venue+date}{%
+    \printfield{eventtitle}%
+    \ifboolexpr{%
+        test {\iffieldundef{venue}}
+        and
+        test {\iffieldundef{eventyear}}
+    }
+    {}
+    {\setunit{\addcomma\space}%
+        \printfield{venue}%
+        \setunit*{\addcomma\space}%
+        \printeventdate}%
+    \newunit}
+\renewbibmacro*{issue+date}{%
+    \setunit{\addcomma\space}%
+        \iffieldundef{issue}
+            {\usebibmacro{date}}
+            {\printfield{issue}%
+                \setunit*{\addspace}%
+                \usebibmacro{date}}%
+    \newunit}
+\renewbibmacro*{volume+number+eid}{%
+    \printfield{volume}%
+    \printfield{number}%
+    \setunit{\addcomma\space}%
+    \printfield{eid}%
+    \addcolon}
+
+\addbibresource{\pre@bibresource}
+\newcommand{\thebibresource}{\pre@bibresource}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% page style                                                                           %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\KOMAoptions{
+  paper=a4,
+  pagesize=auto,
+  fontsize=11pt,
+  %BCOR=0mm,
+  %DIV=13,
+  headsepline=true,
+  parskip=false,
+  captions=tableheading
+}
+%\recalctypearea
+
+% \newsavebox{\iotasunbox}
+% \savebox{\iotasunbox}{%
+% \tikz[overlay,scale=0.6, every node/.style={transform shape}]{%
+%   \coordinate (c) at ($(current page.north east)-(1.5,1.5)$);%
+%   \foreach \w in {0, 30, ..., 330} \draw ($(c)+(\w:4mm)$) -- ($(c)+(\w:7mm)$);%
+%   \node[circle,draw,inner sep=2] at (c){\large$\ddot\iota$};}%
+% }
+\newcommand{\iotasun}{%
+\tikz[overlay,scale=0.6, every node/.style={transform shape}]{%
+  \coordinate (c) at ($(current page.north east)-(1.5,1.5)$);%
+  \foreach \w in {0, 30, ..., 330} \draw ($(c)+(\w:4mm)$) -- ($(c)+(\w:7mm)$);%
+  \node[circle,draw,inner sep=2] at (c){\large$\ddot\iota$};}%
+}
+
+\@ifpackageloaded{scrlayer-scrpage}{
+\clearpairofpagestyles
+\ihead{\headmark}
+\chead*{\ifdraft{\iotasun}{}}
+\ohead{\pagemark}
+\ifoot{}
+\cfoot[\pagemark]{}
+\ofoot{}
+\lefoot*{\ifdraft{Draft: \today}{}}
+\lofoot*{\ifdraft{Draft: \today}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+}
+
+
+%% Spacing within itemize (using enumitem)
+% \setlist[itemize,1]{
+%   topsep=-0.5\baselineskip+6pt,
+%   itemsep=.1\baselineskip,
+%   parsep=.1\baselineskip
+% }
+% \setlength{\topsep}{1ex plus0.5ex minus0.5ex}
+\setlist[itemize]{itemsep=.1\baselineskip}
+\setlist[itemize]{parsep=.1\baselineskip}
+
+
+% \AtBeginDocument{%
+%   \abovedisplayskip=0.5\baselineskip
+%   \abovedisplayshortskip=1pt plus 1pt
+%   \belowdisplayskip=0.5\baselineskip
+%   \belowdisplayshortskip=3pt plus 1pt minus 1pt
+% }
+
+
+%% PENALTIES
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\relpenalty=10000
+\binoppenalty=10000
+
+
+%% change page margins locally, see
+%% http://www.tex.ac.uk/cgi-bin/texfaq2html?label=chngmargonfly
+%%
+%% DOES NOT UPDATE \textwidth
+\newenvironment{changemargin}[2]{%
+  \begin{list}{}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\leftmargin}{#1}%
+    \setlength{\rightmargin}{#2}%
+    \setlength{\listparindent}{\parindent}%
+    \setlength{\itemindent}{\parindent}%
+    \setlength{\parsep}{\parskip}%
+  }%
+  \item[]}{\end{list}}
+
+
+\allowdisplaybreaks
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% new environments                                                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%   \declaretheoremstyle[
+%     spaceabove = \@defstyleabovespace,
+%     spacebelow = \@defstylebelowspace,
+%     headfont   = \normalfont\bfseries,
+%     bodyfont   = \normalfont,
+%     headpunct  = {},
+%     postheadspace = \newline,
+%     notefont   = \normalfont\itshape,
+%     notebraces = {}{},
+%     headformat = \NAME\ \NUMBER :\NOTE
+%     ]{algstyle}
+
+
+\declaretheoremstyle[
+  spaceabove=\topsep,
+  spacebelow=\topsep,
+  headfont=\normalfont\bfseries,
+  notefont=\normalfont\bfseries,
+  postheadspace=1em,
+  bodyfont=\normalfont\itshape
+]{thmstyle}
+
+\declaretheorem[style=thmstyle,
+  qed=\ensuremath{\diamondsuit},
+  name=Definition]
+  {definition}
+
+\declaretheorem[
+  style=thmstyle,
+  qed=\ensuremath{\diamondsuit},
+  sibling=definition,
+  name=Example]
+  {example}
+
+\declaretheorem[
+  style=thmstyle,
+  qed=\ensuremath{\diamondsuit},
+  sibling=definition,
+  name=Theorem]
+  {theorem*}
+
+\declaretheorem[
+  style=thmstyle,
+  qed=\ensuremath{\diamondsuit},
+  sibling=definition,
+  name=Proposition]
+  {proposition*}
+
+\declaretheorem[
+  style=thmstyle,
+  sibling=definition,
+  name=Theorem]
+  {theorem}
+
+\declaretheorem[
+  style=thmstyle,
+  sibling=definition,
+  name=Proposition]
+  {proposition}
+
+\declaretheorem[
+  style=thmstyle,
+  sibling=definition,
+  name=Lemma]
+  {lemma}
+
+\declaretheorem[
+  style=thmstyle,
+  sibling=definition,
+  name=Corollary]
+  {corollary}
+
+\declaretheorem[
+  style=thmstyle,
+  sibling=definition,
+  name=Conjecture]
+  {conjecture}
+
+\declaretheoremstyle[
+  spaceabove=\topsep,
+  spacebelow=\topsep,
+  headfont=\normalfont\itshape,
+  notefont=\normalfont\itshape,
+  headpunct=.,
+  %postheadspace=1em,
+  bodyfont=\normalfont
+]{proofstyle}
+
+\let\proof\relax
+\declaretheorem[
+  style=proofstyle,
+  name=Proof,
+  qed=\qedsymbol,
+  numbered=no]
+  {proof}
+
+\declaretheoremstyle[
+  spaceabove=0.5\topsep,
+  spacebelow=0.5\topsep,
+  headfont=\normalfont\itshape,
+  notefont=\normalfont\itshape,
+  headpunct=,
+  bodyfont=\normalfont\itshape,
+  headformat=\underline{\smash{\NAME:}}]
+  {claimstyle}
+
+\declaretheoremstyle[
+  spaceabove=0pt,
+  spacebelow=0.5\topsep,
+  headfont=\normalfont\itshape,
+  notefont=\normalfont\itshape,
+  headpunct=,
+  bodyfont=\normalfont\itshape,
+  headformat=\underline{\smash{\NAME:}}]
+  {claimstylenotopsep}
+
+\declaretheorem[
+  style=claimstyle,
+  name=Claim,
+  numbered=no]
+  {claim}
+
+\declaretheorem[
+  style=claimstyle,
+  name=Proof,
+  numbered=no,
+  qed=\ensuremath{\diagup}]
+  {claimproof}
+
+\declaretheorem[
+  style=claimstylenotopsep,
+  name=Claim,
+  numbered=no]
+  {claimnotopsep}
+%\newenvironment{claim}[1]{\par\noindent\ul{\textit{Claim}:}\space#1}{}
+% \newenvironment{claimproof}[1]{\par\noindent\ul{\textit{Proof}:}\space#1}{\leavevmode\unskip\penalty9999
+%     \hbox{}\nobreak\hfill\quad\hbox{$\diagup$}}
+
+
+% no indentation after end of definitions and other environments
+\AfterEndEnvironment{definition}{\par\@afterindentfalse\@afterheading}
+\AfterEndEnvironment{proof}     {\par\@afterindentfalse\@afterheading}
+\AfterEndEnvironment{example}   {\par\@afterindentfalse\@afterheading}
+\AfterEndEnvironment{lemma}     {\par\@afterindentfalse\@afterheading}
+
+
+
+\colorlet{alertcolor}{red}
+\NewDocumentCommand{\alert}{O{alertcolor}m}{\textcolor{#1}{#2}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% tikzset                                                                              %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% macro to check for loaded TikZ libraries
+\def\IfTikzLibraryLoaded#1{%
+  \ifcsname tikz@library@#1@loaded\endcsname
+    \expandafter\@firstoftwo
+  \else
+    \expandafter\@secondoftwo
+  \fi
+}
+
+
+\tikzset{
+  every picture/.style={auto,remember picture},
+  every label/.style={minimum width=0pt,minimum height=0pt},
+  every node/.style={minimum width=0pt,minimum height=0pt},
+  node/.style 2 args={circle, draw, fill=#2!50,inner sep=0pt, minimum width=#1,minimum height=0pt},
+  node/.default={4pt}{black},
+  domain/.style n args={3}{rectangle, draw, rounded corners=2mm, inner sep=#3,minimum width=#1,minimum
+    height=#2},
+  domain/.default={0cm}{0cm}{1pt},
+  is/.style={inner sep=#1},
+  is/.default={1pt},
+  edge/.style={shorten <=3pt, shorten >=3pt},
+  coord/.style={anchor=base,inner sep=0pt},
+  brace/.style={decorate,decoration={brace,amplitude=4pt},thick},
+  wavy/.style={decorate,decoration,decoration={coil,aspect=0,amplitude=1.5pt,post length=2.1pt}},
+  nominwidth/.style={minimum width=0pt},
+  nominheight/.style={minimum height=0pt},
+  nominsize/.style={nominheight,nominwidth},
+  mylabel/.style={nominsize,rounded corners=0pt},
+  nominwidth/.style={minimum width=0pt},
+  outline/.style 2 args={circle,draw=#1,fill=#1,align=center,minimum size=#2,text=white},
+  outline edge/.style 2 args={circle connection bar switch color=from (#1) to (#2)},
+}
+
+
+\IfTikzLibraryLoaded{arrows}{
+  \tikzset{edge/.add style={}{-latex'}}
+}{}
+
+\IfTikzLibraryLoaded{arrows.meta}{
+  \tikzset{
+    >/.tip={Straight Barb[angle=45:1pt 3]},
+    ocont/.style={semithick,solid,black,->},
+    edge/.add style={}{-{Latex[length=6pt 5 0, width'=0pt 0.5]}}
+  }
+}{
+  \tikzset{
+    ocont/.style={thick,solid,black,-latex'},
+  }
+}
+
+
+\NewDocumentCommand{\grid}{smm}{%
+  \draw[\IfBooleanTF{#1}{white}{gray},thin] #2 grid #3;
+}
+
+\NewDocumentCommand{\pagegrid}{O{1cm}O{5mm}O{1cm}}{
+  \begin{tikzpicture}[remember picture,overlay,shift={(current page.center)}]
+    \draw[black!25,ultra thin,step=#1] (current page.south west) grid (current page.north east);
+    \draw[black!5, ultra thin, step=#2] (current page.south west) grid (current page.north east);
+    \foreach \p in {north,south,west,east,north west, north east, south west, south east}{
+      \node[draw=black!50,circle,minimum size=#3] at (current page.\p) {};
+    }
+  \end{tikzpicture}
+}
+
+\newcommand{\tikzmark}[2][]{%
+  \tikz[remember picture,overlay]\coordinate[#1](#2);%
+}
+
+%% PGFPlot settings
+
+%\tikzsetexternalprefix{figures/}
+%\tikzexternalize
+\pgfplotsset{compat=1.12}
+
+\pgfplotsset{
+  tick label style={
+    font=\footnotesize,
+  },
+  x tick label style={
+    %rotate=30
+  }
+}
+%\tikzset{external/force remake}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% used macros                                                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\AtBeginEnvironment{tabularx}{\small}
+
+
+%%% mathcolor - textcolor for mathmode so it does not destroy the spaces
+%%% from http://tex.stackexchange.com/questions/21598/how-to-color-math-symbols
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+
+
+
+%%% ensureboldmath macro %%%
+\newcommand{\@printencoding}{\protect\f@encoding}
+\newcommand{\@printfamily}{\protect\f@family{}}
+\newcommand{\@printseries}{\protect\f@series{}}
+\newcommand{\@printshape}{\protect\f@shape{}}
+\newcommand{\@printsize}{\protect\f@size{}}
+\newcommand{\@printfont}{\@printencoding,\@printfamily,\@printseries,\@printshape,\@printsize}
+\newcommand{\@printfontlong}{\curr@fontshape}
+
+\newcommand{\ensureboldmath}[1]{%
+  {%
+    %\@printfont % for debugging
+    \ifdefstring{\protect\f@series}{b}{%
+      \ensuremath{\boldsymbol{#1}}%
+    }{%
+      \ifdefstring{\f@series}{b}{%
+        \ensuremath{\boldsymbol{#1}}%
+      }{%
+        \ensuremath{#1}%
+      }%
+    }%
+  }%
+}%
+\newcommand{\@math}[1]{\ensureboldmath{#1}\xspace}
+
+
+%% Produces LaTeX Error: Too many math alphabets used in version normal.
+% good explanation:
+% http://tex.stackexchange.com/questions/40757/diagnosing-the-too-many-math-alphabets-error?newreg=70575bace1b14c7e85dabf89bdcdc78c
+% %%% Use varmathbb from txfonts without using the package %%%
+% % http://tex.stackexchange.com/questions/70368/body-text-affected-in-using-txfonts-package
+% \DeclareSymbolFont{lettersA}{U}{txmia}{m}{it}
+% \SetSymbolFont{lettersA}{bold}{U}{txmia}{bx}{it}
+% \DeclareFontSubstitution{U}{txmia}{m}{it}
+% \DeclareMathSymbol{\m@thbbch@rA}{\mathord}{lettersA}{129}
+% \DeclareMathSymbol{\m@thbbch@rB}{\mathord}{lettersA}{130}
+% \DeclareMathSymbol{\m@thbbch@rC}{\mathord}{lettersA}{131}
+% \DeclareMathSymbol{\m@thbbch@rD}{\mathord}{lettersA}{132}
+% \DeclareMathSymbol{\m@thbbch@rE}{\mathord}{lettersA}{133}
+% \DeclareMathSymbol{\m@thbbch@rF}{\mathord}{lettersA}{134}
+% \DeclareMathSymbol{\m@thbbch@rG}{\mathord}{lettersA}{135}
+% \DeclareMathSymbol{\m@thbbch@rH}{\mathord}{lettersA}{136}
+% \DeclareMathSymbol{\m@thbbch@rI}{\mathord}{lettersA}{137}
+% \DeclareMathSymbol{\m@thbbch@rJ}{\mathord}{lettersA}{138}
+% \DeclareMathSymbol{\m@thbbch@rK}{\mathord}{lettersA}{139}
+% \DeclareMathSymbol{\m@thbbch@rL}{\mathord}{lettersA}{140}
+% \DeclareMathSymbol{\m@thbbch@rM}{\mathord}{lettersA}{141}
+% \DeclareMathSymbol{\m@thbbch@rN}{\mathord}{lettersA}{142}
+% \DeclareMathSymbol{\m@thbbch@rO}{\mathord}{lettersA}{143}
+% \DeclareMathSymbol{\m@thbbch@rP}{\mathord}{lettersA}{144}
+% \DeclareMathSymbol{\m@thbbch@rQ}{\mathord}{lettersA}{145}
+% \DeclareMathSymbol{\m@thbbch@rR}{\mathord}{lettersA}{146}
+% \DeclareMathSymbol{\m@thbbch@rS}{\mathord}{lettersA}{147}
+% \DeclareMathSymbol{\m@thbbch@rT}{\mathord}{lettersA}{148}
+% \DeclareMathSymbol{\m@thbbch@rU}{\mathord}{lettersA}{149}
+% \DeclareMathSymbol{\m@thbbch@rV}{\mathord}{lettersA}{150}
+% \DeclareMathSymbol{\m@thbbch@rW}{\mathord}{lettersA}{151}
+% \DeclareMathSymbol{\m@thbbch@rX}{\mathord}{lettersA}{152}
+% \DeclareMathSymbol{\m@thbbch@rY}{\mathord}{lettersA}{153}
+% \DeclareMathSymbol{\m@thbbch@rZ}{\mathord}{lettersA}{154}
+% \ExplSyntaxOn
+% \NewDocumentCommand{\varmathbb}{m}
+% {
+%   \tl_map_inline:nn { #1 } { \use:c { m@thbbch@r##1 } }
+% }
+% \ExplSyntaxOff
+
+
+%%% Letters in mathcal,mathfrak,mathscr,mathds %%%
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1mc\endcsname{\@math{\mathcal{#1}}}} 
+\docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1mf\endcsname{\@math{\mathfrak{#1}}}} 
+\docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,%
+           a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}
+
+\@ifpackageloaded{mathrsfs}{
+  \renewcommand*{\do}[1]{%
+    \expandafter\newcommand\csname #1ms\endcsname{\@math{\mathscr{#1}}}} 
+  \docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+}{}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1sf\endcsname{\@math{\mathsf{#1}}}} 
+\docsvlist{A,B,  D,E,F,G,H,I,J,K,L,M,    P,Q,  S,T,U,V,W,X,Y,Z,
+           a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}
+
+\NewDocumentCommand{\Csf}{O{\I}}{\@math{\mathsf{C}^{#1}}}
+\NewDocumentCommand{\Nsf}{O{\I}}{\@math{\mathsf{N}^{#1}}}
+\NewDocumentCommand{\Osf}{O{\I}}{\@math{\mathsf{O}^{#1}}}
+\NewDocumentCommand{\Rsf}{O{\I}}{\@math{\mathsf{R}^{#1}}}
+
+
+\@ifpackageloaded{dsfont}{
+  \renewcommand*{\do}[1]{%
+    \expandafter\newcommand\csname #1ds\endcsname{\@math{\mathds{#1}}}} 
+  \docsvlist{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1bb\endcsname{\@math{\mathbb{#1}}}} 
+\docsvlist{A,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+\renewcommand{\Bbb}{\@math{\mathbb{B}}}
+
+
+%%% Numbers %%%
+\newcommand{\nat}{\@math{\mathbb{N}}}
+\newcommand{\natwz}{\@math{\mathbb{N}_0}}
+\newcommand{\natinf}{\@math{\mathbb{N}_\infty}}
+\newcommand{\integ}{\@math{\mathbb{Z}}}
+\newcommand{\rat}{\@math{\mathbb{Q}}}
+\newcommand{\real}{\@math{\mathbb{R}}}
+
+
+
+%%% To avoid ``invalid PDF token''
+\newcommand{\texpdf}[1]{\texorpdfstring{\csname #1\endcsname}{#1}}
+%% \texpdf{ALC} yields 'ALC' as PDF token and '\ALC' in the document
+
+%%% DL Names %%%
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1\endcsname{\@math{\mathcal{#1}}}}
+\docsvlist{ALCN,ALCNI,ALCHO,ALCHOIQ}
+
+\newcommand{\@DLhelper}[1]{\@math{\mathcal{#1}}}
+
+\newcommand{\ALC}{\@DLhelper{ALC}}
+\newcommand{\ALCI}{\@DLhelper{ALCI}}
+\newcommand{\ALCO}{\@DLhelper{ALC{\kern-.07em}O}}
+\newcommand{\ALCQ}{\@DLhelper{ALC{\kern-.14em}Q}}
+\newcommand{\ALCH}{\@DLhelper{ALC{\kern-.07em}H}}
+\newcommand{\ALCHI}{\@DLhelper{ALC{\kern-.07em}HI}}
+\newcommand{\ALCOI}{\@DLhelper{ALC{\kern-.07em}O{\kern-.02em}I}}
+\newcommand{\ALCIQ}{\@DLhelper{ALCI{\kern-.12em}Q}}
+\newcommand{\ALCOQ}{\@DLhelper{ALC{\kern-.07em}O{\kern-.12em}Q}}
+\newcommand{\ALCOIQ}{\@DLhelper{ALC{\kern-.07em}O{\kern-.02em}I{\kern-.12em}Q}}
+\newcommand{\SH}{\@DLhelper{S{\kern-.05em}H}}
+\newcommand{\SHO}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O}}
+\newcommand{\SHI}{\@DLhelper{S{\kern-.05em}HI}}
+\newcommand{\SHQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}Q}}
+\newcommand{\SHOQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.12em}Q}}
+\newcommand{\SHIQ}{\@DLhelper{S{\kern-.05em}HI{\kern-.12em}Q}}
+\newcommand{\SHOI}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.05em}I}}
+\newcommand{\SHOIQ}{\@DLhelper{S{\kern-.05em}H{\kern-.12em}O{\kern-.05em}I{\kern-.12em}Q}}
+\newcommand{\SROIQ}{\@DLhelper{S{\kern-.05em}R{\kern-.05em}O{\kern-.05em}I{\kern-.12em}Q}}
+
+\newcommand{\EL}{\@DLhelper{E{\kern-.12em}L}}
+\newcommand{\ELbot}{\@math{\smash{\mathcal{E{\kern-.12em}L}^\bot}}}
+\newcommand{\ELObot}{\@math{\smash{\mathcal{E{\kern-.12em}LO}^\bot}}}
+\newcommand{\FLzero}{\@math{\mathcal{F{\kern-.18em}L}_0}}
+
+
+\newcommand{\ALCD}[1]{\@math{\mathcal{ALC(#1)}}}
+\newcommand{\ALCOD}[1]{\@math{\mathcal{ALCO(#1)}}}
+\newcommand{\ALCID}[1]{\@math{\mathcal{ALCI(#1)}}}
+\newcommand{\ALCQD}[1]{\@math{\mathcal{ALCQ(#1)}}}
+\newcommand{\ALCND}[1]{\@math{\mathcal{ALCN(#1)}}}
+\newcommand{\DLlite}{{\fontfamily{cmr}\fontseries{m}\fontshape{it}\selectfont DL{-}Lite}\xspace}
+
+% \newcommand{\ALCH}{\ensureboldmath{\mathcal{ALC{\kern-.05em}H}}\xspace}
+% \newcommand{\ALCHQ}{\ensureboldmath{\mathcal{ALC{\kern-.05em}H{\kern-.12em}Q}}\xspace}
+
+
+
+
+%%% modal and temporal logics %%%
+\newcommand{\ML}{\@math{\mathcal{ML}}}
+\newcommand{\modalK}{\@math{\mathbf{K}}}
+\newcommand{\modalKn}{\@math{\mathbf{K_{n}}}}
+\newcommand{\modalKm}{\@math{\mathbf{K_{m}}}}
+\newcommand{\MLALC}{\@math{\mathcal{ML}_{\mathcal{ALC}}}}
+\newcommand{\LTL}{\@math{\mathrm{LTL}}}
+\newcommand{\CTL}{\@math{\mathrm{CTL}}}
+\newcommand{\HS}{\@math{\mathcal{HS}}}
+
+
+%%% Context DL names %%%
+\newcommand{\LM}{\@math{\mathcal{L}_\mathsf{M}}}
+\newcommand{\LO}{\@math{\mathcal{L}_\mathsf{O}}}
+
+\NewDocumentCommand{\@condl}{mmO{}}{%
+%\newcommand{\@condl}[2]{%
+  \ensureboldmath{#1}%
+  \textnormal{\ensuremath{\llbracket}}%
+  \ensureboldmath{#2}%
+  \ensuremath{\rrbracket}%
+  \ensureboldmath{^{#3}}%
+  \xspace%
+}
+
+\newcommand{\LMLO}{\@condl{\LM}{\LO}}
+\newcommand{\ALCALC}{\@condl{\ALC}{\ALC}}
+\newcommand{\ALCOALC}{\@condl{\ALCO}{\ALC}}
+\newcommand{\SHOQSHOQ}{\@condl{\SHOQ}{\SHOQ}}
+\newcommand{\SHOIQSHOIQ}{\@condl{\SHOIQ}{\SHOIQ}}
+\newcommand{\SHOIQSHOQ}{\@condl{\SHOIQ}{\SHOQ}}
+\newcommand{\SHIQSHIQ}{\@condl{\SHIQ}{\SHIQ}}
+\newcommand{\ELALC}{\@condl{\EL}{\ALC}}
+\newcommand{\ALCEL}{\@condl{\ALC}{\EL}}
+\newcommand{\SHOQEL}{\@condl{\SHOQ}{\EL}}
+\newcommand{\SHOIQEL}{\@condl{\SHOIQ}{\EL}}
+\newcommand{\SHOIQLO}{\@condl{\SHOIQ}{\LO}}
+\newcommand{\ELEL}{\@condl{\EL}{\EL}}
+\newcommand{\LMEL}{\@condl{\LM}{\EL}}
+\newcommand{\ELLO}{\@condl{\EL}{\LO}}
+\newcommand{\ELSHOIQ}{\@condl{\EL}{\SHOIQ}}
+\newcommand{\LMSHOIQ}{\@condl{\LM}{\SHOIQ}}
+\newcommand{\ALCSHOIQ}{\@condl{\ALC}{\SHOIQ}}
+
+\newcommand{\klarALC}{\@math{\ALC_{\!\ALC}}}
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname c#1\endcsname{\@condl{\csname #1\endcsname}{\csname #1\endcsname}}}
+\docsvlist{ALC,ALCO,ALCI,ALCOI,ALCQ,ALCN,ALCNI,ALCHO,ALCIQ,ALCOIQ,ALCHOIQ,SHQ,SHOQ,SHIQ,SHOIQ,SROIQ}
+
+\newcommand{\LMLOplus}{\@condl{\LM}{\LO}[+]}
+\newcommand{\ELALCplus}{\@condl{\EL}{\ALC}[+]}
+\newcommand{\ALCALCplus}{\@condl{\ALC}{\ALC}[+]}
+
+%%% temporal DL names %%%
+\newcommand{\ALCLTL}{\@math{\mathcal{\ALC}\text{-}{\LTL}}} % Marcel's and not the evil one!
+
+
+%%% sets of concept names, role names, individual names %%%
+\renewcommand*{\do}[1]{\expandafter\newcommand\csname #1sig\endcsname{\@math{\mathsf{#1}}}}
+\docsvlist{N,O,M}
+
+\renewcommand*{\do}[1]{\expandafter\newcommand\csname N#1\endcsname{\@math{\mathsf{N_{#1}}}}}
+\docsvlist{C,R,I,A,V}
+
+\newcommand{\NCR}{\ensuremath{\mathsf{N_{Crig}}}}
+\newcommand{\NRR}{\ensuremath{\mathsf{N_{Rrig}}}}
+
+\renewcommand*{\do}[1]{\expandafter\newcommand\csname O#1\endcsname{\@math{\mathsf{O_{#1}}}}}
+\docsvlist{C,R,I,A,V}
+
+\newcommand{\OCR}{\ensuremath{\mathsf{O_{Crig}}}}
+\newcommand{\OCF}{\ensuremath{\mathsf{O_{Cflex}}}}
+\newcommand{\ORR}{\ensuremath{\mathsf{O_{Rrig}}}\xspace}
+\newcommand{\ORF}{\ensuremath{\mathsf{O_{Rflex}}}\xspace}
+\newcommand{\OIR}{\ensuremath{\mathsf{O_{Irig}}}\xspace}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname M#1\endcsname{\@math{\mathsf{M_{#1}}}}}
+\docsvlist{C,R,I,A,V,O}
+
+
+%%% interpretations %%%
+\newcommand{\I}{\Imc}
+\newcommand{\IA}{\@math{\I_{\A}}}
+\newcommand{\J}{\Jmc}
+%\newcommand{\G}{\Gmc}
+\newcommand{\II}{\@math{\I=(\Delta^{\I},\cdot^{\I})}}
+\newcommand{\HH}{\@math{\Hmc=(\Delta^{\Hmc},\cdot^{\Hmc})}}
+\newcommand{\JJ}{\@math{\J=(\Cbb,\cdot^{\J},\Delta^{\J}{\kern-0.2em},(\cdot^{\I_c})_{c\in\Cbb})}}
+
+\newcommand{\KK}{\@math{\Kmc=(\T,\A,\RM,\RO)}}
+
+%%% mathcal letters (short macro) %%%
+\newcommand{\T}{\Tmc}
+\newcommand{\A}{\Amc}
+\newcommand{\Ap}{\@math{\A'}}
+\newcommand{\ZH}{\@math{\Zmc_{\Hmc}}}
+\newcommand{\B}{\Bmc}
+\newcommand{\Bmfex}{\@math{\Bmf_{\mathsf{ex}}}}
+\newcommand{\Bmcex}{\@math{\Bmc_{\mathsf{ex}}}}
+\newcommand{\Bmfbex}{\@math{\Bmf_{\mathsf{ex}}^{\bsf}}}
+\newcommand{\Omcb}{\@math{\Omc^{\bsf}}}
+
+
+%%% Role Boxes, temporal operators and outer abstractions %%%
+\newcommand{\RO}{\@math{\Rmc_{\Osig}}}
+\newcommand{\RM}{\@math{\Rmc_{\Msig}}}
+\newcommand{\Next}{\@math{\mathsf{X}}}
+\DeclareMathOperator{\until}{\mathsf{U}}
+\newcommand{\Bb}{\@math{\Bmc^{\bsf}}}
+\newcommand{\BB}{\@math{\Bmf=(\B,\RO,\RM)}}
+\newcommand{\Bmfb}{\@math{\Bmf^{\bsf}}}
+\newcommand{\BBb}{\@math{\Bmf^{\bsf}=(\Bb,\RM)}}
+\newcommand{\Jb}{\@math{\J^{\bsf}}}
+\newcommand{\ran}{\@math{\mathsf{ran}}}
+\newcommand{\dom}{\@math{\mathsf{dom}}}
+\newcommand{\im}{\@math{\mathsf{Im}}}
+
+\newcommand{\Cex}{\@math{\Cmc_{\mathsf{ex}}}}
+\newcommand{\Aex}{\@math{\A_{\mathsf{ex}}}}
+\newcommand{\CAex}{\@math{\left(\Cex, \Aex\right)}}
+
+\newcommand*{\oOnt}[1]{\@math{\Omc_{\!#1}}}
+\newcommand{\nnf}[1]{\mathsf{nnf}(#1)}
+\newcommand{\negnnf}{\mathord{\sim}}
+
+
+%%% concept constructors for ALC and ALCQ %%%
+\newcommand{\atleast}[3]{\ensuremath{{\geqslant_{#1}}#2.#3}\xspace}
+\newcommand{\atmost}[3]{\ensuremath{{\leqslant_{#1}}#2.#3}\xspace}
+% \let\origexists\exists
+% \renewcommand{\exists}{\origexists\,}
+
+
+%%% inequality relation for individuals if UNA is not assumed
+\DeclareMathOperator{\unaineq}{\smash{\mathord{\neq}\mathllap{\raisebox{1.2ex}{.}\hspace{0.3em}}}}
+
+%%% concept constructors for ALC[[ALC]] %%%
+\newcommand{\oGCI}[1]{\llbracket #1\rrbracket}
+\newcommand{\oax}[1]{\ensuremath{\mathord{\left\llbracket\obj{#1}\right\rrbracket}}}
+\newcommand{\oaxl}[1]{\ensuremath{\left\llbracket #1\right.}\xspace}
+\newcommand{\oaxr}[1]{\ensuremath{\left. #1\right\rrbracket}\xspace}
+\newcommand{\oalpha}{\ensuremath{\llbracket\alpha\rrbracket}\xspace}
+
+%%% o-context constructors for unrestricted ALC[[ALC]] %%%
+\NewDocumentCommand{\ocont}{mm}{(#1{\uparrow}#2)}
+\ifdefstring{\pre@ocontsyntax}{ams}{
+  \RenewDocumentCommand{\ocont}{mm}{#1{\uparrow^{#2}}}
+}{}
+\ifdefstring{\pre@ocontsyntax}{tikz}{
+  \newlength{\@uparrowheight}
+  \setlength{\@uparrowheight}{\heightof{A}}
+  \NewDocumentCommand{\tikz@uparrow}{}{\tikz[baseline=-0.0ex,x=1pt,y=1pt,transform canvas={scale=0.8*\heightof{A}/\@uparrowheight}]{
+      %\draw[ocont] (0,0) -- (0,1.1*\heightof{A});
+      \draw[ocont] (0,0) -- (0,10);
+    }}
+  \RenewDocumentCommand{\ocont}{mm}{#1\,{\tikz@uparrow}\,{}^{#2}}
+}{}
+\ifdefstring{\pre@ocontsyntax}{klar}{
+  \RenewDocumentCommand{\ocont}{smO{}m}{
+    % #1 (star)      : false -> exists, true -> for all
+    % #2 (mandatory) : o-concept
+    % #3 (optional)  : m-role
+    % #4 (mandatory) : m-concept
+    \IfBooleanTF{#1}
+      {[\mathbf{#4}]_{\mathbf{#3}} #2}
+      {\langle\mathbf{#4}\rangle_{\mathbf{#3}} #2}
+  }
+}{}
+\ifdefstring{\pre@ocontsyntax}{modal}{
+  \RenewDocumentCommand{\ocont}{smO{}m}{
+    % #1 (star)      : false -> exists, true -> for all
+    % #2 (mandatory) : o-concept
+    % #3 (optional)  : m-role
+    % #4 (mandatory) : m-concept
+    \IfBooleanTF{#1}
+      {\Box_{\mathbf{#3},\mathbf{#2}} #4}
+      {\Diamond_{\mathbf{#3},\mathbf{#2}} #4}
+  }
+}{}
+
+%%% Syntax highlighting for meta ans object concepts
+\newcommand{\obj}[1]{***ERROR***}
+\newcommand{\meta}[1]{***ERROR***}
+
+\newcommand{\MetaSyntaxHighlightOn}{%
+  \renewcommand{\obj}[1]{\mathcolor{blue}{##1}}%
+  \renewcommand{\meta}[1]{\mathcolor{red}{##1}}%
+}
+\newcommand{\MetaSyntaxHighlightOff}{%
+  \renewcommand{\obj}[1]{##1}
+  \renewcommand{\meta}[1]{##1}
+}
+
+\ifpre@coloredconcepts
+  \MetaSyntaxHighlightOn
+\else
+  \MetaSyntaxHighlightOff
+\fi
+
+%%% Hypertableau macros %%%
+\newcommand{\pruneABox}[2]{\@math{\mathsf{prune_{#1}(#2)}}}
+\newcommand{\prune}[2]{\pruneABox{#1}{#2}}
+\newcommand{\mergeABox}[2]{\@math{\mathsf{merge_{#1}(#2)}}}
+\newcommand{\CA}{\@math{(\Cmc,\A)}}
+\newcommand{\Ind}[1]{\@math{\mathsf{Ind}(#1)}}
+\NewDocumentCommand{\tail}{sm}{\@math{\mathsf{tail}\IfBooleanTF{#1}{'}{}(#2)}}
+\NewDocumentCommand{\ar}{m}{\@math{\mathsf{ar}(#1)}}
+\NewDocumentCommand{\trans}{m}{\@math{\mathsf{trans}(#1)}}
+\newcommand{\Ob}{\@math{\Omc^{\bsf}}}
+\newcommand{\Tb}{\@math{\Tmc^{\bsf}}}
+\newcommand{\Ab}{\@math{\Amc^{\bsf}}}
+\newcommand{\HTinput}{\@math{(\CM,\AM,\CO,\AO)}}
+\newcommand{\concat}{{\mskip2mu\mid\mskip2mu}}
+\newcommand{\JA}{\@math{\J_{\Ads}}}
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1M\endcsname{\@math{\csname #1mc\endcsname_{\Msig}}}}
+\docsvlist{C,I,A,T}
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1O\endcsname{\@math{\csname #1mc\endcsname_{\Osig}}}}
+\docsvlist{C,I,A}
+\newcommand{\muM}{\@math{\mu_{\Msig}}}
+\newcommand{\muO}{\@math{\mu_{\Osig}}}
+\newcommand{\lhs}{\@math{\mathsf{lhs}}}
+\newcommand{\rhs}{\@math{\mathsf{rhs}}}
+
+
+
+%%% Complexity classes %%%
+\newcommand{\@compclasshelp}[2][]{\mbox{\textsc{#2}}\xspace}
+\newcommand{\cclass}{\@compclasshelp{C}}
+\newcommand{\PTime}{\@compclasshelp{P}}
+\newcommand{\NP}{\@compclasshelp{NP}}
+\newcommand{\coNP}{\@compclasshelp{co\nobreakdash-NP}}
+\newcommand{\ExpTime}{\@compclasshelp{ExpTime}}
+\newcommand{\ExpTIME}{\@compclasshelp{ExpTime}}
+\newcommand{\EXPTime}{\@compclasshelp{ExpTime}}
+\newcommand{\TwoExpTime}{\@compclasshelp{2ExpTime}}
+\newcommand{\TwoEXPTime}{\@compclasshelp{2ExpTime}}
+\newcommand{\NExpTime}{\@compclasshelp{NExpTime}}
+\newcommand{\TwoNExpTime}{\@compclasshelp{N2ExpTime}}
+\newcommand{\TwoNEXPTime}{\@compclasshelp{N2ExpTime}}
+\newcommand{\PSpace}{\@compclasshelp{PSpace}}
+\newcommand{\NPSpace}{\@compclasshelp{NPSpace}}
+\newcommand{\ExpSpace}{\@compclasshelp{ExpSpace}}
+\newcommand{\TwoExpSpace}{\@compclasshelp{2ExpSpace}}
+\newcommand{\NExpSpace}{\@compclasshelp{NExpSpace}}
+\newcommand{\TwoNExpSpace}{\@compclasshelp{2NExpSpace}}
+
+% \newcommand{\ACzero}{\mbox{\ensuremath{\textsc{AC}^0}}\xspace}
+% \newcommand{\PTimeToNExpTime}{\mbox{\ensuremath{\textsc{P}^\textsc{NExpTime}}}\xspace}
+% \newcommand{\NPToNExpTime}{\mbox{\ensuremath{\textsc{NP}^\textsc{NExpTime}}}\xspace}
+% \newcommand{\coNPToNExpTime}{\mbox{\ensuremath{\textsc{co\nobreakdash-NP}^\textsc{NExpTime}}}\xspace}
+
+\newcommand{\transsf}{\@math{\mathsf{trans}}}
+\newcommand{\symm}{\@math{\mathsf{symm}}}
+
+
+
+\let\origblindtext\blindtext
+\RenewDocumentCommand{\blindtext}{o}{
+  \begin{otherlanguage}{ngerman}
+    \textcolor{gray}{\IfNoValueTF{#1}{\origblindtext}{\origblindtext[#1]}}
+  \end{otherlanguage}
+}
+\let\origblindlist\blindlist
+  \RenewDocumentCommand{\blindlist}{mo}{
+  \textcolor{gray}{\IfNoValueTF{#2}{\origblindlist{#1}}{\origblindlist{#1}[#2]}}
+}
+
+
+%%% miscellaneous math macros %%%
+\renewcommand{\emptyset}{\varnothing}
+\newcommand{\powerset}[1]{
+  \ifmmode
+    \mathcal{P}(#1)
+  \else
+    \PackageError{preamble-thesis}{%
+      The command \protect\powerset\space is only
+      available in math mode
+    }{}
+  \fi
+}
+
+\newcommand{\restr}[2]{
+  \ifmmode
+    \left.#1\right|_{#2}
+  \else
+    \PackageError{preamble-thesis}{%
+      The command \protect\restr\space is only
+      available in math mode%
+    }{}
+  \fi
+}
+
+
+%%% miscellaneous text macros %%%
+\newcommand{\commented}[1]{{\leavevmode\color{lightgray}#1}}
+%\newcommand{\commented}[1]{\textcolor{lightgray}{#1}}
+\newcommand{\unsure}[1]{{\color{lorange} #1}}
+\newcommand{\suth}{\mbox{s.\,t.\ }}
+
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+%%% RoSI macros %%%
+\newcommand{\rosirole}{r\^ole\xspace}
+\newcommand{\Rosirole}{R\^ole\xspace}
+\newcommand{\rosiroles}{r\^oles\xspace}
+\newcommand{\Rosiroles}{R\^oles\xspace}
+\newcommand{\RBS}{\rosirole-based systems\xspace}
+
+
+
+
+
+%%% CROM macros %%%
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname A#1\endcsname{\@math{A_{\mathsf{\MakeUppercase{#1}}}}}}
+\docsvlist{rt,ct,rg}
+
+\newcommand{\Ant}{\@math{A_{\mathsf{O}}}}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1\endcsname{\@math{\mathsf{#1}}}}
+\docsvlist{fills,parts,rel,type,plays,links,occur,card,intra,counts,atom,nested}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1ass\endcsname{\@math{\mathsf{#1\_assert}}}}
+\docsvlist{play,link}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1bb\endcsname{\@math{\mathbb{#1}}}}
+\docsvlist{NT,RT}
+
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1sf\endcsname{\@math{\mathsf{#1}}}}
+\docsvlist{NT,RT,CT,RST,Card,RG,IND}
+
+\newcommand{\NT}{\@math{\mathsf{N_{NT}}}}
+\newcommand{\RT}{\@math{\mathsf{N_{RT}}}}
+\NewDocumentCommand{\CT}{s}{\@math{\mathsf{N_{CT\IfBooleanTF{#1}{'}{}}}}}
+\newcommand{\RST}{\@math{\mathsf{N_{RST}}}}
+\newcommand{\IND}{\@math{\mathsf{N_{O\text{-}IND}}}}
+\NewDocumentCommand{\INDC}{s}{\@math{\mathsf{N_{M\text{-}IND\IfBooleanTF{#1}{'}{}}}}}
+\NewDocumentCommand{\RG}{s}{\@math{\mathbb{RG}\IfBooleanTF{#1}{\smash{\!^{\top}\!}}{}}}
+\newcommand{\Card}{\@math{\mathsf{Card}}}
+\newcommand{\textImplies}{\quad\text{implies}\quad}
+\newcommand{\textIff}{\quad\text{iff}\quad}
+\newcommand{\Succ}{\@math{\mathsf{succ}}}
+\newcommand{\Pred}{\@math{\mathsf{pred}}}
+
+\newcommand{\MM}{\@math{\Mmc=(\fills,\parts,\rel)}}
+\newcommand{\CC}{\@math{\Cmc=(\occur, \card, \intra)}}
+
+\newcommand{\nt}[1][]{\@math{N{\kern-0.12em}T_{#1}}}
+\newcommand{\rt}[1][]{\@math{R{\kern-0.08em}T_{#1}}}
+\NewDocumentCommand{\ct}{sO{}}{\@math{{C{\kern-0.09em}T\IfBooleanTF{#1}{'{\kern-0.1em}}{}}_{#2}}}
+\newcommand{\rst}{\@math{R{\kern+0.03em}S{\kern-0.09em}T}}
+\newcommand{\rg}[1][]{\@math{R{\kern-0.08em}G_{#1}}}
+
+
+\newcommand{\SCROM}{\@math{\Sigma}-CROM\xspace}
+\newcommand{\SCROI}{\@math{\Sigma}-CROI\xspace}
+\newcommand{\SCROA}{\@math{\Sigma}-CROA\xspace}
+\newcommand{\SCROC}{\@math{\Sigma}-CROC\xspace}
+\newcommand{\SCCROM}{\@math{\Sigma}-CCROM\xspace}
+
+\newcommand{\occurCounter}{\@math{\mathsf{counter}}}
+
+\newcommand{\IK}{\@math{\I_{\Kmc}}}
+
+
+
+
+
+
+
+
+%%% ToDo macros %%%
+\@ifpackageloaded{todonotes}{
+  \NewDocumentCommand{\missingproof}{O{2cm}}{%
+    \begin{proof}
+      \mbox{}
+      \todo[inline, caption={missing proof}]{\vspace{#1} The proof here is still missing!}
+    \end{proof}
+  }
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% tabular related macros and fixes                                                   %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                                                                         %
+%%% columntypes based on tabularx %%%                                                    %
+\@ifpackageloaded{tabularx}{                                                             %
+  \newcolumntype{L}{>{\raggedright\arraybackslash}X}                                     %
+  \newcolumntype{R}{>{\raggedleft\arraybackslash}X}                                      %
+  \newcolumntype{C}{>{\centering\arraybackslash}X}                                       %
+                                                                                         %
+  %%% for tabularx def inside a tabularx X column                                        %
+  \newcommand{\cellwidth}{\TX@col@width}                                                 %
+                                                                                         %
+  %%% When using Y columns, make sure the sum of the arguments is equal to the number of %
+  %%% columns. See tabularx documentation, section 4.3                                   %
+  \newcolumntype{Y}[1]{>{\hsize=#1\hsize}X}                                              %
+}
+
+
+\newcolumntype{N}{@{}m{0pt}@{}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+%%% tried to have optional arguments in newcolumntype, but didn't work
+%%% http://tex.stackexchange.com/questions/8000/is-it-possible-to-create-a-newcolumntype-like-macro-accepting-more-than-one-arg
+% \newtoks\mytoks
+% \mytoks\expandafter{\the\NC@list}
+% \newcolumntype{Z}{}
+% \NC@list\expandafter{\the\mytoks \NC@do Z}
+% \renewcommand*{\NC@rewrite@Z}[1][2.0]{%
+%   \@temptokena\expandafter{%
+%     \the\@temptokena 
+%       >{\hsize=#1\hsize}X
+%   }%
+%   \NC@find
+% }
+                                                                                         %
+                                                                                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% unsorted macros come here %%%
+
+
+
+%% suppress minor underfull vbox warnings in draft mode (default badness = 1000)
+% http://tex.stackexchange.com/questions/249789/is-the-default-value-vbadness-1000-a-good-one-and-when-should-it-be-adapted
+\ifdraft{
+  \vbadness = 1500
+}{}
+
+
+% \newcommand*{\follows}{{\tikz[baseline=-0.6ex]{ \draw[-latex'] (0,1ex) |- (2ex,0);}}}
+\ifdefstring{\XKV@documentclass}{beamer.cls}{
+  \newcommand*{\follows}[1][thick]{{\tikz[baseline=-0.6ex]{ \draw[#1,->] (0,1ex) |- (2ex,0);}}\xspace}
+}{
+  \newcommand*{\follows}[1][semithick]{{\tikz[baseline=-0.6ex]{ \draw[#1,->] (0,1ex) |- (2ex,0);}}\xspace}
+}
+
+
+
+%% How to get a \mid binary relation that grows
+% http://tex.stackexchange.com/questions/5502/how-to-get-a-mid-binary-relation-that-grows
+\newcommand{\mmid}{\mathrel{}\middle|\mathrel{}}
+
+
+\newcommand{\onlyifdirection}{($\Longrightarrow$):\ }
+\newcommand{\ifdirection}{($\Longleftarrow$):\ }
+
+\NewDocumentCommand{\Zpos}{O{\A}m}{\@math{Z^{+}_{#1}(#2)}}
+\NewDocumentCommand{\Zneg}{O{\A}m}{\@math{Z^{-}_{#1}(#2)}}
+\NewDocumentCommand{\types}{O{\A}m}{\@math{\tau_{#1}(#2)}}
+\NewDocumentCommand{\typesA}{O{\A}}{\@math{\tau_{#1}}}
+\newcommand{\Xpos}{\@math{X_{\mathsf{pos}}}}
+\newcommand{\Xneg}{\@math{X_{\mathsf{neg}}}}
+\newcommand{\Xposi}{\@math{X_{\mathsf{pos},i}}}
+\newcommand{\Xnegi}{\@math{X_{\mathsf{neg},i}}}
+
+%% to remove vertical space before an itemize inside tabularx
+\newcommand*{\compress}{\@minipagetrue}
+
+\newcommand{\shrinkdisplayskip}[1][11pt]{%
+  \setlength{\abovedisplayskip}{#1 plus 3pt minus 6pt}%
+  \setlength{\belowdisplayskip}{#1 plus 3pt minus 6pt}%
+}
+\newcommand{\resetdisplayskip}{%
+  \setlength{\abovedisplayskip}{11pt plus 3pt minus 6pt}%
+  \setlength{\belowdisplayskip}{11pt plus 3pt minus 6pt}%
+}
+\@ifpackageloaded{printlen}{
+\newcommand{\printseps}{\noindent\parbox[t]{10cm}{%
+    topsep: \printlength{\topsep}\\
+    leftmargin: \printlength{\leftmargin}\\
+    labelsep: \printlength{\labelsep}\\
+    labelwidth: \printlength{\labelwidth}\\
+    parskip: \printlength{\parskip}\\
+    partopsep: \printlength{\partopsep}\\
+    parsep: \printlength{\parsep}\\
+    itemsep: \printlength{\itemsep}\\
+    baselineskip: \printlength{\baselineskip}\\
+    abovedisplayskip: \printlength{\abovedisplayskip}\\
+    belowdisplayskip: \printlength{\belowdisplayskip}
+}}
+}{}
+
+\newcommand{\true}{\@math{\mathsf{true}}}
+\newcommand{\false}{\@math{\mathsf{false}}}
+
+
+\newcommand{\bulletItem}[1]{\textbf{\textcolor{orange}{#1}}}
+
+
+%\newcommand{\transClosure}[1][\Rmc]{\@math{\sqsubseteq\kern-0.75em\raisebox{-0.37ex}{\ensuremath{^*}}_{#1}}}
+\DeclareMathOperator{\transClosure}{\@math{\sqsubseteq\kern-0.75em\raisebox{-0.75ex}{\ensuremath{^*}}\kern0.05em_{\Rmc}}}
+
+
+\newcommand{\TableComplexityResults}{%
+{\renewcommand{\arraystretch}{1.1}
+\begin{table}[t]
+  \centering
+  \caption{The complexity results for the consistency problem in \LMLO}
+  \label{tab:compl-results}
+  \begin{tabularx}{1.0\linewidth}[t]{clC@{\ }C@{\ }C@{\ }C}
+    \toprule
+    & \diagbox[width=2cm]{\LM}{\LO}
+    & \tikzmark{X1l} \hfill \EL    \hfill \tikzmark{X1r}
+    & \tikzmark{X2l} \hfill \ALC   \hfill \tikzmark{X2r}
+    & \tikzmark{X3l} \hfill \SHOQ  \hfill \tikzmark{X3r}
+    & \tikzmark{X4l} \hfill \SHOIQ \hfill \tikzmark{X4r}\\
+    \midrule \noalign{\hbox{\tikzmark{rawY1}}}
+    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (i)}}
+    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY2}}}
+    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY3}}}
+    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY4}}}
+    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY5}}}
+    \midrule \noalign{\hbox{\tikzmark{rawY6}}}
+    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (ii)}}
+    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY7}}}
+    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY8}}}
+    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY9}}}
+    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY10}}}
+    \midrule \noalign{\hbox{\tikzmark{rawY11}}}
+    \multirow{4}{*}{\rotatebox[origin=c]{90}{Setting (iii)}}
+    & \EL    & constant \\ \noalign{\hbox{\tikzmark{rawY12}}}
+    & \ALC   &          \\ \noalign{\hbox{\tikzmark{rawY13}}}
+    & \SHOQ  &          \\ \noalign{\hbox{\tikzmark{rawY14}}}
+    & \SHOIQ &          \\ \noalign{\hbox{\tikzmark{rawY15}}}
+    \bottomrule
+  \end{tabularx}
+  \caption*{Settings: (i) No rigid names are allowed. (ii) Only rigid
+    concepts are allowed. (iii) Rigid roles
+    are allowed.}
+\end{table}
+}
+\begin{tikzpicture}[remember picture, overlay,
+  % colors for table of complexity results
+  ExpTime/.style = {black!10},
+  NExpTime/.style = {black!23},
+  2ExpTime/.style = {black!36},
+  N2ExpTime1/.style = {black!49},
+  N2ExpTime2/.style = {black!62},
+  theoremSE/.style = {text=black!80, font=\tiny, inner sep = 2pt, anchor = south east},
+  theoremNW/.style = {text=black!80, font=\tiny, inner sep = 2pt, anchor = north west},]
+  %
+
+  \pgfmathsetmacro{\eps}{0.05}
+  %
+  \coordinate (Y1) at ($(rawY1)-(0,\eps)$);
+  \coordinate (Y2) at ($(rawY2)-(0,\eps)$);
+  \coordinate (Y3) at ($(rawY3)+(0,0)$);
+  \coordinate (Y4a) at ($(rawY4)+(0,\eps)$);
+  \coordinate (Y4b) at ($(rawY4)-(0,\eps)$);
+  \coordinate (Y5) at ($(rawY5)+(0,\eps)$);
+  \fill[ExpTime] (X2l|-Y1) -- (X2l|-Y2) -- (X1l|-Y2) -- (X1l|-Y4a) -- (X3r|-Y4a) -- (X3r|-Y1) -- cycle;
+  \fill[NExpTime] (X4l|-Y1) -- (X4l|-Y4b) -- (X1l|-Y4b) -- (X1l|-Y5) -- (X4r|-Y5) -- (X4r|-Y1) -- cycle;
+  \node at ($0.5*(X1l|-Y3)+0.5*(X3r|-Y3)+(0.9,0.2)$) {\ExpTime-complete};
+  \node[align=center] at ($0.5*(X4l|-Y3)+0.5*(X4r|-Y3)$) {\NExpTime-\\complete};
+  %
+  \coordinate (Y6) at ($(rawY6)-(0,\eps)$);
+  \coordinate (Y7) at ($(rawY7)-(0,\eps)$);
+  \coordinate (Y8) at ($(rawY8)+(0,0)$);
+  \coordinate (Y10) at ($(rawY10)+(0,\eps)$);
+  \fill[NExpTime] (X2l|-Y6) -- (X2l|-Y7) -- (X1l|-Y7) -- (X1l|-Y10) -- (X3r|-Y10) -- (X3r|-Y6) -- cycle;
+  \fill[N2ExpTime1] (X4l|-Y6) -- (X4l|-Y10) -- (X4r|-Y10) -- (X4r|-Y6) -- cycle;
+  \node at ($0.5*(X1l|-Y10)+0.5*(X3r|-Y6)+(0.5,-0.1)$) {\NExpTime-complete};
+  \node[align=center] at ($0.5*(X4l|-Y8)+0.5*(X4r|-Y8)$) {\NExpTime-hard\\ and\\ in \TwoNExpTime};
+  %
+  \coordinate (Y11) at ($(rawY11)-(0,\eps)$);
+  \coordinate (Y12) at ($(rawY12)-(0,\eps)$);
+  \coordinate (Y13) at ($(rawY13)+(0,0)$);
+  \coordinate (Y14a) at ($(rawY14)+(0,\eps)$);
+  \coordinate (Y14b) at ($(rawY14)-(0,\eps)$);
+  \coordinate (Y15) at ($(rawY15)+(0,\eps)$);
+  \fill[2ExpTime] (X2l|-Y11) -- (X2l|-Y15) -- (X3r|-Y15) -- (X3r|-Y11) -- cycle;
+%  \fill[2ExpTime] (X2l|-Y11) -- (X2l|-Y14a) -- (X3r|-Y14a) -- (X3r|-Y11) -- cycle;
+  \fill[NExpTime] (X1l|-Y12) -- (X1l|-Y15) -- (X1r|-Y15) -- (X1r|-Y12) -- cycle;
+  \fill[N2ExpTime2] (X4l|-Y11) -- (X4l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
+%  \fill[N2ExpTime] (X4l|-Y11) -- (X4l|-Y14b) -- (X2l|-Y14b) -- (X2l|-Y15) -- (X4r|-Y15) -- (X4r|-Y11) -- cycle;
+  \node[align=center] at ($0.5*(X1l|-Y15)+0.5*(X1r|-Y12)$) {\NExpTime-\\complete};
+  \node at ($0.5*(X2l|-Y15)+0.5*(X3r|-Y11)$) {\TwoExpTime-complete};
+  \node[align=center] at ($0.5*(X4l|-Y13)+0.5*(X4r|-Y13)$) {\TwoExpTime-hard\\ and\\ in \TwoNExpTime};
+  %
+  \node[theoremSE] at (X3r|-Y4a) {};
+  \node[theoremSE] at (X4r|-Y5)  {};
+  \node[theoremSE] at (X3r|-Y15) {};
+  \node[theoremSE] at (X4r|-Y15) {};
+  \node[theoremSE] at (X3r|-Y10) {};
+  \node[theoremSE] at (X4r|-Y10) {};
+  \node[theoremNW] at (X1l|-Y2)  {};
+  \node[theoremNW] at (X2l|-Y1)  {};
+  \node[theoremNW] at (X1l|-Y4b) {};
+  \node[theoremNW] at (X4l|-Y1)  {};
+  \node[theoremNW] at (X2l|-Y11) {};
+  \node[theoremNW] at (X1l|-Y7)  {};
+  \node[theoremNW] at (X2l|-Y6)  {};
+  \node[theoremSE] at (X1r|-Y15) {};
+\end{tikzpicture}
+}
+
+\newcommand{\tableSyntaxSemanticsLMLO}{%
+\begin{table}[t]
+  \centering
+  \caption{Syntax and Semantics of \SHOIQSHOIQ}
+  \label{tab:syntax-semantics-dls}
+  %\setlength{\tabcolsep}{2pt}
+  %\setstretch{0.9}
+  \begin{tabularx}{\linewidth}{llX@{}}
+    \toprule
+     & syntax & semantics \\
+    \midrule
+    inverse object role    & $R^{-}$ & $\{(e,d) \in \Delta\times\Delta \mid (d,e) \in R^{\I_{c}}\}$\\
+    object negation            & $\lnot C$   & $\Delta \setminus C^{\I_{c}}$ \\
+    object conjunction         & $C \sqcap D$ & $C^{\I_{c}} \cap D^{\I_{c}}$\\
+    object existential restriction   & $\exists R.C$
+              & $\{d\!\in\!\Delta \mid \text{there is some $e\!\in\! C^{\I_{c}}$ with $(d,e)\!\in\! R^{\I_{c}}\}$}$\\
+    object nominal             & $\{a\}$   & $\{a^{\I_{c}}\}$\\
+    object at-most restriction & $\atmost{n}{S}{C}$
+              & $\{d\in\Delta\mid \sharp\{e\in C^{\I_{c}}\mid(d,e)\in S^{\I_{c}}\} \leq n\}$\\
+    \midrule \noalign{\hbox{\tikzmark{rawY1}}}
+    object general concept inclusion  & $C \sqsubseteq D$  & \ $C^{\I_{c}} \subseteq D^{\I_{c}}$\\
+    object concept assertion  & $C(a)$   & \ $a^{\I_{c}} \in C^{\I_{c}}$\\
+    object role assertion & $R(a,b)$ & \ $(a^{\I_{c}}, b^{\I_{c}}) \in R^{\I_{c}}$\\ \noalign{\hbox{\tikzmark{rawY2}}}
+    object role inclusion & $R \sqsubseteq S$ & \ $R^{\I_{c}} \subseteq S^{\I_{c}}$\\
+    object transitivity axiom & $\mathsf{Trans}(R)$ & \ $R^{\I_{c}}$ is transitive.\\ \noalign{\hbox{\tikzmark{rawY3}}}
+    \midrule
+    inverse meta role      & $P^{-}$ & $\{(e,d) \in \Cbb\times\Cbb \mid (d,e) \in P^{\J}\}$\tikzmark{X}\\
+    meta negation              & $\lnot E$   & $\Cbb \setminus E^{\J}$ \\
+    meta conjunction           & $E \sqcap F$ & $E^{\J} \cap F^{\J}$\\
+    meta existential restriction   & $\exists P.E$
+              & $\{d\in\Cbb \mid \text{there is some $e\!\in\! E^{\J}$ with $(d,e)\!\in\! P^{\J}\}$}$\\
+    meta nominal             & $\{u\}$   & $\{u^{\J}\}$\\
+    meta at-most restriction & $\atmost{n}{Q}{E}$
+              & $\{d\in\Cbb\mid \sharp\{e\in E^{\J}\mid(d,e)\in Q^{\J}\} \leq n\}$\\
+    \textbf{referring concept} & $\oalpha$ & $\{d\in\Cbb\mid \I_{d}\models\alpha\}$\\
+    \midrule \noalign{\hbox{\tikzmark{rawY4}}}
+    meta general concept inclusion & $E \sqsubseteq F$  & \ $E^{\J} \subseteq F^{\J}$\\
+    meta concept assertion  & $E(u)$   & \ $u^{\J} \in E^{\J}$\\
+    meta role assertion & $T(u,v)$ & \ $(u^{\J}, v^{\J}) \in T^{\J}$\\ \noalign{\hbox{\tikzmark{rawY5}}}
+    meta role inclusion & $R \sqsubseteq S$ & \ $R^{\I_{c}} \subseteq S^{\I_{c}}$\\
+    meta transitivity axiom & $\mathsf{Trans}(R)$ & \ $R^{\I_{c}}$ is transitive.\\ \noalign{\hbox{\tikzmark{rawY6}}}
+    \bottomrule
+  \end{tabularx}
+  \begin{tikzpicture}[remember picture, overlay]
+    \pgfmathsetmacro{\eps}{0.05}
+    %
+    \coordinate (Y1)  at (rawY1);
+    \coordinate (Y2a) at ($(rawY2)+(0,\eps)$);
+    \coordinate (Y2b) at ($(rawY2)-(0,\eps)$);
+    \coordinate (Y3)  at (rawY3);
+    %
+    \coordinate (Y4)  at (rawY4);
+    \coordinate (Y5a) at ($(rawY5)+(0,\eps)$);
+    \coordinate (Y5b) at ($(rawY5)-(0,\eps)$);
+    \coordinate (Y6)  at (rawY6);
+    %
+    \draw[thick,decorate,decoration={brace,amplitude=3pt}] (X|-Y1)  to[right] node[xshift=4pt] {$\alpha$} (X|-Y2a);
+    \draw[thick,decorate,decoration={brace,amplitude=3pt}] (X|-Y2b) to[right] node[xshift=4pt] {$\RO$} (X|-Y3);
+    \draw[thick,decorate,decoration={brace,amplitude=3pt}] (X|-Y4)  to[right] node[xshift=4pt] {$\Bmc$} (X|-Y5a);
+    \draw[thick,decorate,decoration={brace,amplitude=3pt}] (X|-Y5b) to[right] node[xshift=4pt] {$\RM$} (X|-Y6);
+  \end{tikzpicture}
+  \vspace*{-0ex}
+\end{table}
+}
+
+\newcommand{\rdfsIsDefinedBy}{\texttt{rdfs:isDefinedBy}\xspace}
+\newcommand{\rdfsLabelGlobal}{\texttt{rdfs:label~"objectGlobal"}\xspace}
+\newcommand{\rdfsLabelRigid}{\texttt{rdfs:label~"rigid"}\xspace}
+
+
+% bank example
+\renewcommand*{\do}[1]{%
+  \expandafter\newcommand\csname #1\endcsname{\@math{\mathsf{#1}}}}
+\docsvlist{Bank, BankAccounts, Customer, CheckingAccount, SavingsAccount, Participants, Source,
+  Target, Transaction, issues, MoneyTransfer}
+
+\newcommand{\ownca}{\@math{\mathsf{own\_ca}}}
+\newcommand{\ownsa}{\@math{\mathsf{own\_sa}}}
+\newcommand{\transBank}{\@math{\mathsf{trans}}}
+
+
+
+
+%% Calculate mean value with pgfplots
+% https://tex.stackexchange.com/a/268942/123973
+\newcommand\GetMean[2]{
+  \pgfplotstableread{#1}\tableA
+  \pgfplotstableset{
+    create on use/new/.style={
+    create col/expr={\pgfmathaccuma + \thisrow{#2}}},
+  }
+  \pgfplotstablegetrowsof{\tableA}
+  \pgfmathsetmacro{\NumRows}{\pgfplotsretval}
+  \pgfplotstablegetelem{\numexpr\NumRows-1\relax}{new}\of{#1} 
+  \pgfmathsetmacro{\Sum}{\pgfplotsretval}
+  \pgfmathsetmacro{\Mean}{\Sum/\NumRows}
+}
+
+
+
+\endinput
+
+%%% Local Variables:
+%%% mode: latex
+%%% End:

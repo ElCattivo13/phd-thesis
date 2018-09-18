@@ -1,0 +1,68 @@
+\RequirePackage{fix-tudscrfonts}
+
+\documentclass[t,nototalpages,useheader=false]{tudbeamer}
+
+\usepackage[beamer,
+            ocontsyntax=modal,
+            coloredconcepts,
+            bibresource=references.bib,
+            biblatex=true,
+            bibstyle=authoryear]{preamble20171016}
+
+\hfuzz=17pt
+            
+\einrichtung{Institute of Theoretical Computer Science\ }
+\professur{Chair for Automata Theory}
+
+\title{Context Reasoning for Role-Based Models}
+\author{Stephan Böhme}
+\date{27.10.2017}
+\datecity{Dresden}
+
+\begin{document}
+
+\mathversion{intro}
+
+\slideMotivation
+\slideRoleBasedSystems
+\slideWorkflow
+\slideBankTikZ
+
+\mathversion{lmlo}
+
+\slideOutline{1}
+\slideSyntaxSemanticsDL
+\slideIntuitionLMLO
+\slideSyntaxSemanticsLMLO
+\slideExampleLMLO
+\slideComplexityResults
+\slideUpperBoundsLMLO
+
+\mathversion{mapping}
+
+\slideOutline{2}
+\slideMapping
+\slideComplexityResults*
+\slideMappingExample
+
+\mathversion{jconht}
+
+\slideOutline{3}
+\slideJConHTIntro
+\slideAlgorithm
+\slideRepletion
+
+\mathversion{normal}
+
+\slideThankYou
+\slideJConHTEvaluation
+\slideReferences
+
+\end{document}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% reftex-default-bibliography: ("references.bib")
+%%% End: 
