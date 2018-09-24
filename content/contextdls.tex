@@ -21,58 +21,70 @@ leads to undecidability.
 \section{Requirements for Logical Formalism}
 \label{sec:requirements-and-CDLs}
 
-Basically every large software project starts with modelling the application domain in UML. While
-UML is the de facto standard as modelling language, it has several drawbacks. First of all, it has
-no formally defined semantics~\cite{FrEL-CSI98}. While UML meta-models capture the precise syntax of
-concepts used for modelling, they do little for answering questions of how to interpret non-trivial
-UML diagrams.  For example, if one wants to map UML class diagrams to a logical formalism to be able
-to reason about these diagrams, one takes certain assumptions about the intended meaning of the
-occurring elements. Then a domain expert modelling some application has to trust that the logician
-constructed the mapping with the same semantics in mind. Nevertheless, over the last years several
-approaches for formal frameworks to reason on UML
+First we have to decide how to represent role-based models. Although nearly every large software
+project starts with modelling the application domain in UML and, hence, UML is the de facto standard
+as modelling language, it has several drawbacks. First of all, it has no formally defined
+semantics~\cite{FrEL-CSI98}. While UML meta-models capture the precise syntax of concepts used for
+modelling, they do little for answering questions of how to interpret non-trivial UML diagrams.  For
+example, if one wants to map UML class diagrams to a logical formalism to be able to reason about
+these diagrams, one takes certain assumptions about the intended meaning of the occurring
+elements. Then a domain expert modelling some application has to trust that the logician constructed
+the mapping with the same semantics in mind. Nevertheless, over the last years several approaches
+for formal frameworks to reason on UML
 arose~\cite{Eva-WIFT98,CaCG-ISMIS02,StMS-UML03,SiSJ-OBJ04,BeCG-AI05,SiBH-IJSEKE08,AhNa-ICET10}, from
-which we can adapt some ideas, e.g. to model attributes of a~UML class with~DL roles and how
+which we can adapt some ideas, e.g.\ how to model attributes of a~UML class with~DL roles and how
 multiplicities of associations are modelled in~\cite{CaCG-ISMIS02}.
 
-Besides that, UML lacks expressive power to model context-dependent domains. There also exist some
-work on extending UML in that direction~\cite{ShB-ICMB05}, but here the semantics are even more ambiguous.
-Therefore, we focus on role-based models that are based on CROM since it has both a well-defined,
-formal semantics and the means to formulate the necessary concepts accordingly.
+The second major drawback is that UML lacks expressive power to model context-dependent
+domains. There also exists some work on extending UML in that direction~\cite{ShB-ICMB05}, but here
+the semantics are even more ambiguous.  Therefore, instead of trying to formalise and reason on
+semantically ambiguous UML diagrams that try to capture role-based models, we focus on role-based
+models that are modelled in CROM which we introduced in Chapter~\ref{cha:preliminaries}.  CROM
+overcomes both these deficits since it has both a well-defined, formal semantics and the means to
+formulate the necessary concepts accordingly.
 
-The only drawback might be the expressive restrictions of ``classical'' description logics as
-explained in the introduction. Standard DLs cannot formalise contextual knowledge in a proper way
-which is crucial for role-based systems.  In the recent years many different approaches and
-extensions of DLs have been proposed~\cite{BoGH-ISWC03, BoGH-WS04, BeAF-ADVIS06, BaVS-ModOnt09, BaKP-JWS12,
-  CePe-IJCAR14, CePe-JAR17}.  However, many were tailored to different goals, for example to support
-context-specific reuse of ontologies or enable probabilistic reasoning. Additionally, these
-approaches have a quite different intuition of what a context exactly is. In most cases it is simply
-a finite set of names.  Serafini et al.~\cite{SeHo-JWS12} defines contexts by a set of
-attribute-value declarations, one for each \emph{dimension}, e.g.\ time, topic or location to name a
-few. There is only one context for each dimensional vector whereas there can exist many instances
-of one compartment type.  Furthermore, except a coverage relation, one can hardly express any other
-knowledge about the contexts such as the relational structure between them.  Hence, these
-approaches seem not appropriate to model CROMs.
+Next, we investigate the requirements for the logical formalism. In order to be feasible with the
+workflow outlined in the introduction, we need a formalism that has the expressive power
+to capture the information in CROM on one hand but preserves decidability of the needed
+reasoning tasks on the other.
+%
+As shown in the preliminaries description logics serve as a very powerful formalism in knowledge
+representation. Still, the main drawback might be the expressive restrictions of \enquote{classical}
+description logics as explained in the introduction. Standard DLs cannot formalise contextual
+knowledge in a proper way which is crucial for role-based systems.  In the recent years many
+different approaches and extensions of DLs have been proposed~\cite{BoGH-ISWC03, BoGH-WS04,
+  BeAF-ADVIS06, BaVS-ModOnt09, BaKP-JWS12, CePe-IJCAR14, CePe-JAR17}.  However, many were tailored
+to different goals, for example to support context-specific reuse of ontologies or enable
+probabilistic reasoning. Additionally, these approaches have a quite different intuition of what a
+context exactly is. In most cases it is simply a finite set of names.  Serafini et
+al.~\cite{SeHo-JWS12} defines contexts by a set of attribute-value declarations, one for each
+\emph{dimension}, e.g.\ time, topic or location to name a few. There is only one context for each
+dimensional vector whereas in CROM there can exist many instances of one compartment type.  Furthermore,
+except a coverage relation, one can hardly express any other knowledge about the contexts such as
+the relational structure between them.  Hence, these approaches seem not appropriate to model
+CROMs.
 
-A far more promising formalism is the description logic of context \klarALC~\cite{KG-JELIA10, KG16}
-mentioned in Section~\ref{sec:adding-cont-concepts}. Klarman et al.\ follow the ideas of McCarthy's
-formalisation of contexts~\cite{McC-ACM87,McC-IJCAI93} where contexts are formal objects, that have
-properties and can be described, and that are organised in a relational structure.  This results in
-a very expressive, two-dimensional description logic with strong interactions between the object and
-the context level allowing to express information within a context that is valid in some other
-context.  While transcending object knowledge through contexts is very important in the general
-application of contextualised knowledge, it is complexity-wise very costly, especially in the
-presence of rigid roles where the consistency problem becomes undecidable.
+A far more promising formalism is the description logic of context \klarALC~\cite{KG-JELIA10, KG16}.
+%mentioned in Section~\ref{sec:adding-cont-concepts}.
+Klarman et al.\ follow the ideas of McCarthy's formalisation of
+contexts~\cite{McC-ACM87,McC-IJCAI93} where contexts are formal objects, that have properties and
+can be described, and that are organised in a relational structure.  This results in a very
+expressive, two-dimensional description logic with strong interactions between the object and the
+context level allowing to express information within a context that is valid in some other context.
+While transcending object knowledge through contexts is very important in the general application of
+contextualised knowledge, it is complexity-wise very costly, especially in the presence of rigid
+roles where the consistency problem becomes undecidable.
 
 By restricting that interaction to a top-down view of contexts, we can retain decidability. From the
 meta or context level, we can impose axioms that must hold within a certain context, but on the object
-level, i.e.\ within a context, we cannot ``look outside''.
+level, i.e.\ within a context, we cannot \enquote{look outside}.
 %
-When formalising compartments, this is exactly the needed expressiveness. For each compartment type
+When formalising CROM compartments, this is exactly the needed expressiveness. For each compartment type
 we want to specify the constraints which must hold within a compartment of that type.
 %
-This analysis led to the construction of \LMLO.
-In Section~\ref{sec:adding-cont-concepts}, we showed that \ALCALC is indeed a sublogic of \klarALC.
-We will now present how a CROM can be represented in \LMLO.
+This analysis leads us to the construction of a new contextualised description logic \LMLO.
+In Section~\ref{sec:adding-cont-concepts}, we show that \ALCALC is indeed a sublogic of \klarALC.
+In Chapter~\ref{cha:mapping}, we will present how a CROM can be represented in \LMLO.
 
 \section{Syntax and Semantics of the Contextualised Description Logic \texorpdfstring{\LMLO}{LM[LO]}}
 \label{sec:syn-seman-cdl}
@@ -134,7 +146,7 @@ respectively, the set of \emph{meta concept}, \emph{role} and \emph{individual n
 Essentially, m-GCIs and meta concept assertions are \LM-GCIs over \Msig and \LM-concept assertions
 over \Msig in which additionally referring m-concepts are admitted.
 %
-For the same reasons as mentioned in Section~\ref{sec:preliminaries}, role inclusions
+For the same reasons as mentioned in the end of Section~\ref{sec:prelim-dls}, role inclusions
 over~\Osig and transitivity axioms over~\Osig are not allowed to constitute m-concepts.  However, we
 fix an RBox~\RO over~\Osig that contains such o-axioms and holds in \emph{all} contexts.  The same
 applies to role inclusions over~\Msig and transitivity axioms over~\Msig, which are only allowed to
@@ -201,7 +213,7 @@ We are now ready to define the semantics of \LMLO.
 
 \noindent
 With these notions, we can refine the examples of
-Section~\ref{sec:preliminaries}. 
+Section~\ref{sec:prelim-dls}. 
 
 \begin{example}\label{ex:nfl-with-contexts}
   Considering again Example~\ref{ex:concept-nfl} and Example~\ref{ex:bkb-nfl}, we recognise that
@@ -382,6 +394,8 @@ similar to what was done for \ALC-LTL in~\cite{BaGL-KR08,BaGL-ToCL12} (and
 \SHOQ-LTL in~\cite{Lip-PhD14}) and reduce the consistency problem to two separate
 decision problems.
 
+\TableComplexityResults
+
 For the first decision problem, we consider the so-called \emph{outer abstraction}, which is the \LM-BKB
 over~\Msig obtained by replacing each referring m-concept of the form \oalpha
 occurring in~\B by a fresh concept name such that there is a 1--1 relationship between them.
@@ -427,7 +441,6 @@ Now let us consider the following small example.
   \end{align*}
   is the outer abstraction of $\Bmf_\text{ex}$.
 \end{example}
-\TableComplexityResults
 
 \noindent
 The following lemma makes the relationship between \Bmf and its outer abstraction
@@ -1534,4 +1547,4 @@ only.
 
 %  LocalWords:  Löwenheim Skolem Logics logics iff temporalised Quasimodel quasimodel BKB Klarman
 %  LocalWords:  DL et al GreenBayPackers AaronRodgers DLs bijections equisatisfiable satisfiability
-%  LocalWords:  ontologies workflow
+%  LocalWords:  ontologies workflow CROM CROMs
