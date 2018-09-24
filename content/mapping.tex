@@ -2,41 +2,50 @@
 \chapter{A Mapping from Role-Based Models to Description Logic Ontologies}
 \label{cha:mapping}
 
-In the last chapter we introduced a family of description logics which are capable of expressing
+In the last chapter we introduced a family of description logics which is capable of expressing
 contextualised knowledge. This provides the needed expressiveness to be able to reason on role-based
 models. But due to the rather elaborate semantics both of role-based models and of contextualised
 description logics it will be tedious and error-prone to construct the DL ontology which exactly
-captures a role-based model. Hence, an automated mapping from role-based models into DL would be
-desirable. Therefore, a formal representation of role-based systems with a well-defined semantics is
-necessary.
+captures a role-based model manually, especially since the domain analyst who generates the
+role-based model is in general not an expert in DLs. Hence, an automated mapping from role-based
+models into DL would be desirable. Therefore, a formal representation of role-based systems with a
+well-defined semantics is necessary which is the case since we use role-based systems formalised in
+CROM.
 
-In this chapter we will present a mapping from such role-based models into contextualised DLs in
-order to automate this step.
+In this chapter we will present a mapping algorithm from such role-based models into contextualised
+DLs in order to automate this step.
 %
-To avoid the confusion with the notations, from now on we differentiate \emph{\rosiroles} as
-in \rosirole-based systems and \emph{roles} as used in description logics whenever we feel it is
-necessary. Otherwise, we drop that distinction if it is clear from the context.
+% To avoid the confusion with the notations, from now on we differentiate \emph{\rosiroles} as
+% in \rosirole-based systems and \emph{roles} as used in description logics whenever we feel it is
+% necessary. Otherwise, we drop that distinction if it is clear from the context.
+% %
 %
+In Section~\ref{sec:representating-role-based-models}, we present the mapping algorithm along with
+the proof that the mapping preserves the semantics. Then, in Section~\ref{sec:going-beyond-crom} we
+discuss possible features of role-based systems that go beyond CROM but still can be expressed in an
+ontology.
 
-In Section~\ref{sec:rosiroles}, we give a short ontological introduction to \rosiroles.  In
-Section~\ref{sec:sigma-crom}, we introduce a syntactical variant of the \emph{Compartment Role Object
-  Model (CROM)}~\cite{KBG-SLE15}.  Then, after discussing requirements for the logical formalism and
-analyse possible candidates for the translation in Section~\ref{sec:requirements-and-CDLs}, we
-present the actual mapping in Section~\ref{sec:representating-role-based-models}. We close this
-chapter in Section~\ref{sec:going-beyond-crom} with possible features of role-based systems that go
-beyond CROM but still can be expressed in an ontology.
+% In Section~\ref{sec:rosiroles}, we give a short ontological introduction to \rosiroles.  In
+% Section~\ref{sec:sigma-crom}, we introduce a syntactical variant of the \emph{Compartment Role Object
+%   Model (CROM)}~\cite{KBG-SLE15}.  Then, after discussing requirements for the logical formalism and
+% analyse possible candidates for the translation in Section~\ref{sec:requirements-and-CDLs}, we
+% present the actual mapping in Section~\ref{sec:representating-role-based-models}. We close this
+% chapter in Section~\ref{sec:going-beyond-crom} with possible features of role-based systems that go
+% beyond CROM but still can be expressed in an ontology.
 
-\todo[inline]{rewrite introduction and structure of chapter}
+% \todo[inline]{rewrite introduction and structure of chapter}
 
 
 \section{Representing Role-Based Models}
 \label{sec:representating-role-based-models}
 
-We would like to emphasise here once again that checking well-formedness of a \SCROM{}~\Mmc and
+We would like to emphasise here
+%once again
+that checking well-formedness of a \SCROM{}~\Mmc and
 compliance of a constraint set with \Mmc is not considered here, because these are purely
 syntactical checks and no reasoning is necessary. Furthermore, checking whether a given \SCROI
 satisfies \Mmc is also not the considered task as it rather belongs to the area of model checking
-and is in the scope of this thesis. More interesting is whether there exists such a \SCROI at all.
+and is not in the scope of this thesis. More interesting is whether there exists such a \SCROI at all.
 Then, we can additionally test if certain axioms are entailed or whether specific role types can be
 played since these questions can be reduced to the satisfiability problem. Thus, the main objective
 is, given a \SCCROM{} \Kmc, to construct an \LMLO-ontology $\Bmf_{\Kmc}$ such that $\Bmf_{\Kmc}$ is
