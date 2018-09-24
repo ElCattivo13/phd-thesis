@@ -2,9 +2,20 @@
 \chapter{The Contextualised Description Logic \texorpdfstring{\LMLO}{LM[LO]}}
 \label{cha:context-dls}
 
-\todo[inline]{introductory paragraph}
-\todo[inline]{aufbau des kapitels}
+In the previous chapter we introduced description logics as a logical formalism for knowledge
+representation as well as the Compartment Role Object Model as a modelling language for role based
+models with a formal semantics. Now, the next step in our overall workflow is to investigate whether
+DLs are sufficient to express CROM and, if necessary, develop an extension of DLs which possesses
+the required expressive power.
 
+Hence, we start this chapter with discussing the requirements for a feasible logical formalism in
+Section~\ref{sec:requirements-and-CDLs}. Then, after defining the syntax and semantics of
+contextualised DLs in Section~\ref{sec:syn-seman-cdl}, we analyse the computational complexity of
+the consistency problem for contextualised DLs in
+Section~\ref{sec:complexity-consis-problem}. Particular consideration is needed in the case of \EL,
+which is discussed in Section~\ref{sec:case-el}. At last, we show in
+Section~\ref{sec:adding-cont-concepts} that introducing an additional concept constructor directly
+leads to undecidability.
 
 
 \section{Requirements for Logical Formalism}
@@ -1523,4 +1534,4 @@ only.
 
 %  LocalWords:  Löwenheim Skolem Logics logics iff temporalised Quasimodel quasimodel BKB Klarman
 %  LocalWords:  DL et al GreenBayPackers AaronRodgers DLs bijections equisatisfiable satisfiability
-%  LocalWords:  ontologies
+%  LocalWords:  ontologies workflow
