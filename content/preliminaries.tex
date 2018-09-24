@@ -2,14 +2,15 @@
 \chapter{Preliminaries}
 \label{cha:preliminaries}
 
-In this chapter, we will introduce the necessary preliminaries
-
-\todo[inline]{specific notation used to emphasise parameters which are important later on.}
-\todo[inline]{introduction paragraph}
-\todo[inline]{aufbau chapter}
+In this chapter, we will introduce the preliminaries which are necessary for the rest of the thesis.
+In Section~\ref{sec:prelim-dls}, we introduce \emph{description logics (DLs)} as a well-established
+logical formalism for knowledge representation and show the specific notations used in this thesis
+to emphasise parameters which are important later on. A short overview of the ontological
+foundations of roles followed by the presentation of the formal role-based modelling language CROM
+is given in Section~\ref{sec:role-based-modelling}.
 
 \section{Description Logics}
-\label{sec:preliminaries}
+\label{sec:prelim-dls}
 
 Description logics are a family of knowledge representation formalisms. As already outlined in the
 introduction, DLs allow to represent application domains in a well-structured way. In this section,
@@ -317,9 +318,19 @@ very unnatural to admit axiom negation while denying concept negation at the sam
 \section{Role-Based Modelling}
 \label{sec:role-based-modelling}
 
-\todo[inline]{introduction}
+In this section we present the essentials of role-based modelling needed in this thesis. By all
+means this is not a thorough introduction to role-based modelling and we assume that the reader is
+already familiar with the basic concepts.
+%
+After discussing some ontological foundations of roles, we introduce the \emph{Compartment Role
+  Object Model (CROM)} as a modelling language with well-defined formal semantics. We mentioned the
+importance of formal semantics of the modelling language already in the introduction and will pick
+up the argument in Section~\ref{sec:requirements-and-CDLs} again.
 
-
+To avoid the confusion with the notations, from now on we differentiate \emph{\rosiroles} as
+in \rosirole-based systems and \emph{roles} as used in description logics whenever we feel it is
+necessary. Otherwise, we drop that distinction if it is clear from the context.
+%
 \subsection{Ontological Foundation of Roles}
 \label{sec:rosiroles}
 
@@ -360,6 +371,7 @@ in an orchestra.  Anyhow, an instance of a role depends on the existence of anot
 \begin{table}[t]
   \caption{Classifying features for roles~\cite{Stei-DKE00,KuLG-SLE14}}
   \small
+  \renewcommand\baselinestretch{0.99}\selectfont
   \centering
   \begin{tabularx}{0.8\linewidth}{rX} 
     \toprule
@@ -413,10 +425,10 @@ instance of this feature model.
 \subsection{A Formal Role-Based Modelling Language}
 \label{sec:sigma-crom}
 
-In this section we will present a syntactical variant of the \emph{Compartment Role Object Model}
+We will present here a syntactical variant of the \emph{Compartment Role Object Model}
 published in~\cite{KBG-SLE15}. This variant is semantically equivalent to the CROM proposed
-in~\cite{KBG-SLE15} and we simply introduce it here for easier explanation of the mapping to
-description logics.
+in~\cite{KBG-SLE15} but we introduce it here a bit different for easier explanation of the mapping
+to description logics.
 
 \subsubsection{Type and Instance Level}
 \label{sec:type-instance-level}
