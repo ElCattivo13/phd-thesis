@@ -41,15 +41,17 @@ ontology.
 
 We would like to emphasise here
 %once again
-that checking well-formedness of a \SCROM{}~\Mmc and
-compliance of a constraint set with \Mmc is not considered here, because these are purely
-syntactical checks and no reasoning is necessary. Furthermore, checking whether a given \SCROI
-satisfies \Mmc is also not the considered task as it rather belongs to the area of model checking
-and is not in the scope of this thesis. More interesting is whether there exists such a \SCROI at all.
-Then, we can additionally test if certain axioms are entailed or whether specific role types can be
-played since these questions can be reduced to the satisfiability problem. Thus, the main objective
-is, given a \SCCROM{} \Kmc, to construct an \LMLO-ontology $\Bmf_{\Kmc}$ such that $\Bmf_{\Kmc}$ is
-consistent iff \Kmc is satisfiable.
+that checking well-formedness of a \SCROM{}~\Mmc and compliance of a constraint set with \Mmc is not
+considered here, because these are purely syntactical checks and no reasoning is
+necessary. Furthermore, checking whether a given \SCROI satisfies \Mmc is also not the considered
+task as it rather belongs to the area of model checking and is not in the scope of this thesis. More
+interesting is whether there exists such a \SCROI at all.  Then, we can additionally test if certain
+axioms are entailed or whether specific role types can be played since these questions can be
+reduced to the satisfiability problem. Thus, the main objective is, given a \SCCROM{} \Kmc, to
+construct an \ALCSHOIQ-ontology $\Bmf_{\Kmc}$ such that $\Bmf_{\Kmc}$ is consistent iff \Kmc is
+satisfiable.  Which contextualised description logic is exactly necessary depends also on the
+constraints occurring in \Kmc and will be discussed in Section~\ref{sec:sem-integ-mapping} in more
+detail.
 
 The general idea is to model compartment types as concepts on the meta level, and objects playing a
 \rosirole, the relationship types as well as all the constraints within a compartment type on the
@@ -59,8 +61,8 @@ object role \plays. The fills relation is transformed into corresponding domain 
 
 Here, we made a first design decision on how to express that a \rosirole is played within a
 compartment. There are two possibilities, depicted in Figure~\ref{fig:two-ways-to-play-roles}, which
-we already showed in Example~\ref{ex:nfl-with-contexts}. On the one hand, we can introduce
-an o-concept $\mathsf{Coach}\in\RT$ and elements playing a $\mathsf{Coach}$-\rosirole are in the
+we already showed in Example~\ref{ex:nfl-with-contexts}. On the one hand, we can introduce an
+o-concept $\mathsf{Coach}\in\RT$ and elements playing a $\mathsf{Coach}$-\rosirole are in the
 extension of \rt (such as Mike McCarthy playing the \rosirole of a coach in the left side of
 Figure~\ref{fig:two-ways-to-play-roles}). Here, an object $o$ and a \rosirole $r$ with
 $(o,\cdot,r)\in\plays$ would be mapped to a single element $d$ in the object interpretation for that
@@ -72,8 +74,8 @@ $\mathsf{Coach}$-\rosirole have a \plays-successor that is in the extension of $
 (such as Mike playing the \rosirole of a coach in the left side of
 Figure~\ref{fig:two-ways-to-play-roles}).  This is closer to the semantics of \SCROI{s}, but
 introduces new object domain elements for each \rosirole that is played.  Still, we chose the latter
-variant, since later we need to count the number of \rosiroles to assure occurrence and
-cardinality constraints. In~DLs, this can be done via qualified number restrictions.
+variant, since later we need to count the number of \rosiroles to assure occurrence and cardinality
+constraints. In~DLs, this can be done via qualified number restrictions.
 
 \begin{figure}
   \centering
@@ -576,6 +578,8 @@ constraints on the relationship type \rst if \rst is supposed to be transitive.
 % only simple roles are allowed to appear in number restrictions, we cannot impose any cardinality
 % constraints on the relationship type \rst if \rst is supposed to be transitive.
 
+\subsection{Semantic Integrity of Mapping Algorithm}
+\label{sec:sem-integ-mapping}
 
 Before we establish the desired relation between the CROM and the ontology, we do a short
 analysis of the required expressiveness of the meta and the object logic. To state the disjoint union
@@ -586,6 +590,12 @@ assure that every \rosirole is played exactly once.
 If we have a single occurrence constraint, we have to add nominals. Transitivity axioms or role
 hierarchies are only required if some intra-relationship type constraint specifies a transitive or
 symmetric relationship type, respectively. Table~\ref{tab:required-dls} shows a summary of the required DLs.
+
+Given a \SCCROM{} \Kmc, we obtain the \ALCSHOIQ ontology
+$\Bmf_{\Kmc} = (\Bmc_{\Kmc}, \emptyset,\RO)$ where~$\Bmc_{\Kmc}$ is the conjunction of all meta
+axioms from~\eqref{eq:compartments-coverage} to~\eqref{eq:last-equation} and~\RO is the set of all
+role axioms~\eqref{eq:rbox-1} and~\eqref{eq:rbox-2}.
+
 
 \begin{table}
   \caption{Summary of required DLs for \LM and \LO}
@@ -600,11 +610,6 @@ symmetric relationship type, respectively. Table~\ref{tab:required-dls} shows a 
     \bottomrule
   \end{tabularx}
 \end{table}
-
-Given a \SCCROM{} \Kmc, we obtain the \ALCSHOIQ ontology
-$\Bmf_{\Kmc} = (\Bmc_{\Kmc}, \emptyset,\RO)$ where~$\Bmc_{\Kmc}$ is the conjunction of all meta
-axioms from~\eqref{eq:compartments-coverage} to~\eqref{eq:last-equation} and~\RO is the set of all
-role axioms~\eqref{eq:rbox-1} and~\eqref{eq:rbox-2}.
 
 \begin{theorem}
   Let $\Kmc = (\Mmc, \Amc, \Cmc)$ be a \SCCROM. Then, \Kmc is satisfiable iff $\Bmf_{\Kmc}$ is consistent.
@@ -799,7 +804,7 @@ Besides checking satisfiability in general, we can also address the following ot
 domain analyst would be interested in:
 \begin{enumerate}
 \item[(Q1)] Is a specific compartment type \ct instantiable, i.e.\ does there exist some \SCROI{} \I
-  s.t.\ $c \in \ct^{\I}$?
+  s.t.\ there exists a compartment $c$ with $c \in \ct^{\I}$?
 \item[(Q2)] Is the \rosirole type \rt playable, i.e.\ does there exist some \SCROI{} \I s.t. there is
   some $r \in \rt^{\I}$?
 \item[(Q3)] Can two \rosiroles be linked via the relationship type \rst, i.e. does there exist some
@@ -808,7 +813,7 @@ domain analyst would be interested in:
 \item[(Q4)] Can more precise constraints be entailed, i.e.\ do there exist some cardinalities in \Cmc
   which can never be reached?
 \item[(Q5)] Is some partial knowledge about an instance satisfiable, i.e.\ does there exist some
-  \SCROI{} \I based this partial knowledge?
+  \SCROI{} \I based on this partial knowledge?
 \end{enumerate}
 
 To answer all these questions, we utilise \SCROA{s} as introduced earlier. For~(Q1), we add the meta

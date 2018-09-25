@@ -42,7 +42,7 @@ classical description logic reasoners. Therefore, we introduce the notion of \em
   Let $\alpha$ be an axiom over \Nsig, then the \emph{weakly negated axiom $\alpha^{*}$} is defined
   as follows:
   \begin{itemize}
-  \item if $\alpha = C \sqsubseteq D$, then $\alpha^{*} \coloneqq (C \sqcup \lnot D)(x)$ where $x$
+  \item if $\alpha = C \sqsubseteq D$, then $\alpha^{*} \coloneqq (C \sqcap \lnot D)(x)$ where $x$
     is a fresh variable,
   \item if $\alpha = C(a)$, then $\alpha^{*} \coloneqq (\lnot C)(a)$, and
 %  \item if $\alpha = r(a,b)$, then $\alpha^{*} \coloneqq \lnot r(a,b)$, and
@@ -289,7 +289,7 @@ Lemma~\ref{lem:admissible-and-outerConsistent}.
 
 Due to Lemma \ref{lem:consistant-and-admissible-types}, we do not need to construct the set \Xmc
 first. We can also enumerate all models \Hmc of \Bmfb, and check for each \Hmc if the occurring
-types are admissible. Of course, if there exist one model of \Bmfb, then there exists infinitely
+types are admissible. If there exist one model of \Bmfb, then there exists infinitely
 many. But we only need to check those that are \emph{essentially different}, i.e.~those for which the set of
 occurring restricted types differs.
 
@@ -349,7 +349,7 @@ if consistent, returns the set of occurring restricted types.
   Algorithm~\ref{alg:1} is sound, complete, and terminating.
 \end{lemma}
 \begin{proof}
-  The set of essential equal models is finite. Checking whether \Hmc is a model and checking whether
+  Up to essential equivalence, there are only finitely many models. Checking whether \Hmc is a model and checking whether
   $\Omf_{\Zmc_{\Hmc}}$ or $\Omf_{Z_{i}}$ is consistent, is decidable. Thus, Algorithm~\ref{alg:1}
   terminates.
 
@@ -976,7 +976,7 @@ of the reference implementation of CROM\footnote{\url{https://github.com/Eden-06
 of the mapping is an OWL ontology in Manchester OWL syntax~\cite{HoP-OWL2Man12} that uses the
 special annotations introduced above to encode \LMLO.
 
-To evaluate the implementation of our reasoner, we conducted several benchmarks to test the
+To evaluate the implementation of our reasoner, we performed several benchmarks to test the
 performance on ontologies that are based on CROM. Therefore, we used a CROM generator, which we explain
 below in detail, that randomly generates models based on a pseudorandom number generator. These models are
 then converted to OWL ontologies by the above mentioned mapping. We analyse the performance based on
