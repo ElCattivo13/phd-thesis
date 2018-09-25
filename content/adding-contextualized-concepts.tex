@@ -1,6 +1,6 @@
 
 In this section we discuss a possible extension to our contextualised description logic.  We start
-with a little comparison to temporal description logics. Both DL-LTL-structures and nested DL
+with a comparison to temporal description logics. Both DL-LTL-structures and nested DL
 interpretations use a \emph{possible worlds semantics}. Single time points or contexts are
 represented in a meta dimension and for each such a meta element, or possible world, there exists
 one DL interpretation on the object level. Important for both the expressivity and the complexity of
@@ -86,7 +86,7 @@ The set of \emph{concepts of the object logic \LO (o-concepts)} is the smallest 
 
 Furthermore, for a nested interpretation \JJ the mapping $\cdot^{\I_{c}}$ is extended to
 $\ocont{C}[r]{D}$ as follows: $(\ocont{C}[r]{D})^{\I_{c}} \coloneqq \{d \in \Delta^{\J} \mid \text{there is
-some $c'\in C^{\J}$ s.t.\ $(c,c')\in r^{\J}$ and $d \in D^{\I_{c'}}$}\}$.
+some $c'\in \mathbf{C}^{\J}$ s.t.\ $(c,c')\in \mathbf{r}^{\J}$ and $d \in D^{\I_{c'}}$}\}$.
 \end{definition}
 
 Following customs of modal logic, we use $\ocont*{C}[r]{D}$ as an abbreviation for
@@ -134,7 +134,7 @@ the same complexity.
     \mathbf{C}:\langle \mathbf{C} \rangle_{\mathbf{r}}(\langle \mathbf{C}\rangle_{\mathbf{r}}D
     \sqsubseteq A) 
     \qquad\leadsto\qquad
-    C\sqsubseteq\exists r.\left(C\sqcap\oax{\ocont{C}[r]{D}}\right)
+    C\sqsubseteq\exists r.\left(C\sqcap\oax{\ocont{C}[r]{D}\sqsubseteq A}\right)
   \end{align*}
 
   \begin{table}[t]    
@@ -307,8 +307,17 @@ problem becomes undecidable.
 In Section~\ref{sec:complexity-consis-problem}, we discussed three different settings depending on
 whether rigid concept and role names are admitted. We already obtained the complexity results for
 \LMLOplus for Setting~(i), i.e.~no rigid names are allowed, and for Setting~(iii), i.e.~rigid roles
-are allowed.  In LMLOplus, however, a Setting~(ii) that allows rigid concept names but no rigid
-roles, coincides with Setting~(i), since rigid concepts can be easily simulated.
+are allowed.  With some assumptions, in \LMLOplus, however, Setting~(ii) that allows rigid concept names but no rigid
+roles coincides with Setting~(i), since rigid concepts can be simulated. Hence, we obtain the
+following result:
+
+\begin{theorem}
+  The consistency problem for \ALCHIALCplus-ontologies is \TwoExpTime-complete if $\ORR=\emptyset$.
+\end{theorem}
+
+\begin{proof}
+  \todo[inline]{Hier fehlt noch der genaue Beweis}
+\end{proof}
 
 To simulate rigid concepts in \LMLOplus, let \BB be an \LMLOplus ontology. We first have to
 simulate a universal role $u$ on the meta level. We can assume w.l.o.g.\
