@@ -101,9 +101,9 @@ logic proposed by Klarman et al.~\cite{KG16}.
 
 The contextualised DL \LMLO is a two-dimensional and two-sorted description logic. Syntactically, we
 start with a description logic \LM for the meta level to describe the relational structure between
-contexts. We add one meta concept constructor that allows to refer to the inner structure of
-each context. More precisely, we allow an \LO-axiom to constitute a meta concept which denotes the
-set of contexts in which that axiom holds.
+contexts. We add one meta concept constructor that allows to refer to the inner structure of each
+context. More precisely, we allow an \LO-axiom to constitute a meta concept which denotes the set of
+contexts in which that axiom holds.
 
 Throughout the rest of this thesis, let $\Msig = (\MC, \MR, \MI)$ and $\Osig = (\OC, \OR, \OI)$
 denote the signatures for \LM and \LO, respectively. Thus, we call \MC, \MR, \MI, \OC, \OR and \OI,
@@ -112,8 +112,8 @@ respectively, the set of \emph{meta concept}, \emph{role} and \emph{individual n
 
 \begin{definition}[Syntax of \LMLO]\label{def:syntax-lmlo}
   A \emph{concept of the object logic~\LO (o-concept)} is an \LO-concept over~\Osig.  An
-  \emph{o-axiom} is an \LO-GCI over~\Osig, an \LO-concept assertion over~\Osig, or an
-  \LO-role assertion over~\Osig.
+  \emph{o-axiom} is an \LO-GCI over~\Osig, an \LO-concept assertion over~\Osig, or an \LO-role
+  assertion over~\Osig.
 
   The set of \emph{concepts of the meta logic~\LM (m-concepts)} is the smallest set such that
   \begin{itemize}
@@ -123,9 +123,10 @@ respectively, the set of \emph{meta concept}, \emph{role} and \emph{individual n
     concepts.
   \end{itemize}
   %
-  A \emph{meta general concept inclusion (m-GCI)} is a GCI $C\sqsubseteq D$ where $C$ and $D$
-  are m-concepts, a \emph{meta concept assertion} is a concept assertion $C(a)$ where $C$ is a
-  m-concept and a \emph{meta role assertion} is simply an \LM-role assertion over \Msig.
+  A \emph{meta general concept inclusion (m-GCI)} is a GCI $C\sqsubseteq D$ where $C$ and $D$ are
+  m-concepts, a \emph{meta concept assertion} is a concept assertion $C(s)$ where $C$ is an
+  m-concept and $s\in\MI$, and a \emph{meta role assertion} is simply an \LM-role assertion over
+  \Msig.
   %
   An \emph{m-axiom} is an m-GCI, a meta concept assertion or a meta role assertion.
 
@@ -137,9 +138,10 @@ respectively, the set of \emph{meta concept}, \emph{role} and \emph{individual n
   \item nothing else is a Boolean m-axiom formula.
   \end{itemize}
     %
-  Finally, a \emph{Boolean \LMLO-knowledge base (\LMLO-BKB)} is a triple $\Bmf=(\B,\RO,\RM)$, where~\RO is an~\LO-RBox over~\Osig, \RM an \LM-RBox over~\Msig, and~\B is a Boolean m-axiom formula. An
-  \emph{\LMLO-ontology} is an \LMLO-BKB, where only axiom conjunction and no axiom negation is
-  allowed in the Boolean m-axiom formula.
+  Finally, a \emph{Boolean \LMLO-knowledge base (\LMLO-BKB)} is a triple $\Bmf=(\B,\RO,\RM)$,
+  where~\RO is an~\LO-RBox over~\Osig, \RM an \LM-RBox over~\Msig, and~\B is a Boolean m-axiom
+  formula. An \emph{\LMLO-ontology} is an \LMLO-BKB, where only axiom conjunction and no axiom
+  negation is allowed in the Boolean m-axiom formula.
 \end{definition}
 
 \noindent
@@ -160,7 +162,7 @@ The semantics of \LMLO is defined by the notion of \emph{nested interpretations}
 structure between them.  We assume that all contexts speak about the same non-empty domain
 (\emph{constant domain assumption}). We show later that this is no real restriction.
 
-As argued earlier, sometimes it is desired that concepts or roles in the object logic are
+As argued earlier, in some situations it is desired that concepts or roles in the object logic are
 interpreted the same in all contexts. Therefore we introduce \emph{rigid names}. Let
 $\OCR\subseteq\OC$ be the set of \emph{rigid object concept names} and $\ORR\subseteq\OR$ be the set
 of \emph{rigid object role names}.  Often, we refer to \OCR and \ORR simply as \emph{rigid concepts}
@@ -212,22 +214,34 @@ We are now ready to define the semantics of \LMLO.
 \end{definition}
 
 \noindent
-With these notions, we can refine the examples of
+Note here, that in the above definition we do not need to consider o-axioms separately since on the
+object level the semantics are defined as for the DL \LO.
+
+Now with these notions, we can refine the examples of
 Section~\ref{sec:prelim-dls}. 
 
 \begin{example}\label{ex:nfl-with-contexts}
   Considering again Example~\ref{ex:concept-nfl} and Example~\ref{ex:bkb-nfl}, we recognise that
-  $\mathsf{NFL\_Team}$ actually is a context. The meta concept $C'$ analogous to $C$ could be:
+  from an ontological point of view, the occurring concepts are not modelled well. There is a
+  qualitative difference between the concepts of a $\mathsf{Quarterback}$ and an
+  $\mathsf{NFL\_Team}$. In fact, $\mathsf{NFL\_Team}$ actually is a context within the
+  $\mathsf{Quaterback}$ position makes sense.
+  %
+  Analogous to the concept $C$ of Ex.~\ref{ex:concept-nfl}, we can model the meta concept $C'$ as follows:
   \begin{align*}
     & \mathsf{NFL\_{}Team} \sqcap \lnot \mathsf{AFC} \sqcap
     \lnot\oax{\exists\plays.\mathsf{Quarterback}\sqsubseteq\bot} 
-    \sqcap \oax{\mathsf{Coach}(\text{\textit{MikeMcCarthy}})},
-  \end{align*}
-  describing the context of an NFL team that is not in the AFC, has someone playing quarterback and
-  has Mike McCarthy as coach.  The contextualised ontology $\Omc'$ could look like the following:
+    \sqcap \oax{\mathsf{Coach}(\text{\textit{MikeMcCarthy}})}.
+  \end{align*} 
+  It describes the context of an NFL team that is not in the AFC, has someone playing quarterback
+  and has Mike McCarthy as coach. Here, $\exists\plays.\mathsf{Quarterback}\sqsubseteq\bot$ is an
+  o-axiom which builds the m-concept $\smash{\oax{\exists\plays.\mathsf{Quarterback}\sqsubseteq\bot}}$.
+ 
+  In reference to the ontology \Omc of Ex.~\ref{ex:bkb-nfl} the contextualised ontology $\Omc'$
+  could look like the following:
   \begin{gather*}
-    (\mathsf{NFC} \sqcap
-    \oax{(\exists\plays.\top)(\text{\textit{AaronRodgers}})})(\text{\textit{GreenBayPackers}})
+    \mathsf{NFC}(\text{\textit{GreenBayPackers}}) \quad\land\\ 
+    \oax{(\exists\plays.\top)(\text{\textit{AaronRodgers}})}(\text{\textit{GreenBayPackers}})
     \quad\land\\ 
     \begin{aligned}
       \mathsf{NFL\_Team} & \sqsubseteq \oax{\exists\plays.\top \sqsubseteq
@@ -237,17 +251,20 @@ Section~\ref{sec:prelim-dls}.
     \end{aligned}
   \end{gather*}
   The first meta concept assertion states that the context of the Green Bay Packers belongs to the
-  meta concept NFC and is a context in which Aaron Rodgers plays something. Furthermore, people who
-  play something within the context of an NFL team are NFL players, and again, the NFL is a disjoint
-  union of the NFC and the AFC. As before, we can entail that Aaron Rodgers is an NFL player, at
-  least in the context of the Packers, i.e.\ $\Omc'$ entails
+  meta concept NFC. The second meta concept assertion states that the Green Bay Packers are a
+  context in which Aaron Rodgers plays something. Furthermore, people who play something within the
+  context of an NFL team are NFL players, and last, the NFL is a disjoint union of the NFC and the
+  AFC. As before, we can entail that Aaron Rodgers is an NFL player, at least in the context of the
+  Packers, i.e.\ $\Omc'$ entails
   \begin{gather*}
     \oax{\mathsf{NFL\_Player}(\text{\textit{AaronRodgers}})}(\text{\textit{GreenBayPackers}}).
   \end{gather*}
   A nested interpretation \J, such that Green Bay Packers are in the extension of $C'$, and \J is a
-  model of $\Omc'$, is depicted in Figure~\ref{fig:example-nfl-contexts}. Note here that after
-  introducing ``Junior Football Clinic'' as another context it would not be clear anymore in which
-  context Aaron Rodgers actually plays quarterback if modelled with standard DLs.
+  model of $\Omc'$, is depicted in Figure~\ref{fig:example-nfl-contexts}.  In order to show the
+  relational structure of contexts we added the context of the \enquote{Junior Football Clinic} in \J
+  though it has nothing to do with neither $C'$ nor $\Omc'$. However, if we would model this with
+  standard DLs it is not clear anymore in which context Aaron Rodgers is a player and when he is a
+  coach.
 \end{example}
 
 \begin{figure}[t]
