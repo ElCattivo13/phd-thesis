@@ -555,12 +555,17 @@ sufficient since the converse does not hold as the following example shows.
 \begin{example}\label{ex:outer-abstraction-continued}
   Consider again $\Bmf_\text{ex}$ of Example~\ref{ex:outer-abstraction}.
   %
-  Take any \Msig-interpretation $\Hmc=(\Delta^{\Hmc},\cdot^\Hmc)$ with $\Delta^{\Hmc}=\{e\}$,
-  $d^\Hmc=e$, and $C^\Hmc = A_{\oax{A\sqsubseteq\bot}}^\Hmc = A_{\oax{A(a)}}^\Hmc = \{e\}$.
+  First, we observe that $\Bmf_\text{ex}$ is inconsistent since the meta individual $c$ belongs to
+  the meta concepts $C$, $\oax{A\sqsubseteq\bot}$ and $\oax{A(a)}$. Thus, in any model of
+  $\Bmf_\text{ex}$ the $\mathsf{O}$-interpretation $\I_{c}$ must model both o-axioms
+  $A\sqsubseteq\bot$ and $A(a)$ which is obviously not possible.
 
-  Clearly, \Hmc is a model of~$\Bmf_\text{ex}^{\bsf}$.  But there is no nested interpretation~\JJ
-  with $\J\models\Bmf_\text{ex}$ since this would imply $\Cbb=\Delta^{\Hmc}$, and that $\I_e$ is a model of
-  both $A\sqsubseteq\bot$ and $A(a)$, which is not possible.
+  However, there exists an \Msig-interpretation $\Hmc=(\Delta^{\Hmc},\cdot^\Hmc)$ such that
+  $\Delta^{\Hmc}=\{e\}$, $d^\Hmc=e$, and
+  $C^\Hmc = A_{\oax{A\sqsubseteq\bot}}^\Hmc = A_{\oax{A(a)}}^\Hmc = \{e\}$ which is a model
+  of~$\Bmf_\text{ex}^{\bsf}$. Hence, $\Bmf_\text{ex}^{\bsf}$ is consistent while $\Bmf_\text{ex}$ is
+  not. Note that this does not contradicts Lemma~\ref{lem:interpretation-outer-abstraction} since
+  there does not exist any nested interpretation \J such that \Hmc=\Jb.
 \end{example}
 
 The above example illustrates that there exist implicit restrictions on the interpretation of the
@@ -1164,7 +1169,7 @@ syntactically restricted fragment of \EL-LTL.
 
   Let $\Box\phi$ be such an \EL-LTL-formula over~\Osig.  Now, we obtain the m-concept $C_\phi$
   from~$\phi$ by replacing \EL-axioms~$\alpha$ by \oalpha, $\land$ by $\sqcap$, and subformulas of
-  the form $\Next\psi$ by $\forall t.\psi\sqcap\exists t.\psi$, where $t\in\MR$ is arbitrary but
+  the form $\Next\psi$ by $\forall t.C_{\psi}\sqcap\exists t.C_{\psi}$, where $t\in\MR$ is arbitrary but
   fixed.
 
   \begin{claim}
@@ -1226,14 +1231,23 @@ syntactically restricted fragment of \EL-LTL.
     By construction we have that $\J_{\Psf}\models\top\sqsubseteq\exists t.\top$.  We show by a
     simple case distinction that $\J_{\Psf}\models\top\sqsubseteq C_\phi$.
     %
-    If $C_\phi$ does not contain any role name $r\in\MR$, the restriction on the set of worlds
-    preserves the entailment relation.
-    %
-    Otherwise, $C_\phi$ is of the form $\forall t.C_\psi\sqcap\exists t.C_\psi$.  Since
-    $\J_{\Psf}\models\top\sqsubseteq\exists t.\top$, $\J_{\Psf}\models\top\sqsubseteq C_\psi$, and
+    If $\phi$ does not contain any \Next-operator, then no meta role names occur in $C_{\phi}$ and
+    the restriction on the set of worlds preserves the entailment relation. Otherwise, $C_{\phi}$ is
+    of the form $C'_{\phi} \sqcap \forall t.C_\psi\sqcap\exists t.C_\psi$ where $C'_{\phi}$ is the
+    possibly empty conjunction contained in $C_{\phi}$ that does not contain meta role names. Hence,
+    $\J_{\Psf}\models C'_{\phi}$. Furthermore, since
+    $\J_{\Psf}\models\top\sqsubseteq\exists t.\top$, $\J_{\Psf}\models\top\sqsubseteq C_\psi$ (by induction), and
     there is only one $t$-successor, we have $\J_{\Psf}\models\top\sqsubseteq C_\phi$.  Hence,
     $\J_{\Psf}\models\top\sqsubseteq C_{\phi}\sqcap\exists t.\top$.
-
+    %
+    % If $C_\phi$ does not contain any role name $r\in\MR$, the restriction on the set of worlds
+    % preserves the entailment relation.
+    % %
+    % Otherwise, $C_\phi$ is of the form $\forall t.C_\psi\sqcap\exists t.C_\psi$.  Since
+    % $\J_{\Psf}\models\top\sqsubseteq\exists t.\top$, $\J_{\Psf}\models\top\sqsubseteq C_\psi$, and
+    % there is only one $t$-successor, we have $\J_{\Psf}\models\top\sqsubseteq C_\phi$.  Hence,
+    % $\J_{\Psf}\models\top\sqsubseteq C_{\phi}\sqcap\exists t.\top$.
+    
     We define the DL-LTL-structure \Imf over~\Osig as
     $\Imf\coloneqq(\Delta^{\J},\cdot^{\I_i})_{i\ge 0}$ where
     $\cdot^{\I_{i}}\coloneqq\cdot^{\I_{c_{i}}}$.
