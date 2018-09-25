@@ -294,23 +294,30 @@ are possible.
 
 In the following, we give a short outline how the thesis is structured.
 
-In the first section of Chapter~\ref{cha:context-dls}, we present the basic definitions of
+In the first section of Chapter~\ref{cha:preliminaries}, we present the basic definitions of
 description logics which we will use throughout the thesis. We define the syntax and semantics of
 concepts, axioms and knowledge bases and state specific DLs together with the respective
 complexities of the consistency problem.
 %
-We then introduce the contextualised description logic \LMLO. We again start with the definition of
-the syntax and semantics. For the complexity analysis of the consistency problem, the upper bounds
-are investigated first. We consider the case of the lightweight description logic \EL in a separate
-section, which at the same time yields the lower bounds of the complexity for more expressive
-contextualised DLs. For the complexity analysis, we consider three different settings which result in
-different complexity results. In the first setting, we do not allow any rigid names.  In the
-second setting, we assume the presence of rigid concepts, but forbid any rigid roles. In the
-last and complexity-wise hardest setting, we allow both rigid concepts and rigid names.
+We then present an ontological overview of the notion of a role and introduce
+a syntactical variant of the Compartment Role Object Model, the modelling language we use for
+role-based modelling.
+
+Chapter~\ref{cha:context-dls} starts with an discussion about the requirements for a logical
+formalism in order to be feasible in our setting, and we then introduce the contextualised
+description logic \LMLO. We again start with the definition of the syntax and semantics. For the
+complexity analysis of the consistency problem, the upper bounds are investigated first. We consider
+the case of the lightweight description logic \EL in a separate section, which at the same time
+yields the lower bounds of the complexity for more expressive contextualised DLs. For the complexity
+analysis, we consider three different settings which result in different complexity results. In the
+first setting, we do not allow any rigid names.  In the second setting, we assume the presence of
+rigid concepts, but forbid any rigid roles. In the last and complexity-wise hardest setting, we
+allow both rigid concepts and rigid names.
 %
 At last, we introduce an extension of \LMLO, and show that the consistency problem becomes
 undecidable in the presence of rigid roles. The main results of this chapter, namely the complexity
-results excluding the description logic \SHOIQ, have already been published:
+results excluding the description logic \SHOIQ, have already been published in~\cite{BoLi-FroCoS15,
+  BoLi-DL15, BoLi-LTCS-15-04}:
 \begin{itemize}
 \item \fullcite{BoLi-FroCoS15}
 \item \fullcite{BoLi-DL15}
@@ -318,24 +325,25 @@ results excluding the description logic \SHOIQ, have already been published:
 \end{itemize}
 
 
-In Chapter~\ref{cha:mapping}, we present the mapping from role-based models into
-\LMLO-ontologies. We start with an ontological overview of the notion of a role.  We then introduce
-a syntactical variant of the Compartment Role Object Model and explain in detail how the different
-assumptions of a CROM are translated.  We conclude the chapter with some thoughts on how to express
-constraints for role-based models that go beyond CROM. The mapping algorithm is still to be
-published, the formal role-based modelling language CROM has been published:
+In Chapter~\ref{cha:mapping}, we present the mapping from role-based models into \LMLO-ontologies.
+We explain in detail how the different assumptions of a CROM are translated and proof that the
+mapping algorithm preserves the semantics of the role-based model.  We conclude the chapter with
+some thoughts on how to express constraints for role-based models that go beyond CROM.  Both the
+formal role-based modelling language CROM and the mapping algorithm have already been published
+in~\cite{KBG-SLE15,BoKu-JIST17}:
 \begin{itemize}
 \item \fullcite{KBG-SLE15}
+\item \fullcite{BoKu-JIST17}
 \end{itemize}
 
 
-Finally, in Chapter~\ref{cha:jconht}, we present JConHT, our reasoner for \LMLO. To implement a decision
-procedure for the consistency problem, we have to adapt some ideas of Chapter~\ref{cha:context-dls},
-which are discussed in Section~\ref{sec:blackbox-approach}. Section~\ref{sec:using-hypertableau}
-covers the analysis of the contextualised hypertableau algorithm. We finish the chapter with some
-notes on the implementation and an evaluation of our implementation. Both the contextualised
-hypertableau algorithm and a system description
-of JConHT are not yet published.
+Finally, in Chapter~\ref{cha:jconht}, we present JConHT, our reasoner for \LMLO. To implement a
+decision procedure for the consistency problem, we have to adapt some ideas of
+Chapter~\ref{cha:context-dls}, which are discussed in
+Section~\ref{sec:blackbox-approach}. Section~\ref{sec:using-hypertableau} covers the analysis of the
+contextualised hypertableau algorithm. We finish the chapter with some notes on the implementation
+and an evaluation of our implementation. Both the contextualised hypertableau algorithm and a system
+description of JConHT are also published in~\cite{BoKu-JIST17}.
 
 
 % \clearpage
