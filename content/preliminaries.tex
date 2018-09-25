@@ -210,10 +210,17 @@ logics.  The entailment problem, for instance, is the problem of deciding, given
 axiom~$\beta$, whether \Bmf \emph{entails} $\beta$, i.e.~whether all models of~\Bmf are also models
 of~$\beta$.
 %
-The consistency problem, however, is fundamental in the sense that most other standard reasoning tasks can be polynomially reduced to it in the presence of axiom negation.
-For example, the entailment problem can be reduced to the \emph{in}consistency problem: $\Bmf=(\B,\Rmc)$
-entails $\beta$ iff $(\B\land\lnot\beta,\Rmc)$ is inconsistent.  Hence, we focus in this thesis only
-on the consistency problem.
+The consistency problem, however, is fundamental in the sense that most other standard reasoning
+tasks can be polynomially reduced to it in the presence of axiom negation.  For example, the
+entailment problem can be reduced to the \emph{in}consistency problem: $\Bmf=(\B,\Rmc)$ entails
+$\beta$ iff $(\B\land\lnot\beta,\Rmc)$ is inconsistent. If we consider only an ontology $\Omf=(\Omc,\Rmc)$ without
+any axiom negations, we can still simulate most of the negated axioms $\lnot\beta$. Let us for
+example consider the GCI
+$\beta = C \sqsubseteq D$. Here we can check $(\Omc\land (C \sqcap \lnot D)(x),\Rmc)$ with $x\in\NI$
+not occurring in \Omc for inconsistency to
+decide the entailment problem.
+%
+Hence, we focus in this thesis only on the consistency problem.
 
 To show an example of an ontology, we continue contentwise with American football.
 
