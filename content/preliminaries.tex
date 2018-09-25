@@ -537,7 +537,7 @@ interesting aspects.
   the context of a transaction. Transactions in turn can have the function of a money transfer in
   the context of a bank and customers can issue such money transfers.
 
-  Hence, we have the following signature
+  Hence, we have the following vocabulary
   $\Sigma_{\mathsf{Bank}} = (\NT{}_{\mathsf{,Bank}}, \RT{}_{\mathsf{,Bank}}, \CT{}_{\mathsf{,Bank}},
   \RST{}_{\mathsf{,Bank}})$ with
   \begin{align*}
@@ -702,10 +702,10 @@ apparent question is, given a \SCROM{} \Mmc and a \SCROI{} \I, whether \I is com
 \Mmc. But as this task rather belongs to the area of model checking, we will not focus on that
 problem in this thesis.
 %
-Instead, given a \SCROM{} \Mmc, it ismore interesting whether there exists any \SCROI that is
+Instead, given a \SCROM{} \Mmc, it is more interesting whether there exists any \SCROI that is
 compliant with \Mmc.  Additionally, we often want to know for a specific \SCROM{} \Mmc whether there
 exists a compliant \SCROI that fulfills certain assertions, e.g.\ that a role of a certain type is
-played.  To express this assertional knowledge, we introduce a so-called \SCROA, a set of
+played.  To express this assertional knowledge, we introduce a so-called \SCROA, a finite set of
 assertions which should additionally be satisfied by a \SCROI.
 
 \begin{definition}[$\Sigma$-Compartment Role Object Assertions] \label{def:scroa} Let
@@ -720,7 +720,7 @@ assertions which should additionally be satisfied by a \SCROI.
     $c\in\INDC$ (\emph{link assertion}). 
   \end{itemize}
 
-  A \emph{set of Compartment Role Object Assertions \A over $\Sigma$ (\SCROA)} is a set of such
+  A \emph{set of Compartment Role Object Assertions \A over $\Sigma$ (\SCROA)} is a finite set of such
   assertions.
   %
   We extend the \SCROI{} \I to additionally map individual names to domain elements, e.g.\
