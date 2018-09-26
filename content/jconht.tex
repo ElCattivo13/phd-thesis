@@ -373,6 +373,10 @@ if consistent, returns the set of occurring restricted types.
   is consistent.
 \end{proof}
 
+In Algorithm~\ref{alg:1}, we need to enumerate all models of \Bmfb up to essential
+equivalence. Therefore, we need an algorithm deciding not only the consistency of a DL ontology but also
+outputs information about a model. We discuss further issues about the core algorithm and core
+reasoner which we use in the next section.
 
 
 \section{Contextual Hypertableau}
@@ -404,8 +408,8 @@ Last but not least, the performance of the reasoner in consistency checking is i
 us. Therefore, we take a look at the OWL Reasoner Evaluation Competition
 Report~\cite{PaMGGS-SSWS15}, especially at the results of the discipline: \emph{OWL DL
   Consistency}. This discipline, among others, was won by Konclude~\cite{StLG-JWS14}, a
- hybrid reasoner that combines tableau calculus with a variant of consequence-based
-saturation procedure. This hybrid approach, however, makes Konclude unsuitable in our
+ hybrid reasoner that combines tableau calculus with a variant of a consequence-based
+saturation procedure. However, due to this hybrid approach it is unsuitable in our
 setting. Besides that, it is implemented in C++ and we focus on Java-based reasoners. The
 next candidate is HermiT~\cite{GHM-JAR14}, a Java-implemented reasoner based on the hypertableau
 calculus~\cite{MoSH-JAIR09}. Since it meets all our requirements, we use HermiT as core reasoner in
@@ -421,8 +425,8 @@ our implementation.
 
 % \todo[inline]{full subset blocking could be problematic, but is not used in HermiT.}
 
-Before we discuss the details of our algorithm, we present the relevant parts of the
-hypertableau algorithm and refer the interested reader
+Before we discuss the details of a refinement of our algorithm with regard towards an implementation, we
+present the relevant parts of the hypertableau algorithm and refer the interested reader
 to~\cite{MoSH-CADE07,MoSH-DL07,MoSH-JAIR09}. Like other tableau-based methods, the hypertableau
 calculus tries to construct an abstraction of a model for a given ontology to check whether that
 ontology is consistent. But in contrast to other tableau calculi, it operates on a set of
@@ -487,50 +491,11 @@ to consider the clausification of the outer abstraction of an \LMLO ontology.
 
 As typical for tableau algorithms, the hypertableau calculus uses a blocking strategy to ensure
 termination. Intuitively, in the construction of a model, a blocked individual is replaced by its
-blocker. Thus, infinite models can be constructed. Here, it is important for us, that the blocked
-individual and its blocker have the same restricted type. This holds for all blocking strategies
-used in the hypertableau algorithm. For the sake of conciseness, we omit the specific blocking
-strategy in our definition of the hypertableau algorithm and refer to~\cite{MoSH-JAIR09} for a
-complete definition.
-
-\begin{definition}[Hypertableau Algorithm~\cite{MoSH-JAIR09}]
-  Given a set of named individual \MI, the set of \emph{root individuals \MO} is the smallest set
-  such that $\MI\subseteq\MO$, and if $x\in\MO$, then $x.\langle r,B,i \rangle\in\MO$ for each role
-  $r$, literal concept $B$ and positive integer $i$. The set of \emph{all individuals} \MA is the
-  smallest set such that $\MO\subseteq\MA$, and if $x\in\MA$, then $x.i\in\MA$ for each positive
-  integer~$i$. $x.i$ is a \emph{successor} of $x$, and \emph{descendant} is the transitive closure
-  of successor.
-
-  In the hypertableau algorithm, an ABox can additionally contain
-  \begin{itemize}
-  \item annotatd equalities,
-  \item $\bot$, which is equivalent to the concept assertion $\bot(a)$ for some $a\in\MI$,
-  \item assertions that contain individuals from \MA and not only \MI, and
-  \item renamings of the form $a\mapsto b$.
-  \end{itemize}
-  The ABox \emph{\prune{\A}{c}} is obtained from \A by removing all assertions containing
-  descendants of~$c$.  The ABox \emph{\mergeABox{\A}{s\to t}} is obtained from \prune{\A}{s} by
-  replacing all individuals $s$ with individual $t$ in all assertions and annotation, and, if both
-  $s$ and $t$ are root individuals, adding the renaming $s\mapsto t$.
-
-  Table~\ref{tab:derivation-rules} specifies \emph{derivation rules} that, given an ABox \A and a
-  set of DL-Clauses \Cmc, derive one or more ABoxes $\A_{1},\dots,\A_{n}$.
-
-  An ABox \A contains a \emph{clash} iff $\bot\in\A$. Otherwise, \A is \emph{clash-free}. 
-  
-  For a set of DL-clauses \Cmc and an input ABox \A, a \emph{derivation} is a pair $(T,\lambda)$
-  where $T$ is a finitely branching tree and $\lambda$ is a function that labels the nodes of $T$
-  with ABoxes such that for each node $t\in T$:
-  \begin{itemize}
-  \item $\lambda(t)=\A$ if $t$ is the root of $T$,
-  \item $t$ is a leaf of $T$ if $\bot\in\lambda(t)$ or no derivation rule is applicable to
-    $\lambda(t)$ and \Cmc, and
-  \item $t$ has children $t_{1},\dots,t_{n}$ such that $\lambda(t_{1}),\dots,\lambda(t_{n})$ are
-    exactly the results of applying one applicable rule to $\lambda(t)$ and \Cmc in all other
-    cases.
-  \end{itemize}
-  An ABox is \emph{complete} iff it labels some leaf of $T$.
-\end{definition}
+blocker. Thus, by the unravelling technique infinite models can be constructed. Here, it is important for us, that
+the blocked individual and its blocker have the same restricted type. This holds for all blocking
+strategies used in the hypertableau algorithm. For the sake of conciseness, we omit the specific
+blocking strategy in our definition of the hypertableau algorithm and refer to~\cite{MoSH-JAIR09}
+for a complete definition.
 
 \begin{table}
   \caption{Derivation rules of the hypertableau calculus~\cite{MoSH-JAIR09}}
@@ -598,7 +563,49 @@ complete definition.
   \end{tabularx}
 \end{table}
 
+\begin{definition}[Hypertableau Algorithm~\cite{MoSH-JAIR09}]
+  Given a set of named individual \MI, the set of \emph{root individuals \MO} is the smallest set
+  such that $\MI\subseteq\MO$, and if $x\in\MO$, then $x.\langle r,B,i \rangle\in\MO$ for each role
+  $r$, literal concept $B$ and positive integer $i$. The set of \emph{all individuals} \MA is the
+  smallest set such that $\MO\subseteq\MA$, and if $x\in\MA$, then $x.i\in\MA$ for each positive
+  integer~$i$. $x.i$ is a \emph{successor} of $x$, and \emph{descendant} is the transitive closure
+  of successor.
 
+  In the hypertableau algorithm, an ABox can additionally contain
+  \begin{itemize}
+  \item annotatd equalities,
+  \item $\bot$, which is equivalent to the concept assertion $\bot(a)$ for some $a\in\MI$,
+  \item assertions that contain individuals from \MA and not only \MI, and
+  \item renamings of the form $a\mapsto b$.
+  \end{itemize}
+  The ABox \emph{\prune{\A}{c}} is obtained from \A by removing all assertions containing
+  descendants of~$c$.  The ABox \emph{\mergeABox{\A}{s\to t}} is obtained from \prune{\A}{s} by
+  replacing all individuals $s$ with individual $t$ in all assertions and annotation, and, if both
+  $s$ and $t$ are root individuals, adding the renaming $s\mapsto t$.
+
+  Table~\ref{tab:derivation-rules} specifies \emph{derivation rules} that, given an ABox \A and a
+  set of DL-Clauses \Cmc, derive one or more ABoxes $\A_{1},\dots,\A_{n}$.
+
+  An ABox \A contains a \emph{clash} iff $\bot\in\A$. Otherwise, \A is \emph{clash-free}. 
+  
+  For a set of DL-clauses \Cmc and an input ABox \A, a \emph{derivation} is a pair $(T,\lambda)$
+  where $T$ is a finitely branching tree and $\lambda$ is a function that labels the nodes of $T$
+  with ABoxes such that for each node $t\in T$:
+  \begin{itemize}
+  \item $\lambda(t)=\A$ if $t$ is the root of $T$,
+  \item $t$ is a leaf of $T$ if $\bot\in\lambda(t)$ or no derivation rule is applicable to
+    $\lambda(t)$ and \Cmc, and
+  \item $t$ has children $t_{1},\dots,t_{n}$ such that $\lambda(t_{1}),\dots,\lambda(t_{n})$ are
+    exactly the results of applying one applicable rule to $\lambda(t)$ and \Cmc in all other
+    cases.
+  \end{itemize}
+  An ABox is \emph{complete} iff it labels some leaf of $T$.
+\end{definition}
+
+Note that the annotation $\ldots @_{\atmost{n}{r}{B}}^{u}$ used in the \textit{NI}-rule does not
+effect the meaning of the equality, it only records its provenance. They are introduced in the
+clausification, but since the details are not important here, we omit them and refer
+to~\cite{MSH-DL08}.
 
 Through the rest of this section let \CA be the clausification of the outer abstraction
 $\Omf^{\bsf}$. Hence, \A is an \LM-ABox over \Msig.
@@ -681,7 +688,7 @@ $A_{\oax{B\sqsubseteq\bot}}$. Hence, $\Zmc_{\Hmc}$ is not admissible.
 
 \begin{proof}
   In the completeness proof for the Hypertableau Algorithm (see \cite{MoSH-JAIR09}, Lemma 6) a model
-  $\Hmc_{\CA}$ for \CA is constructed by an unraveling based on \Ap. Here, the domain elements are paths. We
+  $\Hmc_{\CA}$ for \CA is constructed by an unravelling based on \Ap. Here, the domain elements are paths. We
   can extend this interpretation to $\Hmc_{\Ap}$ by additionally interpreting blockable individuals as follows:
   if $s$ is not blocked, then $s^{\Hmc_{\Ap}}\coloneqq \left[p\mid\frac{s}{s}\right]$ and if $s$ is
   blocked by $t$, then $s^{\Hmc_{\Ap}}\coloneqq \left[p\mid\frac{t}{s}\right]$ where $p$ is a path where
@@ -704,22 +711,50 @@ $A_{\oax{B\sqsubseteq\bot}}$. Hence, $\Zmc_{\Hmc}$ is not admissible.
   If \Ap is not admissible, then $(Z_{1},\dots,Z_{k})$ cannot be admissible either. Hence, $\Zmc_{\Hmc}$ is
   also not admissible.
 
-  If \Ap is admissible, let $\I_{1},\dots,\I_{k}$ be the \Osig-interpretations modelling
-  $\Omc_{c_{1}},\dots,\Omc_{c_{k}}$. For any
-  $\bsf(\oalpha) \in \ran(\bsf) \setminus (\Zpos{c_{i}}\cup\Zneg{c_{i}})$, we have that $\I_{i}$ is
-  either a model of $\Omc_{c_{i}}\land\alpha$ or $\Omc_{c_{i}}\land\lnot\alpha$.  For any concept
-  assertion $A(c)$ with $A\in\MC$, $\Hmc_{\Ap}\models A(c)$ iff $A(c)\in\Ap$ by construction of
-  $\Hmc_{\Ap}$. However, if both $A(c)\notin\Ap$ and $\lnot A(c)\notin\Ap$, then $\Hmc_{\Ap}'$ which
-  is equal to $\Hmc_{\Ap}$ except that
-  $A^{\Hmc_{\Ap}'} \coloneqq A^{\Hmc_{\Ap}} \cup \{c^{\Hmc_{\Ap}}\}$ also models \Ap and
-  $A(c)$. Note here, that $\Hmc_{\Ap}'$ also models \A, but not necessarily \Cmc anymore.
-  % 
-  We define $\Hmc^{*}$ such that for all $\bsf(\oalpha) \in \ran(\bsf) \setminus
-  (\Zpos{c_{i}}\cup\Zneg{c_{i}})$ with $\I_{i}\models\Omc_{c_{i}}\land\alpha$ we set
-  $\bsf(\oalpha)^{\Hmc^{*}} \coloneqq \bsf(\oalpha)^{\Hmc_{\Ap}} \cup \{c_{i}^{\Hmc_{\Ap}}\}$. Thus,
-  $\I_{i}\models\Omc_{Z_{i}}$ where $Z_{i} = \mathsf{type}_{\ran(b)}^{\Hmc^{*}}(c_{i})$. Since
-  $\Zmc_{\Hmc^{*}} = (Z_{1},\dots,Z_{k})$, $\Zmc_{\Hmc^{*}}$ is admissible.
-  % 
+  If \Ap is admissible, then by definition there exist \Osig-interpretations $\I_{1},\dots,\I_{k}$
+  modelling $\Omc_{c_{1}},\dots,\Omc_{c_{k}}$. First, we define
+  $\Zneu{c_{i}} \coloneqq \ran(\bsf) \setminus (\Zpos{c_{i}}\cup\Zneg{c_{i}})$ as the set of
+  abstracted concept names which do not occur neither as a positive nor negative concept assertion
+  with $c_{i}$ in \Ap. Note that $\I_{i}$ always either models $\alpha$ or $\lnot\alpha$ for any
+  o-axiom $\alpha$, and that by the construction of $\Hmc_{\Ap}$, $\Hmc_{\Ap}\models A(c)$ iff
+  $A(c)\in\Ap$ for any $A\in\MC$. We define $\Hmc^{*}$ to be equal with $\Hmc_{\Ap}$ except that for
+  all $\bsf(\oalpha)\in\ran(\bsf)$, we define $\bsf(\oalpha)^{\Hmc^{*}}$ as
+  \begin{align*}
+  \bsf(\oalpha)^{\Hmc^{*}}\coloneqq \bsf(\oalpha)^{\Hmc_{\Ap}} \cup \{c_{i}^{\Hmc_{\Ap}} \mid
+  \bsf(\oalpha)\in\Zneu{c_{i}} \text { and }\I_{i}\models\alpha \}.
+  \end{align*}
+  Hence, with $Z_{i} = \mathsf{type}_{\ran(b)}^{\Hmc^{*}}(c_{i})$ we have that
+  $\I\models\Omc_{Z_{i}}$. Since $\Zmc_{\Hmc^{*}} = (Z_{1},\dots,Z_{k})$, $\Zmc_{\Hmc^{*}}$ is
+  admissible.
+  %
+  % \vspace{2cm}
+  % If \Ap is admissible, then by definition there exist \Osig-interpretations $\I_{1},\dots,\I_{k}$
+  % modelling $\Omc_{c_{1}},\dots,\Omc_{c_{k}}$. For any abstracted concept name $A_{\oalpha}$ which
+  % does not occur neither as a positive nor negative concept assertion in \Ap, i.e.\  for any
+  % $\bsf(\oalpha) \in \ran(\bsf) \setminus (\Zpos{c_{i}}\cup\Zneg{c_{i}})$, we have that either
+  % $\I_{i}\models\Omc_{c_{i}}\land\alpha$ or $\I_{i}\models\Omc_{c_{i}}\land\lnot\alpha$.
+  %
+  % Furthermore, by construction of $\Hmc_{\Ap}$ we know that $\Hmc_{\Ap}\models A(c)$ iff
+  % $A(c)\in\Ap$ for any concept assertion $A(c)$ with $A\in\MC$.
+  %
+  %
+  % If \Ap is admissible, let $\I_{1},\dots,\I_{k}$ be the \Osig-interpretations modelling
+  % $\Omc_{c_{1}},\dots,\Omc_{c_{k}}$. For any
+  % $\bsf(\oalpha) \in \ran(\bsf) \setminus (\Zpos{c_{i}}\cup\Zneg{c_{i}})$, we have that $\I_{i}$ is
+  % either a model of $\Omc_{c_{i}}\land\alpha$ or $\Omc_{c_{i}}\land\lnot\alpha$.  For any concept
+  % assertion $A(c)$ with $A\in\MC$, $\Hmc_{\Ap}\models A(c)$ iff $A(c)\in\Ap$ by construction of
+  % $\Hmc_{\Ap}$. However, if both $A(c)\notin\Ap$ and $\lnot A(c)\notin\Ap$, then $\Hmc_{\Ap}'$ which
+  % is equal to $\Hmc_{\Ap}$ except that
+  % $A^{\Hmc_{\Ap}'} \coloneqq A^{\Hmc_{\Ap}} \cup \{c^{\Hmc_{\Ap}}\}$ also models \Ap and
+  % $A(c)$. Note here, that $\Hmc_{\Ap}'$ also models \A, but not necessarily \Cmc anymore.
+  % % 
+  % We define $\Hmc^{*}$ such that for all $\bsf(\oalpha) \in \ran(\bsf) \setminus
+  % (\Zpos{c_{i}}\cup\Zneg{c_{i}})$ with $\I_{i}\models\Omc_{c_{i}}\land\alpha$ we set
+  % $\bsf(\oalpha)^{\Hmc^{*}} \coloneqq \bsf(\oalpha)^{\Hmc_{\Ap}} \cup \{c_{i}^{\Hmc_{\Ap}}\}$. Thus,
+  % $\I_{i}\models\Omc_{Z_{i}}$ where $Z_{i} = \mathsf{type}_{\ran(b)}^{\Hmc^{*}}(c_{i})$. Since
+  % $\Zmc_{\Hmc^{*}} = (Z_{1},\dots,Z_{k})$, $\Zmc_{\Hmc^{*}}$ is admissible.
+  %
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % 
   % For any DL BKB \Bmf and DL axiom $\alpha$ it holds that if \Bmf is consistent then
   % either $\Bmf\land\alpha$ or $\Bmf\land\lnot\alpha$ is also consistent.
@@ -761,9 +796,11 @@ there exists no model \Hmc of \CA and \Ap such that \ZH is admissible as the fol
 shows.
 
 \begin{example}\label{ex:repletion-necessary}
-  Let $\Bmfex = (\Bmcex,\emptyset,\emptyset)$ with $\Bmcex = \lnot C(s) \land \oax{\lnot A(a)} \sqsubseteq
-  C \land \lnot C \sqsubseteq \oax{A\sqsubseteq\bot}$ be an \ALCALC-ontology. Then,
+  Let $\Bmfex = (\Bmcex,\emptyset,\emptyset)$ with
   \begin{align*}
+    \Bmcex  & = \lnot C(s) \quad\land\quad \oax{\lnot A(a)} \sqsubseteq
+              C \quad\land\quad \lnot C \sqsubseteq \oax{A\sqsubseteq\bot}\\
+    \intertext{be an \ALCALC-ontology. Then,}
     \Bmfbex & = \big(\lnot C(s) \quad\land\quad 
               A_{\oax{\lnot A(a)}} \sqsubseteq C \quad\land\quad
               \lnot C \sqsubseteq A_{\oax{A\sqsubseteq\bot}} ,\quad \emptyset\big)\\
@@ -774,22 +811,39 @@ shows.
     \intertext{Any derivation of \CAex produces a leaf node labelled with}
     \Ap & = \{\lnot C(s),\ A_{\oax{A\sqsubseteq\bot}}(s)\}.
   \end{align*}
+  %
   Clearly, \Ap is admissible and in any model \HH of \Ap such that \ZH is admissible there exists
-  $d\in\Delta^{\Hmc}$ with $s^{\Hmc} = d$ and $d \in {A_{\oax{A\sqsubseteq\bot}}}^{\Hmc}$. For \ZH
-  to be admissible, we know that $X = \{A_{\oax{A\sqsubseteq\bot}}\} \notin \ZH$ since
-  $\Omc_{X} = A \sqsubseteq \bot \ \land\ \lnot(\lnot A(a))$ is not consistent . Thus, we also have
-  $d \in {A_{\oax{\lnot A(a)}}}^{\Hmc}$. Because of $A_{\oax{\lnot A(a)}}(x) \to C(x) \in \Cex$ and
-  $\lnot C(s)\in\Aex$, we know that \Hmc cannot be model of \CAex. In fact, there
-  exists no model $\Hmc'$ of \CAex such that $\Zmc_{\Hmc'}$ is admissible
-  since \Bmfex is inconsistent.
+  $d\in\Delta^{\Hmc}$ with $s^{\Hmc} = d$ and $d \in {A_{\oax{A\sqsubseteq\bot}}}^{\Hmc}$. Since \ZH
+  is admissible, we know that
+  $\Omc_{X}\coloneqq\bigwedge_{\bsf(\oalpha)\in
+    X}\alpha\land\bigwedge_{\bsf(\oalpha)\in\ran(\bsf)\setminus X} \alpha^{*}$ must be consistent
+  for any $X\in\ZH$. Hence, in particular $X = \{A_{\oax{A\sqsubseteq\bot}}\} \notin \ZH$ since
+  $\Omc_{X} = A \sqsubseteq \bot \ \land\ \lnot(\lnot A(a))$ is inconsistent. Therefore,
+  $A_{\oax{\lnot A(a)}}$ must also be in the restricted type of $d$, i.e.\
+  $d \in {A_{\oax{\lnot A(a)}}}^{\Hmc}$. We implicitly obtain an ABox
+  \begin{align*}
+    \App & = \{\lnot C(s),\ A_{\oax{A\sqsubseteq\bot}}(s),\ A_{\oax{\lnot A(a)}}(s)\}.
+  \end{align*}
+  Because of $A_{\oax{\lnot A(a)}}(x) \to C(x) \in \Cex$ and
+  $\lnot C(s)\in\Aex$, we know that \Hmc cannot be model of \CAex. In fact, there exists no model
+  $\Hmc'$ of \CAex such that $\Zmc_{\Hmc'}$ is admissible since \Bmfex is inconsistent.
+  %
+  % \vspace{2cm}
+  % we know that $X = \{A_{\oax{A\sqsubseteq\bot}}\} \notin \ZH$ since
+  % $\Omc_{X} = A \sqsubseteq \bot \ \land\ \lnot(\lnot A(a))$ is not consistent . Thus, we also have
+  % $d \in {A_{\oax{\lnot A(a)}}}^{\Hmc}$. Because of $A_{\oax{\lnot A(a)}}(x) \to C(x) \in \Cex$ and
+  % $\lnot C(s)\in\Aex$, we know that \Hmc cannot be model of \CAex. In fact, there exists no model
+  % $\Hmc'$ of \CAex such that $\Zmc_{\Hmc'}$ is admissible since \Bmfex is inconsistent.
 \end{example}
 
-The above example illustrates that there can exist implicitly negated concept assertions in a
-complete, clash-free meta ABox \Ap, i.e.\ concept assertions that would cause a clash if added to
-the ABox. In the proof of Lemma~\ref{lem:A-admissible-iff-ZH-admissible}, we may need to add certain
-concept assertions in order to ensure admissibility. To avoid adding concept assertions which
-cause a clash, we add special DL-clauses to \Cmc. Since for every context $c\in\Cbb$ an object
-axiom~$\alpha$ is either modelled by $\I_{c}$ or not, we can assume w.l.o.g.\ that either $c\in\bsf(\oalpha)^{\Jb}$ or $c\in\bsf(\oax{\alpha^{*}})^{\Jb}$. Thus, we can add the DL-clause
+The above example illustrates that there can exist \enquote{implicitly negated} concept assertions
+in a complete, clash-free meta ABox \Ap like $A_{\oax{\lnot A(a)}}(s)$ in the above example, i.e.\
+concept assertions that would cause a clash if added to the ABox. In the proof of
+Lemma~\ref{lem:A-admissible-iff-ZH-admissible}, we had to add certain concept assertions in order to
+ensure admissibility. To avoid adding concept assertions which cause such a clash, we add special
+DL-clauses to \Cmc. Since for every context $c\in\Cbb$ an object axiom~$\alpha$ is either modelled
+by $\I_{c}$ or not, we can assume w.l.o.g.\ that either $c\in\bsf(\oalpha)^{\Jb}$ or
+$c\in\bsf(\oax{\alpha^{*}})^{\Jb}$. Thus, we can add the DL-clause
 $\top\to\bsf(\oalpha)(x) \lor \bsf(\oax{\alpha^{*}})(x)$ without adding any logical consequences.
 
 \begin{definition}[Repletion of DL-clauses]
@@ -816,12 +870,12 @@ needed anymore.
 
 To sum up, we refine Algorithm~\ref{alg:1}, so it can be used with the hypertableau calculus. The
 algorithm is depicted in Algorithm~\ref{alg:2}, where $\Omc_{c_{i}}$ is defined as in
-Definition~\ref{def:admissibility-of-abox}. Instead
-of enumerating all models of $\smash{\Omf^{\bsf}}$ up to essential equality, we traverse the clash-free, complete
-ABoxes in a derivation of \CA and check whether there is an admissible ABox among them. To check
-admissibility, we reuse the results of Section~\ref{sec:blackbox-approach}. Thus, $\Omc_{\Ap}$ is
+Definition~\ref{def:admissibility-of-abox}. Instead of enumerating all models of
+$\smash{\Omf^{\bsf}}$ up to essential equality, we traverse the clash-free, complete ABoxes in a
+derivation of \CA and check whether there is an admissible ABox among them. To check admissibility,
+we reuse the results of Section~\ref{sec:blackbox-approach}. Thus, $\Omc_{\Ap}$ and $\RO'$ are
 defined analogous to Definition~\ref{def:renaming}. The next two lemmata show that
-Algorithm~\ref{alg:2} is sound and complete. 
+Algorithm~\ref{alg:2} is sound and complete.
 
 \IncMargin{1em}
 \RestyleAlgo{ruled}
@@ -1131,7 +1185,9 @@ relationship types. Intuitively, the more relationship types and, hence, cardina
 model contains, the harder it is to reason about. If only few constraints appear in the model, it is
 probable that the first branch of the derivation tree in the hypertableau algorithm already yields a
 consistent interpretation and no backtracking is needed. With more constraints, backtracking is
-needed more often, which increases the computation time significantly.
+needed more often, which increases the computation time significantly. An unsatisfiable role-based
+model is the most expensive to reason upon, since here complete backtracking is necessary before the
+algorithm can determine that the model is unsatisfiable.
 %
 Interestingly, there is not much difference between $\rst0.5$ and $\rst1$. So, once relationship
 types are introduced, it is not relevant how many of them are defined. Furthermore, once
@@ -1142,17 +1198,24 @@ decline of $\rst0.5$ for higher $n$.
 
 The results for Scenario~(II), shown in Figure~\ref{fig:results-B}, are similar to
 Scenario~(I). Analogously, $\rg0$, $\rg0.5$ and $\rg1$ respectively denote the data sets where no,
-$\nicefrac{n}{2}$ and $n$ role groups appear in the role-based model. This is not unexpected,
-however, it can be realised that introducing role groups is computation-wise costlier than
-relationship types with cardinality constraints.
+$\nicefrac{n}{2}$ and $n$ role groups appear in the role-based model. Again, when more constraints
+are introduced, it gets harder to decide satisfiability. However, it can be realised that
+introducing role groups is computation-wise costlier than relationship types with cardinality
+constraints.
 
 In Figure~\ref{fig:results-C}, $\ct{=}\bot$ denotes the average reasoning time if no compartments
 are allowed to play roles. In $\ct{=}\top$, compartments were allowed to play roles.
 %
 If compartments are allowed to play roles, due to Axiom~\eqref{eq:nested-cts}, we have to add the
 repletion clauses. These introduce a large amount of non-determinism. This explains why the
-reasoning time increases and out-of-memory exceptions appear for smaller~$n$.
+reasoning time increases and out-of-memory exceptions appear even for smaller~$n$.
 
+In the end it is hard to tell whether these randomly generated role-based models give realistic test
+results. The tests clearly show that more constraints directly influence the computation
+time. Anyway, the application scope for role-based modelling is quite broad and these test give an
+impression for a general setting. However, a further examination of models within a specific topic
+can result in more target-oriented tests which might even initiate further specialised optimisations
+in the algorithm.
 
 % We next present how we implement our algorithm. The main components that we discuss are the
 % \texttt{ContextOntology}, \texttt{ContextReasoner} and \texttt{ContextTableau} classes. 
@@ -1213,7 +1276,7 @@ reasoning time increases and out-of-memory exceptions appear for smaller~$n$.
 % an object in OWL. Especially if one wants to merge two different ontologies talking about the same
 % topic, it seems quite natural to be able to state that two individual names actually represent the
 % same object. Furthermore, OWL2 allows for a so-called \emph{Individual Inequality Axiom} which can be
-% used to axiomatize the unique name assumption if needed.
+% used to axiomatise the unique name assumption if needed.
 
 % As a design decision we chose to also neglect the UNA in our case. Consequently, we then also drop
 % the rigid individual assumption we made in chapter \ref{cha:context-dls}. When individual names are
@@ -1260,7 +1323,7 @@ reasoning time increases and out-of-memory exceptions appear for smaller~$n$.
 %%% reftex-default-bibliography: ("../references.bib")
 %%% End:
 
-%  LocalWords:  performant axiomatize iff logics clausification inline ABox ontologies workflow DL
+%  LocalWords:  performant axiomatise iff logics clausification inline ABox ontologies workflow DL
 %  LocalWords:  bijection subtasks nominals conformant hypertableau DLs Konclude API HermiT ABoxes
 %  LocalWords:  blockable Preprocessing OWLReasoner et al ava preprocessing equisatisfiable
 %  LocalWords:  transitiviy pseudorandom scalably upscaled
