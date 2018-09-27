@@ -916,6 +916,7 @@
 \newcommand{\SHOIQSHOIQ}{\@condl{\SHOIQ}{\SHOIQ}}
 \newcommand{\SHOIQSHOQ}{\@condl{\SHOIQ}{\SHOQ}}
 \newcommand{\SHIQSHIQ}{\@condl{\SHIQ}{\SHIQ}}
+\newcommand{\SHOISHOI}{\@condl{\SHOI}{\SHOI}}
 \newcommand{\ELALC}{\@condl{\EL}{\ALC}}
 \newcommand{\ALCEL}{\@condl{\ALC}{\EL}}
 \newcommand{\SHOQEL}{\@condl{\SHOQ}{\EL}}
@@ -924,12 +925,14 @@
 \newcommand{\ELEL}{\@condl{\EL}{\EL}}
 \newcommand{\LMEL}{\@condl{\LM}{\EL}}
 \newcommand{\ELLO}{\@condl{\EL}{\LO}}
+\newcommand{\ALCLO}{\@condl{\ALC}{\LO}}
 \newcommand{\ELSHOIQ}{\@condl{\EL}{\SHOIQ}}
 \newcommand{\LMSHOIQ}{\@condl{\LM}{\SHOIQ}}
 \newcommand{\ALCSHOIQ}{\@condl{\ALC}{\SHOIQ}}
 \newcommand{\ALCHIALC}{\@condl{\ALCHI}{\ALC}}
 
 \newcommand{\klarALC}{\@math{\ALC_{\!\ALC}}}
+\newcommand{\klarSHOI}{\@math{\SHOI_{\!\SHOI}}}
 \renewcommand*{\do}[1]{%
   \expandafter\newcommand\csname c#1\endcsname{\@condl{\csname #1\endcsname}{\csname #1\endcsname}}}
 \docsvlist{ALC,ALCO,ALCI,ALCOI,ALCQ,ALCN,ALCNI,ALCHO,ALCIQ,ALCOIQ,ALCHOIQ,SHQ,SHOQ,SHIQ,SHOIQ,SROIQ}
@@ -938,6 +941,7 @@
 \newcommand{\ELALCplus}{\@condl{\EL}{\ALC}[+]}
 \newcommand{\ALCALCplus}{\@condl{\ALC}{\ALC}[+]}
 \newcommand{\ALCHIALCplus}{\@condl{\ALCHI}{\ALC}[+]}
+\newcommand{\SHOISHOIplus}{\@condl{\SHOI}{\SHOI}[+]}
 
 %%% temporal DL names %%%
 \newcommand{\ALCLTL}{\@math{\mathcal{\ALC}\text{-}{\LTL}}} % Marcel's and not the evil one!
