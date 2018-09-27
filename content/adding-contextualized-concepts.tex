@@ -307,9 +307,9 @@ problem becomes undecidable.
 In Section~\ref{sec:complexity-consis-problem}, we discussed three different settings depending on
 whether rigid concept and role names are admitted. We already obtained the complexity results for
 \LMLOplus for Setting~(i), i.e.~no rigid names are allowed, and for Setting~(iii), i.e.~rigid roles
-are allowed.  With some assumptions, in \LMLOplus, however, Setting~(ii) that allows rigid concept names but no rigid
-roles coincides with Setting~(i), since rigid concepts can be simulated. Hence, we obtain the
-following result:
+are allowed.  With some assumptions, in \LMLOplus, however, Setting~(ii) that allows rigid concept
+names but no rigid roles coincides with Setting~(i), since rigid concepts can be simulated. Hence,
+we obtain the following result:
 
 \begin{theorem}
   The consistency problem for \SHOISHOIplus-ontologies is \TwoExpTime-complete if $\ORR=\emptyset$.
@@ -319,9 +319,9 @@ following result:
   First, we have to simulate the universal role $u$. With $u$, we can simulate rigid concepts and,
   thus, reduce the consistency problem to the case without rigid names.
 
-  Let $\Omf = (\Omc,\RO, \RM)$ be an \SHOISHOIplus-ontology. We first have to simulate a universal role $u$ on the meta level. We can assume
-  w.l.o.g.\ that $u\in\MR$ does not occur in \Omf. We obtain $\Omf_{u}$ from \Omf by adding the
-  following axioms to \Omf:
+  Let $\Omf = (\Omc,\RO, \RM)$ be an \SHOISHOIplus-ontology. We first have to simulate a universal
+  role $u$ on the meta level. We can assume w.l.o.g.\ that $u\in\MR$ does not occur in \Omf. We
+  obtain $\Omf_{u}$ from \Omf by adding the following axioms to \Omf:
   \begin{itemize}
   \item $u^{-} \sqsubseteq u$,
     % \item $\trans{u}$,
@@ -355,6 +355,12 @@ following result:
   Theorem~\ref{thm:alcalcplus-without-rigid-twoexptime} and, hence, obtain \TwoExpTime-completeness
   for \SHOISHOIplus-ontologies with rigid concepts.
 \end{proof}
+
+To sum up, we showed that adding contextualised concepts dramatically increases the complexity. In
+the presence of rigid roles, the consistency problem for even less expressive \ELALCplus-ontologies
+becomes undecidable. Without rigid roles for any contextualised DL between \ALCALCplus and
+\SHOISHOIplus deciding the consistency of an ontology is \TwoExpTime-complete.
+
 
 
 %%% Local Variables:
