@@ -138,6 +138,7 @@
 \RequirePackage{algorithm2e}
 \RequirePackage{soul}
 
+\RequirePackage{rosi-syntax-tikz}[2018/10/01]
 
 %% the silence package to suppress unwanted warnings
 % Remember: silence does not fix anything!
@@ -1518,6 +1519,62 @@
 \newcommand{\transBank}{\@math{\mathsf{trans}}}
 
 
+\newcommand{\BankFullConstraintsExample}{%
+  \begin{tikzpicture}
+    %\grid{(0,0)}{(14,5)}
+    %
+    \tikzNatural{person}{1.5,0.5}{1.6cm}{Person}{\scriptsize name\\[-1ex] age\\[-1.7ex] profession}{}
+    \tikzNatural{comp}{3.5,0.5}{1.6cm}{Company}{}{}
+    \tikzNatural{acc}{11.3,2.95}{1.6cm}{Account}{}{}
+    %
+    \tikzContext{bank}{4.3,4}{0cm}{Bank}{
+      \tikzRole{cons}{0.3,3}{1cm}{Consultant}{1..*}{0cm}
+      \tikzRole{cus}{0.3,1.12}{1cm}{Customer}{0..*}{0.3cm}
+      \tikzRole{monTra}{5,3}{1cm}{MoneyTransfer}{0..*}{0cm}
+      \tikzRoleGroup{rg1}{5,0.88}{BankAccounts (1..1)}{
+        \tikzRole{ca}{0,0.6}{1cm}{CheckingAccount}{}{0cm}
+        \tikzRole{sa}{0,-0.3}{1cm}{SavingsAccount}{}{0cm}
+      }{1..*}
+    }
+    %
+    \tikzContext{transaction}{11.3,5.05}{0cm}{Transaction}{
+      \tikzRoleGroup{rg2}{0,0}{Participants (1..1)}{
+        \tikzRole{source}{0,0}{1cm}{Source}{}{0cm}
+        \tikzRole{target}{3.3,0}{1cm}{Target}{}{0cm}
+      }{1..1}
+    }
+    %
+    %\coordinate (c1) at (0.4,1);
+    \tikzFillsV{(person)}{(cus)}{0.4}
+    \tikzFillsV{(comp)}{(cus)}{0.4}
+    %\tikzFillsH{(c1)}{(cons.180)}{-0.2}
+    \tikzFills{(transaction)}{(monTra)}
+    \tikzFills{(acc)}{(rg1)}
+    \tikzFills{(acc)}{(rg2)}
+    \draw[-triangle 60,thick] (person) -| ($(person)!0.5!(cons)+(-1.5,0)$) |- (cons);
+    %
+    \tikzRST{(source)}{(target)}{1..1}{trans}{1..1}{0.12}{above}{0.88}
+    \tikzRST{($(cons.south)+(-0.6,0)$)}{($(cus.north)+(-0.6,0)$)}{0..*}{advises}{1..*}{0.2}{right}{0.8}
+    \tikzRSTH{(cus.19)}{(monTra)}{1..1}{issues}{1..*}{shorten <=-4.0pt}{5mm}
+    \tikzRST{(cus.0)}{(ca)}{1..1}{own\_ca}{0..*}{0.1}{above}{0.85}
+    \tikzRSTH{(cus.341)}{(sa)}{1..*}{own\_sa}{0..*}{shorten <=-4.0pt}{-1mm}
+    %
+    \tikzNatural[legendgray]{nt}{7.5,0.5}{1.6cm}{\scriptsize Natural Type}{}{}
+    \tikzContext[legendgray]{ct}{10.1,0.5}{1.0cm}{\scriptsize Compartment Type}{
+      \tikzRole[legendgray]{rt}{0,0}{5mm}{\scriptsize Role Type}{Card}{0cm}
+    }
+    \tikzRoleGroup[legendgray]{rg}{12.95,0.25}{\scriptsize Rolegroup (m..n)}{
+      \node{\smash{\hphantom{abcdefghijk}}};
+    }{}
+    \coordinate (a) at (11.8,1.5);
+    \coordinate (b) at (12.4,1.5);
+    \draw[legendgray,thin, -triangle 60] (a) -- (b);
+    \node[legendgray, anchor = west] at (12.4,1.5){\scriptsize Fills-Relation};
+    \coordinate (c) at (11.8,1.0);
+    \coordinate (d) at (14.1,1.0);
+    \tikzRST[legendgray]{(c)}{(d)}{\scriptsize CardM}{\scriptsize RST}{\scriptsize CardN}{0.15}{above}{0.85}
+  \end{tikzpicture}
+}
 
 
 %% Calculate mean value with pgfplots
