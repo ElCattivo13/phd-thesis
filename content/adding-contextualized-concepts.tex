@@ -1,6 +1,6 @@
 
 In this section we discuss a possible extension to our contextualised description logic.  We start
-with a little comparison to temporal description logics. Both DL-LTL-structures and nested DL
+with a comparison to temporal description logics. Both DL-LTL-structures and nested DL
 interpretations use a \emph{possible worlds semantics}. Single time points or contexts are
 represented in a meta dimension and for each such a meta element, or possible world, there exists
 one DL interpretation on the object level. Important for both the expressivity and the complexity of
@@ -39,7 +39,7 @@ We illustrate this by an example taken from \cite{LuWZ-TIME08}.
   \Diamond\Box(\mathsf{European\_country} \sqsubseteq \mathsf{EU\_country})\\
   \mathsf{Independent\_country} \sqsubseteq \Box\mathsf{Independent\_country}
 \end{gather*}
-The first temporalised GCI states that eventually, i.e.\ at some time point $t$ in future, all
+The first temporalised GCI states that eventually, i.e.\ at some time point $t$ in the future, all
 European countries will forever be EU members, i.e.\ in every time point after $t$. The second axiom
 says that the extension of the concept $\mathsf{Independent\_country}$ does not decrease.
 
@@ -86,7 +86,7 @@ The set of \emph{concepts of the object logic \LO (o-concepts)} is the smallest 
 
 Furthermore, for a nested interpretation \JJ the mapping $\cdot^{\I_{c}}$ is extended to
 $\ocont{C}[r]{D}$ as follows: $(\ocont{C}[r]{D})^{\I_{c}} \coloneqq \{d \in \Delta^{\J} \mid \text{there is
-some $c'\in\Cbb$ s.t.\ $(c,c')\in r^{\J}$ and $d \in D^{\I_{c'}}$}\}$.
+some $c'\in \mathbf{C}^{\J}$ s.t.\ $(c,c')\in \mathbf{r}^{\J}$ and $d \in D^{\I_{c'}}$}\}$.
 \end{definition}
 
 Following customs of modal logic, we use $\ocont*{C}[r]{D}$ as an abbreviation for
@@ -134,7 +134,7 @@ the same complexity.
     \mathbf{C}:\langle \mathbf{C} \rangle_{\mathbf{r}}(\langle \mathbf{C}\rangle_{\mathbf{r}}D
     \sqsubseteq A) 
     \qquad\leadsto\qquad
-    C\sqsubseteq\exists r.\left(C\sqcap\oax{\ocont{C}[r]{D}}\right)
+    C\sqsubseteq\exists r.\left(C\sqcap\oax{\ocont{C}[r]{D}\sqsubseteq A}\right)
   \end{align*}
 
   \begin{table}[t]    
@@ -307,44 +307,60 @@ problem becomes undecidable.
 In Section~\ref{sec:complexity-consis-problem}, we discussed three different settings depending on
 whether rigid concept and role names are admitted. We already obtained the complexity results for
 \LMLOplus for Setting~(i), i.e.~no rigid names are allowed, and for Setting~(iii), i.e.~rigid roles
-are allowed.  In LMLOplus, however, a Setting~(ii) that allows rigid concept names but no rigid
-roles, coincides with Setting~(i), since rigid concepts can be easily simulated.
+are allowed.  With some assumptions, in \LMLOplus, however, Setting~(ii) that allows rigid concept
+names but no rigid roles coincides with Setting~(i), since rigid concepts can be simulated. Hence,
+we obtain the following result:
 
-To simulate rigid concepts in \LMLOplus, let \BB be an \LMLOplus ontology. We first have to
-simulate a universal role $u$ on the meta level. We can assume w.l.o.g.\
-that $u\in\MR$ does not occur in \Bmf. We obtain $\Bmf_{u}$ from \Bmf by adding the following axioms
-to \Bmf:
-\begin{itemize}
-\item $u^{-} \sqsubseteq u$,
-%\item $\trans{u}$,
-\item $r \sqsubseteq u$, for all $r\in\MR$ occurring in \Bmf,
-\item $u(a,b)$ for all $a,b\in\MI$ occurring in \Bmf. 
-\end{itemize}
-Note that $\Bmf_{u}$ is of size polynomial in the size of \Bmf and that we need at least \ALCHI as
-\LM to simulate the universal role.
-%
-Assume there exists an unnamed context in a model of \Bmf, i.e.~$c\in\Cbb$ such that there is
-no~$a\in\MI$ occurring in~\Bmf with~$a^{\J}=c$, and $c$ is not connected to any named context by some
-path. Then, we can always remove that unnamed context from the interpretation and still have a model.
-Hence, we can assume that every model of~$\Bmf_{u}$ is connected and that every context can be
-reached by any other context via a path of $u$-edges.
-%
-Here, we restrict~\Bmf to~\LMLOplus-ontologies, since in an \LMLOplus-BKB, a negated meta GCI can
-enforce the existence of an unnamed context that is not necessarily connected to the rest of the model.
+\begin{theorem}
+  The consistency problem for \SHOISHOIplus-ontologies is \TwoExpTime-complete if $\ORR=\emptyset$.
+\end{theorem}
 
+\begin{proof}
+  First, we have to simulate the universal role $u$. With $u$, we can simulate rigid concepts and,
+  thus, reduce the consistency problem to the case without rigid names.
 
-With the help of $u$ and contextualised concepts, we can express that $A\in\OC$ is rigid by the
-following two axioms:
-\begin{align*}
-  \top & \sqsubseteq \oax{A \sqsubseteq \ocont*{\top}[u]{A}} \\
-  \top & \sqsubseteq \oax{\lnot A \sqsubseteq \ocont*{\top}[u]{\lnot A}}
-\end{align*}
-Due to these axioms, the extension of $A$ in a context $c$ are exactly these elements which are in
-$A$ in every context $c'$ that is related to $c$ via $u$. Thus, the extension of $A$ is equal in
-every context, i.e.\ $A$ is rigid.
+  Let $\Omf = (\Omc,\RO, \RM)$ be an \SHOISHOIplus-ontology. We first have to simulate a universal
+  role $u$ on the meta level. We can assume w.l.o.g.\ that $u\in\MR$ does not occur in \Omf. We
+  obtain $\Omf_{u}$ from \Omf by adding the following axioms to \Omf:
+  \begin{itemize}
+  \item $u^{-} \sqsubseteq u$,
+    % \item $\trans{u}$,
+  \item $r \sqsubseteq u$, for all $r\in\MR$ occurring in \Omf,
+  \item $u(a,b)$ for all $a,b\in\MI$ occurring in \Omf.
+  \end{itemize}
+  Note that $\Omf_{u}$ is of size polynomial in the size of \Omf.
+  %
+  Assume there exists an unnamed context in a model of \Omf, i.e.~$c\in\Cbb$ such that there is
+  no~$a\in\MI$ occurring in~\Omf with~$a^{\J}=c$, and $c$ is not connected to any named context by
+  some path. Then, we can always remove that unnamed context from the interpretation and still have
+  a model.  Hence, we can assume that every model of~$\Omf_{u}$ is connected and that every context
+  can be reached by any other context via a path of $u$-edges.
+  %
+  Note that we restrict~\Omf to~\SHOISHOIplus-ontologies, since in an \SHOISHOIplus-BKB, a negated
+  meta GCI can enforce the existence of an unnamed context that is not necessarily connected to the
+  rest of the model.
 
-Hence, the complexity of the consistency problem in \LMLOplus is independent of whether rigid
-concepts are allowed or not.
+  With the help of $u$ and contextualised concepts, we can express that $A\in\OC$ is rigid by the
+  following two axioms:
+  \begin{align*}
+    \top & \sqsubseteq \oax{A \sqsubseteq \ocont*{\top}[u]{A}} \\
+    \top & \sqsubseteq \oax{\lnot A \sqsubseteq \ocont*{\top}[u]{\lnot A}}
+  \end{align*}
+  Due to these axioms, the extension of $A$ in a context $c$ are exactly these elements which are in
+  $A$ in every context $c'$ that is related to $c$ via $u$. Thus, the extension of $A$ is equal in
+  every context, i.e.\ $A$ is rigid.
+
+  In~\cite{KG16}, Theorem~6 states that deciding the consistency problem in \klarSHOI without rigid
+  names is \TwoExpTime-complete. We can again use the same translation as shown in the proof of
+  Theorem~\ref{thm:alcalcplus-without-rigid-twoexptime} and, hence, obtain \TwoExpTime-completeness
+  for \SHOISHOIplus-ontologies with rigid concepts.
+\end{proof}
+
+To sum up, we showed that adding contextualised concepts dramatically increases the complexity. In
+the presence of rigid roles, the consistency problem for even less expressive \ELALCplus-ontologies
+becomes undecidable. Without rigid roles for any contextualised DL between \ALCALCplus and
+\SHOISHOIplus deciding the consistency of an ontology is \TwoExpTime-complete.
+
 
 
 %%% Local Variables:

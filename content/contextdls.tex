@@ -1,4 +1,91 @@
 
+\chapter{The Contextualised Description Logic \texorpdfstring{\LMLO}{LM[LO]}}
+\label{cha:context-dls}
+
+In the previous chapter we introduced description logics as a logical formalism for knowledge
+representation as well as the Compartment Role Object Model as a modelling language for role based
+models with a formal semantics. Now, the next step in our overall workflow is to investigate whether
+DLs are sufficient to express CROM and, if necessary, develop an extension of DLs which possesses
+the required expressive power.
+
+Hence, we start this chapter with discussing the requirements for a feasible logical formalism in
+Section~\ref{sec:requirements-and-CDLs}. Then, after defining the syntax and semantics of
+contextualised DLs in Section~\ref{sec:syn-seman-cdl}, we analyse the computational complexity of
+the consistency problem for contextualised DLs in
+Section~\ref{sec:complexity-consis-problem}. Particular consideration is needed in the case of \EL,
+which is discussed in Section~\ref{sec:case-el}. At last, we show in
+Section~\ref{sec:adding-cont-concepts} that introducing an additional concept constructor directly
+leads to undecidability.
+
+
+\section{Requirements for Logical Formalism}
+\label{sec:requirements-and-CDLs}
+
+First we have to decide how to represent role-based models. Although nearly every large software
+project starts with modelling the application domain in UML and, hence, UML is the de facto standard
+as modelling language, it has several drawbacks. First of all, it has no formally defined
+semantics~\cite{FrEL-CSI98}. While UML meta-models capture the precise syntax of concepts used for
+modelling, they do little for answering questions of how to interpret non-trivial UML diagrams.  For
+example, if one wants to map UML class diagrams to a logical formalism to be able to reason about
+these diagrams, one takes certain assumptions about the intended meaning of the occurring
+elements. Then a domain expert modelling some application has to trust that the logician constructed
+the mapping with the same semantics in mind. Nevertheless, over the last years several approaches
+for formal frameworks to reason on UML
+arose~\cite{Eva-WIFT98,CaCG-ISMIS02,StMS-UML03,SiSJ-OBJ04,BeCG-AI05,SiBH-IJSEKE08,AhNa-ICET10}, from
+which we can adapt some ideas, e.g.\ how to model attributes of a~UML class with~DL roles and how
+multiplicities of associations are modelled in~\cite{CaCG-ISMIS02}.
+
+The second major drawback is that UML lacks expressive power to model context-dependent
+domains. There also exists some work on extending UML in that direction~\cite{ShB-ICMB05}, but here
+the semantics are even more ambiguous.  Therefore, instead of trying to formalise and reason on
+semantically ambiguous UML diagrams that try to capture role-based models, we focus on role-based
+models that are modelled in CROM which we introduced in Chapter~\ref{cha:preliminaries}.  CROM
+overcomes both these deficits since it has both a well-defined, formal semantics and the means to
+formulate the necessary concepts accordingly.
+
+Next, we investigate the requirements for the logical formalism. In order to be feasible with the
+workflow outlined in the introduction, we need a formalism that has the expressive power
+to capture the information in CROM on one hand but preserves decidability of the needed
+reasoning tasks on the other.
+%
+As shown in the preliminaries description logics serve as a very powerful formalism in knowledge
+representation. Still, the main drawback might be the expressive restrictions of \enquote{classical}
+description logics as explained in the introduction. Standard DLs cannot formalise contextual
+knowledge in a proper way which is crucial for role-based systems.  In the recent years many
+different approaches and extensions of DLs have been proposed~\cite{BoGH-ISWC03, BoGH-WS04,
+  BeAF-ADVIS06, BaVS-ModOnt09, BaKP-JWS12, CePe-IJCAR14, CePe-JAR17}.  However, many were tailored
+to different goals, for example to support context-specific reuse of ontologies or enable
+probabilistic reasoning. Additionally, these approaches have a quite different intuition of what a
+context exactly is. In most cases it is simply a finite set of names.  Serafini et
+al.~\cite{SeHo-JWS12} defines contexts by a set of attribute-value declarations, one for each
+\emph{dimension}, e.g.\ time, topic or location to name a few. There is only one context for each
+dimensional vector whereas in CROM there can exist many instances of one compartment type.  Furthermore,
+except a coverage relation, one can hardly express any other knowledge about the contexts such as
+the relational structure between them.  Hence, these approaches seem not appropriate to model
+CROMs.
+
+A far more promising formalism is the description logic of context \klarALC~\cite{KG-JELIA10, KG16}.
+%mentioned in Section~\ref{sec:adding-cont-concepts}.
+Klarman et al.\ follow the ideas of McCarthy's formalisation of
+contexts~\cite{McC-ACM87,McC-IJCAI93} where contexts are formal objects, that have properties and
+can be described, and that are organised in a relational structure.  This results in a very
+expressive, two-dimensional description logic with strong interactions between the object and the
+context level allowing to express information within a context that is valid in some other context.
+While transcending object knowledge through contexts is very important in the general application of
+contextualised knowledge, it is complexity-wise very costly, especially in the presence of rigid
+roles where the consistency problem becomes undecidable.
+
+By restricting that interaction to a top-down view of contexts, we can retain decidability. From the
+meta or context level, we can impose axioms that must hold within a certain context, but on the object
+level, i.e.\ within a context, we cannot \enquote{look outside}.
+%
+When formalising CROM compartments, this is exactly the needed expressiveness. For each compartment type
+we want to specify the constraints which must hold within a compartment of that type.
+%
+This analysis leads us to the construction of a new contextualised description logic \LMLO.
+In Section~\ref{sec:adding-cont-concepts}, we show that \ALCALC is indeed a sublogic of \klarALC.
+In Chapter~\ref{cha:mapping}, we will present how a CROM can be represented in \LMLO.
+
 \section{Syntax and Semantics of the Contextualised Description Logic \texorpdfstring{\LMLO}{LM[LO]}}
 \label{sec:syn-seman-cdl}
 
@@ -14,9 +101,9 @@ logic proposed by Klarman et al.~\cite{KG16}.
 
 The contextualised DL \LMLO is a two-dimensional and two-sorted description logic. Syntactically, we
 start with a description logic \LM for the meta level to describe the relational structure between
-contexts. We add one meta concept constructor that allows to refer to the inner structure of
-each context. More precisely, we allow an \LO-axiom to constitute a meta concept which denotes the
-set of contexts in which that axiom holds.
+contexts. We add one meta concept constructor that allows to refer to the inner structure of each
+context. More precisely, we allow an \LO-axiom to constitute a meta concept which denotes the set of
+contexts in which that axiom holds.
 
 Throughout the rest of this thesis, let $\Msig = (\MC, \MR, \MI)$ and $\Osig = (\OC, \OR, \OI)$
 denote the signatures for \LM and \LO, respectively. Thus, we call \MC, \MR, \MI, \OC, \OR and \OI,
@@ -25,8 +112,8 @@ respectively, the set of \emph{meta concept}, \emph{role} and \emph{individual n
 
 \begin{definition}[Syntax of \LMLO]\label{def:syntax-lmlo}
   A \emph{concept of the object logic~\LO (o-concept)} is an \LO-concept over~\Osig.  An
-  \emph{o-axiom} is an \LO-GCI over~\Osig, an \LO-concept assertion over~\Osig, or an
-  \LO-role assertion over~\Osig.
+  \emph{o-axiom} is an \LO-GCI over~\Osig, an \LO-concept assertion over~\Osig, or an \LO-role
+  assertion over~\Osig.
 
   The set of \emph{concepts of the meta logic~\LM (m-concepts)} is the smallest set such that
   \begin{itemize}
@@ -36,9 +123,10 @@ respectively, the set of \emph{meta concept}, \emph{role} and \emph{individual n
     concepts.
   \end{itemize}
   %
-  A \emph{meta general concept inclusion (m-GCI)} is a GCI $C\sqsubseteq D$ where $C$ and $D$
-  are m-concepts, a \emph{meta concept assertion} is a concept assertion $C(a)$ where $C$ is a
-  m-concept and a \emph{meta role assertion} is simply an \LM-role assertion over \Msig.
+  A \emph{meta general concept inclusion (m-GCI)} is a GCI $C\sqsubseteq D$ where $C$ and $D$ are
+  m-concepts, a \emph{meta concept assertion} is a concept assertion $C(s)$ where $C$ is an
+  m-concept and $s\in\MI$, and a \emph{meta role assertion} is simply an \LM-role assertion over
+  \Msig.
   %
   An \emph{m-axiom} is an m-GCI, a meta concept assertion or a meta role assertion.
 
@@ -50,16 +138,17 @@ respectively, the set of \emph{meta concept}, \emph{role} and \emph{individual n
   \item nothing else is a Boolean m-axiom formula.
   \end{itemize}
     %
-  Finally, a \emph{Boolean \LMLO-knowledge base (\LMLO-BKB)} is a triple $\Bmf=(\B,\RO,\RM)$, where~\RO is an~\LO-RBox over~\Osig, \RM an \LM-RBox over~\Msig, and~\B is a Boolean m-axiom formula. An
-  \emph{\LMLO-ontology} is an \LMLO-BKB, where only axiom conjunction and no axiom negation is
-  allowed in the Boolean m-axiom formula.
+  Finally, a \emph{Boolean \LMLO-knowledge base (\LMLO-BKB)} is a triple $\Bmf=(\B,\RO,\RM)$,
+  where~\RO is an~\LO-RBox over~\Osig, \RM an \LM-RBox over~\Msig, and~\B is a Boolean m-axiom
+  formula. An \emph{\LMLO-ontology} is an \LMLO-BKB, where only axiom conjunction and no axiom
+  negation is allowed in the Boolean m-axiom formula.
 \end{definition}
 
 \noindent
 Essentially, m-GCIs and meta concept assertions are \LM-GCIs over \Msig and \LM-concept assertions
 over \Msig in which additionally referring m-concepts are admitted.
 %
-For the same reasons as mentioned in Section~\ref{sec:preliminaries}, role inclusions
+For the same reasons as mentioned in the end of Section~\ref{sec:prelim-dls}, role inclusions
 over~\Osig and transitivity axioms over~\Osig are not allowed to constitute m-concepts.  However, we
 fix an RBox~\RO over~\Osig that contains such o-axioms and holds in \emph{all} contexts.  The same
 applies to role inclusions over~\Msig and transitivity axioms over~\Msig, which are only allowed to
@@ -73,7 +162,7 @@ The semantics of \LMLO is defined by the notion of \emph{nested interpretations}
 structure between them.  We assume that all contexts speak about the same non-empty domain
 (\emph{constant domain assumption}). We show later that this is no real restriction.
 
-As argued earlier, sometimes it is desired that concepts or roles in the object logic are
+As argued earlier, in some situations it is desired that concepts or roles in the object logic are
 interpreted the same in all contexts. Therefore we introduce \emph{rigid names}. Let
 $\OCR\subseteq\OC$ be the set of \emph{rigid object concept names} and $\ORR\subseteq\OR$ be the set
 of \emph{rigid object role names}.  Often, we refer to \OCR and \ORR simply as \emph{rigid concepts}
@@ -125,22 +214,34 @@ We are now ready to define the semantics of \LMLO.
 \end{definition}
 
 \noindent
-With these notions, we can refine the examples of
-Section~\ref{sec:preliminaries}. 
+Note here, that in the above definition we do not need to consider o-axioms separately since on the
+object level the semantics are defined as for the DL \LO.
+
+Now with these notions, we can refine the examples of
+Section~\ref{sec:prelim-dls}. 
 
 \begin{example}\label{ex:nfl-with-contexts}
   Considering again Example~\ref{ex:concept-nfl} and Example~\ref{ex:bkb-nfl}, we recognise that
-  $\mathsf{NFL\_Team}$ actually is a context. The meta concept $C'$ analogous to $C$ could be:
+  from an ontological point of view, the occurring concepts are not modelled well. There is a
+  qualitative difference between the concepts of a $\mathsf{Quarterback}$ and an
+  $\mathsf{NFL\_Team}$. In fact, $\mathsf{NFL\_Team}$ actually is a context within the
+  $\mathsf{Quaterback}$ position makes sense.
+  %
+  Analogous to the concept $C$ of Ex.~\ref{ex:concept-nfl}, we can model the meta concept $C'$ as follows:
   \begin{align*}
     & \mathsf{NFL\_{}Team} \sqcap \lnot \mathsf{AFC} \sqcap
     \lnot\oax{\exists\plays.\mathsf{Quarterback}\sqsubseteq\bot} 
-    \sqcap \oax{\mathsf{Coach}(\text{\textit{MikeMcCarthy}})},
-  \end{align*}
-  describing the context of an NFL team that is not in the AFC, has someone playing quarterback and
-  has Mike McCarthy as coach.  The contextualised ontology $\Omc'$ could look like the following:
+    \sqcap \oax{\mathsf{Coach}(\text{\textit{MikeMcCarthy}})}.
+  \end{align*} 
+  It describes the context of an NFL team that is not in the AFC, has someone playing quarterback
+  and has Mike McCarthy as coach. Here, $\exists\plays.\mathsf{Quarterback}\sqsubseteq\bot$ is an
+  o-axiom which builds the m-concept $\smash{\oax{\exists\plays.\mathsf{Quarterback}\sqsubseteq\bot}}$.
+ 
+  In reference to the ontology \Omc of Ex.~\ref{ex:bkb-nfl} the contextualised ontology $\Omc'$
+  could look like the following:
   \begin{gather*}
-    (\mathsf{NFC} \sqcap
-    \oax{(\exists\plays.\top)(\text{\textit{AaronRodgers}})})(\text{\textit{GreenBayPackers}})
+    \mathsf{NFC}(\text{\textit{GreenBayPackers}}) \quad\land\\ 
+    \oax{(\exists\plays.\top)(\text{\textit{AaronRodgers}})}(\text{\textit{GreenBayPackers}})
     \quad\land\\ 
     \begin{aligned}
       \mathsf{NFL\_Team} & \sqsubseteq \oax{\exists\plays.\top \sqsubseteq
@@ -150,17 +251,20 @@ Section~\ref{sec:preliminaries}.
     \end{aligned}
   \end{gather*}
   The first meta concept assertion states that the context of the Green Bay Packers belongs to the
-  meta concept NFC and is a context in which Aaron Rodgers plays something. Furthermore, people who
-  play something within the context of an NFL team are NFL players, and again, the NFL is a disjoint
-  union of the NFC and the AFC. As before, we can entail that Aaron Rodgers is an NFL player, at
-  least in the context of the Packers, i.e.\ $\Omc'$ entails
+  meta concept NFC. The second meta concept assertion states that the Green Bay Packers are a
+  context in which Aaron Rodgers plays something. Furthermore, people who play something within the
+  context of an NFL team are NFL players, and last, the NFL is a disjoint union of the NFC and the
+  AFC. As before, we can entail that Aaron Rodgers is an NFL player, at least in the context of the
+  Packers, i.e.\ $\Omc'$ entails
   \begin{gather*}
     \oax{\mathsf{NFL\_Player}(\text{\textit{AaronRodgers}})}(\text{\textit{GreenBayPackers}}).
   \end{gather*}
   A nested interpretation \J, such that Green Bay Packers are in the extension of $C'$, and \J is a
-  model of $\Omc'$, is depicted in Figure~\ref{fig:example-nfl-contexts}. Note here that after
-  introducing ``Junior Football Clinic'' as another context it would not be clear anymore in which
-  context Aaron Rodgers actually plays quarterback if modelled with standard DLs.
+  model of $\Omc'$, is depicted in Figure~\ref{fig:example-nfl-contexts}.  In order to show the
+  relational structure of contexts we added the context of the \enquote{Junior Football Clinic} in \J
+  though it has nothing to do with neither $C'$ nor $\Omc'$. However, if we would model this with
+  standard DLs it is not clear anymore in which context Aaron Rodgers is a player and when he is a
+  coach.
 \end{example}
 
 \begin{figure}[t]
@@ -200,6 +304,8 @@ Section~\ref{sec:preliminaries}.
     and $\J\models\Omc'$.}
   \label{fig:example-nfl-contexts}
 \end{figure}
+\footnotetext{A Hail Mary pass is a very long forward pass in American football, made in desperation
+  with only a small chance of success.}
 
 To argue that the constant domain assumption is no serious restriction, we show that consistency
 with varying domains can be polynomially reduced to consistency with constant domains. Here, we can
@@ -221,7 +327,6 @@ where~$\alpha_{E}$ is defined as follows:
     \alpha & \text{otherwise.}
   \end{cases}
 \end{align*}
-\footnotetext{A Hail Mary pass is a very long forward pass in American football, made in desperation with only a small chance of success.}
 %
 \begin{proposition}\label{prop:constant-domain-assumption}
   \Bmf is consistent w.r.t. varying domains if and only if $\Bmf_{E}$ is consistent w.r.t. constant
@@ -307,6 +412,8 @@ similar to what was done for \ALC-LTL in~\cite{BaGL-KR08,BaGL-ToCL12} (and
 \SHOQ-LTL in~\cite{Lip-PhD14}) and reduce the consistency problem to two separate
 decision problems.
 
+\TableComplexityResults
+
 For the first decision problem, we consider the so-called \emph{outer abstraction}, which is the \LM-BKB
 over~\Msig obtained by replacing each referring m-concept of the form \oalpha
 occurring in~\B by a fresh concept name such that there is a 1--1 relationship between them.
@@ -352,7 +459,6 @@ Now let us consider the following small example.
   \end{align*}
   is the outer abstraction of $\Bmf_\text{ex}$.
 \end{example}
-\TableComplexityResults
 
 \noindent
 The following lemma makes the relationship between \Bmf and its outer abstraction
@@ -450,12 +556,17 @@ sufficient since the converse does not hold as the following example shows.
 \begin{example}\label{ex:outer-abstraction-continued}
   Consider again $\Bmf_\text{ex}$ of Example~\ref{ex:outer-abstraction}.
   %
-  Take any \Msig-interpretation $\Hmc=(\Delta^{\Hmc},\cdot^\Hmc)$ with $\Delta^{\Hmc}=\{e\}$,
-  $d^\Hmc=e$, and $C^\Hmc = A_{\oax{A\sqsubseteq\bot}}^\Hmc = A_{\oax{A(a)}}^\Hmc = \{e\}$.
+  First, we observe that $\Bmf_\text{ex}$ is inconsistent since the meta individual $c$ belongs to
+  the meta concepts $C$, $\oax{A\sqsubseteq\bot}$ and $\oax{A(a)}$. Thus, in any model of
+  $\Bmf_\text{ex}$ the $\mathsf{O}$-interpretation $\I_{c}$ must model both o-axioms
+  $A\sqsubseteq\bot$ and $A(a)$ which is obviously not possible.
 
-  Clearly, \Hmc is a model of~$\Bmf_\text{ex}^{\bsf}$.  But there is no nested interpretation~\JJ
-  with $\J\models\Bmf_\text{ex}$ since this would imply $\Cbb=\Delta^{\Hmc}$, and that $\I_e$ is a model of
-  both $A\sqsubseteq\bot$ and $A(a)$, which is not possible.
+  However, there exists an \Msig-interpretation $\Hmc=(\Delta^{\Hmc},\cdot^\Hmc)$ such that
+  $\Delta^{\Hmc}=\{e\}$, $d^\Hmc=e$, and
+  $C^\Hmc = A_{\oax{A\sqsubseteq\bot}}^\Hmc = A_{\oax{A(a)}}^\Hmc = \{e\}$ which is a model
+  of~$\Bmf_\text{ex}^{\bsf}$. Hence, $\Bmf_\text{ex}^{\bsf}$ is consistent while $\Bmf_\text{ex}$ is
+  not. Note that this does not contradicts Lemma~\ref{lem:interpretation-outer-abstraction} since
+  there does not exist any nested interpretation \J such that \Hmc=\Jb.
 \end{example}
 
 The above example illustrates that there exist implicit restrictions on the interpretation of the
@@ -1059,7 +1170,7 @@ syntactically restricted fragment of \EL-LTL.
 
   Let $\Box\phi$ be such an \EL-LTL-formula over~\Osig.  Now, we obtain the m-concept $C_\phi$
   from~$\phi$ by replacing \EL-axioms~$\alpha$ by \oalpha, $\land$ by $\sqcap$, and subformulas of
-  the form $\Next\psi$ by $\forall t.\psi\sqcap\exists t.\psi$, where $t\in\MR$ is arbitrary but
+  the form $\Next\psi$ by $\forall t.C_{\psi}\sqcap\exists t.C_{\psi}$, where $t\in\MR$ is arbitrary but
   fixed.
 
   \begin{claim}
@@ -1121,14 +1232,23 @@ syntactically restricted fragment of \EL-LTL.
     By construction we have that $\J_{\Psf}\models\top\sqsubseteq\exists t.\top$.  We show by a
     simple case distinction that $\J_{\Psf}\models\top\sqsubseteq C_\phi$.
     %
-    If $C_\phi$ does not contain any role name $r\in\MR$, the restriction on the set of worlds
-    preserves the entailment relation.
-    %
-    Otherwise, $C_\phi$ is of the form $\forall t.C_\psi\sqcap\exists t.C_\psi$.  Since
-    $\J_{\Psf}\models\top\sqsubseteq\exists t.\top$, $\J_{\Psf}\models\top\sqsubseteq C_\psi$, and
+    If $\phi$ does not contain any \Next-operator, then no meta role names occur in $C_{\phi}$ and
+    the restriction on the set of worlds preserves the entailment relation. Otherwise, $C_{\phi}$ is
+    of the form $C'_{\phi} \sqcap \forall t.C_\psi\sqcap\exists t.C_\psi$ where $C'_{\phi}$ is the
+    possibly empty conjunction contained in $C_{\phi}$ that does not contain meta role names. Hence,
+    $\J_{\Psf}\models C'_{\phi}$. Furthermore, since
+    $\J_{\Psf}\models\top\sqsubseteq\exists t.\top$, $\J_{\Psf}\models\top\sqsubseteq C_\psi$ (by induction), and
     there is only one $t$-successor, we have $\J_{\Psf}\models\top\sqsubseteq C_\phi$.  Hence,
     $\J_{\Psf}\models\top\sqsubseteq C_{\phi}\sqcap\exists t.\top$.
-
+    %
+    % If $C_\phi$ does not contain any role name $r\in\MR$, the restriction on the set of worlds
+    % preserves the entailment relation.
+    % %
+    % Otherwise, $C_\phi$ is of the form $\forall t.C_\psi\sqcap\exists t.C_\psi$.  Since
+    % $\J_{\Psf}\models\top\sqsubseteq\exists t.\top$, $\J_{\Psf}\models\top\sqsubseteq C_\psi$, and
+    % there is only one $t$-successor, we have $\J_{\Psf}\models\top\sqsubseteq C_\phi$.  Hence,
+    % $\J_{\Psf}\models\top\sqsubseteq C_{\phi}\sqcap\exists t.\top$.
+    
     We define the DL-LTL-structure \Imf over~\Osig as
     $\Imf\coloneqq(\Delta^{\J},\cdot^{\I_i})_{i\ge 0}$ where
     $\cdot^{\I_{i}}\coloneqq\cdot^{\I_{c_{i}}}$.
@@ -1444,6 +1564,13 @@ only.
 
 
 
+\section{Adding Contextualised Concepts}
+\label{sec:adding-cont-concepts}
+
+\input{content/adding-contextualized-concepts}
+
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../thesis"
@@ -1452,4 +1579,4 @@ only.
 
 %  LocalWords:  Löwenheim Skolem Logics logics iff temporalised Quasimodel quasimodel BKB Klarman
 %  LocalWords:  DL et al GreenBayPackers AaronRodgers DLs bijections equisatisfiable satisfiability
-%  LocalWords:  ontologies
+%  LocalWords:  ontologies workflow CROM CROMs

@@ -6,7 +6,7 @@ Nowadays, we are literally everywhere surrounded by software systems. Current de
 a continuing growth in the future.  Not only the amount of systems increases, but also the
 requirements and expectations users impose on current software steadily rise. Modern software
 systems should cope with very complex scenarios. This includes the ability of context-awareness and
-self-adaptability. For example, a robot in a smart factory should recognize when a human co-worker
+self-adaptability. For example, a robot in a smart factory should recognise when a human co-worker
 approaches and switch to a different, human-friendly working mode accordingly. Similarly, software
 in autonomous cars or in the area of smart homes needs to adapt to various situations of which some
 are not even stated explicitly.
@@ -32,7 +32,7 @@ the use of roles, \emph{role-based systems} can model application domains cleane
 structured, since ontologically different entities are modelled by different concepts.
 
 Let us consider, for example, the concepts of $\mathsf{Person}$ and $\mathsf{Customer}$. With an
-object-oriented approach of inheritance as a specialization relation, we could model
+object-oriented approach of inheritance as a specialisation relation, we could model
 $\mathsf{Customer}$ as a subclass of $\mathsf{Person}$, as not every person is a customer.
 On the other hand, if we restrict our domain to a business context and add the concept of a
 $\mathsf{Company}$, the inheritance relation would flip and we also have $\mathsf{Company}$ as
@@ -161,8 +161,7 @@ such a restriction, even in the presence of rigid roles.
 In some sense this restriction is similar to what is done in~\cite{BaGL-KR08,BaGL-ToCL12,Lip-PhD14}
 to obtain a decidable temporalised DL with rigid roles.  
 
-To provide a better intuition on how our formalism works, we examine the above mentioned example a bit
-further.  Consider the following axioms:
+To provide a better intuition on how our formalism works, we examine the following example.  Consider these axioms:
 \begin{align}
   \top & \sqsubseteq \oax{\exists\mathsf{worksFor}.\{\text{\textit{Siemens}}\} \sqsubseteq \exists\mathsf{hasAccessRights}.\{\text{\textit{Siemens}}\}}\label{eq:1-7} \\
   \mathsf{Work} & \sqsubseteq \oax{\mathsf{worksFor}(\text{\textit{Bob}},\text{\textit{Siemens}})} \label{eq:1-8}\\
@@ -178,7 +177,11 @@ further.  Consider the following axioms:
   & \sqsubseteq\ \oax{\exists\mathsf{worksFor}.\top\sqsubseteq\bot}\label{eq:1-13}
 \end{align}
 %
-The first axiom states that in all contexts somebody who
+The \enquote{outside} or meta GCIs like $\top\sqsubseteq\oax{\ldots}$ express knowledge about the meta dimension whereas
+the axioms inside \oax{\ldots} refer to knowledge in the object level. The complex meta concept
+\oalpha describes all contexts in which the object axiom $\alpha$ holds.
+%
+In detail, the first axiom states that in all contexts somebody who
 works for Siemens also has access rights to certain data.  The second axiom
 states that Bob is an employee of Siemens in any work context.  Furthermore,
 Axioms~\eqref{eq:1-9} and~\eqref{eq:1-10} say intuitively that if Bob has a job, he will earn money,
@@ -246,7 +249,7 @@ equipped with a formal semantics. Otherwise, we cannot ensure that the intended 
 model is correctly translated into the ontology. Furthermore, the modelling language needs to be
 expressive enough to express all concepts needed in the role-based model.
 %
-The \emph{Compartment Role Object Model (CROM)}\cite{KuLG-SLE14,KBG-SLE15} emerged to be a potent
+The \emph{Compartment Role Object Model (CROM)}\cite{KuLG-SLE14,KBG-SLE15} emerged to be a capable
 candidate that meets exactly the above mentioned requirements.
 
 Next, there is some freedom on how to express roles and role-playing in an ontology. While it is
@@ -266,7 +269,7 @@ overall workflow.
 \section{A Reasoner for Contextualised Description Logics}
 \label{sec:intro-reasoner}
 
-A contextualised DL capable of formalizing role-based models and an automated mapping from
+A contextualised DL capable of formalising role-based models and an automated mapping from
 role-based models into an ontology still helps only very little in practice, if there es no DL reasoner
 available which can process such ontologies. 
 %
@@ -281,7 +284,7 @@ deciding consistency of an \LMLO-ontology could benefit from these optimised rea
 idea is to divide the consistency problem into separate subproblems each of which can be processed
 by a standard DL reasoner.
 %
-Taking into account the special form of the axioms of the generated ontologies further optimizations
+Taking into account the special form of the axioms of the generated ontologies further optimisations
 are possible.
 
 
@@ -294,23 +297,30 @@ are possible.
 
 In the following, we give a short outline how the thesis is structured.
 
-In the first section of Chapter~\ref{cha:context-dls}, we present the basic definitions of
+In the first section of Chapter~\ref{cha:preliminaries}, we present the basic definitions of
 description logics which we will use throughout the thesis. We define the syntax and semantics of
 concepts, axioms and knowledge bases and state specific DLs together with the respective
 complexities of the consistency problem.
 %
-We then introduce the contextualised description logic \LMLO. We again start with the definition of
-the syntax and semantics. For the complexity analysis of the consistency problem, the upper bounds
-are investigated first. We consider the case of the lightweight description logic \EL in a separate
-section, which at the same time yields the lower bounds of the complexity for more expressive
-contextualised DLs. For the complexity analysis, we consider three different settings which result in
-different complexity results. In the first setting, we do not allow any rigid names.  In the
-second setting, we assume the presence of rigid concepts, but forbid any rigid roles. In the
-last and complexity-wise hardest setting, we allow both rigid concepts and rigid names.
+We then present an ontological overview of the notion of a role and introduce
+a syntactical variant of the Compartment Role Object Model, the modelling language we use for
+role-based modelling.
+
+Chapter~\ref{cha:context-dls} starts with an discussion about the requirements for a logical
+formalism in order to be feasible in our setting, and we then introduce the contextualised
+description logic \LMLO. We again start with the definition of the syntax and semantics. For the
+complexity analysis of the consistency problem, the upper bounds are investigated first. We consider
+the case of the lightweight description logic \EL in a separate section, which at the same time
+yields the lower bounds of the complexity for more expressive contextualised DLs. For the complexity
+analysis, we consider three different settings which result in different complexity results. In the
+first setting, we do not allow any rigid names.  In the second setting, we assume the presence of
+rigid concepts, but forbid any rigid roles. In the last and complexity-wise hardest setting, we
+allow both rigid concepts and rigid names.
 %
 At last, we introduce an extension of \LMLO, and show that the consistency problem becomes
 undecidable in the presence of rigid roles. The main results of this chapter, namely the complexity
-results excluding the description logic \SHOIQ, have already been published:
+results excluding the description logic \SHOIQ, have already been published in~\cite{BoLi-FroCoS15,
+  BoLi-DL15, BoLi-LTCS-15-04}:
 \begin{itemize}
 \item \fullcite{BoLi-FroCoS15}
 \item \fullcite{BoLi-DL15}
@@ -318,24 +328,25 @@ results excluding the description logic \SHOIQ, have already been published:
 \end{itemize}
 
 
-In Chapter~\ref{cha:mapping}, we present the mapping from role-based models into
-\LMLO-ontologies. We start with an ontological overview of the notion of a role.  We then introduce
-a syntactical variant of the Compartment Role Object Model and explain in detail how the different
-assumptions of a CROM are translated.  We conclude the chapter with some thoughts on how to express
-constraints for role-based models that go beyond CROM. The mapping algorithm is still to be
-published, the formal role-based modelling language CROM has been published:
+In Chapter~\ref{cha:mapping}, we present the mapping from role-based models into \LMLO-ontologies.
+We explain in detail how the different assumptions of a CROM are translated and proof that the
+mapping algorithm preserves the semantics of the role-based model.  We conclude the chapter with
+some thoughts on how to express constraints for role-based models that go beyond CROM.  Both the
+formal role-based modelling language CROM and the mapping algorithm have already been published
+in~\cite{KBG-SLE15,BoKu-JIST17}:
 \begin{itemize}
 \item \fullcite{KBG-SLE15}
+\item \fullcite{BoKu-JIST17}
 \end{itemize}
 
 
-Finally, in Chapter~\ref{cha:jconht}, we present JConHT, our reasoner for \LMLO. To implement a decision
-procedure for the consistency problem, we have to adapt some ideas of Chapter~\ref{cha:context-dls},
-which are discussed in Section~\ref{sec:blackbox-approach}. Section~\ref{sec:using-hypertableau}
-covers the analysis of the contextualised hypertableau algorithm. We finish the chapter with some
-notes on the implementation and an evaluation of our implementation. Both the contextualised
-hypertableau algorithm and a system description
-of JConHT are not yet published.
+Finally, in Chapter~\ref{cha:jconht}, we present JConHT, our reasoner for \LMLO. To implement a
+decision procedure for the consistency problem, we have to adapt some ideas of
+Chapter~\ref{cha:context-dls}, which are discussed in
+Section~\ref{sec:blackbox-approach}. Section~\ref{sec:using-hypertableau} covers the analysis of the
+contextualised hypertableau algorithm. We finish the chapter with some notes on the implementation
+and an evaluation of our implementation. Both the contextualised hypertableau algorithm and a system
+description of JConHT are also published in~\cite{BoKu-JIST17}.
 
 
 % \clearpage
