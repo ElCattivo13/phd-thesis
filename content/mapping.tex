@@ -581,15 +581,31 @@ constraints on the relationship type \rst if \rst is supposed to be transitive.
 \subsection{Semantic Integrity of Mapping Algorithm}
 \label{sec:sem-integ-mapping}
 
-Before we establish the desired relation between the CROM and the ontology, we do a short
-analysis of the required expressiveness of the meta and the object logic. To state the disjoint union
-axioms we need at least~\ALC. As we do not need anything more on the meta level, we can
-fix~\LM to be~\ALC. On the object level, we need qualified number restrictions and inverse roles to
-assure that every \rosirole is played exactly once. 
+Before we establish the desired relation between the CROM and the ontology, we do a short analysis
+of the required expressiveness of the meta and the object logic. To state the disjoint union axioms
+we need at least~\ALC. As we do not need anything more on the meta level, we can fix~\LM to
+be~\ALC. On the object level, we need qualified number restrictions and inverse roles to assure that
+every \rosirole is played exactly once.
 %Hence, the minimal object DL is \ALCIQ. 
 If we have a single occurrence constraint, we have to add nominals. Transitivity axioms or role
 hierarchies are only required if some intra-relationship type constraint specifies a transitive or
-symmetric relationship type, respectively. Table~\ref{tab:required-dls} shows a summary of the required DLs.
+symmetric relationship type, respectively. Table~\ref{tab:required-dls} shows a summary of the
+required DLs.
+
+Anyhow, from a practical point of view not only the required DLs are relevant but also the
+complexity of the reasoning. Besides the specific DL it is also important which names in the
+ontology need to be rigid. We need rigid concept names for mapping natural types and o-compartment
+types. Whether we also need rigid role names depends on the constraints we want to model. Rigid
+roles are necessary to model attributes of natural types, e.g.\ the name or date of birth of a
+person. Complexity-wise it is important to only map details of the role-based model which might have
+logical implications.  Since in the current version of CROM we do not have any constraints based on
+attributes of naturals, we will not map attributes and, hence, do not need rigid roles.  In
+Section~\ref{sec:going-beyond-crom}, we analyse some constraints beyond CROM which we can model in
+\LMLO and therefore we also need rigid roles. Table~\ref{tab:crom-complexity} shows an overview of
+the resulting complexities. Note here, that these are all worst-case complexities and that the
+actual reasoning effort might vary depending on the used constraints even if the different cases,
+i.e.\ with and without intra-relationship type constraints, are in the same complexity class.
+
 
 Given a \SCCROM{} \Kmc, we obtain the \ALCSHOIQ ontology
 $\Bmf_{\Kmc} = (\Bmc_{\Kmc}, \emptyset,\RO)$ where~$\Bmc_{\Kmc}$ is the conjunction of all meta
@@ -597,10 +613,11 @@ axioms from~\eqref{eq:compartments-coverage} to~\eqref{eq:last-equation} and~\RO
 role axioms~\eqref{eq:rbox-1} and~\eqref{eq:rbox-2}.
 
 
+\setlength{\floatsep}{25pt plus 2.0pt minus 2.0pt}
 \begin{table}
-  \caption{Summary of required DLs for \LM and \LO}
+  \caption{Summary of required DLs for \LM and \LO.}
   \label{tab:required-dls}  \centering
-  \begin{tabularx}{0.8\linewidth}{lXl}
+  \begin{tabularx}{0.9\linewidth}{lXl}
     \toprule
     \LO & minimal                                  & \ALCIQ\\
         & with occurrence constraints              & \ALCOIQ\\
@@ -610,6 +627,23 @@ role axioms~\eqref{eq:rbox-1} and~\eqref{eq:rbox-2}.
     \bottomrule
   \end{tabularx}
 \end{table}
+
+\begin{table}
+  \caption{ Overview of complexities for reasoning on CROM models with (I): No attribute-based
+    constraints (only rigid concepts), and (II): With attribute-based constraints (with rigid roles).}
+  \label{tab:crom-complexity}  \centering
+  \begin{tabularx}{0.9\linewidth}{M{8mm}LLL}
+    \toprule
+    & minimal (\ALCALCIQ)
+    & with occ.\ constr.\ (\ALCALCOIQ)
+    & with in.-rel.\ constr.\ (\ALCSHOIQ) \\
+    \midrule
+    (I)  & \NExpTime   & \multicolumn{2}{c}{\NExpTime-hard and in \TwoNExpTime}\\
+    (II) & \TwoExpTime & \multicolumn{2}{c}{\TwoExpTime-hard and in \TwoNExpTime}\\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+%\setlength{\floatsep}{12pt plus 2.0pt minus 2.0pt}
 
 \begin{theorem}
   Let $\Kmc = (\Mmc, \Amc, \Cmc)$ be a \SCCROM. Then, \Kmc is satisfiable iff $\Bmf_{\Kmc}$ is consistent.
