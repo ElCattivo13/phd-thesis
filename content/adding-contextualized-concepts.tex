@@ -223,28 +223,35 @@ problem becomes undecidable.
   there exist a \emph{tiling} $\mathsf{t}:\nat\times\nat\to D$ s.t.\
   $(\mathsf{t}(i,j),\mathsf{t}(i+1,j))\in H$ and $(\mathsf{t}(i,j),\mathsf{t}(i,j+1))\in V$?
 
+  \setLength{\jot}{7pt}
   We encode this problem in \ELALCplus with a single rigid role $v\in\ORR$. Let $\Bmc_{\Dmc}$ be the
   conjunction of the following meta axioms. Each context represents a \emph{column} of the
   grid. Using a meta role $h \in \MR$ and a rigid object role $v \in \ORR$, we ensure the existence
   of a grid:
+  \vspace{0.19ex}
   \begin{align*}
     \top & \sqsubseteq \exists h.\top \tag{$\alpha_{1}$}\\
     \top & \sqsubseteq \oax{\top \sqsubseteq \exists v.\top} \tag{$\alpha_{2}$}
   \end{align*}
+  \vspace{0.19ex}
   Let $A_{0}, \dots, A_{n} \in \OC$ be object concept names representing the given domino types. To
   ensure that a single domino type is assigned to each grid position, we use
+  \vspace{0.19ex}
   \begin{align*}
     \top & \sqsubseteq \oax{\top \sqsubseteq (A_{1} \sqcup \dots \sqcup A_{n})
            \sqcap \bigsqcap_{1 \leq i < j \leq n} \lnot(A_{i} \sqcap A_{j})}.
            \tag{$\alpha_{3}$}
   \end{align*}
+  \vspace{0.19ex}
   To enforce the compatibility relations, we use
+  \vspace{0.19ex}
   \begin{align*}
     \top & \sqsubseteq \bigsqcap_{i=1}^{n} 
            \oax{A_{i} \sqsubseteq \forall v.(\bigsqcup_{(d_{i},d_{j})\in V} A_{j})}, \text{ and} \tag{$\alpha_{4}$}\\
     \top & \sqsubseteq \bigsqcap_{i=1}^{n} 
            \oax{A_{i} \sqsubseteq \bigsqcup_{(d_{i},d_{j})\in H} \ocont*{\top}[h]{A_{j}}}.\tag{$\alpha_{5}$}
   \end{align*}
+  \resetLength{\jot}
 
   \begin{claim}
     $\Bmc_{\Dmc}$ is consistent iff \Dmc has a

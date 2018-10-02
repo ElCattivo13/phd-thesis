@@ -1592,6 +1592,15 @@
   \pgfmathsetmacro{\Mean}{\Sum/\NumRows}
 }
 
+\newlength{\mytmplen}
+\newcommand{\setLength}[2]{%
+  \setlength{\mytmplen}{#1}%
+  \setlength{#1}{#2}%
+}
+\newcommand{\resetLength}[1]{%
+  \setlength{#1}{\mytmplen}%
+}
+
 
 
 \endinput
