@@ -191,33 +191,45 @@
 \RequirePackage[scale=.9]{tgheros}
 \RequirePackage[bitstream-charter]{mathdesign}
 
-\RequirePackage[
-  final,
-  pdftex,
-  %pdfa,
-  unicode=true,
-  pdftoolbar=true,
-  bookmarks=true,
-  bookmarksopen=true,
-  bookmarksnumbered=false,
-  bookmarksopenlevel=1,
-  hyperfootnotes=false,
-  pdfdisplaydoctitle,
-  pdfpagelabels=true,
-  plainpages=false,
-  hidelinks,
-]{hyperref}
-\title{**NO TITLE SET**}
-\date{**NO DATE SET**}
-\author{**NO AUTHOR SET**}
-\AtEndPreamble{
+\RequirePackage[a-1b]{pdfx}
+
+\@ifpackageloaded{pdfx}
+{
+  \RequirePackage{hyperref}
   \hypersetup{
-    pdftitle=\theauthor: \thetitle,
-    pdfauthor=\theauthor,
-    pdfsubject=\thetitle,
-    pdfkeywords=\thetitle
+    unicode=true
   }
 }
+{
+  \RequirePackage[
+    final,
+    pdftex,
+    % pdfa,
+    unicode=true,
+    pdftoolbar=true,
+    bookmarks=true,
+    bookmarksopen=true,
+    bookmarksnumbered=false,
+    bookmarksopenlevel=1,
+    hyperfootnotes=false,
+    pdfdisplaydoctitle,
+    pdfpagelabels=true,
+    plainpages=false,
+    hidelinks,
+  ]{hyperref}
+  \title{**NO TITLE SET**}
+  \date{**NO DATE SET**}
+  \author{**NO AUTHOR SET**}
+  \AtEndPreamble{
+    \hypersetup{
+      pdftitle=\theauthor: \thetitle,
+      pdfauthor=\theauthor,
+      pdfsubject=\thetitle,
+      pdfkeywords=\thetitle
+    }
+  }
+}
+
 
 \RequirePackage[
   backend=biber,
