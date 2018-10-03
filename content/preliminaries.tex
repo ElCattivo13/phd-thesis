@@ -189,16 +189,16 @@ assertion axioms occurring in \Bmc.
   %
   This is extended to Boolean axiom formulas over~\Nsig inductively as follows:
   \begin{itemize}
-  \item \I is a model of $\lnot\B_1$ if it is not a model of~$\B_1$, and
-  \item \I is a model of $\B_1\land\B_2$ if it is a model of both $\B_1$ and~$\B_2$.
+  \item \I is a model of $\lnot\Bmc_1$ if it is not a model of~$\Bmc_1$, and
+  \item \I is a model of $\Bmc_1\land\Bmc_2$ if it is a model of both $\Bmc_1$ and~$\Bmc_2$.
   \end{itemize}
   %
   We write $\I\models\alpha$ and $\I\models\Bmc$ if \I is a model of the axiom~$\alpha$ over~\Nsig
-  or \I is a model of the Boolean axiom formula~\B, respectively. Furthermore, \I is a model of an
+  or \I is a model of the Boolean axiom formula~\Bmc, respectively. Furthermore, \I is a model of an
   RBox~\Rmc over~\Nsig (written $\I\models\Rmc$) if it is a model of each axiom in \Rmc.
 
-  Finally, \I is a model of the BKB $\Bmf=(\B,\Rmc)$ over~\Nsig (written $\I\models\Bmf$) if it is a
-  model of both~\B and~\Rmc.  We call~\Bmf \emph{consistent} if it has a model.  The
+  Finally, \I is a model of the BKB $\Bmf=(\Bmc,\Rmc)$ over~\Nsig (written $\I\models\Bmf$) if it is a
+  model of both~\Bmc and~\Rmc.  We call~\Bmf \emph{consistent} if it has a model.  The
   \emph{consistency problem} is the problem of deciding whether a given BKB is consistent.
 \end{definition}
 
@@ -210,8 +210,8 @@ of~$\beta$.
 %
 The consistency problem, however, is fundamental in the sense that most other standard reasoning
 tasks can be polynomially reduced to it in the presence of axiom negation.  For example, the
-entailment problem can be reduced to the \emph{in}consistency problem: $\Bmf=(\B,\Rmc)$ entails
-$\beta$ iff $(\B\land\lnot\beta,\Rmc)$ is inconsistent. If we consider only an ontology $\Omf=(\Omc,\Rmc)$ without
+entailment problem can be reduced to the \emph{in}consistency problem: $\Bmf=(\Bmc,\Rmc)$ entails
+$\beta$ iff $(\Bmc\land\lnot\beta,\Rmc)$ is inconsistent. If we consider only an ontology $\Omf=(\Omc,\Rmc)$ without
 any axiom negations, we can still simulate most of the negated axioms $\lnot\beta$. Let us for
 example consider the GCI
 $\beta = C \sqsubseteq D$. Here we can check $(\Omc\land (C \sqcap \lnot D)(x),\Rmc)$ with $x\in\NI$
