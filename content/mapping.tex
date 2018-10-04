@@ -162,7 +162,7 @@ In the next sections, we present the mapping from \rosirole-based systems into c
 description logics in detail.  At first, we express general knowledge about occurring types which is
 independent of the specific \SCROM.
 
-\setLength{\jot}{5pt}
+{\setlength{\jot}{5pt}
 \begin{enumerate}
 
 \item Every context belongs to exactly one compartment type.
@@ -216,7 +216,7 @@ instance of a \rosirole group or the individual \occurCounter.
       \text{\hspace{3em} for all $\ct* \in \CT*$}\label{eq:nested-cts}
   \end{align}
 \end{enumerate}
-\resetLength{\jot}
+}
 
 % \noindent
 % In every context, every natural or o-compartment and every \rosirole belongs to exactly one type.
@@ -772,7 +772,7 @@ implications which can be drawn due to the mapping into description logics.
   Omitting general axioms, e.g.\ stating that every role or rolegroup instance is played and
   connected to \occurCounter, the following axioms are contained in the ontology, among others:
   %
-  \setLength{\jot}{4pt}
+  {\setlength{\jot}{4pt}
   \begin{align}
     % \top & \sqsubseteq \oax{\BankAccounts\sqsubseteq\exact{1}{\plays^{-}}{\top}}\\
     \Bank & \sqsubseteq \oax{(\atleast{1}{\counts}{\BankAccounts})(\occurCounter)}\label{eq:counter-bankaccount}\\
@@ -785,7 +785,7 @@ implications which can be drawn due to the mapping into description logics.
     \top & \sqsubseteq \oax{\exists\ownsa.\top\sqsubseteq\Customer}\label{eq:domain-ownsa}\\
     \top & \sqsubseteq \oax{\exists\ownca.\top\sqsubseteq\Customer}\label{eq:domain-ownca}
   \end{align}
-  \resetLength{\jot}%
+  }
   In any interpretation \J that satisfies $\Omc_{\Bank}$ with $c\in\Bank^{\J}$,
   equations~\eqref{eq:counter-bankaccount} and~\eqref{eq:decl-rg-bankaccounts} entail the existence
   of an element in $\CheckingAccount^{\I_{c}}$ or $\SavingsAccount^{\I_{c}}$. Due to

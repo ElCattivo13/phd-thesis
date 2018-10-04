@@ -223,7 +223,7 @@ problem becomes undecidable.
   there exist a \emph{tiling} $\mathsf{t}:\nat\times\nat\to D$ s.t.\
   $(\mathsf{t}(i,j),\mathsf{t}(i+1,j))\in H$ and $(\mathsf{t}(i,j),\mathsf{t}(i,j+1))\in V$?
 
-  \setLength{\jot}{7pt}
+  {\setlength{\jot}{7pt}
   We encode this problem in \ELALCplus with a single rigid role $v\in\ORR$. Let $\Bmc_{\Dmc}$ be the
   conjunction of the following meta axioms. Each context represents a \emph{column} of the
   grid. Using a meta role $h \in \MR$ and a rigid object role $v \in \ORR$, we ensure the existence
@@ -251,7 +251,7 @@ problem becomes undecidable.
     \top & \sqsubseteq \bigsqcap_{i=1}^{n} 
            \oax{A_{i} \sqsubseteq \bigsqcup_{(d_{i},d_{j})\in H} \ocont*{\top}[h]{A_{j}}}.\tag{$\alpha_{5}$}
   \end{align*}
-  \resetLength{\jot}
+  }
 
   \begin{claim}
     $\Bmc_{\Dmc}$ is consistent iff \Dmc has a
