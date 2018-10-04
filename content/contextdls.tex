@@ -423,22 +423,21 @@ occurring in~\Bmc by a fresh concept name such that there is a 1--1 relationship
   Let \BB be an \LMLO-BKB.  Let \bsf be the bijection mapping every referring m-concept of the form \oalpha
   occurring in~\Bmc to the so-called \emph{abstracted concept name $A_{\oalpha}\in\MC$}, where we assume w.l.o.g.\ that
   $A_{\oalpha}$ does not occur in~\Bmc.
-  \begin{enumerate}
+  \begin{enumerate}[itemsep = 10.5pt plus 2pt minus 1pt,
+                    topsep  = 15.0pt plus 3pt minus 2pt]
   \item The \LM-concept $C^{\bsf}$ over \Msig is obtained from the m-concept~$C$ by replacing every occurrence of
     \oalpha by $\bsf(\oalpha)$.
   \item The Boolean \LM-axiom formula~\Bb over \Msig is obtained from~\Bmc by replacing every
     m-concept~$C$ occurring in~\Bmc with~$C^{\bsf}$.  We call the \LM-BKB $\Bmfb=(\Bb,\RM)$ the
     \emph{outer abstraction of~\Bmf}.
-        \item Given \JJ, its \emph{outer abstraction} is the
-            \Msig-interpretation $\Jb=(\Cbb,\cdot^{\Jb})$ where
-            \begin{itemize}
-                \item for every $x\in\MR\cup\MI\cup(\MC\setminus\ran(\bsf))$, we
-                    have $x^{\Jb}=x^\J$, and
-                \item for every $A\in\ran(\bsf)$, we have
-                    $A^{\Jb}=(\bsf^{-1}(A))^\J$,
-            \end{itemize}
-            where $\ran(\bsf)$ denotes the image of~\bsf. \qedhere
-    \end{enumerate}
+  \item Given \JJ, its \emph{outer abstraction} is the \Msig-interpretation $\Jb=(\Cbb,\cdot^{\Jb})$
+    where
+    \begin{itemize}
+    \item for every $x\in\MR\cup\MI\cup(\MC\setminus\ran(\bsf))$, we have $x^{\Jb}=x^\J$, and
+    \item for every $A\in\ran(\bsf)$, we have $A^{\Jb}=(\bsf^{-1}(A))^\J$,
+    \end{itemize}
+    where $\ran(\bsf)$ denotes the image of~\bsf. \qedhere
+  \end{enumerate}
 \end{definition}
 
 For simplicity, for $\Bmf'=(\Bmc',\RO,\RM)$, where $\Bmc'$ is a subformula of~\Bmc, we
@@ -447,7 +446,8 @@ restricting \bsf to the m-concepts occurring in~$\Bmc'$.
 %
 Now let us consider the following small example.
 
-
+{\setlength{\abovedisplayskip}{16pt plus 3pt minus 6pt}
+\setlength{\belowdisplayskip}{16pt plus 3pt minus 6pt}
 \begin{example}\label{ex:outer-abstraction}
   Let $\Bmf_{\text{ex}} = (\Bmc_{\text{ex}},\emptyset,\emptyset)$ with $\Bmc_{\text{ex}}\coloneqq
   C\sqsubseteq(\oax{A\sqsubseteq\bot})\ \land\ (C\sqcap\oax{A(a)})(c)$ be an \ALCALC-BKB.  Then,
@@ -459,6 +459,7 @@ Now let us consider the following small example.
   \end{align*}
   is the outer abstraction of $\Bmf_\text{ex}$.
 \end{example}
+}
 
 \noindent
 The following lemma makes the relationship between \Bmf and its outer abstraction
