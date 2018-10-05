@@ -378,9 +378,9 @@ if consistent, returns the set of occurring restricted types.
 \end{proof}
 
 In Algorithm~\ref{alg:1}, we need to enumerate all models of \Bmfb up to essential
-equivalence. Therefore, we need an algorithm deciding not only the consistency of a DL ontology but also
-outputs information about a model. We discuss further issues about the core algorithm and core
-reasoner which we use in the next section.
+equivalence. Therefore, we need an algorithm not only deciding the consistency of a DL ontology but
+where applicable also returning information about a model. We discuss this and further issues about
+the core algorithm and core reasoner which we use in the next section.
 
 
 \section{Contextual Hypertableau}
@@ -1216,10 +1216,10 @@ reasoning time increases and out-of-memory exceptions appear even for smaller~$n
 
 In the end it is hard to tell whether these randomly generated role-based models give realistic test
 results. The tests clearly show that more constraints directly influence the computation
-time. Anyway, the application scope for role-based modelling is quite broad and these test give an
-impression for a general setting. However, a further examination of models within a specific topic
-can result in more target-oriented tests which might even initiate further specialised optimisations
-in the algorithm.
+time. Anyway, the application scope for role-based modelling is quite broad and these tests only
+give an impression for a general setting. However, a further examination of models within a specific
+topic can result in more target-oriented tests which might even initiate further specialised
+optimisations in the algorithm, the implementation or both.
 
 % We next present how we implement our algorithm. The main components that we discuss are the
 % \texttt{ContextOntology}, \texttt{ContextReasoner} and \texttt{ContextTableau} classes. 

@@ -34,7 +34,7 @@ Sometimes we omit \Nsig, however, if they are irrelevant or clear from the conte
   \label{def:syntax-concepts}
   Let~\NC, \NR, \NI be countably infinite, pairwise disjoint sets of
   \emph{concept names}, \emph{role names}, and \emph{individual names}. Then, the triple
-  $\Nsig\coloneqq(\NC,\NR,\NI)$ is a \emph{signature}. An \emph{role $r$ over \Nsig} is either
+  $\Nsig\coloneqq(\NC,\NR,\NI)$ is a \emph{signature}. A \emph{role $r$ over \Nsig} is either
   a role name, i.e.~$r\in\NR$, or it is of the form $s^{-}$ with $s\in\NR$ (\emph{inverse role}).
 
   The set of \emph{concepts over \Nsig} is the smallest set such that
@@ -138,8 +138,8 @@ axioms and an RBox which states the general knowledge about roles.
 
 \begin{definition}[Syntax of axioms over \Nsig and BKBs over \Nsig]
   Let $\Nsig\coloneqq(\NC,\NR,\NI)$ be the signature. Then, if $C$ and $D$ are concepts over \Nsig, $r$
-  and $s$ are a roles over \Nsig, and $\{a,b\}\subseteq\NI$, then
-  \begin{itemize}
+  and $s$ are roles over \Nsig, and $\{a,b\}\subseteq\NI$, then
+  \begin{itemize}[itemsep = 6.0pt plus 2pt minus 1pt, topsep = 11pt plus 3pt minus 5pt]
   \item $C \sqsubseteq D$ (\emph{general concept inclusion, GCI}),
   \item $C(a)$ (\emph{concept assertion}),
   \item $r(a,b)$ (\emph{role assertion}),
@@ -151,7 +151,7 @@ axioms and an RBox which states the general knowledge about roles.
   Moreover, an \emph{RBox \Rmc over \Nsig} is a finite set of role inclusions over \Nsig and
   transitivity axioms over \Nsig. A \emph{Boolean axiom formula over \Nsig} is defined inductively
   as follows:
-  \begin{itemize}
+  \begin{itemize}[itemsep = 6.0pt plus 2pt minus 1pt, topsep = 11pt plus 3pt minus 5pt]
   \item every GCI over \Nsig is a Boolean axiom formula over \Nsig,
   \item every concept and role assertion over \Nsig is a Boolean axiom formula over \Nsig,
   \item if $\Bmc_{1}$, $\Bmc_{2}$ are Boolean axiom formulas over \Nsig, then so are $\lnot\Bmc_{1}$
@@ -341,7 +341,7 @@ To avoid the confusion with the notations, from now on we differentiate \emph{\r
 in \rosirole-based systems and \emph{roles} as used in description logics whenever we feel it is
 necessary. Otherwise, we drop that distinction if it is clear from the context.
 %
-\subsection{Ontological Foundation of Roles}
+\subsection{Ontological Foundation of \texorpdfstring{\Rosiroles}{Rôles}}
 \label{sec:rosiroles}
 
 The word \emph{Role} originated from the French word \emph{\Rosirole} which referred to a form of
