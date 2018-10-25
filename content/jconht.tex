@@ -1,5 +1,9 @@
 
-\chapter{JConHT -- A \texorpdfstring{\SHOIQSHOIQ}{SHOIQ[SHOIQ]} Reasoner}
+\addtocontents{toc}{\protect\null}
+% avoid underfull vbox in toc
+% https://tex.stackexchange.com/questions/453341/underfull-vbox-in-table-of-contents
+
+\chapter{JConHT -- A \texorpdfstring{\SHOIQSHOIQ}{SHOIQ⟦SHOIQ⟧} Reasoner}
 \label{cha:jconht}
 
 In the last chapter, we presented a mapping for role-based models into contextualised description
@@ -227,8 +231,8 @@ let $\alpha$ always denote an original axiom and $\beta$ an renamed axiom.
   % If \Xmc is admissible, then there exist \Osig-interpretations $\I_1=(\Delta,\cdot^{\I_1})$,
   % \ldots, $\I_k=(\Delta,\cdot^{\I_k})$ such that $x^{\I_i}=x^{\I_j}$ for all
   % $x\in\OI\cup\OCR\cup\ORR$ and all $i,j\in\{1,\dots,k\}$, and every $\I_i$, $1\le i\le k$, is a
-  % model of the \LO-BKB $\Bmf_{X_{i}}= (\B_{X_i},\RO)$ over~\Osig where
-  % $\B_{X_i}:=\bigwedge_{\bsf(\oalpha)\in X_i}\alpha\ \land
+  % model of the \LO-BKB $\Bmf_{X_{i}}= (\Bmc_{X_i},\RO)$ over~\Osig where
+  % $\Bmc_{X_i}:=\bigwedge_{\bsf(\oalpha)\in X_i}\alpha\ \land
   % \bigwedge_{\bsf(\oalpha)\in\ran(\bsf)\setminus X_i}\lnot\alpha$. We define the
   % \Osig-interpretation \II as follows:
   % \begin{align*}
@@ -374,9 +378,9 @@ if consistent, returns the set of occurring restricted types.
 \end{proof}
 
 In Algorithm~\ref{alg:1}, we need to enumerate all models of \Bmfb up to essential
-equivalence. Therefore, we need an algorithm deciding not only the consistency of a DL ontology but also
-outputs information about a model. We discuss further issues about the core algorithm and core
-reasoner which we use in the next section.
+equivalence. Therefore, we need an algorithm not only deciding the consistency of a DL ontology but
+where applicable also returning information about a model. We discuss this and further issues about
+the core algorithm and core reasoner which we use in the next section.
 
 
 \section{Contextual Hypertableau}
@@ -1212,10 +1216,10 @@ reasoning time increases and out-of-memory exceptions appear even for smaller~$n
 
 In the end it is hard to tell whether these randomly generated role-based models give realistic test
 results. The tests clearly show that more constraints directly influence the computation
-time. Anyway, the application scope for role-based modelling is quite broad and these test give an
-impression for a general setting. However, a further examination of models within a specific topic
-can result in more target-oriented tests which might even initiate further specialised optimisations
-in the algorithm.
+time. Anyway, the application scope for role-based modelling is quite broad and these tests only
+give an impression for a general setting. However, a further examination of models within a specific
+topic can result in more target-oriented tests which might even initiate further specialised
+optimisations in the algorithm, the implementation or both.
 
 % We next present how we implement our algorithm. The main components that we discuss are the
 % \texttt{ContextOntology}, \texttt{ContextReasoner} and \texttt{ContextTableau} classes. 
@@ -1299,10 +1303,10 @@ in the algorithm.
 %   $\I_k=(\Delta,\cdot^{\I_k})$ such that
 %   \begin{enumerate}
 %   \item $x^{\I_i}=x^{\I_j}$ for all $x\in\OIR\cup\OCR\cup\ORR$ and all $i,j\in\{1,\dots,k\}$, and
-%   \item every $\I_i$, $1\le i\le k$, is a model of the \LO-BKB $\Bmf_{X_{i}}= (\B_{X_i},\RO)$
+%   \item every $\I_i$, $1\le i\le k$, is a model of the \LO-BKB $\Bmf_{X_{i}}= (\Bmc_{X_i},\RO)$
 %     over~\Osig where
 %     \begin{align*}
-%       \B_{X_i}:=\bigwedge_{\bsf(\oalpha)\in X_i}\alpha\ \land
+%       \Bmc_{X_i}:=\bigwedge_{\bsf(\oalpha)\in X_i}\alpha\ \land
 %       \bigwedge_{\bsf(\oalpha)\in\ran(\bsf)\setminus X_i}\lnot\alpha.
 %     \end{align*}
 %   \end{enumerate}

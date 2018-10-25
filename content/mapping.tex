@@ -5,8 +5,8 @@
 In the last chapter we introduced a family of description logics which is capable of expressing
 contextualised knowledge. This provides the needed expressiveness to be able to reason on role-based
 models. But due to the rather elaborate semantics both of role-based models and of contextualised
-description logics it will be tedious and error-prone to construct the DL ontology which exactly
-captures a role-based model manually, especially since the domain analyst who generates the
+description logics it will be tedious and error-prone to manually construct the DL ontology which
+exactly captures a role-based model, especially since the domain analyst who generates the
 role-based model is in general not an expert in DLs. Hence, an automated mapping from role-based
 models into DL would be desirable. Therefore, a formal representation of role-based systems with a
 well-defined semantics is necessary which is the case since we use role-based systems formalised in
@@ -156,13 +156,13 @@ will consider \rosirole groups of the constraint set similar to \rosiroles.
 % $\Art\in\OCF$ for all \rosiroles and $\Arg\in\OCF$ for all instances of \rosirole groups since we
 % will consider \rosirole groups of the constraint set similar to \rosiroles.
 
-\subsection{A Mapping for the Vocabulary  \texorpdfstring{\ensureboldmath{\Sigma}}{Sigma}}
+\subsection{A Mapping for the Vocabulary  \texorpdfstring{\ensureboldmath{\Sigma}}{Σ}}
 
 In the next sections, we present the mapping from \rosirole-based systems into contextualised
 description logics in detail.  At first, we express general knowledge about occurring types which is
 independent of the specific \SCROM.
 
-
+{\setlength{\jot}{5pt}
 \begin{enumerate}
 
 \item Every context belongs to exactly one compartment type.
@@ -216,6 +216,7 @@ instance of a \rosirole group or the individual \occurCounter.
       \text{\hspace{3em} for all $\ct* \in \CT*$}\label{eq:nested-cts}
   \end{align}
 \end{enumerate}
+}
 
 % \noindent
 % In every context, every natural or o-compartment and every \rosirole belongs to exactly one type.
@@ -264,7 +265,7 @@ instance of a \rosirole group or the individual \occurCounter.
 %       \text{\hspace{3em} for all $\ct* \in \CT*$}\label{eq:nested-cts}
 % \end{align}
 
-\subsection{A Mapping for the \texorpdfstring{\SCROM{} \Mmc}{Sigma-CROM M}}
+\subsection{A Mapping for the \texorpdfstring{\SCROM{} \Mmc}{Σ-CROM M}}
 
 With the general knowledge about the vocabulary $\Sigma$ being set up, we can look into
 the translation of the specifications for a given \SCROM{} \MM.
@@ -345,7 +346,7 @@ $\ct\in\CT$:
   \lnot\ct & \sqsubseteq \oax{\bigsqcup_{\rt\in\parts(\ct)}\rt\sqsubseteq\bot}
 \end{align*}
 
-\subsection{A Mapping for the \texorpdfstring{\SCROA{} \A}{Sigma-CROA A}}
+\subsection{A Mapping for the \texorpdfstring{\SCROA{} \A}{Σ-CROA A}}
 
 Next, let \A be a \SCROA. We can translate the different Compartment Role Object Assertions into
 meta assertions in \LMLO.
@@ -414,7 +415,7 @@ simply the following axiom:
 % % \end{gather}
 % %where w.l.o.g.\ $o_{1}, o_{2}\in\OI\setminus\IND$ are fresh individual names.
 
-\subsection{A Mapping for the \texorpdfstring{\SCROC{} \Cmc}{Sigma-CROC C}}
+\subsection{A Mapping for the \texorpdfstring{\SCROC{} \Cmc}{Σ-CROC C}}
 \label{sec:mapping-constraints}
 
 
@@ -613,7 +614,7 @@ axioms from~\eqref{eq:compartments-coverage} to~\eqref{eq:last-equation} and~\RO
 role axioms~\eqref{eq:rbox-1} and~\eqref{eq:rbox-2}.
 
 
-\setlength{\floatsep}{25pt plus 2.0pt minus 2.0pt}
+\setlength{\floatsep}{20pt plus 2.0pt minus 2.0pt}
 \begin{table}
   \caption{Summary of required DLs for \LM and \LO.}
   \label{tab:required-dls}  \centering
@@ -721,6 +722,7 @@ role axioms~\eqref{eq:rbox-1} and~\eqref{eq:rbox-2}.
   %
   Let $\Delta_{\NT}\subseteq\Delta^{\J}$ and $\Delta_{\CT}\subseteq\Delta^{\J}$ denote,
   respectively, the set of all naturals and the set of all o-compartments, i.e.
+  \vspace{-0.20ex}
   \begin{align*}
     \Delta_{\NT} & \coloneqq \bigcup_{\nt\in\NT} \nt^{\I_{\hat{c}}} \text{, and}\\
     \Delta_{\CT} & \coloneqq \bigcup_{\ct*\in\CT*} \ct*^{\I_{\hat{c}}}
@@ -729,6 +731,7 @@ role axioms~\eqref{eq:rbox-1} and~\eqref{eq:rbox-2}.
   %
   Due to \eqref{eq:nested-cts}, there exists a mapping $\mu: \Delta_{\NT}\cup\Delta_{\CT} \to \Delta_{\NT}\cup\Cbb$ which maps
   o-compartments to contexts of respective type, i.e.
+  \vspace{-0.20ex}
   \begin{align*}
     \mu(o) \coloneqq
     \begin{cases}
@@ -740,6 +743,7 @@ W.l.o.g, we can assume that there exist
   sufficiently many contexts $c\in\Cbb$ to assure that $\mu$ preserves the occurrence and
   cardinality constraints, since we could introduce copies of $c$ if necessary.  We define the
   \SCROI{} \I as follows:
+  \vspace{-0.21ex}
   \begin{align*}
     \Gamma^{\I} & \coloneqq \Cbb^{\J} \cup \Delta_{\NT} \cup \bigcup_{c\in\Cbb} \Art^{\I_{c}}\\
     \type(d) & \coloneqq  
@@ -767,6 +771,8 @@ implications which can be drawn due to the mapping into description logics.
 
   Omitting general axioms, e.g.\ stating that every role or rolegroup instance is played and
   connected to \occurCounter, the following axioms are contained in the ontology, among others:
+  %
+  {\setlength{\jot}{4pt}
   \begin{align}
     % \top & \sqsubseteq \oax{\BankAccounts\sqsubseteq\exact{1}{\plays^{-}}{\top}}\\
     \Bank & \sqsubseteq \oax{(\atleast{1}{\counts}{\BankAccounts})(\occurCounter)}\label{eq:counter-bankaccount}\\
@@ -779,6 +785,7 @@ implications which can be drawn due to the mapping into description logics.
     \top & \sqsubseteq \oax{\exists\ownsa.\top\sqsubseteq\Customer}\label{eq:domain-ownsa}\\
     \top & \sqsubseteq \oax{\exists\ownca.\top\sqsubseteq\Customer}\label{eq:domain-ownca}
   \end{align}
+  }
   In any interpretation \J that satisfies $\Omc_{\Bank}$ with $c\in\Bank^{\J}$,
   equations~\eqref{eq:counter-bankaccount} and~\eqref{eq:decl-rg-bankaccounts} entail the existence
   of an element in $\CheckingAccount^{\I_{c}}$ or $\SavingsAccount^{\I_{c}}$. Due to
@@ -885,7 +892,7 @@ consistency of $\Bmf_{(\Mmc,\A,\Cmc)}$, then there exists some \SCROI that satis
 \Cmc and respects these facts.
 
 
-\section{Going beyond \texorpdfstring{$\Sigma$}{Sigma}-CROMs}
+\section{Going beyond \texorpdfstring{$\Sigma$}{Σ}-CROMs}
 \label{sec:going-beyond-crom}
 
 In~\cite{KuLG-SLE14}, Kühn et al. present a feature model for role-based modelling languages of
@@ -938,7 +945,7 @@ whether a \rosirole type can be played several times by one object in the same c
 
 Two kinds of constraints that, in our opinion, might be important in practice, were not considered
 until now: Constraints based on attributes of players and temporal constraints.
-
+%
 The first ones are quite easy to express in \LMLO. Besides some technical changes on the above
 axioms, for each attribute $\mathsf{att_{i}}$ of a natural type or o-compartment, we introduce the
 rigid role $\mathsf{att_{i}}\in\ORR$, since we assume that attributes of a rigid type are also
