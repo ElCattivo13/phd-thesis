@@ -1,7 +1,7 @@
 # DoctoralThesis
 
 This repository contains the LaTeX source code of
-[my doctoral thesis](qucosa-link muss hier noch rein, wenn fertig).
+[my doctoral thesis](http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319266).
 
 To compile the project using `latexmk`, run the following command:
 ```
